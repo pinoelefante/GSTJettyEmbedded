@@ -161,44 +161,9 @@ public class EZTV2 extends ProviderSerieTV {
 	}
 
 	@Override
-	public void caricaSerieDB() {
-		String query = "SELECT * FROM " + Database.TABLE_SERIETV + " WHERE provider=" + PROVIDER_EZTV + " ORDER BY nome ASC";
-		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		for (int i = 0; i < res.size(); i++) {
-			KVResult<String, Object> riga = res.get(i);
-			int id_db = (int) riga.getValueByKey("id");
-			String url = (String) riga.getValueByKey("url");
-			String nome = (String) riga.getValueByKey("nome");
-			boolean inserita = ((int) riga.getValueByKey("inserita") == 0 ? false : true);
-			boolean conclusa = ((int) riga.getValueByKey("conclusa") == 0 ? false : true);
-			boolean stop_search = ((int) riga.getValueByKey("stop_search") == 0 ? false : true);
-			int id_itasa = (int) riga.getValueByKey("id_itasa");
-			int id_subsf = (int) riga.getValueByKey("id_subsfactory");
-			int id_subsp = (int) riga.getValueByKey("id_subspedia");
-			int id_tvdb = (int) riga.getValueByKey("id_tvdb");
-			int id_opensub = (int) riga.getValueByKey("id_opensubtitles");
-			int preferenze_d = (int) riga.getValueByKey("preferenze_download");
-			SerieTV st = new SerieTV(this, nome, url);
-			st.setIDDb(id_db);
-			st.setInserita(inserita);
-			st.setConclusa(conclusa);
-			st.setIDItasa(id_itasa);
-			st.setIDSubsfactory(id_subsf, false);
-			st.setIDSubspedia(id_subsp);
-			st.setIDTvdb(id_tvdb);
-			st.setIDOpenSubtitles(id_opensub);
-			st.setStopSearch(stop_search, false);
-			st.setPreferenze(new Preferenze(preferenze_d));
-			if (st.isInserita())
-				caricaEpisodiDB(st);
-		}
-		System.out.println("Caricate " + res.size() + " serietv dal database - EZTV.it");
-	}
-
-	@Override
 	protected void salvaSerieInDB(SerieTV s) {
 		if (s.getIDDb() == 0) {
-			String query = "INSERT INTO " + Database.TABLE_SERIETV + " (nome, url, inserita, conclusa, stop_search, provider, id_itasa, id_subsfactory, id_subspedia, id_tvdb, preferenze_download) VALUES (" + "\"" + s.getNomeSerie() + "\", " + "\"" + s.getUrl() + "\"," + (s.isInserita() ? 1 : 0) + "," + (s.isConclusa() ? 1 : 0) + "," + (s.isStopSearch() ? 1 : 0) + "," + getProviderID() + "," + s.getIDItasa() + "," + s.getIDDBSubsfactory() + "," + s.getIDSubspedia() + "," + s.getIDTvdb() + "," + s.getPreferenze().toValue() + ")";
+			String query = "INSERT INTO " + Database.TABLE_SERIETV + " (nome, url, conclusa, stop_search, provider, id_itasa, id_subsfactory, id_subspedia, id_tvdb, preferenze_download) VALUES (" + "\"" + s.getNomeSerie() + "\", " + "\"" + s.getUrl() + "\"," + (s.isConclusa() ? 1 : 0) + "," + (s.isStopSearch() ? 1 : 0) + "," + getProviderID() + "," + s.getIDItasa() + "," + s.getIDDBSubsfactory() + "," + s.getIDSubspedia() + "," + s.getIDTvdb() + "," + s.getPreferenze().toValue() + ")";
 			Database.updateQuery(query);
 
 			String query_id = "SELECT id FROM " + Database.TABLE_SERIETV + " WHERE url=\"" + s.getUrl() + "\"";
@@ -210,7 +175,7 @@ public class EZTV2 extends ProviderSerieTV {
 			}
 		}
 		else {
-			String query = "UPDATE " + Database.TABLE_SERIETV + " SET " + "nome=" + "\"" + s.getNomeSerie() + "\"" + ", url=" + "\"" + s.getUrl() + "\"" + ", inserita=" + (s.isInserita() ? 1 : 0) + ", conclusa=" + (s.isConclusa() ? 1 : 0) + ", stop_search=" + (s.isStopSearch() ? 1 : 0) + ", id_itasa=" + s.getIDItasa() + ", id_subsfactory=" + s.getIDDBSubsfactory() + ", id_subspedia=" + s.getIDSubspedia() + ", id_tvdb=" + s.getIDTvdb() + ", preferenze_download=" + s.getPreferenze().toValue() + " WHERE id=" + s.getIDDb();
+			String query = "UPDATE " + Database.TABLE_SERIETV + " SET " + "nome=" + "\"" + s.getNomeSerie() + "\"" + ", url=" + "\"" + s.getUrl() + "\"" + ", conclusa=" + (s.isConclusa() ? 1 : 0) + ", stop_search=" + (s.isStopSearch() ? 1 : 0) + ", id_itasa=" + s.getIDItasa() + ", id_subsfactory=" + s.getIDDBSubsfactory() + ", id_subspedia=" + s.getIDSubspedia() + ", id_tvdb=" + s.getIDTvdb() + ", preferenze_download=" + s.getPreferenze().toValue() + " WHERE id=" + s.getIDDb();
 			Database.updateQuery(query);
 		}
 
@@ -281,20 +246,9 @@ public class EZTV2 extends ProviderSerieTV {
 		System.out.println("Aggiornando i link di: " + serie.getNomeSerie());
 
 		try {
-			String base_url = /* WebProxyManager.getUrlProxy()+ */getBaseURL();
-			// System.out.println(base_url+"/shows/"+serie.getUrl()+"/");
+			String base_url = getBaseURL();
 			base_url += "/shows/" + serie.getUrl() + "/";
-			/*
-			 * if(base_url.startsWith("https")){ HtmlPage
-			 * pagina=HttpsDownload.downloadPageFromHttpsUrl(base_url);
-			 * List<HtmlAnchor> links=pagina.getAnchors(); for(int
-			 * i=0;i<links.size();i++){ String
-			 * link=links.get(i).getHrefAttribute();
-			 * if(link.startsWith("magnet:?xt=urn:btih:")){
-			 * //System.out.println(link); Torrent t=new Torrent(serie, link,
-			 * Torrent.SCARICARE); t.parseMagnet(); serie.addEpisodio(t); } }
-			 * pagina.cleanUp(); pagina.remove(); } else {
-			 */
+			
 			Download download = new Download(base_url, Settings.getUserDir() + serie.getNomeSerie());
 			download.avviaDownload();
 			download.getDownloadThread().join();
@@ -321,7 +275,7 @@ public class EZTV2 extends ProviderSerieTV {
 			// }
 
 			if (serie.isConclusa()) {
-				serie.setStopSearch(true, true);
+				serie.setStopSearch(true);
 			}
 		}
 

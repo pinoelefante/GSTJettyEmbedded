@@ -1,23 +1,16 @@
 package gst.programma;
 
+import gst.database.Database;
+import gst.infoManager.TheTVDB;
 import gst.manutenzione.InterfacciaManutenzione;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ThreadRicercaAutomatica;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
-import Database.Database;
-import GUI.Advertising;
-import GUI.FrameLoading;
-import GUI.Interfaccia;
-import InfoManager.TheTVDB;
 
 public class Main {
 	public static FrameLoading 					fl;
-	private static Interfaccia 					GUIframe;
 	
 	public static void main(String[] args) {
 		boolean isManutenzione=isManutenzione(args);
@@ -58,7 +51,6 @@ public class Main {
 					public void run(){
 						Database.rebuildDB();
 						Database.Disconnect();
-						NativeInterface.close();
 					}
 				});
 				
@@ -92,10 +84,8 @@ public class Main {
 				
 				fl.chiudi();
 				
-				FileManager.instance();
 				
-				GUIframe = new Interfaccia();
-				GUIframe.init();
+				
 				Thread subThread=new Thread(new Runnable() {
 					public void run() {
 						if(Settings.isRicercaSottotitoli())
@@ -110,7 +100,6 @@ public class Main {
 				Advertising.avvio();
 			}
 			catch(Exception e){
-				JOptionPane.showMessageDialog(GUIframe, e.getMessage());
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 				ManagerException.registraEccezione(e);

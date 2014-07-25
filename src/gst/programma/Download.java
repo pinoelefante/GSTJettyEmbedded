@@ -273,19 +273,7 @@ public class Download {
 		catch(InterruptedException e){}
 	}
 	*/
-	public static void copiaFile(String origine, String dir_destinazione){
-		if(!origine.startsWith("file:///")){
-			origine="file:///"+origine;
-		}
-		String nomefile="gst_file_destinazione_copia";
-		if(origine.contains(File.separator)){
-			nomefile=origine.substring(origine.lastIndexOf(File.separator)+1);
-		}
-		String destinazione=dir_destinazione+File.separator+nomefile;
-		Download d=new Download(origine, destinazione);
-		
-		FileManager.addDownloadFile(d);
-	}
+	
 	public boolean isStarted() {
 		return started;
 	}
@@ -317,15 +305,7 @@ public class Download {
 		}
 		return false;
 	}
-	private static boolean isHttpsRaggiungibile(String url_s){
-		return HttpsDownload.isHttpsRaggiungibile(url_s);
-	}
 	public static boolean isRaggiungibile(String url){
-		if(url.startsWith("https://")){
-			return isHttpsRaggiungibile(url);
-		}
-		else {
-			return isHttpRaggiungibile(url);
-		}
+		return isHttpRaggiungibile(url);
 	}
 }

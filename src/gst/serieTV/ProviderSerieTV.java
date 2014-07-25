@@ -17,7 +17,7 @@ public abstract class ProviderSerieTV {
 		providerID=id;
 		nuove_serie=new ArrayList<SerieTV>();
 	}
-	protected ArrayList<SerieTV> getElencoSerie(){
+	protected ArrayList<SerieTV> getElencoSerieDB(){
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+ " WHERE provider="+providerID+" ORDER BY nome ASC";
 		ArrayList<SerieTV> elenco = new ArrayList<>();
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
@@ -108,7 +108,6 @@ public abstract class ProviderSerieTV {
 	public abstract void aggiornaElencoSerie();
 	public abstract ArrayList<Episodio> nuoviEpisodi(SerieTV serie);
 	public abstract void caricaEpisodiDB(SerieTV serie);
-	public abstract void caricaSerieDB();
 	protected abstract void salvaSerieInDB(SerieTV s);
 	protected abstract void salvaEpisodioInDB(Torrent t);
 	public abstract int getProviderID();

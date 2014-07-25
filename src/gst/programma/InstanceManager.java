@@ -6,10 +6,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.swing.JFrame;
-
-import GUI.Interfaccia;
-
 public class InstanceManager {
 	private ServerSocket socket;
 	private static int listen_port=54564;
@@ -34,20 +30,11 @@ public class InstanceManager {
 					while(true){
 		    			socket.accept();
 		    			System.out.println("Tentativo di avviare una nuova istanza");
-		    			Interfaccia gui=Interfaccia.getInterfaccia();
-		    			do {
-		    				sleep(200L);
-		    				gui=Interfaccia.getInterfaccia();
-		    			}
-		    			while(gui==null);
-		    			gui.setVisible(true);
-		    			gui.setState(JFrame.NORMAL);
+		    			//TODO open browser
+		    			
 					}
 				}
 				catch (IOException e) {
-					e.printStackTrace();
-				}
-				catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
