@@ -6,4 +6,5 @@
     <welcome-file>page/index.htm</welcome-file>
     <welcome-file>page/index.jsp</welcome-file>
   </welcome-file-list>
+  
 </web-app>

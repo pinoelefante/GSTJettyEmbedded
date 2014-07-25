@@ -1,0 +1,115 @@
+@CHARSET "ISO-8859-1";
+
+div {
+	border: 1px solid black;	
+}
+
+div#container {
+	position: relative;
+	margin-top: 70px;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 90%;
+}
+div#containerLeft {
+	position: absolute;
+	left:0%;
+	right: 70;
+	height: 100%;
+	width: 30%;
+}
+div#serieNuove {
+	position: absolute;
+	left: 0px;
+	top: 5%;
+	bottom: 55%;
+	right: 10%;
+	width: 90%;
+	height: 50%;
+	overflow: auto;
+}
+
+div#altervista {
+	position: absolute;
+	top: 70%;
+	bottom: 5%;
+	left: 0px;
+	right: 10%;
+	width: 90%;
+	height: 30%;
+	overflow:auto;
+}
+
+div#containerCenter {
+	position: absolute;
+	left: 30%;
+	right: 30%;
+	height: 100%;
+	width: 40%;
+}
+div#addSerie {
+	position:absolute;
+	overflow:auto;
+	top:0px;
+	left:0px;
+	right:0px;
+	height: 150px;
+}
+div#selectSerieDiv {
+	position: absolute;
+	top: 20px;
+	bottom: 20px;
+	left: 5px;
+	right: 5px;
+	height: 100px;
+}
+select#selectSerie, select#selectProvider{
+	width: 30%;
+}
+div#listSerie {
+	position:absolute;
+	overflow:auto;
+	left:0px;
+	right:0px;
+	top:150px;
+	bottom: 80px;
+}
+div#buttonCenter {
+	position: absolute;
+	height: 80px;
+	bottom:0px;
+	width: 100%;
+}
+div#divContainerButtons {
+	position: absolute;
+	top: 20px;
+	bottom: 10px;
+	left: 40%;
+	height: 50px;
+	margin-left: auto;
+    margin-right: auto;
+}
+div#containerRight {
+	position: absolute;
+	left: 70%;
+	height: 100%;
+	width: 30%;
+}
+div#boxInfo {
+	position:absolute;
+	top: 5%;
+	bottom: 5%;
+	right: 0px;
+	width: 90%;
+	height: 50%;
+	overflow: auto;
+}
+div#altro {
+	position:absolute;
+	top: 70%;
+	bottom: 5%;
+	right: 0px;
+	width: 90%;
+	height: 30%;
+	overflow: hidden;
+}

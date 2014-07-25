@@ -1,0 +1,58 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Gestione Serie TV - Homepage</title>
+	<link rel="stylesheet" type="text/css" href="css/mainstyle.css" />
+	<script src="js/jquery-1.11.1.js"></script>
+	<script src="js/scripts.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="containerLeft">
+			<div id="serieNuove">Serie Nuove</div>
+			<div id="altervista">Altervista
+			</div>
+		</div>
+		
+		<div id="containerCenter">
+			<div id="addSerie">
+				<div id="selectSerieDiv">
+					<label>Provider</label>
+					<select id="selectProvider" onchange="caricaSerieFromProvider()">
+						<optgroup label="Provider">
+							<option value="0">Karmorra</option>
+							<option value="1">EZTV</option>
+						</optgroup>
+					</select>
+					<label>Serie</label>
+					<select id="selectSerie">
+						<optgroup label="Serie">
+							<option value="1">Lost</option>
+							<option value="2">How i met your mother</option>
+						</optgroup>
+					</select>
+					<input type="button" id="btnAggiungiSerie" value="Aggiungi" onclick="aggiungiSerie()" />
+				</div>
+				
+			</div>
+			<div id="listSerie">ListSerie</div>
+			<div id="buttonCenter">
+				<div id="divContainerButtons">
+				<input type="button" value="Download" id="btnDownload" onclick="download()"/>
+				<input type="button" value="Ignora" id="btnIgnora" onclick="ignora()"/>
+				</div>
+			</div>
+		</div>
+		<div id="containerRight">
+			<div id="boxInfo">Info</div>
+			<div id="altro">Altro</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			caricaProvider();
+		});
+	</script>
+
+</body>
+</html>
