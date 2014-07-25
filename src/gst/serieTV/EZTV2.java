@@ -20,11 +20,11 @@ public class EZTV2 extends ProviderSerieTV {
 	private String			baseUrl;
 
 	public EZTV2() {
-		super();
+		super(ProviderSerieTV.PROVIDER_EZTV);
 		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
 		baseUrls.add("http://eztv.it");
-		baseUrls.add("http://eztv.openinternet.biz/");
+		baseUrls.add("http://eztv.openinternet.biz");
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
 	}
@@ -76,20 +76,17 @@ public class EZTV2 extends ProviderSerieTV {
 					url = url.replace("/shows/", "");
 					url = url.substring(0, url.indexOf("/"));
 					String nextline = file.nextLine().trim();
-					int stato = 0;
+					boolean conclusa = false;
 					if (nextline.contains("ended"))
-						stato = 1;
+						conclusa = true;
 					
 					if(isTempPlaceholder(nomeserie))
 						continue;
 					
 					SerieTV toInsert = new SerieTV(this, nomeserie, url);
-					toInsert.setConclusa(stato == 0 ? false : true);
-
-					if (addSerieFromOnline(toInsert) == null) { // null se non è
-																// presente nel
-																// database
-						salvaSerieInDB(toInsert);
+					toInsert.setConclusa(conclusa);
+					
+					if(aggiungiSerieADatabase(toInsert)){
 						caricate++;
 					}
 				}
@@ -110,7 +107,6 @@ public class EZTV2 extends ProviderSerieTV {
 			}
 		}
 		OperazioniFile.deleteFile(Settings.getUserDir() + "file.html");
-		// }
 	}
 	private boolean isTempPlaceholder(String nome){
 		switch (nome.toLowerCase()) {
@@ -167,7 +163,6 @@ public class EZTV2 extends ProviderSerieTV {
 	@Override
 	public void caricaSerieDB() {
 		String query = "SELECT * FROM " + Database.TABLE_SERIETV + " WHERE provider=" + PROVIDER_EZTV + " ORDER BY nome ASC";
-		elenco_serie.clear();
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		for (int i = 0; i < res.size(); i++) {
 			KVResult<String, Object> riga = res.get(i);
@@ -181,6 +176,7 @@ public class EZTV2 extends ProviderSerieTV {
 			int id_subsf = (int) riga.getValueByKey("id_subsfactory");
 			int id_subsp = (int) riga.getValueByKey("id_subspedia");
 			int id_tvdb = (int) riga.getValueByKey("id_tvdb");
+			int id_opensub = (int) riga.getValueByKey("id_opensubtitles");
 			int preferenze_d = (int) riga.getValueByKey("preferenze_download");
 			SerieTV st = new SerieTV(this, nome, url);
 			st.setIDDb(id_db);
@@ -190,9 +186,9 @@ public class EZTV2 extends ProviderSerieTV {
 			st.setIDSubsfactory(id_subsf, false);
 			st.setIDSubspedia(id_subsp);
 			st.setIDTvdb(id_tvdb);
+			st.setIDOpenSubtitles(id_opensub);
 			st.setStopSearch(stop_search, false);
 			st.setPreferenze(new Preferenze(preferenze_d));
-			addSerieFromDB(st);
 			if (st.isInserita())
 				caricaEpisodiDB(st);
 		}

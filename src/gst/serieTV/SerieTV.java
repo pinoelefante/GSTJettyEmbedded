@@ -2,8 +2,6 @@ package gst.serieTV;
 
 import gst.database.Database;
 import gst.tda.db.KVResult;
-import gst.tda.serietv.ElencoEpisodi;
-import gst.tda.serietv.Episodio;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -14,7 +12,7 @@ public class SerieTV {
 	private ProviderSerieTV provider;
 	private String url_serie;
 	private int id_db, id_itasa=0, id_tvdb=0, id_subspedia=0, id_subsfactory=0;
-	private boolean conclusa, stop_search, inserita;
+	private boolean conclusa, stop_search;
 	private Preferenze preferenze_download;
 	
 	public SerieTV(ProviderSerieTV provider, String nomeserie, String url) {
@@ -55,26 +53,11 @@ public class SerieTV {
 	public void setIDDb(int i){
 		id_db=i;
 	}
-	public boolean isInserita(){
-		return inserita;
-	}
-	public void setInserita(boolean s){
-		inserita=s;
-	}
-	public void aggiornaDB(){
-		provider.salvaSerieInDB(this);
-	}
 	public boolean isStopSearch(){
-		if(getNumEpisodi()==0){
-			stop_search=false;
-		}
 		return stop_search;
 	}
-	public void setStopSearch(boolean s, boolean updateDB){
+	public void setStopSearch(boolean s){
 		stop_search=s;
-		if(updateDB){
-			aggiornaDB();
-		}
 	}
 	public String getUrl(){
 		return url_serie;
@@ -92,7 +75,7 @@ public class SerieTV {
 		return id_subsfactory;
 	}
 
-	public void setIDSubsfactory(int id_subsfactory, boolean updatedb) {
+	public void setIDSubsfactory(int id_subsfactory) {
 		this.id_subsfactory = id_subsfactory;
 		if(id_subsfactory>0){
 			String query="SELECT directory FROM "+Database.TABLE_SUBSFACTORY+" WHERE id="+id_subsfactory;
@@ -102,8 +85,6 @@ public class SerieTV {
 				setSubsfactoryDirectory(directory);
 			}
 		}
-		if(updatedb)
-			aggiornaDB();
 	}
 
 	public int getIDTvdb() {
@@ -123,8 +104,6 @@ public class SerieTV {
 	}
 	public int compareTo(SerieTV s2){
 		return getUrl().compareToIgnoreCase(s2.getUrl());
-		
-		//return this.getNomeSerie().trim().toLowerCase().compareTo(s2.getNomeSerie().trim().toLowerCase());
 	}
 	
 	public int getProviderID(){
@@ -163,6 +142,7 @@ public class SerieTV {
 		System.out.println("Prima stringa: "+nomeserie+"\nFormattata: "+removeNationality(nomeserie));
 		System.out.println("Seconda stringa: "+nomeserie2+"\nFormattata: "+removeNationality(nomeserie2));
 	}
+	/*
 	public void addEpisodio(Torrent episodio){
 		if(episodio.is720p() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isPreferisciHD())
 			episodio.setScaricato(Torrent.IGNORATO, false);
@@ -172,6 +152,8 @@ public class SerieTV {
 		if(episodio.isSottotitolo())
 			GestioneSerieTV.getSubManager().aggiungiEpisodio(episodio);
 	}
+	*/
+	/*
 	public void addEpisodioDB(Torrent episodio){
 		//System.out.println(getNomeSerie()+" "+episodio.getStagione()+"x"+episodio.getEpisodio());
 		if(episodio.is720p() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isPreferisciHD())
@@ -182,16 +164,24 @@ public class SerieTV {
 		if(episodio.isSottotitolo())
 			GestioneSerieTV.getSubManager().aggiungiEpisodio(episodio);
 	}
+	*/
+	/*
 	public void aggiornaEpisodiOnline(){
 		provider.caricaEpisodiOnline(this);
 	}
+	*/
+	/*
 	public int getNumEpisodi(){
 		return episodi.size();
 	}
+	*/
+	/*
 	public Episodio getEpisodio(int i){ // index in elencoepisodi
 		return episodi.get(i);
 	}
+	*/
 	private String SubsfactoryOnlineDirectory="";
+	private int id_openSubtitles;
 	
 	public String getSubsfactoryDirectory(){
 		if(SubsfactoryOnlineDirectory.isEmpty()){
@@ -209,8 +199,12 @@ public class SerieTV {
 	public void setSubsfactoryDirectory(String id) {
 		SubsfactoryOnlineDirectory=id;
 	}
-	public boolean rimuoviSerie(){
-		setStopSearch(false, false);
-		return getProvider().rimuoviSerieDaDB(this);
+
+	public void setIDOpenSubtitles(int id_opensub) {
+		id_openSubtitles = id_opensub;
+		
+	}
+	public int getIDOpenSubtitles(){
+		return id_openSubtitles;
 	}
 }

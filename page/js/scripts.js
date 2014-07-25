@@ -27,3 +27,6 @@ function download(){
 function ignora(){ 
 	
 }
+function selezionaTutto(){
+	
+}

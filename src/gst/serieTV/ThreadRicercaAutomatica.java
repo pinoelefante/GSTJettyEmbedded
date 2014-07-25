@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import GUI.Interfaccia;
-
 public class ThreadRicercaAutomatica extends Thread {
 	public static ThreadRicercaAutomatica getInstance(){
 		if(thisInstance==null)
@@ -30,7 +28,6 @@ public class ThreadRicercaAutomatica extends Thread {
 			int i=0;
 			while(true){
 				download();
-				Interfaccia.getInterfaccia().inizializzaDownloadScroll();
 				do {
 					sleep(60000L);
 					System.out.println("Attesa prossimo download: "+i+"/"+(Settings.getMinRicerca()*60));

@@ -117,7 +117,7 @@ public class Database {
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSPEDIA+" (" +
-					"id INTEGER PRIMARY KEY AUTOINCREMENT"
+					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "url TEXT"
 					+ ")");
 			
@@ -126,13 +126,14 @@ public class Database {
 					"url TEXT NOT NULL," +
 					"nome TEXT NOT NULL, "+
 					"provider INTEGER,"+
-					"conclusa INTEGER,"+
-					"stop_search INTEGER,"+
-					"id_itasa INTEGER,"+
-					"id_subsfactory INTEGER,"+
-					"id_subspedia INTEGER,"+
-					"id_opensubtitles INTEGER"+
-					"preferenze_download INTEGER,"+
+					"conclusa INTEGER DEFAULT 0,"+
+					"stop_search INTEGER DEFAULT 0,"+
+					"id_itasa INTEGER DEFAULT 0,"+
+					"id_subsfactory INTEGER DEFAULT 0,"+
+					"id_subspedia INTEGER DEFAULT 0,"+
+					"id_opensubtitles INTEGER DEFAULT 0,"+
+					"id_tvdb INTEGER DEFAULT 0,"+
+					"preferenze_download INTEGER DEFAULT 0,"+
 					"FOREIGN KEY(provider) REFERENCES provider(id),"+
 					"FOREIGN KEY(id_itasa) REFERENCES itasa(id),"+
 					"FOREIGN KEY(id_subsfactory) REFERENCES subsfactory(id),"+
