@@ -24,7 +24,7 @@ public abstract class ProviderSerieTV {
 			elenco.add(parseSerie(res.get(i)));
 		return elenco;
 	}
-	private SerieTV parseSerie(KVResult<String, Object> res){
+	protected SerieTV parseSerie(KVResult<String, Object> res){
 		int id_db = (int) res.getValueByKey("id");
 		String url = (String) res.getValueByKey("url");
 		String nome = (String) res.getValueByKey("nome");
@@ -75,8 +75,10 @@ public abstract class ProviderSerieTV {
 		return presente;
 	}
 	public boolean aggiungiSerieAPreferiti(SerieTV serie){
-		if(isSerieInPreferiti(serie))
+		if(isSerieInPreferiti(serie)){
+			System.out.println("Serie già presente");
 			return false;
+		}
 		else {
 			String query = "INSERT INTO "+Database.TABLE_PREFERITI+" (id_serie) VALUES ("+serie.getIDDb()+")";
 			return Database.updateQuery(query);

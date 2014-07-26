@@ -1,6 +1,8 @@
 package gst.serieTV;
 
+import gst.database.Database;
 import gst.sottotitoli.GestoreSottotitoli;
+import gst.tda.db.KVResult;
 import gst.tda.serietv.Episodio;
 
 import java.util.ArrayList;
@@ -57,6 +59,39 @@ public class GestioneSerieTV {
 		return p.getElencoSerieNuove();
 	}
 	
+	public boolean aggiungiSerieAPreferiti(int provider, int idSerie){
+		ProviderSerieTV p = checkProvider(provider);
+		if(p!=null){
+			SerieTV st=p.getSerieByID(idSerie);
+			if(st!=null){
+				boolean r = p.aggiungiSerieAPreferiti(st);
+				System.out.println("aggiungi a preferiti:"+r);
+				return r;
+			}
+		}
+		return false;
+	}
+	public boolean aggiornaListaSerie(int idProvider){
+		ProviderSerieTV p = checkProvider(idProvider);
+		if(p!=null){
+			p.aggiornaElencoSerie();
+			return true;
+		}
+		return false;
+	}
+	
+	public ArrayList<SerieTV> getElencoSeriePreferite(){
+		String query = "SELECT * FROM preferiti pref JOIN serietv serie ON pref.id_serie = serie.id ORDER BY serie.nome ASC";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		ProviderSerieTV p=providers.get(0);
+		ArrayList<SerieTV> preferiti = new ArrayList<>();
+		for(int i=0;i<res.size();i++){
+			SerieTV s = p.parseSerie(res.get(i));
+			preferiti.add(s);
+		}
+		return preferiti;
+	}
+	
 	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}
@@ -107,16 +142,6 @@ public class GestioneSerieTV {
 			}
 		}
 		return episodi;
-	}
-	public ArrayList<SerieTV> getElencoNuoveSerie(){
-		ArrayList<SerieTV> newseries=new ArrayList<SerieTV>(5);
-		for(int i=0;i<providers.size();i++){
-			ProviderSerieTV p=providers.get(i);
-			for(int j=0;j<p.getNuoveSerieCount();j++){
-				newseries.add(p.getNuoveSerieAt(j));
-			}
-		}
-		return newseries;
 	}
 	private boolean loading=false;
 	public boolean isLoading() {

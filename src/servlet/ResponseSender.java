@@ -71,8 +71,11 @@ public class ResponseSender {
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
+			Element provider = new Element("provider");
+			provider.addContent(serie.get(i).getProviderID()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
+			serie_tag.addContent(provider);
 			elenco.addContent(serie_tag);
 		}
 		

@@ -37,6 +37,16 @@ public class OperazioniSerieServlet extends HttpServlet {
 		}
 		Document xml = null;
 		switch(action){
+			case "add": {
+				int provider = Integer.parseInt(checkParameter("provider", resp, req));
+				int serie = Integer.parseInt(checkParameter("serie", resp, req));
+				boolean res = manager.aggiungiSerieAPreferiti(provider, serie);
+				xml = ResponseSender.createResponseBoolean(res);
+				break;
+			}
+			case "getSeriePreferite":
+				xml = ResponseSender.createResponseSerie(manager.getElencoSeriePreferite());
+				break;
 			case "getProviders":
 				xml = ResponseSender.createResponseProviders(manager.getProviders());
 				break;
@@ -60,6 +70,12 @@ public class OperazioniSerieServlet extends HttpServlet {
 				catch(Exception e){
 					xml = ResponseSender.createResponseBoolean(false);
 				}
+				break;
+			}
+			case "updateListSeries":{
+				int provider = Integer.parseInt(checkParameter("provider", resp, req));
+				boolean res = manager.aggiornaListaSerie(provider);
+				xml = ResponseSender.createResponseBoolean(res);
 				break;
 			}
 		}

@@ -79,23 +79,31 @@ div#addSerie {
 	height: 150px;
 	border: 1px solid gray;
 	border-radius: 10px;
+	min-height: 150px;
 }
 
 div#selectSerieDiv {
 	position: absolute;
-	top: 20px;
-	bottom: 20px;
+	top: 10px;
+	bottom: 10px;
 	left: 5px;
 	right: 5px;
-	height: 100px;
+	height: 70px;
 }
 div#divMessaggioOperazione {
+	position:absolute;
 	margin-top:3px;
 	margin-bottom: 3px;
+	font-size: 14px;
+	font-family: sans-serif;
 }
 div#operazioniLista {
 	position: absolute;
+	top: 80px;
+	left:5px;
+	right:5px;
 	bottom: 10px;
+	height:50px;
 }
 
 select#selectSerie, select#selectProvider {
