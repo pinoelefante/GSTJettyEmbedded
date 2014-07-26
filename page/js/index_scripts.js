@@ -13,6 +13,7 @@ function aggiungiSerie(){
 			if(response){
 				var elem = creaSerieElementoPagina(serie.innerHTML, serie.value, provider);
 				$("#accordion").append(elem);
+				//TODO aggiornamento serie
 			}
 		}
 	});
@@ -26,8 +27,8 @@ function creaSerieElementoPagina(nome, id, provider) {
 				"<a data-toggle='collapse' data-parent='#accordion' href='#collapse"+id+"'>"+nome+"</a>"+
 			"</h4>"+
 			"<div class='buttonsAccordion'>"+
-				"<button class='btn btn-warning'>Aggiorna</button>&nbsp;"+
-				"<button class='btn btn-warning'>Rimuovi</button>"+
+				"<button class='btn btn-warning' title='Aggiorna episodi'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+
+				"<button class='btn btn-danger' title='Rimuovi dai preferiti'><span class='glyphicon glyphicon-remove'></span></button>"+
 			"</div>"+
 			"<h5 id='episodiScaricare"+id+"'>(0 episodi da scaricare)</h5>"
 		"</div>"+
