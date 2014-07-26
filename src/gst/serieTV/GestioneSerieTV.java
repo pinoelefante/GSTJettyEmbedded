@@ -6,26 +6,34 @@ import gst.tda.serietv.Episodio;
 import java.util.ArrayList;
 
 public class GestioneSerieTV {
-	private static boolean instanced=false; 
-	private static ArrayList<ProviderSerieTV> providers;
+	private static GestioneSerieTV instance;
+	private ArrayList<ProviderSerieTV> providers;
 
-	private static GestoreSottotitoli submanager;
+	private GestoreSottotitoli submanager;
 	
-	public static void instance(){
-		if(!instanced){
-			providers=new ArrayList<ProviderSerieTV>(1);
-    		submanager=new GestoreSottotitoli();
-    		providers.add(new EZTV());
-    		instanced=true;
+	public static GestioneSerieTV getInstance(){
+		if(instance==null){
+			instance=new GestioneSerieTV();    		
 		}
+		return instance;
+	}
+	private GestioneSerieTV(){
+		providers=new ArrayList<ProviderSerieTV>(1);
+		//TODO
+		//submanager=new GestoreSottotitoli();
+		
+		providers.add(new EZTV());
+	}
+	public ArrayList<ProviderSerieTV> getProviders(){
+		return providers;
 	}
 	
-	public static void carica_serie_database(){
+	public void carica_serie_database(){
 		for(int i=0;i<providers.size();i++)
 			providers.get(i).caricaSerieDB();
 	}
 	
-	public static ArrayList<SerieTV> getElencoSerieCompleto(){
+	public ArrayList<SerieTV> getElencoSerieCompleto(){
 		ArrayList<SerieTV> res=new ArrayList<SerieTV>();
 		for(int i=0;i<providers.size();i++){
 			for(int j=0;j<providers.get(i).getSeriesCount();j++){
@@ -36,14 +44,14 @@ public class GestioneSerieTV {
 		}
 		return res;
 	}
-	public static boolean aggiungiSeriePreferita(SerieTV serie){
+	public boolean aggiungiSeriePreferita(SerieTV serie){
 		boolean res=serie.getProvider().addSeriePreferita(serie);
 		serie.getProvider().caricaEpisodiDB(serie);
 		getSubManager().associaSerie(serie);
 		//TODO aggiungere altro (cercare id su tvdb)
 		return res;
 	}
-	public static ArrayList<SerieTV> getElencoSerieInserite(){
+	public ArrayList<SerieTV> getElencoSerieInserite(){
 		ArrayList<SerieTV> res=new ArrayList<SerieTV>();
 		for(int i=0;i<providers.size();i++){
 			ProviderSerieTV provider=providers.get(i);
@@ -54,18 +62,18 @@ public class GestioneSerieTV {
 		return res;
 	}
 	
-	public static void caricaElencoSerieOnline() {
+	public void caricaElencoSerieOnline() {
 		for(int i=0;i<providers.size();i++){
 			providers.get(i).aggiornaElencoSerie();
 		}
 	}
-	public static void rimuoviSeriePreferita(SerieTV st){
+	public void rimuoviSeriePreferita(SerieTV st){
 		st.getProvider().rimuoviSeriePreferita(st);
 	}
-	public static GestoreSottotitoli getSubManager(){
+	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}
-	public static ArrayList<Episodio> caricaEpisodiDaScaricare(){
+	public ArrayList<Episodio> caricaEpisodiDaScaricare(){
 		class ThreadUpdate extends Thread {
 			private SerieTV serie;
 			public ThreadUpdate(SerieTV s){
@@ -103,7 +111,7 @@ public class GestioneSerieTV {
 		firstLoading=true;
 		return episodi;
 	}
-	public static ArrayList<Episodio> caricaEpisodiDaScaricareOffline(){
+	public ArrayList<Episodio> caricaEpisodiDaScaricareOffline(){
 		ArrayList<Episodio> episodi=new ArrayList<Episodio>();
 		for(int i=0;i<providers.size();i++){
 			ProviderSerieTV p=providers.get(i);
@@ -113,7 +121,7 @@ public class GestioneSerieTV {
 		}
 		return episodi;
 	}
-	public static ArrayList<SerieTV> getElencoNuoveSerie(){
+	public ArrayList<SerieTV> getElencoNuoveSerie(){
 		ArrayList<SerieTV> newseries=new ArrayList<SerieTV>(5);
 		for(int i=0;i<providers.size();i++){
 			ProviderSerieTV p=providers.get(i);
@@ -123,12 +131,12 @@ public class GestioneSerieTV {
 		}
 		return newseries;
 	}
-	private static boolean loading=false;
-	public static boolean isLoading() {
+	private boolean loading=false;
+	public boolean isLoading() {
 		return loading;
 	}
-	private static boolean firstLoading=false;
-	public static boolean isFirstLoaded(){
+	private boolean firstLoading=false;
+	public boolean isFirstLoaded(){
 		return firstLoading;
 	}
 }

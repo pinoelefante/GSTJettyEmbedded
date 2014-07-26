@@ -10,15 +10,13 @@ public abstract class ProviderSerieTV {
 	protected final static int PROVIDER_EZTV=1;
 	protected final static int PROVIDER_KARMORRA=2;
 	
-	private int providerID;
 	protected ArrayList<SerieTV> nuove_serie;
 	
 	public ProviderSerieTV(int id){
-		providerID=id;
 		nuove_serie=new ArrayList<SerieTV>();
 	}
 	protected ArrayList<SerieTV> getElencoSerieDB(){
-		String query = "SELECT * FROM "+Database.TABLE_SERIETV+ " WHERE provider="+providerID+" ORDER BY nome ASC";
+		String query = "SELECT * FROM "+Database.TABLE_SERIETV+ " WHERE provider="+getProviderID()+" ORDER BY nome ASC";
 		ArrayList<SerieTV> elenco = new ArrayList<>();
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		for(int i=0;i<res.size();i++)
@@ -99,7 +97,7 @@ public abstract class ProviderSerieTV {
 		}
 	}
 	private void addSerieToDB(SerieTV s){
-		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES ('"+s.getNomeSerie()+"','"+s.getUrl()+"',"+providerID+","+(s.isConclusa()?1:0)+")";
+		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES ('"+s.getNomeSerie()+"','"+s.getUrl()+"',"+getProviderID()+","+(s.isConclusa()?1:0)+")";
 		Database.updateQuery(query);
 	}
 

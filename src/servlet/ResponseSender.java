@@ -1,7 +1,10 @@
 package servlet;
 
+import gst.serieTV.ProviderSerieTV;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,6 +34,23 @@ public class ResponseSender {
 		Element valore = new Element("booleanResponse");
 		valore.addContent(b+"");
 		root.addContent(valore);
+		Document doc = new Document(root);
+		return doc;
+	}
+	public static Document createResponseProviders(ArrayList<ProviderSerieTV> p){
+		Element root = new Element("response");
+		Element providers = new Element("providers");
+		root.addContent(providers);
+		for(int i=0;i<p.size();i++){
+			Element provider = new Element("provider");
+			Element nome = new Element("name");
+			nome.addContent(p.get(i).getProviderName());
+			Element id = new Element("id");
+			id.addContent(p.get(i).getProviderID()+"");
+			provider.addContent(nome);
+			provider.addContent(id);
+			providers.addContent(provider);
+		}
 		Document doc = new Document(root);
 		return doc;
 	}

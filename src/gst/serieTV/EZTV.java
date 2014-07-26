@@ -15,13 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class EZTV2 extends ProviderSerieTV {
+public class EZTV extends ProviderSerieTV {
 	private ArrayList<String> baseUrls;
 	private String			baseUrl;
 
-	public EZTV2() {
+	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
-		cleanUpTemp();
+		//cleanUpTemp();
 		baseUrls = new ArrayList<String>();
 		baseUrls.add("http://eztv.it");
 		baseUrls.add("http://eztv.openinternet.biz");
