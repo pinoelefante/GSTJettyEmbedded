@@ -1,5 +1,8 @@
 package server;
 
+import gst.database.Database;
+import gst.programma.Settings;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
@@ -24,5 +27,8 @@ public class ServerStart {
 			}
 		},"Stop Jetty Hook")); 
 		jettyServer.start();
+		
+		Settings.baseSettings();
+		Database.Connect();
 	}
 }

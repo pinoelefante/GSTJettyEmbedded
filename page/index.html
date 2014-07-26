@@ -4,7 +4,8 @@
 <title>Gestione Serie TV - Homepage</title>
 <link rel="stylesheet" type="text/css" href="css/mainstyle.css" />
 <script src="js/jquery-1.11.1.js"></script>
-<script src="js/scripts.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/index_scripts.js"></script>
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <script src="js/bootstrap.min.js"></script>
 
@@ -16,7 +17,10 @@
 				<fieldset>
 					<legend>Serie Nuove</legend>
 				</fieldset>
-
+				<div id='serieNuoveDivContainer'>
+				
+				</div>
+				<!-- 
 				<div class="panel-serieNuova">
 					<h4 class="panel-title">Serie 1</h4>
 					<div class="buttonsAccordion">
@@ -24,7 +28,7 @@
 						<button class="btn btn-warning">Info</button>
 					</div>
 				</div>
-
+				 -->
 			</div>
 			<div id="altervista">
 				<!-- 
@@ -37,18 +41,19 @@
 			<div id="addSerie">
 				<div id="selectSerieDiv">
 					<label>Provider</label> <select class="form-control" id="selectProvider" onchange="caricaSerieFromProvider()">
+						<option selected></option>
 						<optgroup label="Provider" id="groupProvider">
 						</optgroup>
 					</select> 
 					<label>Serie</label> 
 					<select class="form-control" id="selectSerie">
-						<optgroup label="Serie">
-							<option value="1">Lost</option>
-							<option value="2">How i met your mother</option>
+						<option></option>
+						<optgroup label="Serie" id="optSelectSerie">
 						</optgroup>
-					</select> <input class="btn btn-primary" type="button" id="btnAggiungiSerie"
-						value="Aggiungi" onclick="aggiungiSerie()" />
-
+					</select>
+					<input class="btn btn-primary" type="button" id="btnAggiungiSerie" value="Aggiungi" onclick="aggiungiSerie()" />&nbsp;
+					<input class="btn btn-warning" type="button" id="btnInfoSerie" value="Info" onclick="infoSerie()" />
+					<div id="divMessaggioOperazione"></div>
 					<div id="operazioniLista">
 						<input type="checkbox" onclick="selezionaTutto()">Seleziona
 						tutto</input>
@@ -162,5 +167,21 @@
 		});
 	</script>
 
+	<div class="modal fade" id="ModalMessaggio" tabindex="-1" role="dialog" aria-labelledby="ModalMessaggioLabel" aria-hidden="true" style="vertical-align:middle">
+	  <div class="modal-dialog" style="padding-top: 5%;">
+	    <div class="modal-content panel">
+	      <div class="modal-header panel-heading">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title" id="ModalMessaggioLabel"></h4>
+	      </div>
+	      <div class="modal-body">
+	        <p id="TestoModal"></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </body>
 </html>

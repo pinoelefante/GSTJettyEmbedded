@@ -28,48 +28,35 @@ public class GestioneSerieTV {
 		return providers;
 	}
 	
-	public void carica_serie_database(){
+	public ArrayList<SerieTV> getSerieFromProvider(int id){
+		ProviderSerieTV provider=checkProvider(id);
+		if(provider==null)
+			return null;
+		
+		while(provider.isUpgrading()){
+			try {
+				Thread.sleep(300L);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return provider.getElencoSerieDB();
+	}
+	private ProviderSerieTV checkProvider(int id){
 		for(int i=0;i<providers.size();i++)
-			providers.get(i).caricaSerieDB();
+			if(providers.get(i).getProviderID()==id)
+				return providers.get(i);
+		return null;
 	}
 	
-	public ArrayList<SerieTV> getElencoSerieCompleto(){
-		ArrayList<SerieTV> res=new ArrayList<SerieTV>();
-		for(int i=0;i<providers.size();i++){
-			for(int j=0;j<providers.get(i).getSeriesCount();j++){
-				SerieTV st=providers.get(i).getSerieAt(j);
-				if(st!=null)
-					res.add(st);
-			}
-		}
-		return res;
-	}
-	public boolean aggiungiSeriePreferita(SerieTV serie){
-		boolean res=serie.getProvider().addSeriePreferita(serie);
-		serie.getProvider().caricaEpisodiDB(serie);
-		getSubManager().associaSerie(serie);
-		//TODO aggiungere altro (cercare id su tvdb)
-		return res;
-	}
-	public ArrayList<SerieTV> getElencoSerieInserite(){
-		ArrayList<SerieTV> res=new ArrayList<SerieTV>();
-		for(int i=0;i<providers.size();i++){
-			ProviderSerieTV provider=providers.get(i);
-			for(int j=0;j<provider.getPreferiteSerieCount();j++){
-				res.add(provider.getPreferiteSerieAt(j));
-			}
-		}
-		return res;
+	public ArrayList<SerieTV> getSerieNuoveByProvider(int id){
+		ProviderSerieTV p = checkProvider(id);
+		if(p==null)
+			return null;
+		return p.getElencoSerieNuove();
 	}
 	
-	public void caricaElencoSerieOnline() {
-		for(int i=0;i<providers.size();i++){
-			providers.get(i).aggiornaElencoSerie();
-		}
-	}
-	public void rimuoviSeriePreferita(SerieTV st){
-		st.getProvider().rimuoviSeriePreferita(st);
-	}
 	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}

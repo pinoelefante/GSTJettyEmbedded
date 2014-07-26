@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public abstract class ProviderSerieTV {
 	protected final static int PROVIDER_EZTV=1;
 	protected final static int PROVIDER_KARMORRA=2;
+	protected boolean update_in_corso;
 	
 	protected ArrayList<SerieTV> nuove_serie;
 	
@@ -88,7 +89,7 @@ public abstract class ProviderSerieTV {
 		return Database.updateQuery(query);
 	}
 	public boolean aggiungiSerieADatabase(SerieTV s){
-		if(getSerieByURL(s.getUrl())==null)
+		if(getSerieByURL(s.getUrl())!=null)
 			return false;
 		else {
 			addSerieToDB(s);
@@ -96,9 +97,15 @@ public abstract class ProviderSerieTV {
 			return true;
 		}
 	}
+	public ArrayList<SerieTV> getElencoSerieNuove(){
+		return nuove_serie;
+	}
 	private void addSerieToDB(SerieTV s){
-		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES ('"+s.getNomeSerie()+"','"+s.getUrl()+"',"+getProviderID()+","+(s.isConclusa()?1:0)+")";
+		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES (\""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+getProviderID()+","+(s.isConclusa()?1:0)+")";
 		Database.updateQuery(query);
+	}
+	public boolean isUpgrading(){
+		return update_in_corso;
 	}
 
 	public abstract String getProviderName();

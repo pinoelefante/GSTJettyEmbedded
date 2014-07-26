@@ -89,7 +89,10 @@ div#selectSerieDiv {
 	right: 5px;
 	height: 100px;
 }
-
+div#divMessaggioOperazione {
+	margin-top:3px;
+	margin-bottom: 3px;
+}
 div#operazioniLista {
 	position: absolute;
 	bottom: 10px;

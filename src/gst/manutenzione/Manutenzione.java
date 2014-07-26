@@ -21,7 +21,9 @@ public class Manutenzione {
 	public static boolean esportaDBinSQL(Connection dbOrigine, String directory) {
 		FileWriter fw = null;
 		try {
-			fw = new FileWriter(directory+File.separator+"gst_db_backup.sql");
+			File dir = new File(directory+File.separator+"gst_db_backup.sql");
+			dir.mkdirs();
+			fw = new FileWriter(dir);
 			
 			ArrayList<KVResult<String, Object>> serietv=Database.selectQuery(dbOrigine,"SELECT * FROM "+Database.TABLE_SERIETV);
 			

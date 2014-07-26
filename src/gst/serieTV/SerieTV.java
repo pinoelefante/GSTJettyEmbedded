@@ -117,6 +117,9 @@ public class SerieTV {
 		if(formattato.contains(", The")){
 			formattato="The "+formattato.replace(", The", "").trim();
 		}
+		if(formattato.contains(", A")){
+			formattato="A "+formattato.replace(", A", "").trim();
+		}
 		String pattern_anno="\\([0-9]{4}\\)";
 		Pattern p_anno=Pattern.compile(pattern_anno);
 		Matcher m = p_anno.matcher(formattato);

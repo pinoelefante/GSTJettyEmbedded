@@ -27,6 +27,7 @@ public class EZTV extends ProviderSerieTV {
 		baseUrls.add("http://eztv.openinternet.biz");
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
+		aggiornaElencoSerie(); //TODO remove
 	}
 
 	private String getOnlineUrl() {
@@ -49,17 +50,22 @@ public class EZTV extends ProviderSerieTV {
 
 	@Override
 	public void aggiornaElencoSerie() {
+		update_in_corso=true;
 		System.out.println("EZTV.it - Aggiornando elenco serie tv");
 		String base_url = getBaseURL();
 
 		Download downloader = new Download(base_url + "/showlist/", Settings.getUserDir() + "file.html");
+		System.out.println("path download: "+Settings.getUserDir() + "file.html");
 		downloader.avviaDownload();
 		try {
 			downloader.getDownloadThread().join();
 		}
 		catch (InterruptedException e1) {
 			e1.printStackTrace();
+			update_in_corso=false;
+			return;
 		}
+		
 		FileReader f_r = null;
 		Scanner file = null;
 		int caricate = 0;
@@ -97,6 +103,7 @@ public class EZTV extends ProviderSerieTV {
 			ManagerException.registraEccezione(e);
 		}
 		finally {
+			update_in_corso=false;
 			file.close();
 			try {
 				f_r.close();

@@ -47,13 +47,15 @@ public class Database {
 			
 			SQLiteConfig conf=new SQLiteConfig();
 			conf.enableRecursiveTriggers(true);
-			conf.enforceForeignKeys(true);
+			conf.enforceForeignKeys(false);
 			conf.setSynchronous(SynchronousMode.OFF);
 			
-			if(!OperazioniFile.fileExists(NOMEDB))
+			if(!OperazioniFile.fileExists(NOMEDB)){
+				con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
 				creaDB();
-			
-			con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
+			}
+			else
+				con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
 			checkIntegrita();
 			return con;
 		} 
@@ -104,7 +106,6 @@ public class Database {
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_PROVIDER+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
-					"url TEXT NOT NULL," +
 					"nome TEXT NOT NULL"
 					+ ")");
 			
@@ -157,9 +158,9 @@ public class Database {
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_TORRENT+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ "episodio INTEGER,"+
-					 "qualita INTEGER"+
-					"url TEXT"
+					+"episodio INTEGER,"+
+					 "qualita INTEGER,"+
+					"url TEXT,"
 					+ "FOREIGN KEY(episodio) REFERENCES episodi(id)"
 					+ ")");
 			
@@ -167,18 +168,19 @@ public class Database {
 					
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_LOGSUB+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT)");
-	
-			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SETTINGS+" ("+
-					"option TEXT,"
-					+ "value TEXT"
-					+ ")");
 			
 			stat.close();
+			
+			init();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
 		}
+	}
+	private static void init(){
+		updateQuery("INSERT INTO provider (id, nome) VALUES (1,'eztv.it')");
+		updateQuery("INSERT INTO provider (id, nome) VALUES (2,'Karmorra')");
 	}
 	private static void checkIntegrita(){
 		/*

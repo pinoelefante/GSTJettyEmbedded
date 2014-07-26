@@ -1,6 +1,7 @@
 package servlet;
 
 import gst.serieTV.ProviderSerieTV;
+import gst.serieTV.SerieTV;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,6 +53,30 @@ public class ResponseSender {
 			providers.addContent(provider);
 		}
 		Document doc = new Document(root);
+		return doc;
+	}
+	public static Document createResponseSerie(ArrayList<SerieTV> serie){
+		if(serie == null)
+			return createResponseBoolean(false);
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		
+		Element elenco=new Element("listSerie");
+		root.addContent(elenco);
+		for(int i=0;i<serie.size();i++){
+			Element serie_tag=new Element("serie");
+			Element nome = new Element("name");
+			nome.addContent(serie.get(i).getNomeSerie());
+			Element id = new Element("id");
+			id.addContent(serie.get(i).getIDDb()+"");
+			serie_tag.addContent(nome);
+			serie_tag.addContent(id);
+			elenco.addContent(serie_tag);
+		}
+		
+		Document doc=new Document(root);
 		return doc;
 	}
 }
