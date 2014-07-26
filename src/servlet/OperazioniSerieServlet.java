@@ -72,6 +72,12 @@ public class OperazioniSerieServlet extends HttpServlet {
 				}
 				break;
 			}
+			case "remove": {
+				int idSerie=Integer.parseInt(checkParameter("id", resp, req));
+				boolean r = manager.rimuoviSeriePreferita(idSerie);
+				xml = ResponseSender.createResponseBoolean(r);
+				break;
+			}
 			case "updateListSeries":{
 				int provider = Integer.parseInt(checkParameter("provider", resp, req));
 				boolean res = manager.aggiornaListaSerie(provider);

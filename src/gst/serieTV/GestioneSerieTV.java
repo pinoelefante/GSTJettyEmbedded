@@ -91,6 +91,9 @@ public class GestioneSerieTV {
 		}
 		return preferiti;
 	}
+	public boolean rimuoviSeriePreferita(int id){
+		return ProviderSerieTV.removeSerieDaPreferiti(id);
+	}
 	
 	public GestoreSottotitoli getSubManager(){
 		return submanager;

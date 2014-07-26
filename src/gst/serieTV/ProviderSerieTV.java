@@ -84,9 +84,9 @@ public abstract class ProviderSerieTV {
 			return Database.updateQuery(query);
 		}
 	}
-	public boolean removeSerieDaPreferiti(SerieTV serie){
+	public static boolean removeSerieDaPreferiti(int serie){
 //		TODO rimozione episodi e torrent
-		String query="DELETE FROM "+Database.TABLE_PREFERITI+" WHERE id_serie="+serie.getIDDb();
+		String query="DELETE FROM "+Database.TABLE_PREFERITI+" WHERE id_serie="+serie;
 		//TODO SET STOP_SEARCH A FALSE
 		return Database.updateQuery(query);
 	}

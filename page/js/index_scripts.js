@@ -21,6 +21,7 @@ function aggiungiSerie(){
 function creaSerieElementoPagina(nome, id, provider) {
 	var element = document.createElement("div");
 	$(element).addClass("panel panel panel-default");
+	element.id="serie"+id;
 	element.innerHTML=
 		"<div class='panel-heading'>"+
 			"<h4 class='panel-title'>"+
@@ -28,7 +29,7 @@ function creaSerieElementoPagina(nome, id, provider) {
 			"</h4>"+
 			"<div class='buttonsAccordion'>"+
 				"<button class='btn btn-warning' title='Aggiorna episodi'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+
-				"<button class='btn btn-danger' title='Rimuovi dai preferiti'><span class='glyphicon glyphicon-remove'></span></button>"+
+				"<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie("+id+")'><span class='glyphicon glyphicon-remove'></span></button>"+
 			"</div>"+
 			"<h5 id='episodiScaricare"+id+"'>(0 episodi da scaricare)</h5>"
 		"</div>"+
@@ -207,6 +208,25 @@ function loadSeriePreferite(){
 				var elem = creaSerieElementoPagina(nome, id, provider);
 				$("#accordion").append(elem);
 			});
+			operazioneInCorso("");
+		},
+		error: function(msg){
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function removeSerie(id){
+	$.ajax({
+		type: "POST",
+		url: "./OperazioniSerieServlet",
+		data: "action=remove&id="+id,
+		dataType: "xml",
+		success: function(msg){
+			var r = parseBooleanXML(msg);
+			if(r){
+				$("#serie"+id).remove();
+			}
 			operazioneInCorso("");
 		},
 		error: function(msg){
