@@ -79,7 +79,6 @@ public class ResponseSender {
 			serie_tag.addContent(provider);
 			elenco.addContent(serie_tag);
 		}
-		
 		Document doc=new Document(root);
 		return doc;
 	}

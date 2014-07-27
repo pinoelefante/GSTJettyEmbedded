@@ -77,6 +77,7 @@ public class SerieTV {
 
 	public void setIDSubsfactory(int id_subsfactory) {
 		this.id_subsfactory = id_subsfactory;
+		/*
 		if(id_subsfactory>0){
 			String query="SELECT directory FROM "+Database.TABLE_SUBSFACTORY+" WHERE id="+id_subsfactory;
 			ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
@@ -85,6 +86,7 @@ public class SerieTV {
 				setSubsfactoryDirectory(directory);
 			}
 		}
+		*/
 	}
 
 	public int getIDTvdb() {
@@ -135,54 +137,8 @@ public class SerieTV {
 		}
 		return formattato;
 	}
-	public static void main(String[] args){
-		String nomeserie="Dracula (US)";
-		String nomeserie2="(US) Dracula";
-		
-		System.out.println("Prima stringa: "+nomeserie+"\nFormattata: "+removeNationality(nomeserie));
-		System.out.println("Seconda stringa: "+nomeserie2+"\nFormattata: "+removeNationality(nomeserie2));
-	}
-	/*
-	public void addEpisodio(Torrent episodio){
-		if(episodio.is720p() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isPreferisciHD())
-			episodio.setScaricato(Torrent.IGNORATO, false);
-		if(episodio.isPreAir() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isDownloadPreair())
-			episodio.setScaricato(Torrent.IGNORATO, false);
-		episodi.aggiungiLink(episodio);
-		if(episodio.isSottotitolo())
-			GestioneSerieTV.getSubManager().aggiungiEpisodio(episodio);
-	}
-	*/
-	/*
-	public void addEpisodioDB(Torrent episodio){
-		//System.out.println(getNomeSerie()+" "+episodio.getStagione()+"x"+episodio.getEpisodio());
-		if(episodio.is720p() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isPreferisciHD())
-			episodio.setScaricato(Torrent.IGNORATO, false);
-		if(episodio.isPreAir() && episodio.getScaricato()==Torrent.SCARICARE && !getPreferenze().isDownloadPreair())
-			episodio.setScaricato(Torrent.IGNORATO, false);
-		episodi.aggiungiLinkDB(episodio);
-		if(episodio.isSottotitolo())
-			GestioneSerieTV.getSubManager().aggiungiEpisodio(episodio);
-	}
-	*/
-	/*
-	public void aggiornaEpisodiOnline(){
-		provider.caricaEpisodiOnline(this);
-	}
-	*/
-	/*
-	public int getNumEpisodi(){
-		return episodi.size();
-	}
-	*/
-	/*
-	public Episodio getEpisodio(int i){ // index in elencoepisodi
-		return episodi.get(i);
-	}
-	*/
-	private String SubsfactoryOnlineDirectory="";
 	private int id_openSubtitles;
-	
+	/*
 	public String getSubsfactoryDirectory(){
 		if(SubsfactoryOnlineDirectory.isEmpty()){
 			if(getIDDBSubsfactory()>0){
@@ -199,7 +155,7 @@ public class SerieTV {
 	public void setSubsfactoryDirectory(String id) {
 		SubsfactoryOnlineDirectory=id;
 	}
-
+*/
 	public void setIDOpenSubtitles(int id_opensub) {
 		id_openSubtitles = id_opensub;
 		
