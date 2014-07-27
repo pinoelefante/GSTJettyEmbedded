@@ -12,6 +12,8 @@ public class Episodio {
 	private ArrayList<Torrent> links;
 	
 	public Episodio(int stagione, int episodio){
+		this.stagione=stagione;
+		this.episodio=episodio;
 		links = new ArrayList<Torrent>();
 	}
 	public int getStagione(){
@@ -52,5 +54,8 @@ public class Episodio {
 	}
 	public void setSubDownload(boolean sub_down) {
 		this.sub_down = sub_down;
+	}
+	public void aggiungiLink(Torrent t){
+		links.add(t);
 	}
 }

@@ -18,6 +18,9 @@ public class Torrent {
 		setIdEpisodio(idEpisodio);
 		if(parse)
 			parse();
+		else {
+			prop_torrent=new CaratteristicheFile();
+		}
 	}
 	
 	public String getUrl() {

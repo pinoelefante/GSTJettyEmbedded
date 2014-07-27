@@ -2,6 +2,7 @@ package servlet;
 
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
+import gst.tda.serietv.Episodio;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -80,6 +81,33 @@ public class ResponseSender {
 		}
 		
 		Document doc=new Document(root);
+		return doc;
+	}
+	public static Document createResponseEpisodi(int idSerie, ArrayList<Episodio> episodi) {
+		Element root = new Element("response");
+		Element serie = new Element("serie");
+		Element id_serie = new Element("id_serie");
+		id_serie.addContent(""+idSerie);
+		serie.addContent(id_serie);
+		Element episodiList = new Element("elenco_episodi");
+		serie.addContent(episodiList);
+		for(int i=0;episodi!=null && i<episodi.size();i++){
+			Episodio ep = episodi.get(i);
+			Element episodio = new Element("ep");
+			Element stagione=new Element("stagione");
+			stagione.addContent(ep.getStagione()+"");
+			episodio.addContent(stagione);
+			Element episodioP = new Element("episodio");
+			episodioP.addContent(""+ep.getEpisodio());
+			episodio.addContent(episodioP);
+			Element idEpisodio = new Element("id_episodio");
+			idEpisodio.addContent(""+ep.getId());
+			episodio.addContent(idEpisodio);
+			//Element links = new Element("links");
+			episodiList.addContent(episodio);
+		}
+		root.addContent(serie);
+		Document doc = new Document(root);
 		return doc;
 	}
 }

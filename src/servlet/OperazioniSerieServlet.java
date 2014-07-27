@@ -2,6 +2,7 @@ package servlet;
 
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
+import gst.tda.serietv.Episodio;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +43,12 @@ public class OperazioniSerieServlet extends HttpServlet {
 				int serie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				boolean res = manager.aggiungiSerieAPreferiti(provider, serie);
 				xml = ResponseSender.createResponseBoolean(res);
+				break;
+			}
+			case "getEpisodiDaScaricareBySerie": {
+				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
+				ArrayList<Episodio> episodi = manager.getEpisodiDaScaricareBySerie(idSerie);
+				xml = ResponseSender.createResponseEpisodi(idSerie, episodi);
 				break;
 			}
 			case "getSeriePreferite":

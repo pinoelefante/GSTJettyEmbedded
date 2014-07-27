@@ -64,7 +64,7 @@ public class GestioneSerieTV {
 		if(p!=null){
 			SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
 			if(st!=null){
-				boolean r = p.aggiungiSerieAPreferiti(st);
+				boolean r = ProviderSerieTV.aggiungiSerieAPreferiti(st);
 				System.out.println("aggiungi a preferiti:"+r);
 				return r;
 			}
@@ -98,7 +98,10 @@ public class GestioneSerieTV {
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
 		p.caricaEpisodiOnline(serie);
 	}
-	
+	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
+		ArrayList<Episodio> episodi = ProviderSerieTV.nuoviEpisodi(idSerie);
+		return episodi;
+	}
 	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}
@@ -140,16 +143,7 @@ public class GestioneSerieTV {
 		firstLoading=true;
 		return episodi;
 	}
-	public ArrayList<Episodio> caricaEpisodiDaScaricareOffline(){
-		ArrayList<Episodio> episodi=new ArrayList<Episodio>();
-		for(int i=0;i<providers.size();i++){
-			ProviderSerieTV p=providers.get(i);
-			for(int j=0;j<p.getPreferiteSerieCount();j++){
-				episodi.addAll(p.nuoviEpisodi(p.getPreferiteSerieAt(j)));
-			}
-		}
-		return episodi;
-	}
+	
 	private boolean loading=false;
 	public boolean isLoading() {
 		return loading;

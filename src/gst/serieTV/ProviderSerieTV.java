@@ -168,10 +168,10 @@ public abstract class ProviderSerieTV {
 			String query2 = "SELECT * FROM torrent WHERE episodio="+ep.getId();
 			ArrayList<KVResult<String, Object>> res2=Database.selectQuery(query2);
 			for(int j=0;j<res2.size();j++){
-				ep.getLinks().add(parseTorrent(res2.get(j)));
+				ep.aggiungiLink(parseTorrent(res2.get(j)));
 			}
 		}
-		return null;
+		return episodi;
 	}
 	private static Episodio parseEpisodio(KVResult<String, Object> res){
 		int id = (int) res.getValueByKey("id");
