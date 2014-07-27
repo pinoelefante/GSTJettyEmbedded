@@ -107,7 +107,7 @@ div#operazioniLista {
 }
 
 select#selectSerie, select#selectProvider {
-	width: 30%;
+	width: 20%;
 	display: initial;
 }
 
