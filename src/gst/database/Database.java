@@ -150,9 +150,9 @@ public class Database {
 					+ "serie INTEGER,"
 					+ "stagione INTEGER,"
 					+ "episodio INTEGER,"
-					+ "stato_visualizzazione INTEGER,"+
-					  "sottotitolo INTEGER,"+
-					  "id_tvdb INTEGER,"
+					+ "stato_visualizzazione INTEGER DEFAULT 0,"+
+					  "sottotitolo INTEGER DEFAULT 0,"+
+					  "id_tvdb INTEGER DEFAULT 0,"
 					+ "FOREIGN KEY(serie) REFERENCES serietv(id)"
 					+ ")");
 			
@@ -163,8 +163,6 @@ public class Database {
 					"url TEXT,"
 					+ "FOREIGN KEY(episodio) REFERENCES episodi(id)"
 					+ ")");
-			
-			
 					
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_LOGSUB+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT)");

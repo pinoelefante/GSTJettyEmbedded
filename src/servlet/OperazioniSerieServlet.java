@@ -38,8 +38,8 @@ public class OperazioniSerieServlet extends HttpServlet {
 		Document xml = null;
 		switch(action){
 			case "add": {
-				int provider = Integer.parseInt(checkParameter("provider", resp, req));
-				int serie = Integer.parseInt(checkParameter("serie", resp, req));
+				int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
+				int serie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				boolean res = manager.aggiungiSerieAPreferiti(provider, serie);
 				xml = ResponseSender.createResponseBoolean(res);
 				break;
@@ -52,7 +52,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 				break;
 			case "getSerieFromProvider": {
 				try {
-					int provider = Integer.parseInt(checkParameter("provider", resp, req));
+					int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
 					ArrayList<SerieTV> serie = manager.getSerieFromProvider(provider);
 					xml = ResponseSender.createResponseSerie(serie);
 				}
@@ -63,7 +63,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 			}
 			case "getSerieNuoveFromProvider": {
 				try {
-					int provider = Integer.parseInt(checkParameter("provider", resp, req));
+					int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
 					ArrayList<SerieTV> serie = manager.getSerieNuoveByProvider(provider);
 					xml = ResponseSender.createResponseSerie(serie);
 				}
@@ -73,24 +73,42 @@ public class OperazioniSerieServlet extends HttpServlet {
 				break;
 			}
 			case "remove": {
-				int idSerie=Integer.parseInt(checkParameter("id", resp, req));
-				boolean r = manager.rimuoviSeriePreferita(idSerie);
+				int idSerie=Integer.parseInt(checkParameter("id", resp, req, false));
+				String rimuoviEpisodi = checkParameter("removeEp", resp, req, true);
+				boolean rem = rimuoviEpisodi==null||rimuoviEpisodi.compareTo("false")==0?false:true;
+				boolean r = manager.rimuoviSeriePreferita(idSerie, rem);
 				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "updateListSeries":{
-				int provider = Integer.parseInt(checkParameter("provider", resp, req));
+				int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
 				boolean res = manager.aggiornaListaSerie(provider);
 				xml = ResponseSender.createResponseBoolean(res);
+				break;
+			}
+			case "updateTorrents": {
+				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
+				int idProvider = Integer.parseInt(checkParameter("provider", resp, req, false));
+				try {
+					manager.aggiornaEpisodiSerie(idSerie, idProvider);
+					xml = ResponseSender.createResponseBoolean(true);
+				}
+				catch(Exception e){
+					xml = ResponseSender.createResponseBoolean(true);
+				}
 				break;
 			}
 		}
 		
 		ResponseSender.sendResponse(resp, xml);
 	}
-	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req) throws IOException{
-		if(req.getParameter(parametro)==null)
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,parametro+" not sended");
+	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{
+		if(req.getParameter(parametro)==null){
+			if(paramOpzionale)
+				return null;
+			else
+				resp.sendError(HttpServletResponse.SC_BAD_REQUEST,parametro+" not sended");
+		}
 		return req.getParameter(parametro);
 	}
 

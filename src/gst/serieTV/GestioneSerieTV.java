@@ -90,8 +90,13 @@ public class GestioneSerieTV {
 		}
 		return preferiti;
 	}
-	public boolean rimuoviSeriePreferita(int id){
-		return ProviderSerieTV.removeSerieDaPreferiti(id);
+	public boolean rimuoviSeriePreferita(int id, boolean removeEpisodi){
+		return ProviderSerieTV.removeSerieDaPreferiti(id, removeEpisodi);
+	}
+	public void aggiornaEpisodiSerie(int idSerie, int idProvider){
+		ProviderSerieTV p = checkProvider(idProvider);
+		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+		p.caricaEpisodiOnline(serie);
 	}
 	
 	public GestoreSottotitoli getSubManager(){

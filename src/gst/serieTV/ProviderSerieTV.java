@@ -88,10 +88,16 @@ public abstract class ProviderSerieTV {
 			return Database.updateQuery(query);
 		}
 	}
-	public static boolean removeSerieDaPreferiti(int serie){
-//		TODO rimozione episodi e torrent
+	public static boolean removeSerieDaPreferiti(int serie, boolean resetEpisodi){
+		String update_serie = "UPDATE serietv SET stop_search=0 WHERE id="+serie;
+		Database.updateQuery(update_serie);
+		if(resetEpisodi){
+			String resetEp="UPDATE episodi SET stato_visualizzazione=0 WHERE serie="+serie;
+			Database.updateQuery(resetEp);
+		}
+		
 		String query="DELETE FROM "+Database.TABLE_PREFERITI+" WHERE id_serie="+serie;
-		//TODO SET STOP_SEARCH A FALSE
+		
 		return Database.updateQuery(query);
 	}
 	public boolean aggiungiSerieADatabase(SerieTV s){
@@ -122,14 +128,80 @@ public abstract class ProviderSerieTV {
 		}
 		return "unknown";
 	}
+	public static int isEpisodioPresente(int id_serie, int stagione, int episodio){
+		String query = "SELECT * FROM episodi WHERE serie="+id_serie+" AND stagione="+stagione+" AND episodio="+episodio;
+		ArrayList<KVResult<String, Object>> res =Database.selectQuery(query);
+		if(res.size()==0)
+			return 0;
+		else {
+			return (int) res.get(0).getValueByKey("id");
+		}
+	}
+	public static int aggiungiEpisodioSerie(int idSerie, int stagione, int episodio){
+		int id = isEpisodioPresente(idSerie, stagione, episodio);
+		if(id==0){
+			String query = "INSERT INTO episodi (serie, stagione, episodio) VALUES ("+idSerie+","+stagione+","+episodio+")";
+			Database.updateQuery(query);
+			id=isEpisodioPresente(idSerie, stagione, episodio);
+		}
+		return id;
+	}
+	public static boolean isLinkPresente(String link, int idepisodio){
+		String query="SELECT * FROM torrent WHERE episodio="+idepisodio+" AND url=\""+link+"\"";
+		return Database.selectQuery(query).size()>0;
+	}
+	public static void aggiungiLink(int id_episodio, int qualita, String url){
+		if(!isLinkPresente(url, id_episodio)){
+			String query = "INSERT INTO torrent (episodio, qualita, url) VALUES ("+id_episodio+","+qualita+",\""+url+"\")";
+			Database.updateQuery(query);
+		}
+	}
+	public static ArrayList<Episodio> nuoviEpisodi(int idSerie){
+		ArrayList<Episodio> episodi = new ArrayList<>();
+		String query = "SELECT * FROM episodi WHERE serie="+idSerie+" AND stato_visualizzazione=0 ORDER BY stagione,episodio ASC";
+		ArrayList<KVResult<String, Object>> res1=Database.selectQuery(query);
+		for(int i=0;i<res1.size();i++){
+			episodi.add(parseEpisodio(res1.get(i)));
+		}
+		for(int i=0;i<episodi.size();i++){
+			Episodio ep = episodi.get(i);
+			String query2 = "SELECT * FROM torrent WHERE episodio="+ep.getId();
+			ArrayList<KVResult<String, Object>> res2=Database.selectQuery(query2);
+			for(int j=0;j<res2.size();j++){
+				ep.getLinks().add(parseTorrent(res2.get(j)));
+			}
+		}
+		return null;
+	}
+	private static Episodio parseEpisodio(KVResult<String, Object> res){
+		int id = (int) res.getValueByKey("id");
+		int serie = (int) res.getValueByKey("serie");
+		int stagione = (int) res.getValueByKey("stagione");
+		int episodio = (int) res.getValueByKey("episodio");
+		int stato = (int) res.getValueByKey("stato_visualizzazione");
+		boolean sub_down = ((int)res.getValueByKey("sottotitolo"))==0?false:true;
+		int idTvDB = (int) res.getValueByKey("id_tvdb");
+		Episodio ep = new Episodio(stagione, episodio);
+		ep.setId(id);
+		ep.setSerie(serie);
+		ep.setStatoVisualizzazione(stato);
+		ep.setIdTvDB(idTvDB);
+		ep.setSubDownload(sub_down);
+		return ep;
+	}
+	private static Torrent parseTorrent(KVResult<String, Object> res){
+		int id = (int) res.getValueByKey("id");
+		int idEpisodio = (int) res.getValueByKey("episodio");
+		int qualita = (int) res.getValueByKey("qualita");
+		String link = (String) res.getValueByKey("url");
+		Torrent tor = new Torrent(link, id, idEpisodio);
+		tor.setStats(qualita);
+		return tor;
+	}
 
 	public abstract String getProviderName();
 	public abstract String getBaseURL();
 	public abstract void aggiornaElencoSerie();
-	public abstract ArrayList<Episodio> nuoviEpisodi(SerieTV serie);
-	public abstract void caricaEpisodiDB(SerieTV serie);
-	protected abstract void salvaSerieInDB(SerieTV s);
-	protected abstract void salvaEpisodioInDB(Torrent t);
 	public abstract int getProviderID();
 	public abstract void caricaEpisodiOnline(SerieTV serie);
 }

@@ -7,7 +7,6 @@ import gst.programma.ManagerException;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.tda.db.KVResult;
-import gst.tda.serietv.Episodio;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,13 +20,12 @@ public class EZTV extends ProviderSerieTV {
 
 	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
-		//cleanUpTemp();
+		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
 		baseUrls.add("http://eztv.it");
 		baseUrls.add("http://eztv.openinternet.biz");
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
-		//aggiornaElencoSerie(); //TODO remove
 	}
 
 	private String getOnlineUrl() {
@@ -89,7 +87,7 @@ public class EZTV extends ProviderSerieTV {
 					if(isTempPlaceholder(nomeserie))
 						continue;
 					
-					SerieTV toInsert = new SerieTV(this, nomeserie, url);
+					SerieTV toInsert = new SerieTV(getProviderID(), nomeserie, url);
 					toInsert.setConclusa(conclusa);
 					
 					if(aggiungiSerieADatabase(toInsert)){
@@ -154,20 +152,7 @@ public class EZTV extends ProviderSerieTV {
 		return false;
 	}
 
-	@Override
-	public ArrayList<Episodio> nuoviEpisodi(SerieTV serie) {
-		ArrayList<Episodio> res = new ArrayList<Episodio>();
-		for (int i = 0; i < serie.getNumEpisodi(); i++) {
-			Episodio e = serie.getEpisodio(i);
-			if (!e.isScaricato()) {
-				res.add(e);
-			}
-		}
-		res.trimToSize();
-		return res;
-	}
-
-	@Override
+	//TODO modificare
 	protected void salvaSerieInDB(SerieTV s) {
 		if (s.getIDDb() == 0) {
 			String query = "INSERT INTO " + Database.TABLE_SERIETV + " (nome, url, conclusa, stop_search, provider, id_itasa, id_subsfactory, id_subspedia, id_tvdb, preferenze_download) VALUES (" + "\"" + s.getNomeSerie() + "\", " + "\"" + s.getUrl() + "\"," + (s.isConclusa() ? 1 : 0) + "," + (s.isStopSearch() ? 1 : 0) + "," + getProviderID() + "," + s.getIDItasa() + "," + s.getIDDBSubsfactory() + "," + s.getIDSubspedia() + "," + s.getIDTvdb() + "," + s.getPreferenze().toValue() + ")";
@@ -188,58 +173,7 @@ public class EZTV extends ProviderSerieTV {
 
 	}
 
-	@Override
-	public void caricaEpisodiDB(SerieTV serie) {
-		String query = "SELECT * FROM " + Database.TABLE_EPISODI + " WHERE id_serie=" + serie.getIDDb();
-		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		for (int i = 0; i < res.size(); i++) {
-			KVResult<String, Object> r = res.get(i);
-			// (id,
-			// id_serie,url,vista,stagione,episodio,tags,preair,sottotitolo,id_tvdb_ep)
-			int id = (int) r.getValueByKey("id");
-			String url = (String) r.getValueByKey("url");
-			int stato = (int) r.getValueByKey("vista");
-			int stagione = (int) r.getValueByKey("stagione");
-			int episodio = (int) r.getValueByKey("episodio");
-			int tags = (int) r.getValueByKey("tags");
-			boolean preair = ((int) r.getValueByKey("preair")) == 1 ? true : false;
-			boolean sub = ((int) r.getValueByKey("sottotitolo")) == 1 ? true : false;
-			int id_tvdb = (int) r.getValueByKey("id_tvdb_ep");
-			CaratteristicheFile stat = new CaratteristicheFile();
-			stat.setStatsFromValue(tags);
-			Torrent t = new Torrent(serie, url, stato, stat);
-			t.setStagione(stagione);
-			t.setEpisodio(episodio);
-			t.setIDDB(id);
-			t.setPreair(preair);
-			t.setSubDownload(sub);
-			t.setIDTVDB(id_tvdb);
-			serie.addEpisodioDB(t);
-			// System.out.println(t);
-		}
-	}
-
-	@Override
-	protected void salvaEpisodioInDB(Torrent t) {
-		if (t.getIDDB() == 0) {
-			String query_iddb = "SELECT id FROM " + Database.TABLE_EPISODI + " WHERE url=\"" + t.getUrl() + "\"";
-			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query_iddb);
-			if (res.size() == 1) {
-				int id = (int) res.get(0).getValueByKey("id");
-				t.setIDDB(id);
-			}
-		}
-		if (t.getIDDB() == 0) {
-			String query = "INSERT INTO " + Database.TABLE_EPISODI + " (id_serie,url,vista,stagione,episodio,tags,preair,sottotitolo,id_tvdb_ep) VALUES (" + t.getSerieTV().getIDDb() + "," + "\"" + t.getUrl() + "\"," + t.getScaricato() + "," + t.getStagione() + "," + t.getEpisodio() + "," + t.getStats().value() + "," + (t.isPreAir() ? 1 : 0) + "," + (t.isSottotitolo() ? 1 : 0) + "," + t.getIDTVDB() + ")";
-			// System.out.println(query);
-			Database.updateQuery(query);
-		}
-		else {
-			String query = "UPDATE " + Database.TABLE_EPISODI + " SET id_serie=" + t.getSerieTV().getIDDb() + ", url=\"" + t.getUrl() + "\", vista=" + t.getScaricato() + ", stagione=" + t.getStagione() + "," + "episodio=" + t.getEpisodio() + ", tags=" + t.getStats().value() + ", preair=" + (t.isPreAir() ? 1 : 0) + ", sottotitolo=" + (t.isSottotitolo() ? 1 : 0) + ", id_tvdb_ep=" + t.getIDTVDB() + " " + "WHERE id=" + t.getIDDB();
-			// System.out.println(query);
-			Database.updateQuery(query);
-		}
-	}
+	
 
 	@Override
 	public int getProviderID() {
@@ -268,18 +202,16 @@ public class EZTV extends ProviderSerieTV {
 					int inizio = linea.indexOf("magnet:?xt=urn:btih:");
 					int fine = linea.indexOf("\" class=\"magnet\"");
 					String url_magnet = linea.substring(inizio, fine);
-					// System.out.println(url_magnet);
 					if (url_magnet.length() > 0) {
-						Torrent t = new Torrent(serie, url_magnet, Torrent.SCARICARE);
-						t.parseMagnet();
-						serie.addEpisodio(t);
+						CaratteristicheFile stat = Torrent.parse(url_magnet);
+						int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(serie.getIDDb(), stat.getStagione(), stat.getEpisodio());
+						ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), url_magnet);
 					}
 				}
 			}
 			file.close();
 			fr.close();
 			OperazioniFile.deleteFile(Settings.getUserDir() + serie.getNomeSerie());
-			// }
 
 			if (serie.isConclusa()) {
 				serie.setStopSearch(true);
@@ -301,7 +233,34 @@ public class EZTV extends ProviderSerieTV {
 	}
 
 	private void cleanUpTemp() {
-		String[] query = { "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T1\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T2\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T3\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T4\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T5\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T6\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T7\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T8\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T9\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp1\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp2\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp3\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp4\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp5\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp6\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp7\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp8\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp9\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder_2\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp01\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp02\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp03\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp04\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 01\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 02\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 03\"", "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 04\"" };
+		String[] query = { "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T1\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T2\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T3\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T4\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T5\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T6\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T7\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T8\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T9\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp1\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp2\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp3\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp4\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp5\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp6\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp7\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp8\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp9\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder_2\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp01\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp02\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp03\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp04\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 01\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 02\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 03\"", 
+				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 04\"" };
 		for (int j = 0; j < query.length; j++)
 			Database.updateQuery(query[j]);
 	}
