@@ -28,7 +28,7 @@ function creaSerieElementoPagina(nome, id, provider) {
 				"<a data-toggle='collapse' data-parent='#accordion' href='#collapse"+id+"'>"+nome+"</a>"+
 			"</h4>"+
 			"<div class='buttonsAccordion'>"+
-				"<button class='btn btn-warning' title='Aggiorna episodi'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+
+				"<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi("+id+")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+
 				"<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie("+id+")'><span class='glyphicon glyphicon-remove'></span></button>"+
 			"</div>"+
 			"<h5 id='episodiScaricare"+id+"'>(0 episodi da scaricare)</h5>"
@@ -234,4 +234,7 @@ function removeSerie(id){
 			showModal("Si è verificato un errore durante l'aggiornamento");
 		}
 	});
+}
+function aggiornaEpisodi(id) {
+	
 }

@@ -62,7 +62,7 @@ public class GestioneSerieTV {
 	public boolean aggiungiSerieAPreferiti(int provider, int idSerie){
 		ProviderSerieTV p = checkProvider(provider);
 		if(p!=null){
-			SerieTV st=p.getSerieByID(idSerie);
+			SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
 			if(st!=null){
 				boolean r = p.aggiungiSerieAPreferiti(st);
 				System.out.println("aggiungi a preferiti:"+r);
@@ -83,10 +83,9 @@ public class GestioneSerieTV {
 	public ArrayList<SerieTV> getElencoSeriePreferite(){
 		String query = "SELECT * FROM preferiti pref JOIN serietv serie ON pref.id_serie = serie.id ORDER BY serie.nome ASC";
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		ProviderSerieTV p=providers.get(0);
 		ArrayList<SerieTV> preferiti = new ArrayList<>();
 		for(int i=0;i<res.size();i++){
-			SerieTV s = p.parseSerie(res.get(i));
+			SerieTV s = ProviderSerieTV.parseSerie(res.get(i));
 			preferiti.add(s);
 		}
 		return preferiti;

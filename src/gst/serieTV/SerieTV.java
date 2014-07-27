@@ -9,13 +9,13 @@ import java.util.regex.Pattern;
 
 public class SerieTV {
 	private String titolo;
-	private ProviderSerieTV provider;
+	private int provider;
 	private String url_serie;
 	private int id_db, id_itasa=0, id_tvdb=0, id_subspedia=0, id_subsfactory=0;
 	private boolean conclusa, stop_search;
 	private Preferenze preferenze_download;
 	
-	public SerieTV(ProviderSerieTV provider, String nomeserie, String url) {
+	public SerieTV(int provider, String nomeserie, String url) {
 		this.provider=provider;
 		titolo=formattaNome(nomeserie);
 		url_serie=url;
@@ -42,7 +42,7 @@ public class SerieTV {
 		return conclusa;
 	}
 	public String toString(){
-		return getNomeSerie() + " ("+provider.getProviderName()+")";
+		return getNomeSerie() + " ("+ProviderSerieTV.getProviderNameByID(provider)+")";
 	}
 	public String getFolderSerie() {
 		return getNomeSerie().replace(":", "-").replace("?", "").replace("/", "-").replace("\\", "-").replace("*", "").replace("<", "").replace(">", "").replace("|", "").replace("\"", "").replace(".", "");
@@ -107,9 +107,6 @@ public class SerieTV {
 	}
 	
 	public int getProviderID(){
-		return provider.getProviderID();
-	}
-	public ProviderSerieTV getProvider(){
 		return provider;
 	}
 	public static String formattaNome(String nome){
@@ -209,5 +206,9 @@ public class SerieTV {
 	}
 	public int getIDOpenSubtitles(){
 		return id_openSubtitles;
+	}
+
+	public void setProvider(int id_provider) {
+		provider = id_provider;
 	}
 }

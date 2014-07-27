@@ -24,7 +24,17 @@ public abstract class ProviderSerieTV {
 			elenco.add(parseSerie(res.get(i)));
 		return elenco;
 	}
-	protected SerieTV parseSerie(KVResult<String, Object> res){
+	public static SerieTV getSerieByID(int idSerie){
+		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE id="+idSerie;
+		ArrayList<KVResult<String,Object>> res = Database.selectQuery(query);
+		if(res.size()==0)
+			return null;
+		else {
+			SerieTV serie = parseSerie(res.get(0));
+			return serie;
+		}
+	}
+	public static SerieTV parseSerie(KVResult<String, Object> res){
 		int id_db = (int) res.getValueByKey("id");
 		String url = (String) res.getValueByKey("url");
 		String nome = (String) res.getValueByKey("nome");
@@ -33,28 +43,22 @@ public abstract class ProviderSerieTV {
 		int id_itasa = (int) res.getValueByKey("id_itasa");
 		int id_subsf = (int) res.getValueByKey("id_subsfactory");
 		int id_subsp = (int) res.getValueByKey("id_subspedia");
+		int id_opensub = (int) res.getValueByKey("id_opensubtitles");
 		int id_tvdb = (int) res.getValueByKey("id_tvdb");
+		int id_provider = (int) res.getValueByKey("provider");
 		int preferenze_d = (int) res.getValueByKey("preferenze_download");
-		SerieTV st = new SerieTV(this, nome, url);
+		SerieTV st = new SerieTV(id_provider, nome, url);
 		st.setIDDb(id_db);
 		st.setConclusa(conclusa);
+		st.setProvider(id_provider);
 		st.setIDItasa(id_itasa);
 		st.setIDSubsfactory(id_subsf);
 		st.setIDSubspedia(id_subsp);
 		st.setIDTvdb(id_tvdb);
+		st.setIDOpenSubtitles(id_opensub);
 		st.setStopSearch(stop_search);
 		st.setPreferenze(new Preferenze(preferenze_d));
 		return st;
-	}
-	public SerieTV getSerieByID(int id){
-		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE id="+id;
-		ArrayList<KVResult<String,Object>> res = Database.selectQuery(query);
-		if(res.size()==0)
-			return null;
-		else {
-			SerieTV serie = parseSerie(res.get(0));
-			return serie;
-		}
 	}
 	public SerieTV getSerieByURL(String url){
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE url='"+url+"'";
@@ -66,7 +70,7 @@ public abstract class ProviderSerieTV {
 			return serie;
 		}
 	}
-	private boolean isSerieInPreferiti(SerieTV s){
+	private static boolean isSerieInPreferiti(SerieTV s){
 		String query="SELECT id_serie FROM "+Database.TABLE_PREFERITI+" WHERE id_serie="+s.getIDDb();
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		boolean presente = res.size() > 0;
@@ -74,7 +78,7 @@ public abstract class ProviderSerieTV {
 		res = null;
 		return presente;
 	}
-	public boolean aggiungiSerieAPreferiti(SerieTV serie){
+	public static boolean aggiungiSerieAPreferiti(SerieTV serie){
 		if(isSerieInPreferiti(serie)){
 			System.out.println("Serie già presente");
 			return false;
@@ -108,6 +112,15 @@ public abstract class ProviderSerieTV {
 	}
 	public boolean isUpgrading(){
 		return update_in_corso;
+	}
+	public static String getProviderNameByID(int id){
+		switch(id){
+			case PROVIDER_EZTV:
+				return "eztv.it";
+			case PROVIDER_KARMORRA:
+				return "Karmorra";
+		}
+		return "unknown";
 	}
 
 	public abstract String getProviderName();
