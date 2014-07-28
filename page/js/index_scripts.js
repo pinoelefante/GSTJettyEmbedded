@@ -4,23 +4,23 @@ function aggiungiSerie(p, s, nomeSerie) {
 	var nome = (nomeSerie == null ? selectSerie.options[selectSerie.selectedIndex].innerHTML : nomeSerie);
 	operazioneInCorso("Aggiungo la serie alle preferite");
 	$.ajax({
-	type : "POST",
-	url : "./OperazioniSerieServlet",
-	data : "action=add&serie=" + serie + "&provider=" + provider,
-	dataType : "xml",
-	success : function(msg) {
-		var response = parseBooleanXML(msg);
-		if (response) {
-			var elem = creaSerieElementoPagina(nome, serie, provider);
-			addSerieInOrder(elem, nome);
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=add&serie=" + serie + "&provider=" + provider,
+		dataType : "xml",
+		success : function(msg) {
+			var response = parseBooleanXML(msg);
+			if (response) {
+				var elem = creaSerieElementoPagina(nome, serie, provider);
+				addSerieInOrder(elem, nome);
+				operazioneInCorso("");
+				aggiornaEpisodi(serie, provider);
+			}
+			else {
+				showModal("Serie non aggiunta");
+			}
 			operazioneInCorso("");
-			aggiornaEpisodi(serie, provider);
 		}
-		else {
-			showModal("Serie non aggiunta");
-		}
-		operazioneInCorso("");
-	}
 	});
 }
 function addSerieInOrder(elem, nomeSerie) {
@@ -89,65 +89,61 @@ function caricaSerieFromProvider() {
 }
 function caricaSerieNuove(provider) {
 	operazioneInCorso("Invio richiesta nuove serie");
-	$
-			.ajax({
-			type : "POST",
-			url : "./OperazioniSerieServlet",
-			data : "action=getSerieNuoveFromProvider&provider=" + provider,
-			dataType : "xml",
-			success : function(msg) {
-				var response = parseBooleanXML(msg);
-				if (!response) {
-					showModal("", "Si è verificato un errore durante il caricamento delle serie");
-					return;
-				}
-				serieNuoveDivContainer.innerHTML = "";
-				$(msg)
-						.find("serie")
-						.each(function() {
-							var nome = $(this).find("name").text();
-							var id = $(this).find("id").text();
-							var provider = $(this).find("provider").text();
-							var serie = document.createElement("div");
-							$(serie).addClass("panel-serieNuova");
-							serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
-							$("#serieNuoveDivContainer").append(serie);
-						});
-				operazioneInCorso("");
-			},
-			error : function(msg) {
-				operazioneInCorso("");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getSerieNuoveFromProvider&provider=" + provider,
+		dataType : "xml",
+		success : function(msg) {
+			var response = parseBooleanXML(msg);
+			if (!response) {
 				showModal("", "Si è verificato un errore durante il caricamento delle serie");
 				return;
 			}
+			serieNuoveDivContainer.innerHTML = "";
+			$(msg).find("serie").each(function() {
+				var nome = $(this).find("name").text();
+				var id = $(this).find("id").text();
+				var provider = $(this).find("provider").text();
+				var serie = document.createElement("div");
+				$(serie).addClass("panel-serieNuova");
+				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
+				$("#serieNuoveDivContainer").append(serie);
 			});
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("", "Si è verificato un errore durante il caricamento delle serie");
+			return;
+		}
+	});
 }
 function caricaProvider() {
 	operazioneInCorso("Invio richiesta provider");
-	$
-			.ajax({
-			type : "POST",
-			url : "./OperazioniSerieServlet",
-			data : "action=getProviders",
-			dataType : "xml",
-			success : function(msg) {
-				operazioneInCorso("Carico i provider");
-				groupProvider.innerHTML = "";
-				$(msg).find("provider").each(function() {
-					var nome = $(this).find("name").text();
-					var id = $(this).find("id").text();
-					var provider = document.createElement("option");
-					provider.value = id;
-					provider.innerHTML = nome;
-					$("#groupProvider").append(provider);
-				});
-				operazioneInCorso("");
-			},
-			error : function(msg) {
-				operazioneInCorso("");
-				showModal("Si è verificato un errore durante il caricamento dei provider");
-			}
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getProviders",
+		dataType : "xml",
+		success : function(msg) {
+			operazioneInCorso("Carico i provider");
+			groupProvider.innerHTML = "";
+			$(msg).find("provider").each(function() {
+				var nome = $(this).find("name").text();
+				var id = $(this).find("id").text();
+				var provider = document.createElement("option");
+				provider.value = id;
+				provider.innerHTML = nome;
+				$("#groupProvider").append(provider);
 			});
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante il caricamento dei provider");
+		}
+	});
 }
 function parseBooleanXML(xml) {
 	var valore = $(xml).find("booleanResponse").text();
@@ -158,9 +154,11 @@ function parseBooleanXML(xml) {
 }
 function download() {
 
+	 location.reload(); 
 }
 function ignora() {
-
+	
+	 location.reload(); 
 }
 function aggiornaSerie(bottone) {
 	$(bottone).prop("disabled", "true");
@@ -168,28 +166,27 @@ function aggiornaSerie(bottone) {
 	if (provider == null)
 		return;
 	operazioneInCorso("Aggiorno l'elenco delle serie tv di " + provider.innerHTML);
-	$
-			.ajax({
-			type : "POST",
-			url : "./OperazioniSerieServlet",
-			data : "action=updateListSeries&provider=" + provider.value,
-			dataType : "xml",
-			success : function(msg) {
-				if (parseBooleanXML(msg)) {
-					operazioneInCorso("Aggiornamento dell'elenco delle serie completato con successo");
-					caricaSerieByProvider(provider.value);
-				}
-				else
-					showModal("", "Si è verificato un errore durante l'aggiornamento");
-				operazioneInCorso("");
-				$(bottone).removeAttr("disabled");
-			},
-			error : function(msg) {
-				operazioneInCorso("");
-				showModal("Si è verificato un errore durante l'aggiornamento");
-				$(bottone).removeAttr("disabled");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=updateListSeries&provider=" + provider.value,
+		dataType : "xml",
+		success : function(msg) {
+			if (parseBooleanXML(msg)) {
+				operazioneInCorso("Aggiornamento dell'elenco delle serie completato con successo");
+				caricaSerieByProvider(provider.value);
 			}
-			});
+			else
+				showModal("", "Si è verificato un errore durante l'aggiornamento");
+			operazioneInCorso("");
+			$(bottone).removeAttr("disabled");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante l'aggiornamento");
+			$(bottone).removeAttr("disabled");
+		}
+	});
 }
 
 function selezionaTutto() {
@@ -210,31 +207,31 @@ function operazioneInCorso(messaggio) {
 function loadSeriePreferite() {
 	operazioneInCorso("Invio richiesta mie serie preferite");
 	$.ajax({
-	type : "POST",
-	url : "./OperazioniSerieServlet",
-	data : "action=getSeriePreferite",
-	dataType : "xml",
-	success : function(msg) {
-		var arrayID=new Array();
-		var i=0;
-		operazioneInCorso("Caricando le serie preferite");
-		$(msg).find("serie").each(function() {
-			var nome = $(this).find("name").text();
-			var id = $(this).find("id").text();
-			var provider = $(this).find("provider").text();
-			var elem = creaSerieElementoPagina(nome, id, provider);
-			$("#accordion").append(elem);
-			arrayID[i]=id;
-			i++;
-		});
-		for(var j=0;j<i;j++)
-			getEpisodiDaScaricare(arrayID[j]);
-		operazioneInCorso("");
-	},
-	error : function(msg) {
-		operazioneInCorso("");
-		showModal("Si è verificato un errore durante l'aggiornamento");
-	}
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getSeriePreferite",
+		dataType : "xml",
+		success : function(msg) {
+			var arrayID=new Array();
+			var i=0;
+			operazioneInCorso("Caricando le serie preferite");
+			$(msg).find("serie").each(function() {
+				var nome = $(this).find("name").text();
+				var id = $(this).find("id").text();
+				var provider = $(this).find("provider").text();
+				var elem = creaSerieElementoPagina(nome, id, provider);
+				$("#accordion").append(elem);
+				arrayID[i]=id;
+				i++;
+			});
+			for(var j=0;j<i;j++)
+				getEpisodiDaScaricare(arrayID[j]);
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante l'aggiornamento");
+		}
 	});
 }
 function removeSerie(id) {
@@ -259,58 +256,55 @@ function removeSerie(id) {
 function aggiornaEpisodi(id, provider) {
 	operazioneInCorso("Aggiorno episodi serie");
 	$.ajax({
-	type : "POST",
-	url : "./OperazioniSerieServlet",
-	data : "action=updateTorrents&serie=" + id + "&provider=" + provider,
-	dataType : "xml",
-	success : function(msg) {
-		var r = parseBooleanXML(msg);
-		operazioneInCorso("");
-		getEpisodiDaScaricare(id);
-	},
-	error : function(msg) {
-		operazioneInCorso("");
-		showModal("Si è verificato un errore durante l'aggiornamento");
-	}
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=updateTorrents&serie=" + id + "&provider=" + provider,
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			operazioneInCorso("");
+			getEpisodiDaScaricare(id);
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante l'aggiornamento");
+		}
 	});
 }
 function getEpisodiDaScaricare(id) {
 	operazioneInCorso("Carico l'elenco degli episodi da scaricare");
-	$
-			.ajax({
-			type : "POST",
-			url : "./OperazioniSerieServlet",
-			data : "action=getEpisodiDaScaricareBySerie&serie=" + id,
-			dataType : "xml",
-			success : function(msg) {
-				var count = 0;
-				$(msg)
-						.find("ep")
-						.each(function() {
-							count++;
-							var stagione = $(this).find("stagione").text();
-							var episodio = $(this).find("episodio").text();
-							var idE = $(this).find("id_episodio").text();
-							var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getEpisodiDaScaricareBySerie&serie=" + id,
+		dataType : "xml",
+		success : function(msg) {
+			var count = 0;
+			$(msg).find("ep").each(function() {
+				count++;
+				var stagione = $(this).find("stagione").text();
+				var episodio = $(this).find("episodio").text();
+				var idE = $(this).find("id_episodio").text();
+				var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
 
-							var accordionSerie = $("#accordion" + id);
-							var accordionStagione = $("#listTorrent" + id + "_" + stagione);
-							if (accordionStagione.length == 0) {
-								var elemToCreate = createAccordionStagione(stagione, id);
-								$(elemToCreate).appendTo(accordionSerie);
-								accordionStagione = $("#listTorrent" + id + "_" + stagione);
-							}
-							$(input).appendTo(accordionStagione);
-						});
-				$("#episodiScaricare" + id)
-						.text("(" + count + " episodi da scaricare)");
-				operazioneInCorso("");
-			},
-			error : function(msg) {
-				operazioneInCorso("");
-				showModal("Si è verificato un errore durante l'aggiornamento");
-			}
+				var accordionSerie = $("#accordion" + id);
+				var accordionStagione = $("#listTorrent" + id + "_" + stagione);
+				if (accordionStagione.length == 0) {
+					var elemToCreate = createAccordionStagione(stagione, id);
+					$(elemToCreate).appendTo(accordionSerie);
+					accordionStagione = $("#listTorrent" + id + "_" + stagione);
+				}
+				$(input).appendTo(accordionStagione);
 			});
+			$("#episodiScaricare" + id)	.text("(" + count + " episodi da scaricare)");
+			selezionaTutto();
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante l'aggiornamento");
+		}
+	});
 }
 function createAccordionStagione(stagione, idserie) {
 	var elem = "<div class='panel panel-default'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion" + idserie + "' href='#collapse" + idserie + "_" + stagione + "'> " + (stagione == 0 ? "Speciali" : "Stagione " + stagione) + " </a>" + "</h4>" + "</div>" + "<div id='collapse" + idserie + "_" + stagione + "' class='panel-collapse collapse'>" + "<div class='panel-body' id='listTorrent" + idserie + "_" + stagione + "'></div>" + "</div>" + "</div>";

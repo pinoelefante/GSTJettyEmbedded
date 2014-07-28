@@ -2,6 +2,7 @@ package server;
 
 import gst.database.Database;
 import gst.programma.Settings;
+import gst.serieTV.GestioneSerieTV;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -30,5 +31,6 @@ public class ServerStart {
 		
 		Settings.baseSettings();
 		Database.Connect();
+		GestioneSerieTV m = GestioneSerieTV.getInstance();
 	}
 }

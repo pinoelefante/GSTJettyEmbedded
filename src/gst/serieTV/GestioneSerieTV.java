@@ -19,12 +19,17 @@ public class GestioneSerieTV {
 		}
 		return instance;
 	}
+	private void init(){
+		for(int i=0;i<providers.size();i++)
+			providers.get(i).aggiornaElencoSerie();
+	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
 		//TODO
 		//submanager=new GestoreSottotitoli();
-		
 		providers.add(new EZTV());
+		
+		init();
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
 		return providers;
@@ -105,45 +110,7 @@ public class GestioneSerieTV {
 	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}
-	public ArrayList<Episodio> caricaEpisodiDaScaricare(){
-		class ThreadUpdate extends Thread {
-			private SerieTV serie;
-			public ThreadUpdate(SerieTV s){
-				serie=s;
-			}
-			public void run(){
-				serie.aggiornaEpisodiOnline();
-			}
-		}
-		ArrayList<Episodio> episodi=new ArrayList<Episodio>();
-		if(!isLoading()){
-			loading=true;
-			ThreadGroup tg=new ThreadGroup("AggiornamentoEpisodiSerie");
-			for(int i=0;i<providers.size();i++){
-				ProviderSerieTV p=providers.get(i);
-				for(int j=0;j<p.getPreferiteSerieCount();j++){
-					SerieTV s=p.getPreferiteSerieAt(j);
-					Thread t=new Thread(tg, new ThreadUpdate(s));
-					t.start();
-					try {
-						Thread.sleep(250);
-					}catch (InterruptedException e) {}
-				}
-				while(tg.activeCount()>0)
-					try {
-						Thread.sleep(500L);
-					}catch (InterruptedException e) {}
-				for(int j=0;j<p.getPreferiteSerieCount();j++){
-					SerieTV s=p.getPreferiteSerieAt(j);
-					episodi.addAll(p.nuoviEpisodi(s));
-				}
-			}
-		}
-		loading=false;
-		firstLoading=true;
-		return episodi;
-	}
-	
+		
 	private boolean loading=false;
 	public boolean isLoading() {
 		return loading;
