@@ -110,7 +110,7 @@ function caricaSerieNuove(provider) {
 							var provider = $(this).find("provider").text();
 							var serie = document.createElement("div");
 							$(serie).addClass("panel-serieNuova");
-							serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick='aggiungiSerie(id)'><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie(id)'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
+							serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","&quot;")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
 							$("#serieNuoveDivContainer").append(serie);
 						});
 				operazioneInCorso("");
