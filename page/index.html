@@ -39,21 +39,25 @@
 						<optgroup label="Serie" id="optSelectSerie">
 						</optgroup>
 					</select>
-					<button class="btn btn-primary" onclick="aggiungiSerie()" title='Aggiungi'>
+					<button class="btn btn-primary" onclick="aggiungiSerie()"
+						title='Aggiungi'>
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
-					<button class="btn btn-warning" onclick="infoSerie()" title='Info serie'>
+					<button class="btn btn-warning" onclick="infoSerie()"
+						title='Info serie'>
 						<span class="glyphicon glyphicon-exclamation-sign"></span>
 					</button>
-					<button class="btn btn-warning" onclick="aggiornaSerie(this)" title='Aggiorna elenco serie tv'>
+					<button class="btn btn-warning" onclick="aggiornaSerie(this)"
+						title='Aggiorna elenco serie tv'>
 						<span class="glyphicon glyphicon-refresh"></span>
 					</button>
 				</div>
-				
+
 				<div id="operazioniLista">
 					<table>
 						<tr>
-							<td><input type="checkbox" onclick="selezionaTutto()"> Seleziona tutto</input></td>
+							<td><input type="checkbox" onclick="selezionaTutto()" id="chkSelezionaTutto">
+								Seleziona tutto</input></td>
 						</tr>
 						<tr>
 							<td><div id="divMessaggioOperazione"></div></td>
@@ -107,5 +111,32 @@
 		<!-- /.modal-dialog -->
 	</div>
 	<!-- /.modal -->
+
+	<!-- Piwik -->
+	<script type="text/javascript">
+		var _paq = _paq || [];
+		_paq.push([ 'trackPageView' ]);
+		_paq.push([ 'enableLinkTracking' ]);
+		(function() {
+			var u = (("https:" == document.location.protocol) ? "https"	: "http")	+ "://pinoelefante.altervista.org/piwik/";
+			_paq.push([ 'setTrackerUrl', u + 'piwik.php' ]);
+			_paq.push([ 'setSiteId', 4 ]);
+			var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+			g.type = 'text/javascript';
+			g.defer = true;
+			g.async = true;
+			g.src = u + 'piwik.js';
+			s.parentNode.insertBefore(g, s);
+		})();
+	</script>
+	<noscript>
+		<p>
+			<img
+				src="http://pinoelefante.altervista.org/piwik/piwik.php?idsite=4"
+				style="border: 0;" alt="" />
+		</p>
+	</noscript>
+	<!-- End Piwik Code -->
+
 </body>
 </html>

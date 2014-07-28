@@ -60,7 +60,7 @@ public abstract class ProviderSerieTV {
 		st.setPreferenze(new Preferenze(preferenze_d));
 		return st;
 	}
-	public SerieTV getSerieByURL(String url){
+	public static SerieTV getSerieByURL(String url){
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE url='"+url+"'";
 		ArrayList<KVResult<String,Object>> res = Database.selectQuery(query);
 		if(res.size()==0)
@@ -105,7 +105,8 @@ public abstract class ProviderSerieTV {
 			return false;
 		else {
 			addSerieToDB(s);
-			nuove_serie.add(s);
+			SerieTV s1=getSerieByURL(s.getUrl());
+			nuove_serie.add(s1);
 			return true;
 		}
 	}

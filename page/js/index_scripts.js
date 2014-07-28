@@ -110,7 +110,7 @@ function caricaSerieNuove(provider) {
 							var provider = $(this).find("provider").text();
 							var serie = document.createElement("div");
 							$(serie).addClass("panel-serieNuova");
-							serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","&quot;")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
+							serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
 							$("#serieNuoveDivContainer").append(serie);
 						});
 				operazioneInCorso("");
@@ -193,7 +193,13 @@ function aggiornaSerie(bottone) {
 }
 
 function selezionaTutto() {
-
+	var selected = $("#chkSelezionaTutto").is(':checked');
+	$("#accordion").find("input[type=checkbox]").each(function(){
+		if(selected)
+			$(this).prop('checked', true);
+		else
+			$(this).removeAttr('checked');
+	});
 }
 function operazioneInCorso(messaggio) {
 	if (messaggio.length > 0)
@@ -284,7 +290,7 @@ function getEpisodiDaScaricare(id) {
 							count++;
 							var stagione = $(this).find("stagione").text();
 							var episodio = $(this).find("episodio").text();
-							var idE = $(this).find("id").text();
+							var idE = $(this).find("id_episodio").text();
 							var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
 
 							var accordionSerie = $("#accordion" + id);
