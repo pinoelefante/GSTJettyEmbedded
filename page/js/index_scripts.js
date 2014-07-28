@@ -177,7 +177,7 @@ function aggiornaSerie(bottone) {
 			success : function(msg) {
 				if (parseBooleanXML(msg)) {
 					operazioneInCorso("Aggiornamento dell'elenco delle serie completato con successo");
-					// TODO caricamento serie
+					caricaSerieByProvider(provider.value);
 				}
 				else
 					showModal("", "Si è verificato un errore durante l'aggiornamento");
@@ -209,6 +209,8 @@ function loadSeriePreferite() {
 	data : "action=getSeriePreferite",
 	dataType : "xml",
 	success : function(msg) {
+		var arrayID=new Array();
+		var i=0;
 		operazioneInCorso("Caricando le serie preferite");
 		$(msg).find("serie").each(function() {
 			var nome = $(this).find("name").text();
@@ -216,8 +218,11 @@ function loadSeriePreferite() {
 			var provider = $(this).find("provider").text();
 			var elem = creaSerieElementoPagina(nome, id, provider);
 			$("#accordion").append(elem);
-			getEpisodiDaScaricare(id);
+			arrayID[i]=id;
+			i++;
 		});
+		for(var j=0;j<i;j++)
+			getEpisodiDaScaricare(arrayID[j]);
 		operazioneInCorso("");
 	},
 	error : function(msg) {
