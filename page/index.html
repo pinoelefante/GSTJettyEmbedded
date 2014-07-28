@@ -1,19 +1,15 @@
-<!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Gestione Serie TV - Homepage</title>
-
-	<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" type="text/css" href="css/mainstyle.css" >
-
-	<script src="js/jquery-1.11.1.js" type="text/javascript"></script>
-	<script src="js/functions.js" 	  type="text/javascript"></script>
-	<script src="js/index_scripts.js" type="text/javascript"></script>
-	<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Gestione Serie TV - Homepage</title>
+<link rel="stylesheet" type="text/css" href="css/mainstyle.css" />
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/index_scripts.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<script src="js/bootstrap.min.js"></script>
 
 </head>
-
 <body>
 	<div id="container">
 		<div id="containerLeft">
@@ -26,29 +22,33 @@
 			<div id="altervista">
 				<!-- 
 				<iframe src="http://pinoelefante.altervista.org/ads.html" id="altervistaFrame"></iframe>
-				 -->
+			 -->
 			</div>
 		</div>
 
 		<div id="containerCenter">
 			<div id="addSerie">
 				<div id="selectSerieDiv">
-					<label>Provider</label> <select class="form-control" id="selectProvider" onchange="caricaSerieFromProvider()">
-						<option selected>&nbsp;</option>
-						<optgroup label="Provider" id="groupProvider"></optgroup>
-					</select> 
-					
-					<label>Serie</label> <select class="form-control" id="selectSerie">
-						<option>&nbsp;</option>
-						<optgroup label="Serie" id="optSelectSerie"></optgroup>
+					<label>Provider</label> <select class="form-control"
+						id="selectProvider" onchange="caricaSerieFromProvider()">
+						<option selected></option>
+						<optgroup label="Provider" id="groupProvider">
+						</optgroup>
+					</select> <label>Serie</label> <select class="form-control" id="selectSerie">
+						<option></option>
+						<optgroup label="Serie" id="optSelectSerie">
+						</optgroup>
 					</select>
-					<button class="btn btn-primary" onclick="aggiungiSerie()" title='Aggiungi'>
+					<button class="btn btn-primary" onclick="aggiungiSerie()"
+						title='Aggiungi'>
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
-					<button class="btn btn-warning" onclick="infoSerie()" title='Info serie'>
+					<button class="btn btn-warning" onclick="infoSerie()"
+						title='Info serie'>
 						<span class="glyphicon glyphicon-exclamation-sign"></span>
 					</button>
-					<button class="btn btn-warning" onclick="aggiornaSerie(this)" title='Aggiorna elenco serie tv'>
+					<button class="btn btn-warning" onclick="aggiornaSerie(this)"
+						title='Aggiorna elenco serie tv'>
 						<span class="glyphicon glyphicon-refresh"></span>
 					</button>
 				</div>
@@ -56,7 +56,8 @@
 				<div id="operazioniLista">
 					<table>
 						<tr>
-							<td><input type="checkbox" onclick="selezionaTutto()" id="chkSelezionaTutto">Seleziona tutto</td>
+							<td><input type="checkbox" onclick="selezionaTutto()" id="chkSelezionaTutto">
+								Seleziona tutto</input></td>
 						</tr>
 						<tr>
 							<td><div id="divMessaggioOperazione"></div></td>
@@ -69,8 +70,10 @@
 			</div>
 			<div id="buttonCenter">
 				<div id="divContainerButtons">
-					<input class="btn-lg btn btn-success" type="button"	value="Download" id="btnDownload" onclick="download()" > 
-					<input class="btn-lg btn btn-danger" type="button" value="Ignora" id="btnIgnora" onclick="ignora()" >
+					<input class="btn-lg btn btn-success" type="button"
+						value="Download" id="btnDownload" onclick="download()" /> <input
+						class="btn-lg btn btn-danger" type="button" value="Ignora"
+						id="btnIgnora" onclick="ignora()" />
 				</div>
 			</div>
 		</div>
@@ -79,20 +82,22 @@
 			<div id="altro">Altro</div>
 		</div>
 	</div>
-	<script type="text/javascript">
+	<script>
 		$(document).ready(function() {
 			caricaProvider();
 			loadSeriePreferite();
 		});
 	</script>
 
-	<div class="modal fade" id="ModalMessaggio" tabindex="-1" role="dialog"	aria-labelledby="ModalMessaggioLabel" aria-hidden="true" style="vertical-align: middle">
+	<div class="modal fade" id="ModalMessaggio" tabindex="-1" role="dialog"
+		aria-labelledby="ModalMessaggioLabel" aria-hidden="true"
+		style="vertical-align: middle">
 		<div class="modal-dialog" style="padding-top: 5%;">
 			<div class="modal-content panel">
 				<div class="modal-header panel-heading">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true">&times;</button>
-					<h4 class="modal-title" id="ModalMessaggioLabel">&nbsp;</h4>
+					<h4 class="modal-title" id="ModalMessaggioLabel"></h4>
 				</div>
 				<div class="modal-body">
 					<p id="TestoModal"></p>
