@@ -104,7 +104,11 @@ public class GestioneSerieTV {
 		p.caricaEpisodiOnline(serie);
 	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
-		ArrayList<Episodio> episodi = ProviderSerieTV.nuoviEpisodi(idSerie);
+		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiDaScaricare(idSerie);
+		return episodi;
+	}
+	public ArrayList<Episodio> getEpisodiSerie(int idSerie){
+		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiSerie(idSerie);
 		return episodi;
 	}
 	public GestoreSottotitoli getSubManager(){

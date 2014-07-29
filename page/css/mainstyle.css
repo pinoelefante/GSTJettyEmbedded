@@ -191,3 +191,18 @@ div#altro {
 	border: 1px solid gray;
 	border-radius: 10px;
 }
+
+div.episodio {
+	display:block;
+	position:inherit;
+	height:30px;
+	width: 95%;
+	left: 2%;
+	right: 0%;
+	border-radius: 5px;
+	border-color: red;
+}
+div.episodioButtons {
+	display:inline;
+	float:right;
+}

@@ -45,7 +45,7 @@
 					</button>
 					<button class="btn btn-warning" onclick="infoSerie()"
 						title='Info serie'>
-						<span class="glyphicon glyphicon-exclamation-sign"></span>
+						<span class="glyphicon glyphicon-info-sign"></span>
 					</button>
 					<button class="btn btn-warning" onclick="aggiornaSerie(this)"
 						title='Aggiorna elenco serie tv'>
@@ -56,8 +56,17 @@
 				<div id="operazioniLista">
 					<table>
 						<tr>
-							<td><input type="checkbox" onclick="selezionaTutto()" id="chkSelezionaTutto">
-								Seleziona tutto</input></td>
+							<td>
+								<table>
+									<tr>
+										<td><input type="radio" name='s' onclick="selezionaTutto(true)" id="chkSelezionaTutto">Seleziona tutto</td>
+										<td><input type="radio" name='s' onclick="selezionaPerStato(0)">Seleziona episodi da scaricare</td>
+									</tr>
+									<tr>
+										<td><input type="radio" name='s' onclick="selezionaTutto(false)" id="chkSelezionaTutto">Deseleziona tutto</td>
+									</tr>
+								</table>
+							</td>
 						</tr>
 						<tr>
 							<td><div id="divMessaggioOperazione"></div></td>

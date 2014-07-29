@@ -102,6 +102,9 @@ public class ResponseSender {
 			Element idEpisodio = new Element("id_episodio");
 			idEpisodio.addContent(""+ep.getId());
 			episodio.addContent(idEpisodio);
+			Element stato_visualizzazione = new Element("stato");
+			stato_visualizzazione.addContent(""+ep.getStatoVisualizzazione());
+			episodio.addContent(stato_visualizzazione);
 			//Element links = new Element("links");
 			episodiList.addContent(episodio);
 		}

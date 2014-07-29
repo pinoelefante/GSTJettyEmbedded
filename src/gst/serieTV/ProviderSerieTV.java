@@ -157,9 +157,26 @@ public abstract class ProviderSerieTV {
 			Database.updateQuery(query);
 		}
 	}
-	public static ArrayList<Episodio> nuoviEpisodi(int idSerie){
+	public static ArrayList<Episodio> getEpisodiDaScaricare(int idSerie){
 		ArrayList<Episodio> episodi = new ArrayList<>();
 		String query = "SELECT * FROM episodi WHERE serie="+idSerie+" AND stato_visualizzazione=0 ORDER BY stagione,episodio ASC";
+		ArrayList<KVResult<String, Object>> res1=Database.selectQuery(query);
+		for(int i=0;i<res1.size();i++){
+			episodi.add(parseEpisodio(res1.get(i)));
+		}
+		for(int i=0;i<episodi.size();i++){
+			Episodio ep = episodi.get(i);
+			String query2 = "SELECT * FROM torrent WHERE episodio="+ep.getId();
+			ArrayList<KVResult<String, Object>> res2=Database.selectQuery(query2);
+			for(int j=0;j<res2.size();j++){
+				ep.aggiungiLink(parseTorrent(res2.get(j)));
+			}
+		}
+		return episodi;
+	}
+	public static ArrayList<Episodio> getEpisodiSerie(int idSerie){
+		ArrayList<Episodio> episodi = new ArrayList<>();
+		String query = "SELECT * FROM episodi WHERE serie="+idSerie+" ORDER BY stagione,episodio ASC";
 		ArrayList<KVResult<String, Object>> res1=Database.selectQuery(query);
 		for(int i=0;i<res1.size();i++){
 			episodi.add(parseEpisodio(res1.get(i)));

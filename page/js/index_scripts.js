@@ -39,7 +39,7 @@ function addSerieInOrder(elem, nomeSerie) {
 		$("#accordion").append(elem);
 }
 function creaSerieElementoPagina(nome, id, provider) {
-	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
+	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
 	return element;
 }
 function caricaSerieByProvider(provider) {
@@ -107,7 +107,7 @@ function caricaSerieNuove(provider) {
 				var provider = $(this).find("provider").text();
 				var serie = document.createElement("div");
 				$(serie).addClass("panel-serieNuova");
-				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-exclamation-sign'></span></button>" + "</div>";
+				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
 				$("#serieNuoveDivContainer").append(serie);
 			});
 			operazioneInCorso("");
@@ -189,10 +189,17 @@ function aggiornaSerie(bottone) {
 	});
 }
 
-function selezionaTutto() {
-	var selected = $("#chkSelezionaTutto").is(':checked');
+function selezionaTutto(selected) {
 	$("#accordion").find("input[type=checkbox]").each(function(){
 		if(selected)
+			$(this).prop('checked', true);
+		else
+			$(this).removeAttr('checked');
+	});
+}
+function selezionaPerStato(stato){
+	$("#accordion").find("input[type=checkbox]").each(function(){
+		if($(this).attr("stato_visualizzazione")==stato)
 			$(this).prop('checked', true);
 		else
 			$(this).removeAttr('checked');
@@ -225,7 +232,7 @@ function loadSeriePreferite() {
 				i++;
 			});
 			for(var j=0;j<i;j++)
-				getEpisodiDaScaricare(arrayID[j]);
+				getEpisodi(arrayID[j]);
 			operazioneInCorso("");
 		},
 		error : function(msg) {
@@ -271,21 +278,34 @@ function aggiornaEpisodi(id, provider) {
 		}
 	});
 }
-function getEpisodiDaScaricare(id) {
+function getEpisodi(id) {
 	operazioneInCorso("Carico l'elenco degli episodi da scaricare");
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
-		data : "action=getEpisodiDaScaricareBySerie&serie=" + id,
+		data : "action=getEpisodiBySerie&serie=" + id,
 		dataType : "xml",
 		success : function(msg) {
 			var count = 0;
 			$(msg).find("ep").each(function() {
-				count++;
 				var stagione = $(this).find("stagione").text();
 				var episodio = $(this).find("episodio").text();
 				var idE = $(this).find("id_episodio").text();
-				var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
+				var stato = parseInt($(this).find("stato").text());
+				
+				var html="<div class='episodio'>"+
+					"<input type='checkbox' value='" + idE + "' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
+					"<div class='episodioButtons'>" +
+					generaBottone(stato) +"&nbsp;" +
+					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button" +
+					"" +
+					"</div>" +
+					"</div>";
+				
+				if(stato==0)
+					count++;
+				
+				//var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
 
 				var accordionSerie = $("#accordion" + id);
 				var accordionStagione = $("#listTorrent" + id + "_" + stagione);
@@ -294,7 +314,7 @@ function getEpisodiDaScaricare(id) {
 					$(elemToCreate).appendTo(accordionSerie);
 					accordionStagione = $("#listTorrent" + id + "_" + stagione);
 				}
-				$(input).appendTo(accordionStagione);
+				$(html).appendTo(accordionStagione);
 			});
 			$("#episodiScaricare" + id)	.text("(" + count + " episodi da scaricare)");
 			selezionaTutto();
@@ -306,7 +326,19 @@ function getEpisodiDaScaricare(id) {
 		}
 	});
 }
+function generaBottone(stato){
+	if(stato==0||stato==3||stato==4)
+		return "<button class='btn btn-primary' title='Scarica'><span class='glyphicon glyphicon-download-alt'/></button>";
+	else
+		return "<button class='btn btn-primary' title='Play'><span class='glyphicon glyphicon-play' /></button>";
+}
 function createAccordionStagione(stagione, idserie) {
 	var elem = "<div class='panel panel-default'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion" + idserie + "' href='#collapse" + idserie + "_" + stagione + "'> " + (stagione == 0 ? "Speciali" : "Stagione " + stagione) + " </a>" + "</h4>" + "</div>" + "<div id='collapse" + idserie + "_" + stagione + "' class='panel-collapse collapse'>" + "<div class='panel-body' id='listTorrent" + idserie + "_" + stagione + "'></div>" + "</div>" + "</div>";
 	return elem;
+}
+function infoSerie(id){
+	
+}
+function infoEpisodio(idEp){
+	
 }
