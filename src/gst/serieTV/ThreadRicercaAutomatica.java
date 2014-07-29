@@ -2,7 +2,6 @@ package gst.serieTV;
 
 import gst.programma.Download;
 import gst.programma.Settings;
-import gst.tda.serietv.Episodio;
 
 import java.io.File;
 import java.io.IOException;

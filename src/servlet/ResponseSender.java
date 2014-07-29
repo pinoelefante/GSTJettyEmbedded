@@ -1,8 +1,8 @@
 package servlet;
 
+import gst.serieTV.Episodio;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
-import gst.tda.serietv.Episodio;
 
 import java.io.IOException;
 import java.io.PrintWriter;

@@ -3,7 +3,6 @@ package gst.serieTV;
 import gst.database.Database;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
-import gst.tda.serietv.Episodio;
 
 import java.util.ArrayList;
 

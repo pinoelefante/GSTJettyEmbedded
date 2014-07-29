@@ -2,7 +2,6 @@ package gst.serieTV;
 
 import gst.programma.ManagerException;
 import gst.programma.Settings;
-import gst.tda.serietv.Episodio;
 
 import java.util.ArrayList;
 import java.io.IOException;

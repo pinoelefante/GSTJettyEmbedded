@@ -1,8 +1,8 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.programma.Download;
 import gst.tda.db.KVResult;
-import gst.tda.serietv.Episodio;
 
 import java.util.ArrayList;
 
@@ -216,7 +216,62 @@ public abstract class ProviderSerieTV {
 		tor.setStats(qualita);
 		return tor;
 	}
-
+	public static boolean changeStatusEpisodio(int idEp, int nuovoStato){
+		Episodio ep = getEpisodio(idEp);
+		if(ep==null)
+			return false;
+		else {
+			if(ep.getStatoVisualizzazione()==nuovoStato)
+				return false;
+			else {
+				String query2 = "UPDATE episodi SET stato_visualizzazione="+nuovoStato+" WHERE id="+idEp;
+				return Database.updateQuery(query2);
+			} 
+		}
+	}
+	public static Episodio getEpisodio(int id){
+		String query = "SELECT * FROM episodi WHERE id="+id;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res.size()==0 || res.size()>1)
+			return null;
+		else {
+			Episodio ep = parseEpisodio(res.get(0));
+			return ep;
+		}
+	}
+	public static boolean downloadEpisodio(int idEp){
+		Episodio ep = getEpisodio(idEp);
+		if(ep!=null){
+			SerieTV serie = getSerieByID(ep.getSerie());
+			Torrent torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
+			if(torrent == null)
+				return false;
+			if(Download.DownloadTorrent(serie, torrent)){
+				changeStatusEpisodio(idEp, Episodio.SCARICATO);
+				return true;
+			}
+		}
+		return false;
+	}
+	private static Torrent searchTorrent(Preferenze p, ArrayList<Torrent> list){
+		if(p.isPreferisciHD()){
+			for(int i=0;i<list.size();i++){
+				if(list.get(i).getStats().is720p())
+					return list.get(i);
+			}
+		}
+		else {
+			for(int i=0;i<list.size();i++){
+				if(!list.get(i).getStats().is720p()){
+					return list.get(i);
+				}
+			}
+		}
+		if(list.size()>0)
+			return list.get(0);
+		return null;
+	}
+	
 	public abstract String getProviderName();
 	public abstract String getBaseURL();
 	public abstract void aggiornaElencoSerie();

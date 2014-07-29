@@ -1,5 +1,9 @@
 package gst.programma;
 
+import gst.download.BitTorrentClient;
+import gst.serieTV.SerieTV;
+import gst.serieTV.Torrent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -200,6 +204,11 @@ public class Download {
 				}
 			}
 		}
+	}
+	public static boolean DownloadTorrent(SerieTV serie, Torrent torrent){
+		String directory = Settings.getDirectoryDownload()+serie.getFolderSerie();
+		BitTorrentClient client = Settings.getClientTorrent();
+		return client.downloadTorrent(torrent, directory);
 	}
 	public static void downloadMagnet(String magnet_url, String folder) throws IOException {
 		String directory_download = Settings.getDirectoryDownload();

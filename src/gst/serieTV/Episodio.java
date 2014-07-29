@@ -1,6 +1,4 @@
-package gst.tda.serietv;
-
-import gst.serieTV.Torrent;
+package gst.serieTV;
 
 import java.util.ArrayList;
 
@@ -56,6 +54,14 @@ public class Episodio {
 		this.sub_down = sub_down;
 	}
 	public void aggiungiLink(Torrent t){
-		links.add(t);
+		boolean inserito = false;
+		for(int i=0;i<links.size() && !inserito;i++){
+			if(t.getStats().value()>links.get(i).getStats().value()){
+				links.add(i, t);
+				inserito = true;
+			}
+		}
+		if(!inserito)
+			links.add(t);
 	}
 }

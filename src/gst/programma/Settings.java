@@ -1,6 +1,7 @@
 package gst.programma;
 
 import gst.database.Database;
+import gst.download.BitTorrentClient;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -595,5 +596,9 @@ public class Settings {
 			}
 			catch(IOException e){}
 		}
+	}
+	public static BitTorrentClient getClientTorrent(){
+		//TODO client torrent finder
+		return null;
 	}
 }

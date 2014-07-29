@@ -1,9 +1,5 @@
 package gst.serieTV;
 
-import gst.database.Database;
-import gst.tda.db.KVResult;
-
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
