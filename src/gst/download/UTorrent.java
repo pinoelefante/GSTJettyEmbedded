@@ -61,6 +61,7 @@ public class UTorrent implements BitTorrentClient{
 		return null;
 	}
 	public static void main(String[] args){
+		Settings.baseSettings();
 		String p = rilevaInstallazione();
 		System.out.println(p==null?"Percorso non trovato":p);
 	}
