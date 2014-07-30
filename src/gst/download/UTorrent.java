@@ -37,6 +37,9 @@ public class UTorrent implements BitTorrentClient{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	public boolean downloadCLI(Torrent t){
+		return false;
+	}
 	public static String rilevaInstallazione(){
 		String path = null;
 		if(Settings.isWindows()){
