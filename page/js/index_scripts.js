@@ -340,7 +340,9 @@ function getEpisodi(id) {
 					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
-					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button" +
+					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
+					"<button class='btn btn-danger' title='Cancella episodio' onclick='cancellaEpisodio("+idE+")'><span class='glyphicon glyphicon-trash'/></button>&nbsp;" +
+					"" +
 					"" +
 					"</div>" +
 					"</div>";
@@ -415,4 +417,7 @@ function downloadS(id){
 }
 function play(id) {
 	$("#divEP_"+id).removeClass("episodioDaVedere");
+}
+function cancellaEpisodio(id){
+	
 }
