@@ -205,9 +205,17 @@ public class Download {
 			}
 		}
 	}
-	public static boolean DownloadTorrent(SerieTV serie, Torrent torrent){
-		String directory = Settings.getDirectoryDownload()+serie.getFolderSerie();
-		BitTorrentClient client = Settings.getClientTorrent();
+	public static boolean downloadTorrent(SerieTV serie, Torrent torrent){
+		String directory = Settings.getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		BitTorrentClient client;
+		try {
+			client = Settings.getClientTorrent();
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
 		return client.downloadTorrent(torrent, directory);
 	}
 	public static void downloadMagnet(String magnet_url, String folder) throws IOException {

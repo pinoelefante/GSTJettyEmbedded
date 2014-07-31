@@ -112,4 +112,15 @@ public class ResponseSender {
 		Document doc = new Document(root);
 		return doc;
 	}
+	public static Document createResponseDownload(int idEpisodio, boolean d) {
+		Element root = new Element("response");
+		Element valore = new Element("booleanResponse");
+		valore.addContent(d+"");
+		Element episodio = new Element("episodio");
+		episodio.addContent(""+idEpisodio);
+		root.addContent(valore);
+		root.addContent(episodio);
+		Document doc = new Document(root);
+		return doc;
+	}
 }

@@ -2,6 +2,7 @@ package gst.programma;
 
 import gst.database.Database;
 import gst.download.BitTorrentClient;
+import gst.download.UTorrent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +47,8 @@ public class Settings {
 	private static boolean 		lettore_nascondi_viste				= true;
 	private static int			lettore_ordine						= 0;
 	private static int			default_regola_download_episodi		= 0;
+	
+	private static BitTorrentClient bitClient						= null;
 	
 	public static int getRegolaDownloadDefault(){
 		return default_regola_download_episodi;
@@ -597,8 +600,18 @@ public class Settings {
 			catch(IOException e){}
 		}
 	}
-	public static BitTorrentClient getClientTorrent(){
-		//TODO client torrent finder
-		return null;
+	public static BitTorrentClient getClientTorrent() throws Exception{
+		System.out.println("getClientTorrent Settings.java");
+		if(bitClient!=null)
+			return bitClient;
+		else {
+			String pathClient = UTorrent.rilevaInstallazione();
+			if(pathClient!=null){
+				bitClient = new UTorrent(pathClient);
+				return bitClient;
+			}
+			else
+				throw new Exception("Client torrent non trovato");
+		}
 	}
 }

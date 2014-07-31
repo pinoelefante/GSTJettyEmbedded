@@ -110,6 +110,11 @@ public class GestioneSerieTV {
 		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiSerie(idSerie);
 		return episodi;
 	}
+	
+	public boolean downloadEpisodio(int idEp) {
+		return ProviderSerieTV.downloadEpisodio(idEp);
+	}
+	
 	public GestoreSottotitoli getSubManager(){
 		return submanager;
 	}

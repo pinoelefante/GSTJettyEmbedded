@@ -236,6 +236,11 @@ public abstract class ProviderSerieTV {
 			return null;
 		else {
 			Episodio ep = parseEpisodio(res.get(0));
+			String query2 = "SELECT * FROM torrent WHERE episodio="+ep.getId();
+			ArrayList<KVResult<String, Object>> res2=Database.selectQuery(query2);
+			for(int j=0;j<res2.size();j++){
+				ep.aggiungiLink(parseTorrent(res2.get(j)));
+			}
 			return ep;
 		}
 	}
@@ -243,10 +248,12 @@ public abstract class ProviderSerieTV {
 		Episodio ep = getEpisodio(idEp);
 		if(ep!=null){
 			SerieTV serie = getSerieByID(ep.getSerie());
+			System.out.println(serie.getNomeSerie());
 			Torrent torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
-			if(torrent == null)
+			if(torrent == null){
 				return false;
-			if(Download.DownloadTorrent(serie, torrent)){
+			}
+			if(Download.downloadTorrent(serie, torrent)){
 				changeStatusEpisodio(idEp, Episodio.SCARICATO);
 				return true;
 			}

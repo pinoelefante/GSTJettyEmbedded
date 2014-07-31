@@ -45,6 +45,12 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseBoolean(res);
 				break;
 			}
+			case "download": {
+				int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
+				boolean d = manager.downloadEpisodio(idEpisodio);
+				xml = ResponseSender.createResponseDownload(idEpisodio, d);
+				break;
+			}
 			case "getEpisodiBySerie": {
 				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				ArrayList<Episodio> episodi = manager.getEpisodiSerie(idSerie);

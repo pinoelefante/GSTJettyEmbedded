@@ -1,13 +1,20 @@
 package gst.download;
 
 import java.io.File;
+import java.io.IOException;
 
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
-
+	private String pathInstallazione;
+	
+	public UTorrent() {}
+	public UTorrent(String path) {
+		pathInstallazione=path;
+	}
+	
 	@Override
 	public boolean haveWebAPI() {
 		// TODO Auto-generated method stub
@@ -34,11 +41,44 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean downloadTorrent(Torrent t, String path) {
-		// TODO Auto-generated method stub
-		return false;
+		if(haveWebAPI() && isWebAPIEnabled()){
+			return false;
+		}
+		else {
+			return downloadCLI(t, path);
+		}
 	}
-	public boolean downloadCLI(Torrent t){
-		return false;
+	
+	public void setPathInstallazione(String p){
+		pathInstallazione=p;
+	}
+	public String getPathInstallazione(){
+		return pathInstallazione;
+	}
+	
+	public boolean downloadCLI(Torrent t, String path){
+		String[] cmd={
+				getPathInstallazione(),
+				"/NOINSTALL",
+				"/DIRECTORY",
+				("\"" + path + "\""),
+				t.getUrl()
+		};
+		
+		for(int i=0;i<cmd.length;i++)
+			System.out.print(cmd[i]+" ");
+		
+		try {
+			Process p = Runtime.getRuntime().exec(cmd);
+			if(p==null){
+				return false;
+			}
+			return true;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	public static String rilevaInstallazione(){
 		String path = null;
@@ -63,10 +103,4 @@ public class UTorrent implements BitTorrentClient{
 		}
 		return null;
 	}
-	public static void main(String[] args){
-		Settings.baseSettings();
-		String p = rilevaInstallazione();
-		System.out.println(p==null?"Percorso non trovato":p);
-	}
-
 }

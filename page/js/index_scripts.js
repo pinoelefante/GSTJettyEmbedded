@@ -156,6 +156,7 @@ function download() {
 
 	 location.reload(); 
 }
+
 function ignora() {
 	
 	 location.reload(); 
@@ -294,9 +295,9 @@ function getEpisodi(id) {
 				var stato = parseInt($(this).find("stato").text());
 				
 				var html="<div class='episodio'>"+
-					"<input type='checkbox' value='" + idE + "' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
+					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
-					generaBottone(stato) +"&nbsp;" +
+					generaBottone(stato,idE) +"&nbsp;" +
 					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button" +
 					"" +
 					"</div>" +
@@ -326,11 +327,11 @@ function getEpisodi(id) {
 		}
 	});
 }
-function generaBottone(stato){
+function generaBottone(stato, id){
 	if(stato==0||stato==3||stato==4)
-		return "<button class='btn btn-primary' title='Scarica'><span class='glyphicon glyphicon-download-alt'/></button>";
+		return "<button id='btnDown_"+id+"' class='btn btn-primary' title='Scarica' onclick='downloadS("+id+")'><span class='glyphicon glyphicon-download-alt'/></button>";
 	else
-		return "<button class='btn btn-primary' title='Play'><span class='glyphicon glyphicon-play' /></button>";
+		return "<button id='btnPlay_"+id+"' class='btn btn-primary' title='Play' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button>";
 }
 function createAccordionStagione(stagione, idserie) {
 	var elem = "<div class='panel panel-default'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion" + idserie + "' href='#collapse" + idserie + "_" + stagione + "'> " + (stagione == 0 ? "Speciali" : "Stagione " + stagione) + " </a>" + "</h4>" + "</div>" + "<div id='collapse" + idserie + "_" + stagione + "' class='panel-collapse collapse'>" + "<div class='panel-body' id='listTorrent" + idserie + "_" + stagione + "'></div>" + "</div>" + "</div>";
@@ -340,5 +341,33 @@ function infoSerie(id){
 	
 }
 function infoEpisodio(idEp){
+	
+}
+function downloadS(id){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=download&episodio=" + id,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var idEpisodio = parseInt($(msg).find("episodio").text());
+				$("#btnDown_"+id).replaceWith(generaBottone(1, id));
+				if($("#chkSelezionaDown").is(":checked") && $("#chkEp_"+id).is(":checked")){
+					$("#chkEp_"+id).removeAttr('checked');
+				}
+				$("#chkEp_"+id).attr("stato_visualizzazione","1");
+				
+				//TODO aggiungere stato "Da vedere"
+			}
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("Si è verificato un errore durante il download");
+		}
+	});
+}
+function play(id) {
 	
 }
