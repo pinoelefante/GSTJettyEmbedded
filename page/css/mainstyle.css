@@ -5,10 +5,9 @@ body, html {
     height: 100%;
     width: 100%;
 }
-div {
-	/*border: 1px solid black;*/
+label, select {
+	display: inline;
 }
-
 div#container {
 	position: relative;
 	margin-top: 70px;
@@ -94,6 +93,7 @@ div#selectSerieDiv {
 	left: 5px;
 	right: 5px;
 	height: 70px;
+	width: calc(100% - 10px);
 }
 div#divMessaggioOperazione {
 	position:absolute;
@@ -113,7 +113,7 @@ div#operazioniLista {
 
 select#selectSerie, select#selectProvider {
 	width: 20%;
-	display: initial;
+	display: inline-block;
 }
 
 div#listSerie {
@@ -199,10 +199,43 @@ div.episodio {
 	width: 95%;
 	left: 2%;
 	right: 0%;
-	border-radius: 5px;
-	border-color: red;
 }
 div.episodioButtons {
 	display:inline;
 	float:right;
+}
+.episodioDaVedere {
+	border: 1px solid gray;
+	border-radius: 5px;
+	background-color: #22FF00;
+	
+	/* BORDO DEL TESTO
+		text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	*/
+}
+.episodioIgnorato {
+	border: 1px solid gray;
+	border-radius: 5px;
+	background: repeating-linear-gradient(
+		45deg,
+	  	black,
+	  	black 10px,
+	  	#3D3D3D 10px,
+	  	#3D3D3D 20px
+	);
+	color:white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.episodioRimosso {
+	border: 1px solid gray;
+	border-radius: 5px;
+	background: repeating-linear-gradient(
+		45deg,
+	  	black,
+	  	black 10px,
+	  	red 10px,
+	  	red 20px
+	);
+	color:white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 }

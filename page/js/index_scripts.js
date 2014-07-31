@@ -153,8 +153,12 @@ function parseBooleanXML(xml) {
 		return false;
 }
 function download() {
-
-	 location.reload(); 
+	$("#accordion").find("input[type=checkbox]").each(function(){
+		if($(this).is(":checked")){
+			var idEp = $(this).val();
+			downloadS(idEp);
+		}
+	}); 
 }
 
 function ignora() {
@@ -279,6 +283,20 @@ function aggiornaEpisodi(id, provider) {
 		}
 	});
 }
+function getClassStatus(stato){
+	switch(stato){
+		case 0:
+			return " episodioDaScaricare";
+		case 2:
+			return " episodioVisto";
+		case 1:
+			return " episodioDaVedere";
+		case 3:
+			return " episodioRimosso";
+		case 4:
+			return " episodioIgnorato";
+	}
+}
 function getEpisodi(id) {
 	operazioneInCorso("Carico l'elenco degli episodi da scaricare");
 	$.ajax({
@@ -287,14 +305,38 @@ function getEpisodi(id) {
 		data : "action=getEpisodiBySerie&serie=" + id,
 		dataType : "xml",
 		success : function(msg) {
-			var count = 0;
+			var daScaricare = 0;
+			var daVedere = 0;
+			var visualizzati = 0;
+			var ignorati = 0;
+			var rimossi = 0;
+			var numEpisodi = 0;
 			$(msg).find("ep").each(function() {
+				numEpisodi++;
 				var stagione = $(this).find("stagione").text();
 				var episodio = $(this).find("episodio").text();
 				var idE = $(this).find("id_episodio").text();
 				var stato = parseInt($(this).find("stato").text());
 				
-				var html="<div class='episodio'>"+
+				switch(stato){
+				case 0:
+					daScaricare++;
+					break;
+				case 1:
+					daVedere++;
+					break;
+				case 2:
+					visualizzati++;
+					break;
+				case 3:
+					rimossi++;
+					break;
+				case 4:
+					ignorati++;
+					break;
+				}
+				
+				var html="<div class='episodio"+getClassStatus(stato)+"' id='divEP_"+idE+"'>"+
 					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
@@ -303,11 +345,7 @@ function getEpisodi(id) {
 					"</div>" +
 					"</div>";
 				
-				if(stato==0)
-					count++;
-				
-				//var input = "<p><input type='checkbox' value='" + idE + "'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input></p>";
-
+	
 				var accordionSerie = $("#accordion" + id);
 				var accordionStagione = $("#listTorrent" + id + "_" + stagione);
 				if (accordionStagione.length == 0) {
@@ -317,7 +355,12 @@ function getEpisodi(id) {
 				}
 				$(html).appendTo(accordionStagione);
 			});
-			$("#episodiScaricare" + id)	.text("(" + count + " episodi da scaricare)");
+			if(daScaricare == 0){
+				$("#episodiScaricare" + id)	.text("(Nessun episodo da scaricare. Da vedere: "+daVedere+")");
+			}
+			else {
+				$("#episodiScaricare" + id)	.text("(" + daScaricare + " episodi da scaricare. Da vedere: "+daVedere+")");
+			}
 			selezionaTutto();
 			operazioneInCorso("");
 		},
@@ -359,7 +402,9 @@ function downloadS(id){
 				}
 				$("#chkEp_"+id).attr("stato_visualizzazione","1");
 				
-				//TODO aggiungere stato "Da vedere"
+				if(!$("#divEP_"+id).hasClass("episodioVisto")){
+					$("#divEP_"+id).addClass("episodioDaVedere");
+				}
 			}
 		},
 		error : function(msg) {
@@ -369,5 +414,5 @@ function downloadS(id){
 	});
 }
 function play(id) {
-	
+	$("#divEP_"+id).removeClass("episodioDaVedere");
 }
