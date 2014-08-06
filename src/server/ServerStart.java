@@ -32,5 +32,6 @@ public class ServerStart {
 		Settings.baseSettings();
 		Database.Connect();
 		GestioneSerieTV m = GestioneSerieTV.getInstance();
+		m.init();
 	}
 }

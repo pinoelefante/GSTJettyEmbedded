@@ -12,10 +12,12 @@ import gst.tda.db.KVResult;
 import java.io.File;
 import java.util.ArrayList;
 
-import Database.Database;
-import GUI.Interfaccia;
 
 public class GestoreSottotitoli {
+	public static GestoreSottotitoli getInstance(){
+		return null;
+	}
+	
 	class AssociatoreAutomatico extends Thread {
 		public void run(){
 			System.out.println("Avvio associatore");
@@ -248,5 +250,8 @@ public class GestoreSottotitoli {
 	public boolean localSearch(Torrent t){
 		//TODO ricerca locale del sottotitolo
 		return false;
+	}
+	public void changeSubDownloadStatus(int idEpisodio, boolean stato){
+		
 	}
 }

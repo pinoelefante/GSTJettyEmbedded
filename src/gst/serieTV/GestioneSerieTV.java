@@ -18,7 +18,7 @@ public class GestioneSerieTV {
 		}
 		return instance;
 	}
-	private void init(){
+	public void init(){
 		for(int i=0;i<providers.size();i++)
 			providers.get(i).aggiornaElencoSerie();
 	}
@@ -27,8 +27,6 @@ public class GestioneSerieTV {
 		//TODO
 		//submanager=new GestoreSottotitoli();
 		providers.add(new EZTV());
-		
-		init();
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
 		return providers;
@@ -49,7 +47,7 @@ public class GestioneSerieTV {
 		}
 		return provider.getElencoSerieDB();
 	}
-	private ProviderSerieTV checkProvider(int id){
+	public ProviderSerieTV checkProvider(int id){
 		for(int i=0;i<providers.size();i++)
 			if(providers.get(i).getProviderID()==id)
 				return providers.get(i);
