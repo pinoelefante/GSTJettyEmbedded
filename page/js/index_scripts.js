@@ -1,3 +1,8 @@
+$(document).ready(function() {
+	caricaProvider();
+	loadSeriePreferite();
+	caricaSerieNuove();
+});
 function aggiungiSerie(p, s, nomeSerie) {
 	var provider = (p == null ? selectProvider.options[selectProvider.selectedIndex].value : p);
 	var serie = (s == null ? selectSerie.options[selectSerie.selectedIndex].value : s);
@@ -67,7 +72,7 @@ function caricaSerieByProvider(provider) {
 				serie.innerHTML = nome;
 				$("#optSelectSerie").append(serie);
 			});
-			caricaSerieNuove(provider);
+			//caricaSerieNuove(provider);
 			operazioneInCorso("");
 		},
 		error : function(msg) {
@@ -81,12 +86,44 @@ function caricaSerieFromProvider() {
 	var provider = selectProvider.options[selectProvider.selectedIndex];
 	if (provider.value == null || provider.value == undefined || provider.value <= 0) {
 		optSelectSerie.innerHTML = "";
-		serieNuoveDivContainer.innerHTML = "";
 		return;
 	}
 	operazioneInCorso("Invio richiesta serie per provider " + provider.innerHTML);
 	caricaSerieByProvider(provider.value);
 }
+function caricaSerieNuove(){
+	operazioneInCorso("Invio richiesta nuove serie");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getSerieNuove",
+		dataType : "xml",
+		success : function(msg) {
+			var response = parseBooleanXML(msg);
+			if (!response) {
+				showModal("", "Si è verificato un errore durante il caricamento delle serie");
+				return;
+			}
+			serieNuoveDivContainer.innerHTML = "";
+			$(msg).find("serie").each(function() {
+				var nome = $(this).find("name").text();
+				var id = $(this).find("id").text();
+				var provider = $(this).find("provider").text();
+				var serie = document.createElement("div");
+				$(serie).addClass("panel-serieNuova");
+				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
+				$("#serieNuoveDivContainer").append(serie);
+			});
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("", "Si è verificato un errore durante il caricamento delle serie");
+			return;
+		}
+	});
+}
+/*
 function caricaSerieNuove(provider) {
 	operazioneInCorso("Invio richiesta nuove serie");
 	$.ajax({
@@ -119,6 +156,7 @@ function caricaSerieNuove(provider) {
 		}
 	});
 }
+*/
 function caricaProvider() {
 	operazioneInCorso("Invio richiesta provider");
 	$.ajax({

@@ -61,6 +61,14 @@ public class GestioneSerieTV {
 		return p.getElencoSerieNuove();
 	}
 	
+	public ArrayList<SerieTV> getSerieNuove(){
+		ArrayList<ArrayList<SerieTV>> serie=new ArrayList<ArrayList<SerieTV>>();
+		for(int i=0;i<providers.size();i++){
+			serie.add(providers.get(i).getElencoSerieNuove());
+		}
+		return Merger.mergeListsSerieTV(serie);
+	}
+	
 	public boolean aggiungiSerieAPreferiti(int provider, int idSerie){
 		ProviderSerieTV p = checkProvider(provider);
 		if(p!=null){

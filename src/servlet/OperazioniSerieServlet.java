@@ -80,6 +80,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				}
 				break;
 			}
+			case "getSerieNuove": {
+				ArrayList<SerieTV> serie = manager.getSerieNuove();
+				xml = ResponseSender.createResponseSerie(serie);
+				break;
+			}
 			case "getSerieNuoveFromProvider": {
 				try {
 					int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
