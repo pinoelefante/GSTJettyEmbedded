@@ -111,7 +111,9 @@ public abstract class ProviderSerieTV {
 		}
 	}
 	public ArrayList<SerieTV> getElencoSerieNuove(){
-		return nuove_serie;
+		ArrayList<SerieTV> serie = new ArrayList<SerieTV>(nuove_serie.size());
+		serie.addAll(nuove_serie);
+		return serie;
 	}
 	private void addSerieToDB(SerieTV s){
 		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES (\""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+getProviderID()+","+(s.isConclusa()?1:0)+")";
