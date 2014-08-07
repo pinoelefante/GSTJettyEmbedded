@@ -5,105 +5,86 @@ import gst.download.BitTorrentClient;
 import gst.download.UTorrent;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Scanner;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 
 public class Settings {
-	private static final int	VersioneSoftware					= 122;
-	public static final String	IndirizzoDonazioni					= "http://pinoelefante.altervista.org/donazioni/donazione_gst.html";
-	private static String		current_dir							= "";
-	private static String		user_dir							= "";
-	private static String		DirectoryDownload					= "";
-	private static String		ClientPath							= "";
-	private static boolean		TrayOnIcon							= true;
-	private static boolean		AskOnClose							= false;
-	private static boolean		StartHidden							= false;
-	private static boolean		Autostart							= true;
-	private static boolean		DownloadAutomatico					= false;
-	private static int			MinRicerca							= 480;
-	private static String		SistemaOperativo					= "";
-	private static boolean		canStartDownloadAutomatico			= false;
+	private static Settings		singleton;
+	private static final int	VersioneSoftware		= 122;
+	public static final String	IndirizzoDonazioni		= "http://pinoelefante.altervista.org/donazioni/donazione_gst.html";
 	
-	private static boolean		NewUpdate							= true;
-	private static int			LastVersion							= 0;
-	private static boolean		RicercaSottotitoli					= true;
-	private static boolean 		alwaysontop							= true;
-	private static String		VLCPath								= "";
-	private static boolean		VLCAutoload							= false;
-	private static String		Itasa_Username						= "";
-	private static String		Itasa_Password						= "";
-	private static String		ClientID 							= "";
-	private static boolean 		lettore_nascondi_ignore				= true;
-	private static boolean 		lettore_nascondi_rimosso			= true;
+	private String	current_dir							= "";
+	private String	user_dir							= "";
+	private String	sistemaOperativo					= "";
+		
+	private Properties	opzioni;
+	private BitTorrentClient bitClient					= null;
 	
-	private static boolean 		extenal_VLC							= false;
-	private static boolean 		enableITASA							= true;
-	private static boolean 		lettore_nascondi_viste				= true;
-	private static int			lettore_ordine						= 0;
-	private static int			default_regola_download_episodi		= 0;
+	public static Settings getInstance(){
+		if(singleton==null)
+			singleton=new Settings();
+		return singleton;
+	}
+	private Settings(){
+		opzioni = new Properties();
+		baseSettings();
+		caricaSettings();
+	}
 	
-	private static BitTorrentClient bitClient						= null;
-	
-	public static int getRegolaDownloadDefault(){
+	public int getRegolaDownloadDefault(){
 		return default_regola_download_episodi;
 	}
-	public static void setRegolaDownloadDefault(int d){
+	public void setRegolaDownloadDefault(int d){
 		default_regola_download_episodi=d;
 	}
-	public static int getVersioneSoftware() {
+	public int getVersioneSoftware() {
 		return VersioneSoftware;
 	}
-	public static String getCurrentDir() {
+	public String getCurrentDir() {
 		return current_dir;
 	}
-	public static void setCurrentDir(String current_dir) {
-		Settings.current_dir = current_dir;
+	public void setCurrentDir(String current_dir) {
+		this.current_dir = current_dir;
 	}
-	public static String getClientPath() {
-		if(ClientPath.compareToIgnoreCase("null")==0)
-			return "";
-		return ClientPath;
+	public String getDirectoryDownload() {
+		return getOpzione("download_path")+(getOpzione("download_path").endsWith(File.separator)?"":File.separator);
 	}
-	public static void setClientPath(String clientPath) {
-		ClientPath = clientPath;
-	}
-	public static String getDirectoryDownload() {
-		return DirectoryDownload+(DirectoryDownload.endsWith(File.separator)?"":File.separator);
-	}
-	public static void setDirectoryDownload(String directoryDownload) {	
+	public void setDirectoryDownload(String directoryDownload) {	
 		File f=new File(directoryDownload);
 		if(!f.exists())
 			f.mkdirs();
-		DirectoryDownload = directoryDownload;
+		opzioni.put("download_path", directoryDownload);
 	}
-	public static boolean isTrayOnIcon() {
+	public boolean isTrayOnIcon() {
 		return TrayOnIcon;
 	}
-	public static void setTrayOnIcon(boolean trayOnIcon) {
+	public void setTrayOnIcon(boolean trayOnIcon) {
 		TrayOnIcon = trayOnIcon;
 	}
-	public static boolean isAskOnClose() {
+	public boolean isAskOnClose() {
 		return AskOnClose;
 	}
-	public static void setAskOnClose(boolean askOnClose) {
+	public void setAskOnClose(boolean askOnClose) {
 		AskOnClose = askOnClose;
 	}
-	public static boolean isStartHidden() {
+	public boolean isStartHidden() {
 		return StartHidden;
 	}
-	public static void setStartHidden(boolean startHidden) {
+	public void setStartHidden(boolean startHidden) {
 		StartHidden = startHidden;
 	}
-	public static boolean isAutostart() {
+	public boolean isAutostart() {
 		return Autostart;
 	}
-	public static boolean setAutostart(boolean autostart) {
+	public boolean setAutostart(boolean autostart) {
 		Autostart = autostart;
 		
 		if(isAutostart())
@@ -112,82 +93,82 @@ public class Settings {
 			removeAutostart();
 		return autostart;
 	}
-	public static boolean isDownloadAutomatico() {
+	public boolean isDownloadAutomatico() {
 		return DownloadAutomatico;
 	}
-	public static void setDownloadAutomatico(boolean downloadAutomatico) {
+	public void setDownloadAutomatico(boolean downloadAutomatico) {
 		DownloadAutomatico = downloadAutomatico;
 	}
-	public static String getSistemaOperativo() {
-		return SistemaOperativo;
+	public String getSistemaOperativo() {
+		return sistemaOperativo;
 	}
-	public static void setSistemaOperativo(String sistemaOperativo) {
+	public void setSistemaOperativo(String sistemaOperativo) {
 		SistemaOperativo = sistemaOperativo;
 	}
-	public static boolean isCanStartDownloadAutomatico() {
+	public boolean isCanStartDownloadAutomatico() {
 		return canStartDownloadAutomatico;
 	}
-	public static void setCanStartDownloadAutomatico(boolean canStartDownloadAutomatico) {
+	public void setCanStartDownloadAutomatico(boolean canStartDownloadAutomatico) {
 		Settings.canStartDownloadAutomatico = canStartDownloadAutomatico;
 	}
-	public static boolean isNewUpdate() {
+	public boolean isNewUpdate() {
 		return NewUpdate;
 	}
-	public static void setNewUpdate(boolean newUpdate) {
+	public void setNewUpdate(boolean newUpdate) {
 		NewUpdate = newUpdate;
 	}
-	public static int getLastVersion() {
+	public int getLastVersion() {
 		return LastVersion;
 	}
-	public static void setLastVersion(int lastVersion) {
+	public void setLastVersion(int lastVersion) {
 		LastVersion = lastVersion;
 	}
-	public static boolean isRicercaSottotitoli() {
+	public boolean isRicercaSottotitoli() {
 		return RicercaSottotitoli;
 	}
-	public static void setRicercaSottotitoli(boolean ricercaSottotitoli) {
+	public void setRicercaSottotitoli(boolean ricercaSottotitoli) {
 		RicercaSottotitoli = ricercaSottotitoli;
 	}
-	public static boolean isAlwaysOnTop() {
+	public boolean isAlwaysOnTop() {
 		return alwaysontop;
 	}
-	public static void setAlwaysOnTop(boolean alwaysontop) {
+	public void setAlwaysOnTop(boolean alwaysontop) {
 		Settings.alwaysontop = alwaysontop;
 	}
-	public static String getVLCPath() {
+	public String getVLCPath() {
 		if(VLCPath.compareToIgnoreCase("null")==0)
 			return "";
 		return VLCPath;
 	}
-	public static void setVLCPath(String vLCPath) {
+	public void setVLCPath(String vLCPath) {
 		VLCPath = vLCPath;
 	}
-	public static String getItasaUsername() {
+	public String getItasaUsername() {
 		return Itasa_Username;
 	}
-	public static void setItasaUsername(String itasa_Username) {
+	public void setItasaUsername(String itasa_Username) {
 		Itasa_Username = itasa_Username;
 	}
-	public static String getItasaPassword() {
+	public String getItasaPassword() {
 		return Itasa_Password;
 	}
-	public static void setItasaPassword(String itasa_Password) {
+	public void setItasaPassword(String itasa_Password) {
 		Itasa_Password = itasa_Password;
 	}
-	public static int getMinRicerca() {
+	public int getMinRicerca() {
 		return MinRicerca;
 	}
-	public static void setMinRicerca(int minRicerca) {
+	public void setMinRicerca(int minRicerca) {
 		MinRicerca = minRicerca;
 	}
-	public static void setClientID(String id){
+	public void setClientID(String id){
 		ClientID=id;
 	}
-	public static String getClientID(){
+	public String getClientID(){
 		return ClientID;
 	}
 	//TODO Settaggi default
-	public static void setDefault() {
+	public void setDefault() {
 		setTrayOnIcon(true);
 		setAskOnClose(false);
 		setStartHidden(false);
@@ -198,30 +179,7 @@ public class Settings {
 		setAlwaysOnTop(true);
 	}
 
-	public static void baseSettings(){
-		SistemaOperativo = System.getProperty("os.name");
-		current_dir = ClassLoader.getSystemClassLoader().getResource(".").getPath();
-		if(isWindows() && current_dir.startsWith("/")){
-			current_dir=current_dir.substring(1).replace("%20", " ").replace("\\", File.separator).replace("/", File.separator);
-		}
-		System.setProperty("user.dir", current_dir);
-		
-		String u_dir=System.getProperty("user.home");
-		if(u_dir != null){
-			user_dir=u_dir+File.separator+".gst";
-			if(!user_dir.endsWith(File.separator)){
-				user_dir+=File.separator;
-			}
-			File udir=new File(user_dir);
-			if(!udir.exists())
-				udir.mkdirs();
-		}
-		else {
-			user_dir=current_dir;
-		}
-		DirectoryDownload=user_dir+"Download";
-	}
-	public static String getUserDir(){
+	public String getUserDir(){
 		return user_dir;
 	}
 
@@ -249,7 +207,7 @@ public class Settings {
     "hide_rimosse"
     "ordine_lettore"
     */
-	public static void defaultSettings(){
+	public void defaultSettings(){
 		setAlwaysOnTop(true);
 		setTrayOnIcon(true);
 		setStartHidden(false);
@@ -266,12 +224,9 @@ public class Settings {
 		setLettoreNascondiRimosso(true);
 		setLettoreOrdine(0);
 	}
-	public static void CaricaSetting(){
-		caricaFile();
-	}
 
 	@SuppressWarnings("unused")
-	public static void createAutoStart() {
+	public void createAutoStart() {
 		if(isWindows()){
 			Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV", getCurrentDir()+"GestioneSerieTV5.exe");
 		}
@@ -284,7 +239,7 @@ public class Settings {
 			//TODO
 		}
 	}
-	public static void removeAutostart() {
+	public void removeAutostart() {
 		if(isWindows()){
 			if(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV")){
 				Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV");
@@ -297,31 +252,19 @@ public class Settings {
 			//TODO
 		}
 	}
-	public static void main (String[] args){
-		baseSettings();
-		removeAutostart();
-	}
-	public static boolean verificaUtorrent(){
-		String nome_client=ClientPath.substring(ClientPath.lastIndexOf(File.separator)+1);
-		if(nome_client.compareToIgnoreCase("utorrent.exe")!=0)
-			return false;
-		return true;
-	}
-	public static void salvaSettings() {
-		salvaFile();
-	}
-	public static boolean isWindows(){
+	
+	public boolean isWindows(){
 		return getSistemaOperativo().contains("Windows");
 	}
-	public static boolean isLinux(){
+	public boolean isLinux(){
 		return getSistemaOperativo().contains("Linux");
 	}
-	public static boolean isMacOS(){
+	public boolean isMacOS(){
 		return getSistemaOperativo().contains("Mac");
 	}
 	
 	//TODO completare rilevamento vlc
-	public static String rilevaVLC(){
+	public String rilevaVLC(){
 		if(isWindows()){
 			//TODO c:\\users\\utente\\roaming\\utorrent
 			
@@ -335,10 +278,10 @@ public class Settings {
 		}
 		return "";
 	}
-	public static boolean isLettoreNascondiIgnore() {
+	public boolean isLettoreNascondiIgnore() {
 		return lettore_nascondi_ignore;
 	}
-	public static void setLettoreNascondiIgnore(boolean lettore_nascondi_ignore) {
+	public void setLettoreNascondiIgnore(boolean lettore_nascondi_ignore) {
 		Settings.lettore_nascondi_ignore = lettore_nascondi_ignore;
 	}
 	public static boolean isLettoreNascondiRimosso() {
@@ -363,28 +306,15 @@ public class Settings {
 		}
 		return "";
 	}
-	public static boolean isVLC(){
-		String path=getVLCPath();
-		if(path.isEmpty())
-			return false;
-		
-		if(isWindows()){
-			return path.toLowerCase().endsWith("vlc.exe");
-		}
-		else if(isLinux())
-			return path.toLowerCase().endsWith("vlc");
-		else
-			return true;
-	}
-	public static boolean is32bit(){
+	public boolean is32bit(){
 		String arch_vm = System.getProperty("os.arch");
 		boolean x86 = arch_vm.contains("x86")||arch_vm.contains("i386");
 		return x86;
 	}
-	public static boolean is64bit(){
+	public boolean is64bit(){
 		return !is32bit();
 	}
-	public static String getOSName(){
+	public String getOSName(){
 		String name="";
 		
 		if(isWindows())
@@ -396,210 +326,48 @@ public class Settings {
 		
 		return name;
 	}
-	public static String getVMArch(){
+	public String getVMArch(){
 		if(is32bit())
 			return "i386";
 		else
 			return "amd64";
 	}
-	public static boolean isExtenalVLC() {
+	public boolean isExtenalVLC() {
 		return extenal_VLC;
 	}
-	public static void setExtenalVLC(boolean extenal_VLC) {
+	public void setExtenalVLC(boolean extenal_VLC) {
 		Settings.extenal_VLC = extenal_VLC;
 	}
-	public static boolean isEnableITASA() {
+	public boolean isEnableITASA() {
 		return enableITASA;
 	}
-	public static void setEnableITASA(boolean enableITASA) {
+	public void setEnableITASA(boolean enableITASA) {
 		Settings.enableITASA = enableITASA;
 	}
-	public static boolean isLettoreNascondiViste() {
+	public boolean isLettoreNascondiViste() {
 		return lettore_nascondi_viste;
 	}
-	public static void setLettoreNascondiViste(boolean lettore_nascondi_viste) {
+	public void setLettoreNascondiViste(boolean lettore_nascondi_viste) {
 		Settings.lettore_nascondi_viste = lettore_nascondi_viste;
 	}
-	public static int getLettoreOrdine() {
+	public int getLettoreOrdine() {
 		return lettore_ordine;
 	}
-	public static void setLettoreOrdine(int lettore_ordine) {
+	public void setLettoreOrdine(int lettore_ordine) {
 		Settings.lettore_ordine = lettore_ordine;
 	}
-	public static boolean isVLCAutoload() {
+	public boolean isVLCAutoload() {
 		return VLCAutoload;
 	}
-	public static void setVLCAutoload(boolean vLCAutoload) {
+	public void setVLCAutoload(boolean vLCAutoload) {
 		VLCAutoload = vLCAutoload;
 	}
 	public static String getEXEName(){
 		String exe=System.getProperty("sun.java.command");
 		return exe;
 	}
-	private static synchronized void salvaFile(){
-		String path=getUserDir()+"settings.dat";
-		FileWriter fw=null;
-		try {
-			fw=new FileWriter(path);
-			fw.append("always_on_top="+isAlwaysOnTop()+"\n");
-			fw.append("download_path="+getDirectoryDownload()+"\n");
-			fw.append("utorrent="+getClientPath()+"\n");
-			fw.append("vlc="+getVLCPath()+"\n");
-			fw.append("itasa_user="+getItasaUsername()+"\n");
-			fw.append("itasa_pass="+getItasaPassword()+"\n");
-			fw.append("client_id="+getClientID()+"\n");
-			fw.append("tray_on_icon="+isTrayOnIcon()+"\n");
-			fw.append("start_hidden="+isStartHidden()+"\n");
-			fw.append("ask_on_close="+isAskOnClose()+"\n");
-			fw.append("always_on_top="+isAlwaysOnTop()+"\n");
-			fw.append("autostart="+isAutostart()+"\n");
-			fw.append("download_auto="+isDownloadAutomatico()+"\n");
-			fw.append("min_download_auto="+getMinRicerca()+"\n");
-			fw.append("new_update="+isNewUpdate()+"\n");
-			fw.append("last_version="+getLastVersion()+"\n");
-			fw.append("download_sottotitoli="+isRicercaSottotitoli()+"\n");
-			fw.append("external_vlc="+isExtenalVLC()+"\n");
-			fw.append("vlc_autoload="+isVLCAutoload()+"\n");
-			fw.append("itasa="+isEnableITASA()+"\n");
-			fw.append("hide_viste="+isLettoreNascondiViste()+"\n");
-			fw.append("hide_ignorate="+isLettoreNascondiIgnore()+"\n");
-			fw.append("hide_rimosse="+isLettoreNascondiRimosso()+"\n");
-			fw.append("ordine_lettore="+getLettoreOrdine()+"\n");
-			fw.append("regola_download="+getRegolaDownloadDefault());
-		} 
-		catch (IOException e) {
-			ManagerException.registraEccezione(e);
-			e.printStackTrace();
-		}
-		finally {
-			if(fw!=null)
-				try {
-					fw.close();
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-	}
-	private static void caricaFile() {
-		String path=getUserDir()+"settings.dat";
-		FileReader fr=null;
-		Scanner file=null;
-		try {
-			fr=new FileReader(path);
-			file=new Scanner(fr);
-			while(file.hasNextLine()){
-				String option=file.nextLine().trim();
-				if(option.contains("=")){
-					String[] kv=option.split("=");
-					try {
-						switch(kv[0]){
-							case "always_on_top":
-								setAlwaysOnTop(Boolean.parseBoolean(kv[1]));
-								break;
-							case "download_path":
-								setDirectoryDownload(kv[1]);
-								break;
-							case "utorrent":
-								setClientPath(kv[1]);
-								break;
-							case "vlc":
-								setVLCPath(kv[1]);
-								break;
-							case "itasa_user":
-								setItasaUsername(kv[1]);
-								break;
-							case "itasa_pass":
-								setItasaPassword(kv[1]);
-								break;
-							case "client_id":
-								setClientID(kv[1]);
-								break;
-							case "tray_on_icon":
-								setTrayOnIcon(Boolean.parseBoolean(kv[1]));
-								break;
-							case "start_hidden":
-								setStartHidden(Boolean.parseBoolean(kv[1]));
-								break;
-							case "ask_on_close":
-								setAskOnClose(Boolean.parseBoolean(kv[1]));
-								break;
-							case "autostart":
-								setAutostart(Boolean.parseBoolean(kv[1]));
-								break;
-							case "download_auto":
-								setDownloadAutomatico(Boolean.parseBoolean(kv[1]));
-								break;
-							case "min_download_auto":
-								setMinRicerca(Integer.parseInt(kv[1]));
-								break;
-							case "new_update":
-								setNewUpdate(Boolean.parseBoolean(kv[1]));
-								break;
-							case "last_version":
-								setLastVersion(Integer.parseInt(kv[1]));
-								break;
-							case "download_sottotitoli":
-								setRicercaSottotitoli(Boolean.parseBoolean(kv[1]));
-								break;
-							case "external_vlc":
-								setExtenalVLC(Boolean.parseBoolean(kv[1]));
-								break;
-							case "vlc_autoload":
-								setVLCAutoload(Boolean.parseBoolean(kv[1]));
-								break;
-							case "itasa":
-								setEnableITASA(Boolean.parseBoolean(kv[1]));
-								break;
-							case "hide_viste":
-								setLettoreNascondiViste(Boolean.parseBoolean(kv[1]));
-								break;
-							case "hide_ignorate":
-								setLettoreNascondiIgnore(Boolean.parseBoolean(kv[1]));
-								break;
-							case "hide_rimosse":
-								setLettoreNascondiRimosso(Boolean.parseBoolean(kv[1]));
-								break;
-							case "ordine_lettore":
-								setLettoreOrdine(Integer.parseInt(kv[1]));
-								break;
-							case "regola_download":
-								setRegolaDownloadDefault(Integer.parseInt(kv[1]));
-								break;
-							/*	
-							case "":
-								break;
-							*/
-							default:
-								ManagerException.registraEccezione("Opzione non valida: "+kv[0]);
-						}
-					}
-					catch(Exception e){
-						ManagerException.registraEccezione(e);
-					}
-				}
-				else {
-					ManagerException.registraEccezione("Opzione non valida: "+option);
-				}
-			}
-		} 
-		catch (FileNotFoundException e) {
-			if(Database.isFreshNew())
-				setLastVersion(0);
-			else
-				setLastVersion(117);
-			e.printStackTrace();
-		}
-		finally {
-			try {
-				if(file!=null)
-					file.close();
-				if(fr!=null)
-					fr.close();
-			}
-			catch(IOException e){}
-		}
-	}
+
+	
 	public static BitTorrentClient getClientTorrent() throws Exception{
 		System.out.println("getClientTorrent Settings.java");
 		if(bitClient!=null)
@@ -613,5 +381,85 @@ public class Settings {
 			else
 				throw new Exception("Client torrent non trovato");
 		}
+	}
+	
+	public void caricaSettings(){
+		opzioni.clear();
+		FileInputStream file = null;
+		try {
+			file = new FileInputStream(getUserDir()+File.separator+"settings.properties"); 
+			opzioni.load(file);
+			file.close();
+		}
+		catch (IOException e) {
+			defaultSettings();
+			salvaSettings();
+		}
+		finally {
+			if(file!=null)
+				try {
+					file.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+	}
+	public void salvaSettings(){
+		if(opzioni==null)
+			return;
+		FileOutputStream file = null;
+		try {
+			file = new FileOutputStream(getUserDir()+File.separator+"settings.properties");
+			opzioni.store(file, "");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if(file!=null)
+				try {
+					file.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+	}
+	
+	private void baseSettings(){
+		sistemaOperativo = System.getProperty("os.name");
+		current_dir = ClassLoader.getSystemClassLoader().getResource(".").getPath();
+		if(isWindows() && current_dir.startsWith("/")){
+			current_dir=current_dir.substring(1).replace("%20", " ").replace("\\", File.separator).replace("/", File.separator);
+		}
+		System.setProperty("user.dir", current_dir);
+		
+		String u_dir=System.getProperty("user.home");
+		if(u_dir != null){
+			user_dir=u_dir+File.separator+".gst";
+			if(!user_dir.endsWith(File.separator)){
+				user_dir+=File.separator;
+			}
+			File udir=new File(user_dir);
+			if(!udir.exists())
+				udir.mkdirs();
+		}
+		else {
+			user_dir=current_dir;
+		}
+		opzioni.put("directory_download", user_dir+"Download");
+	}
+	
+	public void aggiungiOpzione(String k, String v){
+		if(opzioni!=null){
+			opzioni.put(k, v);
+		}
+	}
+	public String getOpzione(String k){
+		if(opzioni!=null){
+			return opzioni.getProperty(k);
+		}
+		throw new RuntimeException();
 	}
 }
