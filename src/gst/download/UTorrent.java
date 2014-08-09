@@ -100,6 +100,8 @@ public class UTorrent implements BitTorrentClient{
 					return path;
 			}
 			path = Settings.getInstance().getCurrentDir() + File.separator + "uTorrent.exe";
+			if(OperazioniFile.fileExists(path))
+				return path;
 		}
 		else if(Settings.getInstance().isMacOS()){
 			if(OperazioniFile.fileExists("/Applications/uTorrent.app/Contents/MacOS/uTorrent"))

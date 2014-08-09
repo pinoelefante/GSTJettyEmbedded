@@ -454,7 +454,24 @@ function downloadS(id){
 	});
 }
 function play(id) {
-	$("#divEP_"+id).removeClass("episodioDaVedere");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=play&episodio=" + id,
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			if(r){
+				$("#divEP_"+id).removeClass("episodioDaVedere");
+				$("#divEP_"+id).addClass("episodioVisto");
+			}
+		},
+		error : function(msg) {
+			
+		}
+	});
+	
+	//
 }
 function cancellaEpisodio(id){
 	

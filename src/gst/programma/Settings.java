@@ -2,6 +2,8 @@ package gst.programma;
 
 import gst.download.BitTorrentClient;
 import gst.download.UTorrent;
+import gst.player.VLC;
+import gst.player.VideoPlayer;
 import gst.serieTV.Preferenze;
 
 import java.io.File;
@@ -31,6 +33,7 @@ public class Settings {
 	private Properties	opzioni;
 	
 	private BitTorrentClient bitClient					= null;
+	private VideoPlayer		 videoPlayer				= null;	
 	
 	
 	private Settings(){
@@ -116,7 +119,6 @@ public class Settings {
 		setStartHidden(false);
 	}
 	public BitTorrentClient getClientTorrent() throws Exception{
-		System.out.println("getClientTorrent Settings.java");
 		if(bitClient!=null)
 			return bitClient;
 		else {
@@ -127,6 +129,20 @@ public class Settings {
 			}
 			else
 				throw new Exception("Client torrent non trovato");
+		}
+	}
+	public VideoPlayer getVideoPlayer() throws Exception{
+		if(videoPlayer!=null){
+			return videoPlayer;
+		}
+		else {
+			String vlcPath = VLC.rilevaVLC();
+			if(vlcPath!=null){
+				videoPlayer=new VLC(vlcPath);
+				return videoPlayer;
+			}
+			else
+				throw new Exception("VideoPlayer non trovato");
 		}
 	}
 	public String getCurrentDir() {
@@ -344,4 +360,5 @@ public class Settings {
 			}
 		}
 	}
+	
 }
