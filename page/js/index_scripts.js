@@ -313,7 +313,7 @@ function aggiornaEpisodi(id, provider) {
 		success : function(msg) {
 			var r = parseBooleanXML(msg);
 			operazioneInCorso("");
-			getEpisodiDaScaricare(id);
+			getEpisodi(id);
 		},
 		error : function(msg) {
 			operazioneInCorso("");
