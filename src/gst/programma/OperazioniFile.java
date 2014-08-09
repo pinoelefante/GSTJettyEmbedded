@@ -63,7 +63,7 @@ public class OperazioniFile {
 		return false;
 	}
 	public static void dumpfileclean(){
-		File directory=new File(Settings.getCurrentDir());
+		File directory=new File(Settings.getInstance().getCurrentDir());
 		if(directory.isDirectory()){
 			String[] contenuto = directory.list();
 			for(int i=0;i<contenuto.length;i++){
@@ -116,7 +116,7 @@ public class OperazioniFile {
 			return false;
 	}
 	public static String cercavideofile(Torrent t) throws FileNotFoundException{
-		String path_download=Settings.getDirectoryDownload()+(Settings.getDirectoryDownload().endsWith(File.separator)?"":File.separator)+t.getNomeSerieFolder();
+		String path_download=Settings.getInstance().getDirectoryDownload()+(Settings.getInstance().getDirectoryDownload().endsWith(File.separator)?"":File.separator)+t.getNomeSerieFolder();
 		File cartella_download=new File(path_download);
 		if(!cartella_download.exists())
 			throw new FileNotFoundException("La cartella "+path_download+" non esiste");

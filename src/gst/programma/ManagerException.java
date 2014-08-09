@@ -7,7 +7,7 @@ public class ManagerException {
 	public static synchronized void registraEccezione(Exception e){
 		try{
 			StackTraceElement[] stack=e.getStackTrace();
-			FileWriter file=new FileWriter(Settings.getUserDir()+"eccezioni.txt", true);
+			FileWriter file=new FileWriter(Settings.getInstance().getUserDir()+"eccezioni.txt", true);
 			GregorianCalendar date=new GregorianCalendar();
 			file.append(date.getTime().toString()+"\n");
 			file.append(e.getMessage()+"\n");
@@ -21,7 +21,7 @@ public class ManagerException {
 	}
 	public static synchronized void registraEccezione(String m){
 		try{
-			FileWriter file=new FileWriter(Settings.getUserDir()+"eccezioni.txt", true);
+			FileWriter file=new FileWriter(Settings.getInstance().getUserDir()+"eccezioni.txt", true);
 			GregorianCalendar date=new GregorianCalendar();
 			file.append(date.getTime().toString()+"\n");
 			file.append(m+"\n");

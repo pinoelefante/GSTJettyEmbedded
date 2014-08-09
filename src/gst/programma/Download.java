@@ -141,7 +141,7 @@ public class Download {
 		 * Download del file
 		 */
 		public void run(){
-			String userAgent = "GestioneSerieTV/rel."+Settings.getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
+			String userAgent = "GestioneSerieTV/rel."+Settings.getInstance().getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
 			URL url = null;
 			try {
 				url = new URL(url_download);
@@ -206,10 +206,10 @@ public class Download {
 		}
 	}
 	public static boolean downloadTorrent(SerieTV serie, Torrent torrent){
-		String directory = Settings.getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		String directory = Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
 		BitTorrentClient client;
 		try {
-			client = Settings.getClientTorrent();
+			client = Settings.getInstance().getClientTorrent();
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -217,53 +217,6 @@ public class Download {
 			return false;
 		}
 		return client.downloadTorrent(torrent, directory);
-	}
-	public static void downloadMagnet(String magnet_url, String folder) throws IOException {
-		String directory_download = Settings.getDirectoryDownload();
-		if(Settings.isWindows()){
-			String[] cmd={
-					Settings.getClientPath(),
-					"/NOINSTALL",
-					"/DIRECTORY",
-					("\"" + folder + "\""),
-					magnet_url
-			};
-			/*
-			for(int i=0;i<cmd.length;i++){
-				System.out.print(cmd[i]+" ");
-			}
-			System.out.println();
-			*/
-			Runtime.getRuntime().exec(cmd);
-		}
-		else if(Settings.isLinux()){
-			String[] cmd={
-				"wine",
-				Settings.getClientPath(),
-				"/NOINSTALL",
-				"/DIRECTORY",
-				("\"Z:" + directory_download + File.separator + folder + "\"").replace(File.separator, "\\\\"),
-				magnet_url
-			};
-			Runtime.getRuntime().exec(cmd);
-			//Runtime.getRuntime().exec("wine "+Settings.getClientPath()+ " /NOINSTALL /DIRECTORY " + "'T:"+File.separator +  folder + "'" + " " + url);
-		}
-		else if(Settings.isMacOS()){
-			String[] cmd={
-					Settings.getClientPath(),
-					"/NOINSTALL",
-					"/DIRECTORY",
-					("\"" + folder + "\""),
-					magnet_url
-			};
-			/*
-			for(int i=0;i<cmd.length;i++){
-				System.out.print(cmd[i]+" ");
-			}
-			System.out.println();
-			*/
-			Runtime.getRuntime().exec(cmd);
-		}
 	}
 	
 	public static void downloadFromUrl(String url_download, String localFilename) throws IOException{
@@ -277,19 +230,6 @@ public class Download {
 			throw new IOException("Il download non è stato completato");
 		}
 	}
-	/*
-	public static void main(String[] args){
-		Download d=new Download("file:///D:\\SerieTV\\Alcatraz\\Alcatraz.S01E01.HDTV.XviD-LOL.[VTV].avi", "E:\\Multimedia\\a.avi");
-		d.avviaDownload();
-		try {
-			while(!d.isComplete()){
-				System.out.println(d.getFileSizeDowloaded()+"/"+d.getFileSize());
-				Thread.sleep(1000L);
-			}
-		}
-		catch(InterruptedException e){}
-	}
-	*/
 	
 	public boolean isStarted() {
 		return started;
@@ -299,7 +239,7 @@ public class Download {
 	}
 	private static boolean isHttpRaggiungibile(String url_s){
 		HttpURLConnection urlConn=null;
-		String userAgent = "GestioneSerieTV/rel."+Settings.getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
+		String userAgent = "GestioneSerieTV/rel."+Settings.getInstance().getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
 		try {
 			URL url=new URL(url_s);
 			urlConn=(HttpURLConnection) url.openConnection();

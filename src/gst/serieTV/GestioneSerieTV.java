@@ -1,12 +1,14 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.interfacce.Notificable;
+import gst.interfacce.Notifier;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
 import java.util.ArrayList;
 
-public class GestioneSerieTV {
+public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
 
@@ -24,8 +26,8 @@ public class GestioneSerieTV {
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
-		//TODO
-		//submanager=new GestoreSottotitoli();
+		notificable=new ArrayList<Notificable>();
+		//TODO submanager=new GestoreSottotitoli();
 		providers.add(new EZTV());
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
@@ -75,7 +77,6 @@ public class GestioneSerieTV {
 			SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
 			if(st!=null){
 				boolean r = ProviderSerieTV.aggiungiSerieAPreferiti(st);
-				System.out.println("aggiungi a preferiti:"+r);
 				return r;
 			}
 		}
@@ -132,5 +133,18 @@ public class GestioneSerieTV {
 	private boolean firstLoading=false;
 	public boolean isFirstLoaded(){
 		return firstLoading;
+	}
+	
+	private ArrayList<Notificable> notificable;
+	public void subscribe(Notificable e) {
+		notificable.add(e);
+	}
+	public void unsubscribe(Notificable e) {
+		notificable.remove(e);
+	}
+	public void inviaNotifica(String text){
+		for(int i=0;i<notificable.size();i++){
+			notificable.get(i).sendNotify(text);
+		}
 	}
 }

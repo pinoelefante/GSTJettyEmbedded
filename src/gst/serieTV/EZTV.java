@@ -17,6 +17,7 @@ import java.util.Scanner;
 public class EZTV extends ProviderSerieTV {
 	private ArrayList<String> baseUrls;
 	private String			baseUrl;
+	private Settings settings;
 
 	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
@@ -26,6 +27,7 @@ public class EZTV extends ProviderSerieTV {
 		baseUrls.add("http://eztv.openinternet.biz");
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
+		settings=Settings.getInstance();
 	}
 
 	private String getOnlineUrl() {
@@ -52,8 +54,8 @@ public class EZTV extends ProviderSerieTV {
 		System.out.println("EZTV.it - Aggiornando elenco serie tv");
 		String base_url = getBaseURL();
 
-		Download downloader = new Download(base_url + "/showlist/", Settings.getUserDir() + "file.html");
-		System.out.println("path download: "+Settings.getUserDir() + "file.html");
+		Download downloader = new Download(base_url + "/showlist/", settings.getUserDir() + "file.html");
+		System.out.println("path download: "+settings.getUserDir() + "file.html");
 		downloader.avviaDownload();
 		try {
 			downloader.getDownloadThread().join();
@@ -68,7 +70,7 @@ public class EZTV extends ProviderSerieTV {
 		Scanner file = null;
 		int caricate = 0;
 		try {
-			f_r = new FileReader(Settings.getUserDir() + "file.html");
+			f_r = new FileReader(settings.getUserDir() + "file.html");
 			file = new Scanner(f_r);
 
 			while (file.hasNextLine()) {
@@ -111,7 +113,7 @@ public class EZTV extends ProviderSerieTV {
 				ManagerException.registraEccezione(e);
 			}
 		}
-		OperazioniFile.deleteFile(Settings.getUserDir() + "file.html");
+		OperazioniFile.deleteFile(settings.getUserDir() + "file.html");
 	}
 	private boolean isTempPlaceholder(String nome){
 		switch (nome.toLowerCase()) {
@@ -173,8 +175,6 @@ public class EZTV extends ProviderSerieTV {
 
 	}
 
-	
-
 	@Override
 	public int getProviderID() {
 		return PROVIDER_EZTV;
@@ -190,11 +190,11 @@ public class EZTV extends ProviderSerieTV {
 			String base_url = getBaseURL();
 			base_url += "/shows/" + serie.getUrl() + "/";
 			
-			Download download = new Download(base_url, Settings.getUserDir() + serie.getNomeSerie());
+			Download download = new Download(base_url, settings.getUserDir() + serie.getNomeSerie());
 			download.avviaDownload();
 			download.getDownloadThread().join();
 
-			FileReader fr = new FileReader(Settings.getUserDir() + serie.getNomeSerie());
+			FileReader fr = new FileReader(settings.getUserDir() + serie.getNomeSerie());
 			Scanner file = new Scanner(fr);
 			while (file.hasNextLine()) {
 				String linea = file.nextLine();
@@ -211,7 +211,7 @@ public class EZTV extends ProviderSerieTV {
 			}
 			file.close();
 			fr.close();
-			OperazioniFile.deleteFile(Settings.getUserDir() + serie.getNomeSerie());
+			OperazioniFile.deleteFile(settings.getUserDir() + serie.getNomeSerie());
 
 			if (serie.isConclusa()) {
 				serie.setStopSearch(true);

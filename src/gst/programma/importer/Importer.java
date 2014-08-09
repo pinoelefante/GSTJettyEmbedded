@@ -8,19 +8,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import gst.database.Database;
+import gst.interfacce.Notificable;
+import gst.interfacce.Notifier;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
-import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.Preferenze;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
 import gst.tda.db.KVResult;
 
-public class Importer {
+public class Importer implements Notifier{
 	private Connection dbCon;
-	public void importer(){
-		String dbPath = Settings.getUserDir()+File.separator+"database2.sqlite"; 
+	
+	public Importer(){
+		subscribers=new ArrayList<Notificable>();
+	}
+	
+	public void startImport(){
+		String dbPath = Settings.getInstance().getUserDir()+File.separator+"database2.sqlite"; 
 		if(OperazioniFile.fileExists(dbPath)){
 			OperazioniFile.copyfile(dbPath, dbPath+".bak");
 			try {
@@ -34,7 +40,7 @@ public class Importer {
 					addSerieToDB(s);
 					if(s.isInserita()){
 						preferiti.add(s);
-						System.out.println("Aggiungo "+s.getNomeSerie()+" ai preferiti");
+						inviaNotifica("Aggiungo "+s.getNomeSerie()+" ai preferiti");
 						ProviderSerieTV.aggiungiSerieAPreferiti(s);
 					}
 				}
@@ -42,7 +48,7 @@ public class Importer {
 				Map<Integer, Boolean> subDownload  = new HashMap<Integer, Boolean>();
 				for(int i=0;i<preferiti.size();i++){
 					SerieTVOld s = preferiti.get(i);
-					System.out.println("Seleziono gli episodi di "+s.getNomeSerie());
+					inviaNotifica("Importo gli episodi di "+s.getNomeSerie());
 					query = "SELECT * FROM episodi WHERE id_serie="+s.getIDDb();
 					res = Database.selectQuery(dbCon, query);
 					for(int j=0;j<res.size();j++){
@@ -77,10 +83,10 @@ public class Importer {
 		}
 	}
 	public static void main(String[] args){
-		Settings.baseSettings();
+		Settings.getInstance();
 		Database.Connect();
 		Importer imp = new Importer();
-		imp.importer();
+		imp.startImport();
 	}
 	private void addSerieToDB(SerieTV s){
 		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (id, nome, url, provider,conclusa) VALUES ("+s.getIDDb()+", \""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+s.getProviderID()+","+(s.isConclusa()?1:0)+")";
@@ -142,5 +148,20 @@ public class Importer {
 			super(link, idDB, idEpisodio, true);
 		}
 		
+	}
+	
+	private ArrayList<Notificable> subscribers;
+	@Override
+	public void subscribe(Notificable e) {
+		subscribers.add(e);		
+	}
+	@Override
+	public void unsubscribe(Notificable e) {
+		subscribers.remove(e);
+	}
+	@Override
+	public void inviaNotifica(String text) {
+		for(int i=0;i<subscribers.size();i++)
+			subscribers.get(i).sendNotify(text);
 	}
 }

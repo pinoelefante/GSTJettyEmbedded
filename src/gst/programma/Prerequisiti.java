@@ -11,23 +11,23 @@ public class Prerequisiti {
 			if(list_dipendenze.isEmpty())
 				popola_dipendenze();
 
-			File dir_lib = new File(Settings.getCurrentDir() + "lib");
+			File dir_lib = new File(Settings.getInstance().getCurrentDir() + "lib");
 			if(!dir_lib.isDirectory() || !dir_lib.exists())
 				dir_lib.mkdir();
 			
 			for(int i=0;i<list_dipendenze.size();i++){
 				Dipendenza d=list_dipendenze.get(i);
-				File file=new File(Settings.getCurrentDir()+"lib"+File.separator+d.getNomeDest());
+				File file=new File(Settings.getInstance().getCurrentDir()+"lib"+File.separator+d.getNomeDest());
 				if(file.exists()){
 					System.out.println(d.getNome()+": "+file.length()+"/"+d.getSize());
 					if(file.length()!=d.getSize()){
 						System.out.println("Scaricando: "+d.getNome());
-						Download.downloadFromUrl(d.getUrl(), Settings.getCurrentDir()+"lib"+File.separator+d.getNomeDest());
+						Download.downloadFromUrl(d.getUrl(), Settings.getInstance().getCurrentDir()+"lib"+File.separator+d.getNomeDest());
 					}
 				}
 				else {
 					System.out.println("Scaricando: "+d.getNome());
-					Download.downloadFromUrl(d.getUrl(), Settings.getCurrentDir()+"lib"+File.separator+d.getNomeDest());
+					Download.downloadFromUrl(d.getUrl(), Settings.getInstance().getCurrentDir()+"lib"+File.separator+d.getNomeDest());
 				}
 			}
 		}
@@ -44,17 +44,17 @@ public class Prerequisiti {
 		try {
     		for(int i=0;i<list_utility.size();i++){
     			Dipendenza d=list_utility.get(i);
-    			File file=new File(Settings.getCurrentDir()+d.getNomeDest());
+    			File file=new File(Settings.getInstance().getCurrentDir()+d.getNomeDest());
     			if(file.exists()){
     				System.out.println(d.getNome()+": "+file.length()+"/"+d.getSize());
     				if(file.length()!=d.getSize()){
     					System.out.println("Scaricando: "+d.getNome());
-    					Download.downloadFromUrl(d.getUrl(), Settings.getCurrentDir()+d.getNomeDest());
+    					Download.downloadFromUrl(d.getUrl(), Settings.getInstance().getCurrentDir()+d.getNomeDest());
     				}
     			}
     			else {
     				System.out.println("Scaricando: "+d.getNome());
-    				Download.downloadFromUrl(d.getUrl(), Settings.getCurrentDir()+d.getNomeDest());
+    				Download.downloadFromUrl(d.getUrl(), Settings.getInstance().getCurrentDir()+d.getNomeDest());
     			}
     		}
 		}
@@ -69,7 +69,7 @@ public class Prerequisiti {
 		if(vlc_dep.isEmpty()){
 			popola_vlc();
 		}
-		String destinazione=Settings.getCurrentDir()+"lib"+File.separator+"vlc"+File.separator+Settings.getOSName()+"-"+Settings.getVMArch()+File.separator;
+		String destinazione=Settings.getInstance().getCurrentDir()+"lib"+File.separator+"vlc"+File.separator+Settings.getInstance().getOSName()+"-"+Settings.getInstance().getVMArch()+File.separator;
 		File dest=new File(destinazione);
 		if(!dest.exists())
 			dest.mkdirs();
@@ -115,9 +115,9 @@ public class Prerequisiti {
 		list_utility.add(new Dipendenza("gst_updater.jar", "gst_updater.jar", sito2+"gst_updater.jar", "indipendent", 1872L, true, true));
 	}
 	private static void popola_vlc() {
-		String destinazione=Settings.getCurrentDir()+"lib"+File.separator+"vlc"+File.separator+Settings.getOSName()+"-"+Settings.getVMArch()+File.separator;
-		if(Settings.isWindows()){
-			if(Settings.is32bit()){
+		String destinazione=Settings.getInstance().getCurrentDir()+"lib"+File.separator+"vlc"+File.separator+Settings.getInstance().getOSName()+"-"+Settings.getInstance().getVMArch()+File.separator;
+		if(Settings.getInstance().isWindows()){
+			if(Settings.getInstance().is32bit()){
 				vlc_dep.add(new Dipendenza("libvlc.dll", destinazione+"libvlc.dll", sito+"vlc_win32.7z", "windows", 144896L, true, false));
 				vlc_dep.add(new Dipendenza("libvlccore.dll", destinazione+"libvlccore.dll", sito+"vlc_win32.7z", "windows", 2376192L, true, false));
 			}
@@ -126,8 +126,8 @@ public class Prerequisiti {
 				vlc_dep.add(new Dipendenza("libvlccore.dll", destinazione+"libvlccore.dll", sito+"vlc_win64.7z", "windows", 2401280L, false, true));
 			}
 		}
-		else if(Settings.isLinux()){
-			if(Settings.is32bit()){
+		else if(Settings.getInstance().isLinux()){
+			if(Settings.getInstance().is32bit()){
 				vlc_dep.add(new Dipendenza("libvlc.so.5", destinazione+"libvlc.so.5", sito+"vlc_linux32.zip", "linux", 15L, true, false));
 				vlc_dep.add(new Dipendenza("libvlc.so.5.3.2", destinazione+"libvlc.so.5.3.2", sito+"vlc_linux32.zip", "linux", 112552L, true, false));
 				vlc_dep.add(new Dipendenza("libvlccore.so.5", destinazione+"libvlccore.so.5", sito+"vlc_linux32.zip", "linux", 19L, true, false));
@@ -140,8 +140,8 @@ public class Prerequisiti {
 				vlc_dep.add(new Dipendenza("libvlccore.so.5.1.1", destinazione+"libvlccore.so.5.1.1", sito+"vlc_linux64.zip", "linux", 949824L, false, true));
 			}
 		}
-		else if(Settings.isMacOS()){
-			if(Settings.is32bit()){
+		else if(Settings.getInstance().isMacOS()){
+			if(Settings.getInstance().is32bit()){
 				
 			}
 			else {
@@ -181,7 +181,7 @@ public class Prerequisiti {
 		list_dipendenze.add(new Dipendenza("sevenzipjbinding.jar", "sevenzipjbinding.jar", sito+"sevenzipjbinding.jar", "indipendent",31653L, true, true));
 		list_dipendenze.add(new Dipendenza("vlcj-2.4.0.jar", "vlcj.jar", sito+"vlcj-2.4.0.jar", "indipendent", 345388L, true, true));
 		
-		if(Settings.isLinux()){
+		if(Settings.getInstance().isLinux()){
 			if(!x86){
 				list_dipendenze.add(new Dipendenza("swt-linux-x64.jar", "swt.jar", sito+"swt-linux-x64.jar", "linux", 1702474L, false, true));
 			}
@@ -189,7 +189,7 @@ public class Prerequisiti {
 				list_dipendenze.add(new Dipendenza("swt-linux-x86.jar", "swt.jar", sito+"swt-linux-x86.jar", "linux", 1542536L, true, false));
 			}
 		}
-		else if(Settings.isMacOS()){
+		else if(Settings.getInstance().isMacOS()){
 			if(!x86){
 				list_dipendenze.add(new Dipendenza("swt-macosx-x64.jar", "swt.jar", sito+"swt-macosx-x64.jar", "mac", 1599237L, false, true));
 			}
@@ -197,7 +197,7 @@ public class Prerequisiti {
 				list_dipendenze.add(new Dipendenza("swt-macosx-x86.jar", "swt.jar", sito+"swt-macosx-x86.jar", "mac", 1694512L, true, false));
 			}
 		}
-		else if(Settings.isWindows()){
+		else if(Settings.getInstance().isWindows()){
 			if(!x86){
 				list_dipendenze.add(new Dipendenza("swt-win32-x64.jar", "swt.jar", sito+"swt-win32-x64.jar", "windows", 1878506L, false, true));
 			}

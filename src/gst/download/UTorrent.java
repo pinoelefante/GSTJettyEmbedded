@@ -82,11 +82,11 @@ public class UTorrent implements BitTorrentClient{
 	}
 	public static String rilevaInstallazione(){
 		String path = null;
-		if(Settings.isWindows()){
+		if(Settings.getInstance().isWindows()){
 			path = System.getenv("APPDATA")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
 			if(OperazioniFile.fileExists(path))
 				return path;
-			if(Settings.is32bit()){
+			if(Settings.getInstance().is32bit()){
 				path = System.getenv("PROGRAMFILES")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
 				if(OperazioniFile.fileExists(path))
 					return path;
@@ -99,7 +99,11 @@ public class UTorrent implements BitTorrentClient{
 				if(OperazioniFile.fileExists(path))
 					return path;
 			}
-			path = Settings.getCurrentDir() + File.separator + "uTorrent.exe";
+			path = Settings.getInstance().getCurrentDir() + File.separator + "uTorrent.exe";
+		}
+		else if(Settings.getInstance().isMacOS()){
+			if(OperazioniFile.fileExists("/Applications/uTorrent.app/Contents/MacOS/uTorrent"))
+				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}
 		return null;
 	}

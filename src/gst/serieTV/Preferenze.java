@@ -7,7 +7,7 @@ public class Preferenze {
 	private boolean scarica_hd;
 	private boolean scarica_tutto;
 	
-	private static int TUTTO=4,HD=2, PREAIR=1;
+	public static int TUTTO=4,HD=2, PREAIR=1;
 	
 	public int toValue(){
 		int value=0;
@@ -26,7 +26,7 @@ public class Preferenze {
 		setFromValue(value);
 	}
 	public Preferenze(){
-		setFromValue(Settings.getRegolaDownloadDefault());
+		setFromValue(Settings.getInstance().getRegolaDownloadDefault());
 	}
 	public boolean isPreferisciHD(){
 		return scarica_hd;
