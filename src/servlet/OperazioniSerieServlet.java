@@ -45,6 +45,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseBoolean(res);
 				break;
 			}
+			case "deleteFile": {
+				int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
+				xml = ResponseSender.createResponseBoolean(manager.deleteEpisodio(idEpisodio));
+				break;
+			}
 			case "download": {
 				int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
 				boolean d = manager.downloadEpisodio(idEpisodio);

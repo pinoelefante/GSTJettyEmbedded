@@ -2,6 +2,9 @@ $(document).ready(function() {
 	caricaProvider();
 	loadSeriePreferite();
 	caricaSerieNuove();
+	bootbox.setDefaults({
+		locale: "it"
+	});
 });
 function aggiungiSerie(p, s, nomeSerie) {
 	var provider = (p == null ? selectProvider.options[selectProvider.selectedIndex].value : p);
@@ -22,7 +25,7 @@ function aggiungiSerie(p, s, nomeSerie) {
 				aggiornaEpisodi(serie, provider);
 			}
 			else {
-				showModal("Serie non aggiunta");
+				showModal("","Serie non aggiunta");
 			}
 			operazioneInCorso("");
 		}
@@ -123,40 +126,6 @@ function caricaSerieNuove(){
 		}
 	});
 }
-/*
-function caricaSerieNuove(provider) {
-	operazioneInCorso("Invio richiesta nuove serie");
-	$.ajax({
-		type : "POST",
-		url : "./OperazioniSerieServlet",
-		data : "action=getSerieNuoveFromProvider&provider=" + provider,
-		dataType : "xml",
-		success : function(msg) {
-			var response = parseBooleanXML(msg);
-			if (!response) {
-				showModal("", "Si è verificato un errore durante il caricamento delle serie");
-				return;
-			}
-			serieNuoveDivContainer.innerHTML = "";
-			$(msg).find("serie").each(function() {
-				var nome = $(this).find("name").text();
-				var id = $(this).find("id").text();
-				var provider = $(this).find("provider").text();
-				var serie = document.createElement("div");
-				$(serie).addClass("panel-serieNuova");
-				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
-				$("#serieNuoveDivContainer").append(serie);
-			});
-			operazioneInCorso("");
-		},
-		error : function(msg) {
-			operazioneInCorso("");
-			showModal("", "Si è verificato un errore durante il caricamento delle serie");
-			return;
-		}
-	});
-}
-*/
 function caricaProvider() {
 	operazioneInCorso("Invio richiesta provider");
 	$.ajax({
@@ -179,7 +148,7 @@ function caricaProvider() {
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante il caricamento dei provider");
+			showModal("","Si è verificato un errore durante il caricamento dei provider");
 		}
 	});
 }
@@ -226,7 +195,7 @@ function aggiornaSerie(bottone) {
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante l'aggiornamento");
+			showModal("","Si è verificato un errore durante l'aggiornamento");
 			$(bottone).removeAttr("disabled");
 		}
 	});
@@ -280,7 +249,7 @@ function loadSeriePreferite() {
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante l'aggiornamento");
+			showModal("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
 }
@@ -299,7 +268,7 @@ function removeSerie(id) {
 	},
 	error : function(msg) {
 		operazioneInCorso("");
-		showModal("Si è verificato un errore durante l'aggiornamento");
+		showModal("","Si è verificato un errore durante l'aggiornamento");
 	}
 	});
 }
@@ -317,7 +286,7 @@ function aggiornaEpisodi(id, provider) {
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante l'aggiornamento");
+			showModal("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
 }
@@ -406,7 +375,7 @@ function getEpisodi(id) {
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante l'aggiornamento");
+			showModal("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
 }
@@ -449,7 +418,7 @@ function downloadS(id){
 		},
 		error : function(msg) {
 			operazioneInCorso("");
-			showModal("Si è verificato un errore durante il download");
+			showModal("","Si è verificato un errore durante il download");
 		}
 	});
 }
@@ -472,7 +441,7 @@ function play(id) {
 				$("#chkEp_"+id).attr("stato_visualizzazione","3");
 				var bottone = generaBottone(3, id);
 				$("#btnPlay_"+id).replaceWith(bottone);
-				showModal("File non trovato");
+				showModal("","File non trovato");
 			}
 		},
 		error : function(msg) {
@@ -481,5 +450,35 @@ function play(id) {
 	});
 }
 function cancellaEpisodio(id){
-	
+	var stato=$("#chkEp_"+id).attr("stato_visualizzazione");
+	if(stato=="0"){
+		showModal("","Non credo tu voglia eliminare qualcosa che non esiste. Potrebbe crearsi un buco nero!");
+		return;
+	}
+	else {
+		bootbox.confirm("Vuoi davvero eliminare l'episodio?", function(){
+			$.ajax({
+				type : "POST",
+				url : "./OperazioniSerieServlet",
+				data : "action=deleteFile&episodio=" + id,
+				dataType : "xml",
+				success : function(msg) {
+					var r = parseBooleanXML(msg);
+					if(r){
+						$("#divEP_"+id).removeClass("episodioIgnorato episodioDaVedere");
+						$("#divEP_"+id).addClass("episodioRimosso");
+						$("#chkEp_"+id).attr("stato_visualizzazione","3");
+						var bottone = generaBottone(3, id);
+						$("#btnPlay_"+id).replaceWith(bottone);
+					}
+					else {
+						showModal("","Non è stato possibile eliminare il file");
+					}
+				},
+				error : function(msg) {
+					
+				}
+			});
+		});
+	}
 }

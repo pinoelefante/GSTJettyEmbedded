@@ -126,6 +126,27 @@ public class GestioneSerieTV implements Notifier {
 		return ProviderSerieTV.downloadEpisodio(idEp);
 	}
 	
+	public boolean deleteEpisodio(int idEp){
+		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
+		if(ep==null)
+			return false;
+		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+		if(serie==null)
+			return false;
+		int deleted = 0;
+		ArrayList<File> files=new ArrayList<File>();
+		files.addAll(FileFinder.getInstance().cercaFileVideo(serie, ep));
+		files.addAll(FileFinder.getInstance().cercaFileVideo(serie, ep));
+		int fileTrovati = files.size();
+		for(int i=0;i<files.size();i++){
+			if(files.get(i).delete())
+				deleted++;
+		}
+		files.clear();
+		files=null;
+		return deleted > 0 && fileTrovati>0;
+	}
+	
 	public boolean playVideo(int idEp){
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
 		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
