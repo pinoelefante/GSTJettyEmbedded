@@ -12,9 +12,6 @@ public class AppContextBuilder {
 		webAppContext = new WebAppContext();
 		webAppContext.setDescriptor(webAppContext + "/WEB-INF/web.xml");
 		webAppContext.setResourceBase("./page");
-		//String webDir = AppContextBuilder.class.getResource("./page").toExternalForm();
-		//System.out.println("Path ResFiles = "+webDir);
-		//webAppContext.setResourceBase(webDir);
 		webAppContext.setContextPath("/");
 		
 		webAppContext.addServlet(OperazioniSerieServlet.class, "/OperazioniSerieServlet");
