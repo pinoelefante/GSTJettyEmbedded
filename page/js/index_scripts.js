@@ -464,16 +464,21 @@ function play(id) {
 			if(r){
 				$("#divEP_"+id).removeClass("episodioDaVedere");
 				$("#divEP_"+id).addClass("episodioVisto");
+				$("#chkEp_"+id).attr("stato_visualizzazione","2");
 			}
-			else
+			else {
+				$("#divEP_"+id).removeClass("episodioDaVedere");
+				$("#divEP_"+id).addClass("episodioRimosso");
+				$("#chkEp_"+id).attr("stato_visualizzazione","3");
+				var bottone = generaBottone(3, id);
+				$("#btnPlay_"+id).replaceWith(bottone);
 				showModal("File non trovato");
+			}
 		},
 		error : function(msg) {
 			
 		}
 	});
-	
-	//
 }
 function cancellaEpisodio(id){
 	

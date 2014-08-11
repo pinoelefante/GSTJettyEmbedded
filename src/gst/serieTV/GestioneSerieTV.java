@@ -130,8 +130,10 @@ public class GestioneSerieTV implements Notifier {
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
 		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
 		ArrayList<File> files= FileFinder.getInstance().cercaFileVideo(serie, ep);
-		if(files.size()==0)
+		if(files.size()==0){
+			ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.RIMOSSO);
 			return false;
+		}
 		else {
 			VideoPlayer videoPlayer;
 			try {
