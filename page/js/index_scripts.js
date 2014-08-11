@@ -254,22 +254,24 @@ function loadSeriePreferite() {
 	});
 }
 function removeSerie(id) {
-	$.ajax({
-	type : "POST",
-	url : "./OperazioniSerieServlet",
-	data : "action=remove&id=" + id,
-	dataType : "xml",
-	success : function(msg) {
-		var r = parseBooleanXML(msg);
-		if (r) {
-			$("#serie" + id).remove();
-		}
-		operazioneInCorso("");
-	},
-	error : function(msg) {
-		operazioneInCorso("");
-		showModal("","Si è verificato un errore durante l'aggiornamento");
-	}
+	bootbox.confirm("Vuoi rimuovere la serie dai preferiti?",function(){
+		$.ajax({
+			type : "POST",
+			url : "./OperazioniSerieServlet",
+			data : "action=remove&id=" + id,
+			dataType : "xml",
+		    	success : function(msg) {
+		    		var r = parseBooleanXML(msg);
+		    		if (r) {
+		    			$("#serie" + id).remove();
+		    		}
+		    		operazioneInCorso("");
+		    	},
+		    	error : function(msg) {
+		    		operazioneInCorso("");
+		    		showModal("","Si è verificato un errore durante l'aggiornamento");
+		    	}
+			});
 	});
 }
 function aggiornaEpisodi(id, provider) {
@@ -451,7 +453,7 @@ function play(id) {
 }
 function cancellaEpisodio(id){
 	var stato=$("#chkEp_"+id).attr("stato_visualizzazione");
-	if(stato=="0"){
+	if(stato=="0" || stato=="3"){
 		showModal("","Non credo tu voglia eliminare qualcosa che non esiste. Potrebbe crearsi un buco nero!");
 		return;
 	}
