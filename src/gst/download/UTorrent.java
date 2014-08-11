@@ -9,11 +9,11 @@ import gst.programma.Settings;
 import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
-	private String pathInstallazione;
+	private String pathEseguibile;
 	
 	public UTorrent() {}
 	public UTorrent(String path) {
-		pathInstallazione=path;
+		pathEseguibile=path;
 	}
 	
 	@Override
@@ -36,7 +36,6 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean setDirectoryDownload(String dir) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -51,35 +50,35 @@ public class UTorrent implements BitTorrentClient{
 	}
 	
 	public void setPathInstallazione(String p){
-		pathInstallazione=p;
+		pathEseguibile=p;
 	}
 	public String getPathInstallazione(){
-		return pathInstallazione;
+		return pathEseguibile;
 	}
 	
 	public boolean downloadCLI(Torrent t, String path){
-		String[] cmd={
-				getPathInstallazione(),
-				"/NOINSTALL",
-				"/DIRECTORY",
-				("\"" + path + "\""),
-				t.getUrl()
-		};
-		
-		for(int i=0;i<cmd.length;i++)
-			System.out.print(cmd[i]+" ");
-		
-		try {
-			Process p = Runtime.getRuntime().exec(cmd);
-			if(p==null){
+		if(Os.isWindows()){
+			String[] cmd={
+					getPathInstallazione(),
+					"/NOINSTALL",
+					"/DIRECTORY",
+					("\"" + path + "\""),
+					t.getUrl()
+			};
+			
+			try {
+				Process p = Runtime.getRuntime().exec(cmd);
+				if(p==null){
+					return false;
+				}
+				return true;
+			}
+			catch (IOException e) {
+				e.printStackTrace();
 				return false;
 			}
-			return true;
 		}
-		catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return false;
 	}
 	public static String rilevaInstallazione(){
 		String path = null;

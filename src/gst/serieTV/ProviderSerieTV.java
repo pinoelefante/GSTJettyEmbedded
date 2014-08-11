@@ -250,7 +250,6 @@ public abstract class ProviderSerieTV {
 		Episodio ep = getEpisodio(idEp);
 		if(ep!=null){
 			SerieTV serie = getSerieByID(ep.getSerie());
-			System.out.println(serie.getNomeSerie());
 			Torrent torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
 			if(torrent == null){
 				return false;
