@@ -66,8 +66,17 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
-		if(!isRunning())
+		if(!isRunning()){
 			avviaClient();
+			while(!isRunning()){
+    			try {
+    				Thread.sleep(5000L);
+    			}
+    			catch (InterruptedException e) {
+    				e.printStackTrace();
+    			}
+			}
+		}
 		if(setDirectoryDownload(path)){
 			List<NameValuePair> parametri = new ArrayList<>();
 			parametri.add(new BasicNameValuePair("urls", t.getUrl()));
