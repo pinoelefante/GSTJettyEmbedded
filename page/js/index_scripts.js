@@ -254,24 +254,26 @@ function loadSeriePreferite() {
 	});
 }
 function removeSerie(id) {
-	bootbox.confirm("Vuoi rimuovere la serie dai preferiti?",function(){
-		$.ajax({
-			type : "POST",
-			url : "./OperazioniSerieServlet",
-			data : "action=remove&id=" + id,
-			dataType : "xml",
-		    	success : function(msg) {
-		    		var r = parseBooleanXML(msg);
-		    		if (r) {
-		    			$("#serie" + id).remove();
-		    		}
-		    		operazioneInCorso("");
-		    	},
-		    	error : function(msg) {
-		    		operazioneInCorso("");
-		    		showModal("","Si è verificato un errore durante l'aggiornamento");
-		    	}
-			});
+	bootbox.confirm("Vuoi rimuovere la serie dai preferiti?",function(res){
+		if(res){
+    		$.ajax({
+    			type : "POST",
+    			url : "./OperazioniSerieServlet",
+    			data : "action=remove&id=" + id,
+    			dataType : "xml",
+    		   	success : function(msg) {
+    		   		var r = parseBooleanXML(msg);
+    		   		if (r) {
+    		   			$("#serie" + id).remove();
+    		   		}
+    		   		operazioneInCorso("");
+    		   	},
+    		   	error : function(msg) {
+    		   		operazioneInCorso("");
+    		   		showModal("","Si è verificato un errore durante l'aggiornamento");
+    		   	}
+    		});
+		}
 	});
 }
 function aggiornaEpisodi(id, provider) {
@@ -458,29 +460,31 @@ function cancellaEpisodio(id){
 		return;
 	}
 	else {
-		bootbox.confirm("Vuoi davvero eliminare l'episodio?", function(){
-			$.ajax({
-				type : "POST",
-				url : "./OperazioniSerieServlet",
-				data : "action=deleteFile&episodio=" + id,
-				dataType : "xml",
-				success : function(msg) {
-					var r = parseBooleanXML(msg);
-					if(r){
-						$("#divEP_"+id).removeClass("episodioIgnorato episodioDaVedere");
-						$("#divEP_"+id).addClass("episodioRimosso");
-						$("#chkEp_"+id).attr("stato_visualizzazione","3");
-						var bottone = generaBottone(3, id);
-						$("#btnPlay_"+id).replaceWith(bottone);
-					}
-					else {
-						showModal("","Non è stato possibile eliminare il file");
-					}
-				},
-				error : function(msg) {
-					
-				}
-			});
+		bootbox.confirm("Vuoi davvero eliminare l'episodio?", function(res){
+			if(res){
+    			$.ajax({
+    				type : "POST",
+    				url : "./OperazioniSerieServlet",
+    				data : "action=deleteFile&episodio=" + id,
+    				dataType : "xml",
+    				success : function(msg) {
+    					var r = parseBooleanXML(msg);
+    					if(r){
+    						$("#divEP_"+id).removeClass("episodioIgnorato episodioDaVedere");
+    						$("#divEP_"+id).addClass("episodioRimosso");
+    						$("#chkEp_"+id).attr("stato_visualizzazione","3");
+    						var bottone = generaBottone(3, id);
+    						$("#btnPlay_"+id).replaceWith(bottone);
+    					}
+    					else {
+    						showModal("","Non è stato possibile eliminare il file");
+    					}
+    				},
+    				error : function(msg) {
+    					showModal("","Non è stato possibile eliminare il file");
+    				}
+    			});
+			}
 		});
 	}
 }
