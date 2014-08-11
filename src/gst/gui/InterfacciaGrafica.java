@@ -91,7 +91,7 @@ public class InterfacciaGrafica implements Notificable {
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(Settings.getInstance().isAskOnClose()){
-					if(JOptionPane.showConfirmDialog(null, "Vuoi veramente chiudere Gestione Serie TV?")==JOptionPane.YES_OPTION)
+					if(showConfirmDialog("Conferma chiusura", "Vuoi veramente chiudere Gestione Serie TV?"))
 						System.exit(0);
 				}
 				else
@@ -140,6 +140,5 @@ public class InterfacciaGrafica implements Notificable {
 	}
 	public void showMessageDialog(String text){
 		JOptionPane.showMessageDialog(null, text);
-		
 	}
 }

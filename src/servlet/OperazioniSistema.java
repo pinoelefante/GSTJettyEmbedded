@@ -1,5 +1,7 @@
 package servlet;
 
+import gst.gui.InterfacciaGrafica;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -19,12 +21,11 @@ public class OperazioniSistema extends HttpServlet {
 		String action = req.getParameter("action");
 		switch(action){
 			case "isOpen":
-				resp.getOutputStream().write("OK".getBytes());
 				break;
 			case "show":
-				
+				InterfacciaGrafica.getInstance().apriInterfaccia();
 				break;
 		}
-		
+		resp.getOutputStream().write("OK".getBytes());
 	}
 }

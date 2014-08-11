@@ -1,10 +1,14 @@
 package server;
 
 import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import gst.database.Database;
 import gst.gui.InterfacciaGrafica;
+import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.programma.importer.Importer;
 import gst.serieTV.GestioneSerieTV;
@@ -12,15 +16,33 @@ import gst.serieTV.GestioneSerieTV;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
+import util.httpOperations.HttpOperations;
+
 
 public class ServerStart {
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) {
+		
+		try {
+    		if(HttpOperations.GET_withBoolean("http://localhost:8585/OperazioniSistemaServlet?action=isOpen")){
+    			System.out.println("Un'altra istanza è in esecuzione");
+    			HttpOperations.GET_withBoolean("http://localhost:8585/OperazioniSistemaServlet?action=show");
+    			System.exit(0);
+    		}
+		}
+		catch(Exception e){}
+		
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
 		contexts.setHandlers(new Handler[] { new AppContextBuilder().buildWebAppContext() });
 
 		final JettyServer jettyServer = new JettyServer();
 		jettyServer.setHandler(contexts);
-		jettyServer.start();
+		try {
+			jettyServer.start();
+		}
+		catch (Exception e1) {
+			e1.printStackTrace();
+			return;
+		}
 		
 		Settings settings = Settings.getInstance();
 		
@@ -30,7 +52,8 @@ public class ServerStart {
 		
 		final GestioneSerieTV gst = GestioneSerieTV.getInstance();
 		
-		if(settings.isFirstStart()){
+		String dbPath = Settings.getInstance().getUserDir()+File.separator+"database2.sqlite";
+		if(settings.isFirstStart() && OperazioniFile.fileExists(dbPath)){
 			if(ui.showConfirmDialog("Importa", "Vuoi importare i dati da una versione precedente di Gestione Serie TV?")){
     			Importer importer = new Importer();
     			importer.subscribe(ui);
@@ -51,7 +74,13 @@ public class ServerStart {
 		if(!settings.isStartHidden()){
 			if(Desktop.isDesktopSupported()){
     			Desktop d = Desktop.getDesktop();
-    			d.browse(new URI("http://localhost:8585"));
+    			try {
+					d.browse(new URI("http://localhost:8585"));
+				}
+				catch (IOException | URISyntaxException e) {
+					ui.sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
+					e.printStackTrace();
+				}
 			}
 			else {
 				ui.sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
