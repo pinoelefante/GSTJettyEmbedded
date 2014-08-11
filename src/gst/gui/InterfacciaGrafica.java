@@ -20,10 +20,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class InterfacciaGrafica implements Notificable {
 	private static InterfacciaGrafica sing;
+	private JFrame frameOpzioni;
 	
 	public static InterfacciaGrafica getInstance(){
 		if(sing==null)
@@ -54,9 +56,11 @@ public class InterfacciaGrafica implements Notificable {
 		tray = SystemTray.getSystemTray();
 		final MenuItem restoreWin = new MenuItem("Apri");
 		restoreWin.setFont(new Font(null, Font.BOLD, 14));
+		MenuItem opzioni = new MenuItem("Opzioni");
 		MenuItem exitItem = new MenuItem("Chiudi");
 
 		popup.add(restoreWin);
+		popup.add(opzioni);
 		popup.addSeparator();
 		popup.add(exitItem);
 
@@ -76,13 +80,24 @@ public class InterfacciaGrafica implements Notificable {
 		});
 		restoreWin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Desktop desk = Desktop.getDesktop();
-				try {
-					desk.browse(new URI("http://localhost:8585"));
+				
+				if(Desktop.isDesktopSupported()){
+	    			Desktop d = Desktop.getDesktop();
+	    			try {
+						d.browse(new URI("http://localhost:8585"));
+					}
+					catch (IOException | URISyntaxException e) {
+						e.printStackTrace();
+					}
 				}
-				catch (IOException | URISyntaxException e) {
-					e.printStackTrace();
+				else {
+					sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
 				}
+			}
+		});
+		opzioni.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostraFinestraOpzioni();
 			}
 		});
 		exitItem.addActionListener(new ActionListener() {
@@ -110,5 +125,15 @@ public class InterfacciaGrafica implements Notificable {
 	public void sendNotify(String text) {
 		if(tray != null)
 			tray.getTrayIcons()[0].displayMessage("Gestione Serie TV", text, MessageType.INFO);
+	}
+	public void mostraFinestraOpzioni(){
+		if(frameOpzioni==null)
+			frameOpzioni=new FrameOpzioni();
+		frameOpzioni.setVisible(true);
+	}
+	public boolean showConfirmDialog(String titolo, String text){
+		if(JOptionPane.showConfirmDialog(null, titolo, text, JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
+			return true;
+		return false;
 	}
 }

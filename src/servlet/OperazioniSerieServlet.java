@@ -1,7 +1,5 @@
 package servlet;
 
-import gst.player.VideoPlayer;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -101,13 +99,13 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "play": {
 				try {
 					int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
-					VideoPlayer player = Settings.getInstance().getVideoPlayer();
-					player.playVideo("D:\\SerieTV\\Black Sails\\Black.Sails.S01E01.HDTV.x264-2HD.mp4");
+					boolean r=manager.playVideo(idEpisodio);
+					xml=ResponseSender.createResponseBoolean(r);
 				}
 				catch (Exception e) {
+					xml = ResponseSender.createResponseBoolean(false);
 					e.printStackTrace();
 				}
-				xml = ResponseSender.createResponseBoolean(true);
 				break;
 			}
 			case "remove": {

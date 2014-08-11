@@ -1,6 +1,7 @@
 package gst.programma;
 
 import gst.download.BitTorrentClient;
+import gst.download.QBittorrent;
 import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
@@ -12,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
+
+import util.os.Os;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
@@ -28,8 +31,7 @@ public class Settings {
 	public static final String	IndirizzoDonazioni		= "http://pinoelefante.altervista.org/donazioni/donazione_gst.html";
 	private String	current_dir							= "";
 	private String	user_dir							= "";
-		
-	private String	sistemaOperativo					= "";
+	
 	private Properties	opzioni;
 	
 	private BitTorrentClient bitClient					= null;
@@ -50,9 +52,8 @@ public class Settings {
 		}
 	}
 	private void baseSettings(){
-		sistemaOperativo = System.getProperty("os.name");
 		current_dir = ClassLoader.getSystemClassLoader().getResource(".").getPath();
-		if(isWindows() && current_dir.startsWith("/")){
+		if(Os.isWindows() && current_dir.startsWith("/")){
 			current_dir=current_dir.substring(1).replace("%20", " ").replace("\\", File.separator).replace("/", File.separator);
 		}
 		System.setProperty("user.dir", current_dir);
@@ -94,14 +95,14 @@ public class Settings {
 	}
 	@SuppressWarnings("unused")
 	public void createAutoStart() {
-		if(isWindows()){
+		if(Os.isWindows()){
 			Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV", getCurrentDir()+getEXEName());
 		}
-		else if(isLinux()){
+		else if(Os.isLinux()){
 			String path_exec=System.getProperty("java.home")+File.separator+"bin"+File.separator+"java -jar "+getCurrentDir()+getEXEName();
 			//TODO
 		}
-		else if(isMacOS()){
+		else if(Os.isMacOS()){
 			String path_exec=System.getProperty("java.home")+File.separator+"bin"+File.separator+"java -jar "+getCurrentDir()+getEXEName();
 			//TODO
 		}
@@ -122,9 +123,9 @@ public class Settings {
 		if(bitClient!=null)
 			return bitClient;
 		else {
-			String pathClient = UTorrent.rilevaInstallazione();
+			String pathClient = QBittorrent.rilevaInstallazione();//UTorrent.rilevaInstallazione();
 			if(pathClient!=null){
-				bitClient = new UTorrent(pathClient);
+				bitClient = new QBittorrent(pathClient);//new UTorrent(pathClient);
 				return bitClient;
 			}
 			else
@@ -173,43 +174,15 @@ public class Settings {
 		}
 		throw new RuntimeException();
 	}
-	public String getOSName(){
-		String name="";
-		
-		if(isWindows())
-			name="win32";
-		else if(isLinux())
-			name="linux";
-		else if(isMacOS())
-			name="macos";
-		
-		return name;
-	}
 	public int getRegolaDownloadDefault(){
 		return Integer.parseInt(getOpzione("regola_download"));
 	}
-	public String getSistemaOperativo() {
-		return sistemaOperativo;
-	}
+	
 	public String getUserDir(){
 		return user_dir;
 	}
 	public int getVersioneSoftware() {
 		return VersioneSoftware;
-	}
-	public String getVMArch(){
-		if(is32bit())
-			return "i386";
-		else
-			return "amd64";
-	}
-	public boolean is32bit(){
-		String arch_vm = System.getProperty("os.arch");
-		boolean x86 = arch_vm.contains("x86")||arch_vm.contains("i386");
-		return x86;
-	}
-	public boolean is64bit(){
-		return !is32bit();
 	}
 	public boolean isAskOnClose() {
 		return Boolean.parseBoolean(getOpzione("ask_on_close"));
@@ -226,34 +199,22 @@ public class Settings {
 	public boolean isFirstStart(){
 		return Boolean.parseBoolean(getOpzione("first_start"));
 	}
-	public boolean isLinux(){
-		return getSistemaOperativo().contains("Linux");
-	}
-
-	public boolean isMacOS(){
-		return getSistemaOperativo().contains("Mac");
-	}
-
 	public boolean isRicercaSottotitoli() {
 		return Boolean.parseBoolean(getOpzione("download_sottotitoli"));
 	}
 	public boolean isStartHidden() {
 		return Boolean.parseBoolean(getOpzione("start_hidden"));
 	}
-	
-	public boolean isWindows(){
-		return getSistemaOperativo().contains("Windows");
-	}
 	public void removeAutostart() {
-		if(isWindows()){
+		if(Os.isWindows()){
 			if(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV")){
 				Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV");
 			}
 		}
-		else if(isLinux()){
+		else if(Os.isLinux()){
 			//TODO
 		}
-		else if(isMacOS()){
+		else if(Os.isMacOS()){
 			//TODO
 		}
 	}

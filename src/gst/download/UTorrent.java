@@ -3,6 +3,7 @@ package gst.download;
 import java.io.File;
 import java.io.IOException;
 
+import util.os.Os;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Torrent;
@@ -82,11 +83,11 @@ public class UTorrent implements BitTorrentClient{
 	}
 	public static String rilevaInstallazione(){
 		String path = null;
-		if(Settings.getInstance().isWindows()){
+		if(Os.isWindows()){
 			path = System.getenv("APPDATA")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
 			if(OperazioniFile.fileExists(path))
 				return path;
-			if(Settings.getInstance().is32bit()){
+			if(Os.is32bit()){
 				path = System.getenv("PROGRAMFILES")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
 				if(OperazioniFile.fileExists(path))
 					return path;
@@ -103,7 +104,7 @@ public class UTorrent implements BitTorrentClient{
 			if(OperazioniFile.fileExists(path))
 				return path;
 		}
-		else if(Settings.getInstance().isMacOS()){
+		else if(Os.isMacOS()){
 			if(OperazioniFile.fileExists("/Applications/uTorrent.app/Contents/MacOS/uTorrent"))
 				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}

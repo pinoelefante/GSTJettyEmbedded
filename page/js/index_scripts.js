@@ -465,6 +465,8 @@ function play(id) {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
 				$("#divEP_"+id).addClass("episodioVisto");
 			}
+			else
+				showModal("File non trovato");
 		},
 		error : function(msg) {
 			

@@ -3,6 +3,8 @@ package gst.player;
 import java.io.File;
 import java.io.IOException;
 
+import util.os.Os;
+
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 
@@ -16,8 +18,7 @@ import gst.programma.Settings;
     		pathExe=vlcPath;
 		}
 		public static String rilevaVLC(){
-    		if(Settings.getInstance().isWindows()){
-    			
+    		if(Os.isWindows()){
     			try {
     				if(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\VideoLAN\\VLC", "")){
         				String dirVLC = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, "Software\\VideoLAN\\VLC", "");
@@ -26,11 +27,11 @@ import gst.programma.Settings;
         			}
     			}
     			catch(Exception e){
-    				return null;
+    				e.printStackTrace();
     			}
     			
     			String path=null;
-				if(Settings.getInstance().is32bit()){
+				if(Os.is32bit()){
     				path = System.getenv("PROGRAMFILES")+File.separator+"VideoLAN"+File.separator+"VLC"+File.separator+"vlc.exe";
     				if(OperazioniFile.fileExists(path))
     					return path;
@@ -47,11 +48,11 @@ import gst.programma.Settings;
 				if(OperazioniFile.fileExists(path))
 					return path;
     		}
-    		else if(Settings.getInstance().isLinux()){
+    		else if(Os.isLinux()){
     			if(OperazioniFile.fileExists("/usr/bin/vlc"))
     				return "/usr/bin/vlc";
     		}
-    		else if(Settings.getInstance().isMacOS()){
+    		else if(Os.isMacOS()){
     			
     		}
     		return null;
@@ -62,7 +63,6 @@ import gst.programma.Settings;
     	}
 		@Override
 		public boolean playVideo(String pathVideo) {
-			System.out.println("PlayVideo");
 			String[] cmd = {
 					pathExe,
 					"\"file:///"+pathVideo+"\"",

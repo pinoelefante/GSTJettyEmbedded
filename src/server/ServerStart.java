@@ -31,13 +31,14 @@ public class ServerStart {
 		final GestioneSerieTV gst = GestioneSerieTV.getInstance();
 		
 		if(settings.isFirstStart()){
-			//TODO chiedere se si vogliono importare i vecchi episodi
-			Importer importer = new Importer();
-			importer.subscribe(ui);
-			importer.startImport();
-			importer.unsubscribe(ui);
-			
-			//TODO mostrare finestra che fa scegliere il percorso di download
+			if(ui.showConfirmDialog("Importa", "Vuoi importare i dati da una versione precedente di Gestione Serie TV?")){
+    			Importer importer = new Importer();
+    			importer.subscribe(ui);
+    			importer.startImport();
+    			importer.unsubscribe(ui);
+			}
+			if(ui.showConfirmDialog("Opzioni", "Vuoi modificare le impostazioni predefinite dell'applicazione?"))
+				ui.mostraFinestraOpzioni();
 			
 			settings.setFirstStart(false);
 			settings.salvaSettings();
@@ -48,10 +49,14 @@ public class ServerStart {
 		gst.subscribe(ui);
 		
 		if(!settings.isStartHidden()){
-			Desktop d = Desktop.getDesktop();
-			d.browse(new URI("http://localhost:8585"));
+			if(Desktop.isDesktopSupported()){
+    			Desktop d = Desktop.getDesktop();
+    			d.browse(new URI("http://localhost:8585"));
+			}
+			else {
+				ui.sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
+			}
 		}
-		
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {

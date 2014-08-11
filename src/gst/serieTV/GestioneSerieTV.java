@@ -3,9 +3,13 @@ package gst.serieTV;
 import gst.database.Database;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
+import gst.player.FileFinder;
+import gst.player.VideoPlayer;
+import gst.programma.Settings;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class GestioneSerieTV implements Notifier {
@@ -120,6 +124,28 @@ public class GestioneSerieTV implements Notifier {
 	
 	public boolean downloadEpisodio(int idEp) {
 		return ProviderSerieTV.downloadEpisodio(idEp);
+	}
+	
+	public boolean playVideo(int idEp){
+		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
+		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+		ArrayList<File> files= FileFinder.getInstance().cercaFileVideo(serie, ep);
+		if(files.size()==0)
+			return false;
+		else {
+			VideoPlayer videoPlayer;
+			try {
+				videoPlayer = Settings.getInstance().getVideoPlayer();
+				videoPlayer.playVideo(files.get(0).getAbsolutePath());
+				if(ep.getStatoVisualizzazione()!=Episodio.VISTO)
+					ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.VISTO);
+				return true;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
 	}
 	
 	public GestoreSottotitoli getSubManager(){
