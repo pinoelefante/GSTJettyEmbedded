@@ -3,6 +3,7 @@ package server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import servlet.OperazioniSerieServlet;
+import servlet.OperazioniSistema;
 
 public class AppContextBuilder {
 	private WebAppContext webAppContext;
@@ -17,6 +18,7 @@ public class AppContextBuilder {
 		webAppContext.setContextPath("/");
 		
 		webAppContext.addServlet(OperazioniSerieServlet.class, "/OperazioniSerieServlet");
+		webAppContext.addServlet(OperazioniSistema.class, "/OperazioniSistemaServlet");
 		
 		return webAppContext;
 	}

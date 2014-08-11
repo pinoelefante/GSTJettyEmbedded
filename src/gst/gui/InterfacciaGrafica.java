@@ -80,19 +80,7 @@ public class InterfacciaGrafica implements Notificable {
 		});
 		restoreWin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				if(Desktop.isDesktopSupported()){
-	    			Desktop d = Desktop.getDesktop();
-	    			try {
-						d.browse(new URI("http://localhost:8585"));
-					}
-					catch (IOException | URISyntaxException e) {
-						e.printStackTrace();
-					}
-				}
-				else {
-					sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
-				}
+				apriInterfaccia();
 			}
 		});
 		opzioni.addActionListener(new ActionListener() {
@@ -132,8 +120,26 @@ public class InterfacciaGrafica implements Notificable {
 		frameOpzioni.setVisible(true);
 	}
 	public boolean showConfirmDialog(String titolo, String text){
-		if(JOptionPane.showConfirmDialog(null, titolo, text, JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
+		if(JOptionPane.showConfirmDialog(null, text, titolo, JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
 			return true;
 		return false;
+	}
+	public void apriInterfaccia(){
+		if(Desktop.isDesktopSupported()){
+			Desktop d = Desktop.getDesktop();
+			try {
+				d.browse(new URI("http://localhost:8585"));
+			}
+			catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
+		}
+	}
+	public void showMessageDialog(String text){
+		JOptionPane.showMessageDialog(null, text);
+		
 	}
 }
