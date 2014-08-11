@@ -10,6 +10,14 @@ function aggiungiSerie(p, s, nomeSerie) {
 	var provider = (p == null ? selectProvider.options[selectProvider.selectedIndex].value : p);
 	var serie = (s == null ? selectSerie.options[selectSerie.selectedIndex].value : s);
 	var nome = (nomeSerie == null ? selectSerie.options[selectSerie.selectedIndex].innerHTML : nomeSerie);
+	if(provider == null || provider==""){
+		showModal("","Devi selezionare un provider");
+		return;
+	}
+	if(serie==null || serie==""){
+		showModal("","Devi selezionare una serie da aggiungere");
+		return;
+	}
 	operazioneInCorso("Aggiungo la serie alle preferite");
 	$.ajax({
 		type : "POST",
@@ -27,6 +35,10 @@ function aggiungiSerie(p, s, nomeSerie) {
 			else {
 				showModal("","Serie non aggiunta");
 			}
+			operazioneInCorso("");
+		},
+		error : function(msg){
+			showModal("Si è verificato un errore");
 			operazioneInCorso("");
 		}
 	});
