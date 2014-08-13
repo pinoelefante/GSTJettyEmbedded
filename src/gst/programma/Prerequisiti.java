@@ -1,5 +1,7 @@
 package gst.programma;
 
+import gst.download.Download;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

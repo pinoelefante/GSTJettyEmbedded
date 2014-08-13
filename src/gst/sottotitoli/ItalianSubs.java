@@ -1,7 +1,7 @@
 package gst.sottotitoli;
 
+import gst.download.Download;
 import gst.naming.Renamer;
-import gst.programma.Download;
 import gst.programma.ManagerException;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;

@@ -1,7 +1,7 @@
 package gst.serieTV;
 
 import gst.database.Database;
-import gst.programma.Download;
+import gst.download.Download;
 import gst.tda.db.KVResult;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 package gst.programma;
 
 import gst.database.Database;
+import gst.download.Download;
 
 import java.io.File;
 import java.io.FileNotFoundException;

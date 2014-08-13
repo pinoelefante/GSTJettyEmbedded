@@ -25,7 +25,7 @@ import gst.serieTV.Torrent;
 
 public class QBittorrent implements BitTorrentClient {
 	private String pathExe="", pathConfig="", configFile="";
-	private String address, port;
+	private String address, port, version="3.1.9.2";
 
 	public QBittorrent(String exe) {
 		if(Os.isWindows()){
@@ -54,10 +54,30 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	public boolean setDirectoryDownload(String dir) {
+		try {
+			if(compareVersion(version, "3.2.0")<0){
+    			modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
+    			reloadSettings();
+    			return true;
+			}
+			else {
+				List<NameValuePair> parametri = new ArrayList<>();
+				parametri.add(new BasicNameValuePair("json", "{\"save_path\":\""+dir.replace(File.separator, "/")+"\"}"));
+				boolean r = HttpOperations.POST_withBoolean("http://"+address+":"+port+"/command/setPreferences", parametri);
+				return r;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	private boolean reloadSettings() { /* setta un parametro casuale in modo da ricaricare i settings */
 		List<NameValuePair> parametri = new ArrayList<>();
 		try {
-			parametri.add(new BasicNameValuePair("json", "{\"save_path\":\""+dir+"\"}"));
-			return HttpOperations.POST_withBoolean("http://"+address+":"+port+"/command/setPreferences", parametri);
+			parametri.add(new BasicNameValuePair("json", "{\"dht\":\""+true+"\"}"));
+			boolean r = HttpOperations.POST_withBoolean("http://"+address+":"+port+"/command/setPreferences", parametri);
+			return r;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -135,6 +155,31 @@ public class QBittorrent implements BitTorrentClient {
 				String[] kv=opzioni.get(i).split("=");
 				port=kv[1];
 				break;
+			}
+		}
+	}
+	
+	private void modificaParametroFileConfig(ArrayList<String> opzioni, String param, Object value) {
+		boolean found = false;
+		//System.out.println("In cerca del parametro "+param+" da settare "+value.toString());
+		for(int i=0;i<opzioni.size();i++){
+			if(opzioni.get(i).startsWith(param)){
+				/*String p=*/opzioni.remove(i);
+				//System.out.println("Trovato: "+p);
+				opzioni.add(i,param+"="+value.toString());
+				//System.out.println("Aggiunto: "+opzioni.get(i));
+				found = true;
+				break;
+			}
+		}
+		
+		if(found){
+			try {
+				salvaOpzioni(opzioni);
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -338,6 +383,15 @@ public class QBittorrent implements BitTorrentClient {
 		Settings.getInstance();
 		QBittorrent bit = new QBittorrent(rilevaInstallazione());
 		System.out.println(bit.address+":"+bit.port);
+	}
+	private int compareVersion(String c1, String c2){
+		if(c1.compareTo(c2)==0)
+			return 0;
+		for(int i=0;i<c1.length() && i<c2.length();i++){
+			if(new Character(c1.charAt(i)).compareTo(c2.charAt(i))>0)
+				return 1;
+		}
+		return -1;
 	}
 	
 	public static String rilevaInstallazione(){

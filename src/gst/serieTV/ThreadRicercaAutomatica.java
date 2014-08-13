@@ -1,6 +1,6 @@
 package gst.serieTV;
 
-import gst.programma.Download;
+import gst.download.Download;
 import gst.programma.Settings;
 
 import java.io.File;

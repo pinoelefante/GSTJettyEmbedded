@@ -1,6 +1,6 @@
 package gst.infoManager;
 
-import gst.programma.Download;
+import gst.download.Download;
 import gst.programma.ManagerException;
 import gst.programma.OperazioniFile;
 import gst.serieTV.SerieTV;

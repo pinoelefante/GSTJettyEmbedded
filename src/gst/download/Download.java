@@ -1,6 +1,6 @@
-package gst.programma;
+package gst.download;
 
-import gst.download.BitTorrentClient;
+import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
 
