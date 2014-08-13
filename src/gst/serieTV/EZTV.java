@@ -104,9 +104,11 @@ public class EZTV extends ProviderSerieTV {
 		}
 		finally {
 			update_in_corso=false;
-			file.close();
+			if(file!=null)
+				file.close();
 			try {
-				f_r.close();
+				if(f_r!=null)
+					f_r.close();
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -135,8 +137,8 @@ public class EZTV extends ProviderSerieTV {
 			case "temp7":
 			case "temp8":
 			case "temp9":
-			case "temporary_tlaceholder":
-			case "temporary_tlaceholder_2":
+			case "temporary_placeholder":
+			case "temporary_placeholder_2":
 			case "temp 01":
 			case "temp 02":
 			case "temp 03":
@@ -154,7 +156,6 @@ public class EZTV extends ProviderSerieTV {
 		return false;
 	}
 
-	//TODO modificare
 	protected void salvaSerieInDB(SerieTV s) {
 		if (s.getIDDb() == 0) {
 			String query = "INSERT INTO " + Database.TABLE_SERIETV + " (nome, url, conclusa, stop_search, provider, id_itasa, id_subsfactory, id_subspedia, id_tvdb, preferenze_download) VALUES (" + "\"" + s.getNomeSerie() + "\", " + "\"" + s.getUrl() + "\"," + (s.isConclusa() ? 1 : 0) + "," + (s.isStopSearch() ? 1 : 0) + "," + getProviderID() + "," + s.getIDItasa() + "," + s.getIDDBSubsfactory() + "," + s.getIDSubspedia() + "," + s.getIDTvdb() + "," + s.getPreferenze().toValue() + ")";
@@ -172,7 +173,6 @@ public class EZTV extends ProviderSerieTV {
 			String query = "UPDATE " + Database.TABLE_SERIETV + " SET " + "nome=" + "\"" + s.getNomeSerie() + "\"" + ", url=" + "\"" + s.getUrl() + "\"" + ", conclusa=" + (s.isConclusa() ? 1 : 0) + ", stop_search=" + (s.isStopSearch() ? 1 : 0) + ", id_itasa=" + s.getIDItasa() + ", id_subsfactory=" + s.getIDDBSubsfactory() + ", id_subspedia=" + s.getIDSubspedia() + ", id_tvdb=" + s.getIDTvdb() + ", preferenze_download=" + s.getPreferenze().toValue() + " WHERE id=" + s.getIDDb();
 			Database.updateQuery(query);
 		}
-
 	}
 
 	@Override

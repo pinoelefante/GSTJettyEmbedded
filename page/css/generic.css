@@ -3,3 +3,10 @@
 .donationIMG:hover {
 	cursor: pointer;
 }
+.closeMessage {
+	position: absolute;
+	top: 40%;
+	bottom: 40%;
+	left: 40%;
+	right: 40%;
+}

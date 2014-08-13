@@ -57,9 +57,8 @@ function closeGST(){
 		success : function(msg) {
 			if(parseBooleanXML(msg)){
 				$("body").empty();
-				bootbox.alert("Gestione Serie TV è stato chiuso", function(){
-					 window.close();
-				});
+				document.getElementsByTagName("body")[0].innerHTML="<h1 class='closeMessage'>Arrivederci!</h1>";
+				showModal("","Gestione Serie TV è stato chiuso");
 			}
 			else
 				showModal("","Si è verificato un errore");
