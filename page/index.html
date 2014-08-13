@@ -4,6 +4,7 @@
 <title>Gestione Serie TV - Homepage</title>
  <link rel="icon" href="img/favicon.png" type="image/png" />
 <link rel="stylesheet" type="text/css" href="css/mainstyle.css" />
+<link href="css/generic.css" rel="stylesheet">
 <script src="js/jquery-1.11.1.js"></script>
 <script src="js/functions.js"></script>
 <script src="js/index_scripts.js"></script>
@@ -15,7 +16,6 @@
 	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          
           <a class="navbar-brand" href="#">Gestione Serie TV</a>
         </div>
         <div class="navbar-collapse collapse">
@@ -24,15 +24,19 @@
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Avanzate <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
+              	<li><a href="regoleDownload.html">Regole download</a></li>
                 <li><a href="sottotitoli.html">Sottotitoli</a></li>
                 <li><a href="episodi.html">Stato episodi</a></li>
                 <li class="divider"></li>
                 <li><a onclick="goToOpzioni()">Opzioni</a></li>
+                <li class="divider"></li>
+                <li><a onclick="cercaUpdate()">Cerca aggiornamenti</a></li>
               </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-          	<li><img src="img/dona.jpg" title="Effettua donazione" alt="Effettua donazione" height="50px" onclick="goToDonazione()"></li>
+          	<li><a href="#" onclick="chiudiGST()">Chiudi</a></li>
+          	<li><img class="donationIMG" src="img/dona.jpg" title="Clicca per effettuare una donazione" alt="Effettua donazione" height="50px" onclick="goToDonazione()"></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -49,33 +53,32 @@
 			<div id="altervista">
 				<!-- 
 				<iframe src="http://pinoelefante.altervista.org/ads.html" id="altervistaFrame"></iframe>
-			 -->
+			 	-->
 			</div>
 		</div>
 
 		<div id="containerCenter">
 			<div id="addSerie">
 				<div id="selectSerieDiv">
-					<label>Provider</label> <select class="form-control"
-						id="selectProvider" onchange="caricaSerieFromProvider()">
+					<label>Provider</label> 
+					<select class="form-control" id="selectProvider" onchange="caricaSerieFromProvider()">
 						<option selected></option>
 						<optgroup label="Provider" id="groupProvider">
 						</optgroup>
-					</select> <label>Serie</label> <select class="form-control" id="selectSerie">
+					</select> 
+					<label>Serie</label> 
+					<select class="form-control" id="selectSerie">
 						<option></option>
 						<optgroup label="Serie" id="optSelectSerie">
 						</optgroup>
 					</select>
-					<button class="btn btn-primary" onclick="aggiungiSerie()"
-						title='Aggiungi'>
+					<button class="btn btn-primary" onclick="aggiungiSerie()" title='Aggiungi'>
 						<span class="glyphicon glyphicon-plus"></span>
 					</button>
-					<button class="btn btn-warning" onclick="infoSerie()"
-						title='Info serie'>
+					<button class="btn btn-warning" onclick="infoSerie()" title='Info serie'>
 						<span class="glyphicon glyphicon-info-sign"></span>
 					</button>
-					<button class="btn btn-warning" onclick="aggiornaSerie(this)"
-						title='Aggiorna elenco serie tv'>
+					<button class="btn btn-warning" onclick="aggiornaSerie(this)" title='Aggiorna elenco serie tv'>
 						<span class="glyphicon glyphicon-refresh"></span>
 					</button>
 				</div>
@@ -164,9 +167,7 @@
 	</script>
 	<noscript>
 		<p>
-			<img
-				src="http://pinoelefante.altervista.org/piwik/piwik.php?idsite=4"
-				style="border: 0;" alt="" />
+			<img src="http://pinoelefante.altervista.org/piwik/piwik.php?idsite=4" style="border: 0;" alt="" />
 		</p>
 	</noscript>
 	<!-- End Piwik Code -->

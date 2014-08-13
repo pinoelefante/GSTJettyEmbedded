@@ -2,7 +2,6 @@ package gst.programma;
 
 import gst.download.BitTorrentClient;
 import gst.download.QBittorrent;
-import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
 import gst.serieTV.Preferenze;

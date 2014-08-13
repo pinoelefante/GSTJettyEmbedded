@@ -11,12 +11,61 @@ function goToOpzioni(){
 		type : "POST",
 		url : "./OperazioniSistemaServlet",
 		data : "action=showOpzioni",
-		dataType : "text",
+		dataType : "xml",
 		success : function(msg) {
 			showModal("Opzioni","La finestra delle operazioni si è aperta");
 		},
 		error : function(msg){
-			showModal("Si è verificato un errore");
+			showModal("","Si è verificato un errore");
+			operazioneInCorso("");
+		}
+	});
+}
+function cercaUpdate(){
+	
+}
+function chiudiGST(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSistemaServlet",
+		data : "action=isAskOnClose",
+		dataType : "xml",
+		success : function(msg) {
+			var ask = parseBooleanXML(msg);
+			if(ask){
+				bootbox.confirm("Vuoi veramente chiudere GST?", function(r){
+					if(r)
+						closeGST();
+				});
+			}
+			else {
+				closeGST();
+			}
+		},
+		error : function(msg){
+			showModal("","Si è verificato un errore");
+			operazioneInCorso("");
+		}
+	});
+}
+function closeGST(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSistemaServlet",
+		data : "action=closeGST",
+		dataType : "xml",
+		success : function(msg) {
+			if(parseBooleanXML(msg)){
+				$("body").empty();
+				bootbox.alert("Gestione Serie TV è stato chiuso", function(){
+					 window.close();
+				});
+			}
+			else
+				showModal("","Si è verificato un errore");
+		},
+		error : function(msg){
+			showModal("","Si è verificato un errore");
 			operazioneInCorso("");
 		}
 	});

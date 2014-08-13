@@ -25,6 +25,8 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class InterfacciaGrafica implements Notificable {
 	private static InterfacciaGrafica sing;
@@ -37,6 +39,12 @@ public class InterfacciaGrafica implements Notificable {
 	}
 	
 	private InterfacciaGrafica(){
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 		setTray();
 	}
 	
