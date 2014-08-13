@@ -66,11 +66,11 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
-		if(!isRunning()){
+		if(!isRunning() || !isWebServiceOnline()){
 			avviaClient();
-			while(!isRunning()){
+			while(!isRunning() || !isWebServiceOnline()){
     			try {
-    				Thread.sleep(5000L);
+    				Thread.sleep(1000L);
     			}
     			catch (InterruptedException e) {
     				e.printStackTrace();
@@ -92,10 +92,11 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	private void avviaClient() {
-		if(Os.isWindows()){
+		if(Os.isWindows() || Os.isLinux()){
 			String[] cmd = {
 				pathExe
 			};
+			System.out.println(pathExe);
 			try {
 				Runtime.getRuntime().exec(cmd);
 			}
@@ -319,7 +320,16 @@ public class QBittorrent implements BitTorrentClient {
 			}
 		}
 	}
-
+	private boolean isWebServiceOnline(){
+		try {
+			HttpOperations.GET_withBoolean("http://"+address+":"+port+"/json/torrents");
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	@Override
 	public String auth(String username, String pass) {
 		return "";
@@ -352,6 +362,13 @@ public class QBittorrent implements BitTorrentClient {
     			}
     			catch(Exception e){}
 			}
+		}
+		else if(Os.isLinux()){
+			String path = "/usr/bin/qbittorrent";
+			if(OperazioniFile.fileExists(path))
+				return path;
+			else
+				System.out.println("qbittorrent non trovato");
 		}
 		return null;
 	}

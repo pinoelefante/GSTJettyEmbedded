@@ -52,7 +52,13 @@ public class OperazioniSerieServlet extends HttpServlet {
 			}
 			case "download": {
 				int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
-				boolean d = manager.downloadEpisodio(idEpisodio);
+				boolean d = false;
+				try {
+					d = manager.downloadEpisodio(idEpisodio);
+				}
+				catch(Exception e){
+					d=false;
+				}
 				xml = ResponseSender.createResponseDownload(idEpisodio, d);
 				break;
 			}
