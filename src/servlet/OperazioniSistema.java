@@ -25,6 +25,9 @@ public class OperazioniSistema extends HttpServlet {
 			case "show":
 				InterfacciaGrafica.getInstance().apriInterfaccia();
 				break;
+			case "showOpzioni":
+				InterfacciaGrafica.getInstance().mostraFinestraOpzioni();
+				break;
 		}
 		resp.getOutputStream().write("OK".getBytes());
 	}

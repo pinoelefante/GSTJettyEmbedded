@@ -5,11 +5,14 @@ import gst.programma.Settings;
 
 import java.awt.AWTException;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
@@ -117,6 +120,7 @@ public class InterfacciaGrafica implements Notificable {
 	public void mostraFinestraOpzioni(){
 		if(frameOpzioni==null)
 			frameOpzioni=new FrameOpzioni();
+		centraFinestra(Toolkit.getDefaultToolkit().getScreenSize(), frameOpzioni);
 		frameOpzioni.setVisible(true);
 	}
 	public boolean showConfirmDialog(String titolo, String text){
@@ -140,5 +144,10 @@ public class InterfacciaGrafica implements Notificable {
 	}
 	public void showMessageDialog(String text){
 		JOptionPane.showMessageDialog(null, text);
+	}
+	private void centraFinestra(Dimension risoluzione, Frame finestra){
+		int x=risoluzione.width/2-finestra.getSize().width/2;
+		int y=risoluzione.height/2-finestra.getSize().width/2;
+		finestra.setLocation(x, y);
 	}
 }

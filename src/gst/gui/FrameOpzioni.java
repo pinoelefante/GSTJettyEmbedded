@@ -14,7 +14,7 @@ public class FrameOpzioni extends JFrame {
 		setUndecorated(true);
 		setSize(640, 480);
 		setResizable(false);
-		setAlwaysOnTop(false);
+		setAlwaysOnTop(true);
 		getContentPane().setLayout(null);
 		
 		JPanel panel = new JPanel();
