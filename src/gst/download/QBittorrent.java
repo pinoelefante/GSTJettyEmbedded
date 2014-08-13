@@ -263,7 +263,7 @@ public class QBittorrent implements BitTorrentClient {
 		else if(Os.isLinux() || Os.isMacOS()){
 			try {
 				String line;
-				String[] cmd = {"ps", "-e"};
+				String[] cmd = {"ps", "-e", "-c"};
 				Process p = Runtime.getRuntime().exec(cmd);
 				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				while ((line = input.readLine()) != null) {
