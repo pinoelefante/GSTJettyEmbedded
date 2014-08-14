@@ -7,20 +7,27 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.xml.sax.SAXException;
 
+import com.dd.plist.NSDictionary;
+import com.dd.plist.NSObject;
+import com.dd.plist.PropertyListFormatException;
+import com.dd.plist.PropertyListParser;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 
 import util.httpOperations.HttpOperations;
 import util.os.Os;
 import gst.programma.OperazioniFile;
-import gst.programma.Settings;
 import gst.serieTV.Torrent;
 
 public class QBittorrent implements BitTorrentClient {
@@ -124,6 +131,9 @@ public class QBittorrent implements BitTorrentClient {
 				e.printStackTrace();
 			}
 		}
+		else {
+			//TODO mac
+		}
 	}
 
 	private boolean isRunning() {
@@ -150,58 +160,84 @@ public class QBittorrent implements BitTorrentClient {
 
 	private void trovaParametriWebInterface(ArrayList<String> opzioni) {
 		address="localhost";
-		for(int i=0;i<opzioni.size();i++){
-			if(opzioni.get(i).startsWith("WebUI\\Port")){
-				String[] kv=opzioni.get(i).split("=");
-				port=kv[1];
-				break;
-			}
+		if(Os.isWindows() || Os.isLinux()){
+    		for(int i=0;i<opzioni.size();i++){
+    			if(opzioni.get(i).startsWith("WebUI\\Port")){
+    				String[] kv=opzioni.get(i).split("=");
+    				port=kv[1];
+    				break;
+    			}
+    		}
+		}
+		else {
+			
+			//TODO is mac
 		}
 	}
 	
 	private void modificaParametroFileConfig(ArrayList<String> opzioni, String param, Object value) {
-		boolean found = false;
-		//System.out.println("In cerca del parametro "+param+" da settare "+value.toString());
-		for(int i=0;i<opzioni.size();i++){
-			if(opzioni.get(i).startsWith(param)){
-				/*String p=*/opzioni.remove(i);
-				//System.out.println("Trovato: "+p);
-				opzioni.add(i,param+"="+value.toString());
-				//System.out.println("Aggiunto: "+opzioni.get(i));
-				found = true;
-				break;
-			}
+		if(Os.isWindows() || Os.isLinux()){
+    		boolean found = false;
+    		//System.out.println("In cerca del parametro "+param+" da settare "+value.toString());
+    		for(int i=0;i<opzioni.size();i++){
+    			if(opzioni.get(i).startsWith(param)){
+    				/*String p=*/opzioni.remove(i);
+    				//System.out.println("Trovato: "+p);
+    				opzioni.add(i,param+"="+value.toString());
+    				//System.out.println("Aggiunto: "+opzioni.get(i));
+    				found = true;
+    				break;
+    			}
+    		}
+    		
+    		if(found){
+    			try {
+    				salvaOpzioni(opzioni);
+    			}
+    			catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
 		}
-		
-		if(found){
-			try {
-				salvaOpzioni(opzioni);
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		else {
+			//TODO is mac
 		}
 	}
 
 	private ArrayList<String> readOptionFile() {
 		ArrayList<String> fileS=new ArrayList<String>();
-		Scanner file = null;
-		try {
-			FileReader fr=new FileReader(pathConfig+File.separator+configFile);
-			file = new Scanner(fr);
-			while(file.hasNextLine())
-				fileS.add(file.nextLine().trim());
+		if(Os.isWindows() || Os.isLinux()){
+    		Scanner file = null;
+    		try {
+    			FileReader fr=new FileReader(pathConfig+File.separator+configFile);
+    			file = new Scanner(fr);
+    			while(file.hasNextLine())
+    				fileS.add(file.nextLine().trim());
+    		}
+    		catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		}
+    		finally {
+    			if(file!=null)
+    				file.close();
+    		}
+    		fileS.trimToSize();
+    		return fileS;
 		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
+		else {
+			File file = new File(pathConfig+File.separator+configFile);
+			try {
+				NSObject root = PropertyListParser.parse(file);
+				NSDictionary root_d=(NSDictionary)root;
+				
+			}
+			catch (IOException | PropertyListFormatException | ParseException | ParserConfigurationException | SAXException e) {
+				e.printStackTrace();
+			}
+			//TODO mac
+			//vedi https://code.google.com/p/plist/wiki/Examples
+			return null;
 		}
-		finally {
-			if(file!=null)
-				file.close();
-		}
-		fileS.trimToSize();
-		return fileS;
 	}
 	
 	private boolean modificaOpzioni(ArrayList<String> opzioni){
@@ -277,11 +313,16 @@ public class QBittorrent implements BitTorrentClient {
 		return modificato;
 	}
 	private void salvaOpzioni(ArrayList<String> opzioni) throws IOException {
-		FileWriter file = new FileWriter(pathConfig+File.separator+configFile);
-		for(int i=0;i<opzioni.size();i++){
-			file.append(opzioni.get(i)+"\n");
+		if(Os.isWindows() || Os.isLinux()){
+			FileWriter file = new FileWriter(pathConfig+File.separator+configFile);
+			for(int i=0;i<opzioni.size();i++){
+				file.append(opzioni.get(i)+"\n");
+			}
+			file.close();
 		}
-		file.close();
+		else {
+			//TODO mac
+		}
 	}
 
 	private int getQBittorrentPID() {
@@ -351,7 +392,7 @@ public class QBittorrent implements BitTorrentClient {
 				e.printStackTrace();
 			}
 		}
-		else {
+		else if(Os.isLinux()) {
 			String[] cmd = {
 					"kill",
 					"-9",
@@ -363,6 +404,9 @@ public class QBittorrent implements BitTorrentClient {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		else {
+			//TODO avvio mac
 		}
 	}
 	private boolean isWebServiceOnline(){
@@ -379,11 +423,7 @@ public class QBittorrent implements BitTorrentClient {
 	public String auth(String username, String pass) {
 		return "";
 	}
-	public static void main(String[] args){
-		Settings.getInstance();
-		QBittorrent bit = new QBittorrent(rilevaInstallazione());
-		System.out.println(bit.address+":"+bit.port);
-	}
+
 	private int compareVersion(String c1, String c2){
 		if(c1.compareTo(c2)==0)
 			return 0;
