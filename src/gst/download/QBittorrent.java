@@ -64,16 +64,23 @@ public class QBittorrent implements BitTorrentClient {
 
 	public boolean setDirectoryDownload(String dir) {
 		try {
-			if(compareVersion(version, "3.2.0")<0){
-				if(Os.isMacOS()){
+			int compare = compareVersion(version, "3.2.0");
+			//System.out.println("Versione comparison : "+compare);
+			if(compare<0){
+				//System.out.println("La mia versione è inferiore a 3.2.0 - OK");
+				if(Os.isWindows() || Os.isLinux()) {
+					//System.out.println("Non sono Mac");
+					modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
+				}
+				else {
+					//System.out.println("Sono Mac");
 					modificaParametroFileConfig(readOptionFile(), "Preferences.Downloads.SavePath",dir.replace(File.separator, "/"));
 				}
-				else
-					modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
     			reloadSettings();
     			return true;
 			}
 			else {
+				//System.out.println("La mia versione è superiore a 3.2.0 - impossibile");
 				List<NameValuePair> parametri = new ArrayList<>();
 				parametri.add(new BasicNameValuePair("json", "{\"save_path\":\""+dir.replace(File.separator, "/")+"\"}"));
 				boolean r = HttpOperations.POST_withBoolean("http://"+address+":"+port+"/command/setPreferences", parametri);
@@ -468,8 +475,12 @@ public class QBittorrent implements BitTorrentClient {
 	private int compareVersion(String c1, String c2){
 		if(c1.compareTo(c2)==0)
 			return 0;
-		for(int i=0;i<c1.length() && i<c2.length();i++){
-			if(new Character(c1.charAt(i)).compareTo(c2.charAt(i))>0)
+		String[] numeri1 = c1.split(".");
+		String[] numeri2 = c2.split(".");
+		for(int i=0;i<numeri1.length && i<numeri2.length;i++){
+			Integer n1 = Integer.parseInt(numeri1[i]);
+			Integer n2 = Integer.parseInt(numeri2[i]);
+			if(n1>n2)
 				return 1;
 		}
 		return -1;
