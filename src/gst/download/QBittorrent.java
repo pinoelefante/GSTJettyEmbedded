@@ -1,4 +1,4 @@
-package gst.download;
+	package gst.download;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -65,7 +65,11 @@ public class QBittorrent implements BitTorrentClient {
 	public boolean setDirectoryDownload(String dir) {
 		try {
 			if(compareVersion(version, "3.2.0")<0){
-    			modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
+				if(Os.isMacOS()){
+					modificaParametroFileConfig(readOptionFile(), "Preferences.Downloads.SavePath",dir.replace(File.separator, "/"));
+				}
+				else
+					modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
     			reloadSettings();
     			return true;
 			}
@@ -500,6 +504,9 @@ public class QBittorrent implements BitTorrentClient {
 				return path;
 			else
 				System.out.println("qbittorrent non trovato");
+		}
+		else if(Os.isMacOS()){
+			return "qbittorrent";
 		}
 		return null;
 	}
