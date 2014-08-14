@@ -19,6 +19,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.SAXException;
 
 import com.dd.plist.NSDictionary;
+import com.dd.plist.NSNumber;
 import com.dd.plist.NSObject;
 import com.dd.plist.PropertyListFormatException;
 import com.dd.plist.PropertyListParser;
@@ -44,7 +45,8 @@ public class QBittorrent implements BitTorrentClient {
 			configFile="qBittorrent.conf";
 		}
 		else {
-			//TODO vedi cartella mac
+			pathConfig = System.getProperty("user.home")+File.separator+"Library"+File.separator+"Preferences";
+			configFile = "com.qbittorrent.qBittorrent.plist";
 		}
 		File dirConfig=new File(pathConfig);
 		dirConfig.mkdirs();
@@ -93,9 +95,22 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
-		if(!isRunning() || !isWebServiceOnline()){
+		if(!isRunning()){
 			avviaClient();
-			while(!isRunning() || !isWebServiceOnline()){
+			while(!isWebServiceOnline()){
+    			try {
+    				Thread.sleep(1000L);
+    			}
+    			catch (InterruptedException e) {
+    				e.printStackTrace();
+    			}
+			}
+		}
+		else if(!isWebServiceOnline()){
+			injectOption();
+			chiudiApplicazione(getQBittorrentPID());
+			avviaClient();
+			while(!isWebServiceOnline()){
     			try {
     				Thread.sleep(1000L);
     			}
@@ -141,50 +156,55 @@ public class QBittorrent implements BitTorrentClient {
 	}
 
 	private void injectOption() {
-		ArrayList<String> opzioni = readOptionFile();
-		boolean toStart = false;
+		Object opzioni = readOptionFile();
 		if(modificaOpzioni(opzioni)){
-			if(toStart=isRunning())
-				chiudiApplicazione(getQBittorrentPID());
 			try {
 				salvaOpzioni(opzioni);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
-			if(toStart)
-				avviaClient();
+			if(isRunning())
+				reloadSettings();
 		}
 		trovaParametriWebInterface(opzioni);
 	}
 
-	private void trovaParametriWebInterface(ArrayList<String> opzioni) {
+	@SuppressWarnings("unchecked")
+	private void trovaParametriWebInterface(Object opzioniO) {
 		address="localhost";
 		if(Os.isWindows() || Os.isLinux()){
-    		for(int i=0;i<opzioni.size();i++){
-    			if(opzioni.get(i).startsWith("WebUI\\Port")){
-    				String[] kv=opzioni.get(i).split("=");
-    				port=kv[1];
-    				break;
-    			}
-    		}
+			if(opzioniO instanceof ArrayList){
+    			ArrayList<String> opzioni = (ArrayList<String>)opzioniO;
+        		for(int i=0;i<opzioni.size();i++){
+        			if(opzioni.get(i).startsWith("WebUI\\Port")){
+        				String[] kv=opzioni.get(i).split("=");
+        				port=kv[1];
+        				break;
+        			}
+        		}
+			}
 		}
 		else {
-			
-			//TODO is mac
+			NSDictionary opzioni=(NSDictionary)opzioniO;
+			NSObject porta = opzioni.get("Preferences.WebUI.Port");
+			if(porta != null){
+				port = ""+((NSNumber)porta).intValue();
+			}
+			else
+				port = "8080";
 		}
 	}
 	
-	private void modificaParametroFileConfig(ArrayList<String> opzioni, String param, Object value) {
+	@SuppressWarnings("unchecked")
+	private void modificaParametroFileConfig(Object opzioniO, String param, Object value) {
 		if(Os.isWindows() || Os.isLinux()){
+			ArrayList<String> opzioni=(ArrayList<String>)opzioniO;
     		boolean found = false;
-    		//System.out.println("In cerca del parametro "+param+" da settare "+value.toString());
     		for(int i=0;i<opzioni.size();i++){
     			if(opzioni.get(i).startsWith(param)){
-    				/*String p=*/opzioni.remove(i);
-    				//System.out.println("Trovato: "+p);
+    				opzioni.remove(i);
     				opzioni.add(i,param+"="+value.toString());
-    				//System.out.println("Aggiunto: "+opzioni.get(i));
     				found = true;
     				break;
     			}
@@ -200,11 +220,18 @@ public class QBittorrent implements BitTorrentClient {
     		}
 		}
 		else {
-			//TODO is mac
+			NSDictionary opzioni=(NSDictionary)opzioniO;
+			opzioni.put(param, value);
+			try {
+				salvaOpzioni(opzioni);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private ArrayList<String> readOptionFile() {
+	private Object readOptionFile() {
 		ArrayList<String> fileS=new ArrayList<String>();
 		if(Os.isWindows() || Os.isLinux()){
     		Scanner file = null;
@@ -229,91 +256,103 @@ public class QBittorrent implements BitTorrentClient {
 			try {
 				NSObject root = PropertyListParser.parse(file);
 				NSDictionary root_d=(NSDictionary)root;
-				
+				return root_d;
 			}
 			catch (IOException | PropertyListFormatException | ParseException | ParserConfigurationException | SAXException e) {
 				e.printStackTrace();
 			}
-			//TODO mac
 			//vedi https://code.google.com/p/plist/wiki/Examples
 			return null;
 		}
 	}
 	
-	private boolean modificaOpzioni(ArrayList<String> opzioni){
-		boolean isPreferences=false, prefFound=false, modificato=false;
-		boolean webUiEnabledFound=false,webUiHttpsFound=false, webUiLocalFound = false; 
-		int index_webUi=0;
-		for(int i=0;i<opzioni.size();i++){
-			if(opzioni.get(i).compareTo("[Preferences]")==0){
-				prefFound=true;
-				isPreferences=true;
-				continue;
-			}
-			else if (opzioni.get(i).startsWith("[")){
-				isPreferences=false;
-				if(prefFound)
-					break;
-			}
-			if(isPreferences && opzioni.get(i).startsWith("WebUI")){
-				if(index_webUi==0)
-					index_webUi=i;
-				String[] kv=opzioni.get(i).split("=");
-				switch(kv[0]){
-					case "WebUI\\Enabled":
-						webUiEnabledFound=true;
-						if(!Boolean.parseBoolean(kv[1])){
-							modificato=true;
-							opzioni.remove(i);
-							opzioni.add(i, "WebUI\\Enabled=true");
-						}
-						break;
-					case "WebUI\\HTTPS\\Enabled":
-						webUiHttpsFound=true;
-						if(Boolean.parseBoolean(kv[1])){
-							modificato=true;
-							opzioni.remove(i);
-							opzioni.add(i, "WebUI\\HTTPS\\Enabled=false");
-						}
-						break;
-					case "WebUI\\LocalHostAuth":
-						webUiLocalFound=true;
-						if(Boolean.parseBoolean(kv[1])){
-							modificato=true;
-							opzioni.remove(i);
-							opzioni.add(i, "WebUI\\LocalHostAuth=false");
-						}
+	@SuppressWarnings("unchecked")
+	private boolean modificaOpzioni(Object opzioniO){
+		if(Os.isWindows() || Os.isLinux()){
+			ArrayList<String> opzioni = (ArrayList<String>)opzioniO;
+			boolean isPreferences=false, prefFound=false, modificato=false;
+			boolean webUiEnabledFound=false,webUiHttpsFound=false, webUiLocalFound = false; 
+			int index_webUi=0;
+			for(int i=0;i<opzioni.size();i++){
+				if(opzioni.get(i).compareTo("[Preferences]")==0){
+					prefFound=true;
+					isPreferences=true;
+					continue;
+				}
+				else if (opzioni.get(i).startsWith("[")){
+					isPreferences=false;
+					if(prefFound)
 						break;
 				}
+				if(isPreferences && opzioni.get(i).startsWith("WebUI")){
+					if(index_webUi==0)
+						index_webUi=i;
+					String[] kv=opzioni.get(i).split("=");
+					switch(kv[0]){
+						case "WebUI\\Enabled":
+							webUiEnabledFound=true;
+							if(!Boolean.parseBoolean(kv[1])){
+								modificato=true;
+								opzioni.remove(i);
+								opzioni.add(i, "WebUI\\Enabled=true");
+							}
+							break;
+						case "WebUI\\HTTPS\\Enabled":
+							webUiHttpsFound=true;
+							if(Boolean.parseBoolean(kv[1])){
+								modificato=true;
+								opzioni.remove(i);
+								opzioni.add(i, "WebUI\\HTTPS\\Enabled=false");
+							}
+							break;
+						case "WebUI\\LocalHostAuth":
+							webUiLocalFound=true;
+							if(Boolean.parseBoolean(kv[1])){
+								modificato=true;
+								opzioni.remove(i);
+								opzioni.add(i, "WebUI\\LocalHostAuth=false");
+							}
+							break;
+					}
+				}
 			}
-		}
-		if(!prefFound){
-			opzioni.add("[Preferences]");
-			opzioni.add("WebUI\\Enabled=true");
-			opzioni.add("WebUI\\Port=8080");
-			opzioni.add("WebUI\\HTTPS\\Enabled=false");
-			opzioni.add("WebUI\\LocalHostAuth=false");
-			opzioni.add("WebUI\\Username=admin");
-			modificato=true;
+			if(!prefFound){
+				opzioni.add("[Preferences]");
+				opzioni.add("WebUI\\Enabled=true");
+				opzioni.add("WebUI\\Port=8080");
+				opzioni.add("WebUI\\HTTPS\\Enabled=false");
+				opzioni.add("WebUI\\LocalHostAuth=false");
+				opzioni.add("WebUI\\Username=admin");
+				modificato=true;
+			}
+			else {
+				if(!webUiEnabledFound){
+					opzioni.add(index_webUi++,"WebUI\\Enabled=true");
+					modificato=true;
+				}
+				if(!webUiHttpsFound){
+					opzioni.add(index_webUi++,"WebUI\\HTTPS\\Enabled=false");
+					modificato=true;
+				}
+				if(!webUiLocalFound){
+					opzioni.add(index_webUi, "WebUI\\LocalHostAuth=false");
+					modificato=true;
+				}
+			}
+			return modificato;
 		}
 		else {
-			if(!webUiEnabledFound){
-				opzioni.add(index_webUi++,"WebUI\\Enabled=true");
-				modificato=true;
-			}
-			if(!webUiHttpsFound){
-				opzioni.add(index_webUi++,"WebUI\\HTTPS\\Enabled=false");
-				modificato=true;
-			}
-			if(!webUiLocalFound){
-				opzioni.add(index_webUi, "WebUI\\LocalHostAuth=false");
-				modificato=true;
-			}
+			NSDictionary opzioni = (NSDictionary)opzioniO;
+			opzioni.put("Preferences.WebUI.Enabled",true);
+			opzioni.put("Preferences.WebUI.HTTPS.Enabled",false);
+			opzioni.put("Preferences.WebUI.LocalHostAuth",false);
+			return true;
 		}
-		return modificato;
 	}
-	private void salvaOpzioni(ArrayList<String> opzioni) throws IOException {
+	@SuppressWarnings("unchecked")
+	private void salvaOpzioni(Object opzioniO) throws IOException {
 		if(Os.isWindows() || Os.isLinux()){
+			ArrayList<String> opzioni = (ArrayList<String>)opzioniO;
 			FileWriter file = new FileWriter(pathConfig+File.separator+configFile);
 			for(int i=0;i<opzioni.size();i++){
 				file.append(opzioni.get(i)+"\n");
@@ -321,7 +360,8 @@ public class QBittorrent implements BitTorrentClient {
 			file.close();
 		}
 		else {
-			//TODO mac
+			NSDictionary opzioni = (NSDictionary)opzioniO;
+			PropertyListParser.saveAsBinary(opzioni, new File(pathConfig+File.separator+configFile));
 		}
 	}
 
@@ -392,7 +432,7 @@ public class QBittorrent implements BitTorrentClient {
 				e.printStackTrace();
 			}
 		}
-		else if(Os.isLinux()) {
+		else if(Os.isLinux() || Os.isMacOS()) {
 			String[] cmd = {
 					"kill",
 					"-9",
@@ -404,9 +444,6 @@ public class QBittorrent implements BitTorrentClient {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else {
-			//TODO avvio mac
 		}
 	}
 	private boolean isWebServiceOnline(){
