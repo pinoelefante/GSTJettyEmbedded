@@ -3,6 +3,7 @@ package util.httpOperations;
 import java.net.URI;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -16,7 +17,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 public class HttpOperations {
-		
 	public static String GET_withResponse(String url) throws Exception{
 		HttpGet getter=new HttpGet(new URI(url));
 		CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -72,6 +72,25 @@ public class HttpOperations {
 		}
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		CloseableHttpResponse response =  httpclient.execute(post);
+		int statusCode = response.getStatusLine().getStatusCode();
+		response.close();
+		httpclient.close();
+		return statusCode==200;
+	}
+	
+	public static boolean GET_withBoolean_AuthBasic(String address, String port, String user, String pass, String cmd) throws Exception {
+		/*CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		AuthScope authScope = new AuthScope(address, Integer.parseInt(port));
+		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, pass);
+		credsProvider.setCredentials(authScope, credentials);
+		*/
+		
+		String encoding = new String(Base64.encodeBase64((user + ":" + pass).getBytes()));
+		HttpGet getter=new HttpGet(new URI(cmd));
+		getter.addHeader("Authorization", "Base "+encoding);
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpResponse response =  httpclient.execute(getter);
 		int statusCode = response.getStatusLine().getStatusCode();
 		response.close();
 		httpclient.close();

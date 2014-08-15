@@ -3,6 +3,7 @@ package gst.download;
 import java.io.File;
 import java.io.IOException;
 
+import util.httpOperations.HttpOperations;
 import util.os.Os;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
@@ -10,6 +11,7 @@ import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
 	private String pathEseguibile;
+	private String address, port,authToken, utorrent_user, utorrent_pass;
 	
 	public UTorrent() {}
 	public UTorrent(String path) {
@@ -36,13 +38,21 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean setDirectoryDownload(String dir) {
+		String cmd =  "http://"+address+":"+port+"/gui/?action=setsetting&&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir+"&token="+authToken;
+		try {
+			boolean resp = HttpOperations.GET_withBoolean(cmd);
+			return resp;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
-	public boolean downloadTorrent(Torrent t, String path) {
+	public synchronized boolean downloadTorrent(Torrent t, String path) {
 		if(haveWebAPI() && isWebAPIEnabled()){
-			return false;
+			return downloadWebUI(t, path);
 		}
 		else {
 			return downloadCLI(t, path);
@@ -77,6 +87,21 @@ public class UTorrent implements BitTorrentClient{
 				e.printStackTrace();
 				return false;
 			}
+		}
+		return false;
+	}
+	public boolean downloadWebUI(Torrent t, String path){
+		if(setDirectoryDownload(path)){
+    		String cmd="http://"+address+":"+port+"/gui/?action=add-url&s="+t.getUrl()+"&token="+authToken;
+    		
+    		try {
+    			boolean b=HttpOperations.GET_withBoolean_AuthBasic(address, port, utorrent_user, utorrent_pass, cmd);
+    			return b;
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
 		}
 		return false;
 	}
