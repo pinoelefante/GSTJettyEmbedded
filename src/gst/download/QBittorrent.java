@@ -65,13 +65,19 @@ public class QBittorrent implements BitTorrentClient {
 			if(compare<0){
 				if(Os.isWindows() || Os.isLinux()) {
 					modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
+					reloadSettings();
 				}
 				else {
 					NSDictionary options = (NSDictionary) readOptionFile();
-					options.put("Preferences.Downloads.SavePath", new NSString(dir));
-					salvaOpzioni(options);
+					NSString lastDir = (NSString) options.get("Preferences.Downloads.SavePath");
+					if(lastDir.toString().compareTo(dir)!=0){
+						options.put("Preferences.Downloads.SavePath", new NSString(dir));
+						salvaOpzioni(options);
+						this.chiudiApplicazione(getQBittorrentPID());
+						avviaClient();
+					}
+					
 				}
-    			reloadSettings();
     			return true;
 			}
 			else {
@@ -104,7 +110,7 @@ public class QBittorrent implements BitTorrentClient {
 			avviaClient();
 			while(!isWebServiceOnline()){
     			try {
-    				Thread.sleep(1000L);
+    				Thread.sleep(2500L);
     			}
     			catch (InterruptedException e) {
     				e.printStackTrace();
@@ -152,7 +158,7 @@ public class QBittorrent implements BitTorrentClient {
 		else {
 			String[] cmd = {
 				"open",
-				pathExe
+				pathExe.replace(" ", "\\ ")
 			};
 			try {
 				Runtime.getRuntime().exec(cmd);
@@ -370,7 +376,9 @@ public class QBittorrent implements BitTorrentClient {
 		}
 		else {
 			NSDictionary opzioni = (NSDictionary)opzioniO;
-			PropertyListParser.saveAsBinary(opzioni, new File(pathConfig+File.separator+configFile));
+			File f = new File(pathConfig+File.separator+configFile);
+			System.out.println("Salvo il file opzioni in: "+f.getAbsolutePath());
+			PropertyListParser.saveAsBinary(opzioni, f);
 		}
 	}
 

@@ -77,14 +77,14 @@ public class Download {
 	}
 	/**
 	 * 
-	 * @return percorso in cui si salverà il file che si sta scaricando
+	 * @return percorso in cui si salverï¿½ il file che si sta scaricando
 	 */
 	public String getPathDownload(){
 		return path_destinazione;
 	}
 	/**
 	 * 
-	 * @return true se il download è completo
+	 * @return true se il download ï¿½ completo
 	 */
 	public boolean isComplete(){
 		return complete;
@@ -206,7 +206,7 @@ public class Download {
 		}
 	}
 	public static boolean downloadTorrent(SerieTV serie, Torrent torrent){
-		String directory = Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		String directory = Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
 		BitTorrentClient client;
 		try {
 			client = Settings.getInstance().getClientTorrent();
@@ -227,7 +227,7 @@ public class Download {
 		}
 		catch (InterruptedException e) {
 			e.printStackTrace();
-			throw new IOException("Il download non è stato completato");
+			throw new IOException("Il download non ï¿½ stato completato");
 		}
 	}
 	
