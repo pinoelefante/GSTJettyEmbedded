@@ -7,21 +7,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.xml.sax.SAXException;
 
 import com.dd.plist.NSDictionary;
 import com.dd.plist.NSNumber;
 import com.dd.plist.NSObject;
-import com.dd.plist.PropertyListFormatException;
+import com.dd.plist.NSString;
 import com.dd.plist.PropertyListParser;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
@@ -65,22 +62,19 @@ public class QBittorrent implements BitTorrentClient {
 	public boolean setDirectoryDownload(String dir) {
 		try {
 			int compare = compareVersion(version, "3.2.0");
-			//System.out.println("Versione comparison : "+compare);
 			if(compare<0){
-				//System.out.println("La mia versione è inferiore a 3.2.0 - OK");
 				if(Os.isWindows() || Os.isLinux()) {
-					//System.out.println("Non sono Mac");
 					modificaParametroFileConfig(readOptionFile(), "Downloads\\SavePath", dir.replace(File.separator, "/"));
 				}
 				else {
-					//System.out.println("Sono Mac");
-					modificaParametroFileConfig(readOptionFile(), "Preferences.Downloads.SavePath",dir.replace(File.separator, "/"));
+					NSDictionary options = (NSDictionary) readOptionFile();
+					options.put("Preferences.Downloads.SavePath", new NSString(dir));
+					salvaOpzioni(options);
 				}
     			reloadSettings();
     			return true;
 			}
 			else {
-				//System.out.println("La mia versione è superiore a 3.2.0 - impossibile");
 				List<NameValuePair> parametri = new ArrayList<>();
 				parametri.add(new BasicNameValuePair("json", "{\"save_path\":\""+dir.replace(File.separator, "/")+"\"}"));
 				boolean r = HttpOperations.POST_withBoolean("http://"+address+":"+port+"/command/setPreferences", parametri);
@@ -119,8 +113,6 @@ public class QBittorrent implements BitTorrentClient {
 		}
 		else if(!isWebServiceOnline()){
 			injectOption();
-			chiudiApplicazione(getQBittorrentPID());
-			avviaClient();
 			while(!isWebServiceOnline()){
     			try {
     				Thread.sleep(1000L);
@@ -158,7 +150,16 @@ public class QBittorrent implements BitTorrentClient {
 			}
 		}
 		else {
-			//TODO mac
+			String[] cmd = {
+				"open",
+				pathExe
+			};
+			try {
+				Runtime.getRuntime().exec(cmd);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -265,14 +266,11 @@ public class QBittorrent implements BitTorrentClient {
 		else {
 			File file = new File(pathConfig+File.separator+configFile);
 			try {
-				NSObject root = PropertyListParser.parse(file);
-				NSDictionary root_d=(NSDictionary)root;
-				return root_d;
+				return PropertyListParser.parse(file);
 			}
-			catch (IOException | PropertyListFormatException | ParseException | ParserConfigurationException | SAXException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
-			//vedi https://code.google.com/p/plist/wiki/Examples
 			return null;
 		}
 	}
@@ -354,9 +352,9 @@ public class QBittorrent implements BitTorrentClient {
 		}
 		else {
 			NSDictionary opzioni = (NSDictionary)opzioniO;
-			opzioni.put("Preferences.WebUI.Enabled",true);
-			opzioni.put("Preferences.WebUI.HTTPS.Enabled",false);
-			opzioni.put("Preferences.WebUI.LocalHostAuth",false);
+			opzioni.put("Preferences.WebUI.Enabled", new NSNumber(true));
+			opzioni.put("Preferences.WebUI.HTTPS.Enabled",new NSNumber(false));
+			opzioni.put("Preferences.WebUI.LocalHostAuth",new NSNumber(false));
 			return true;
 		}
 	}
@@ -517,7 +515,7 @@ public class QBittorrent implements BitTorrentClient {
 				System.out.println("qbittorrent non trovato");
 		}
 		else if(Os.isMacOS()){
-			return "qbittorrent";
+			return "qbittorrent.app";
 		}
 		return null;
 	}
