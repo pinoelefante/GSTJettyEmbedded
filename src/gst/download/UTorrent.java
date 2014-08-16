@@ -180,7 +180,7 @@ public class UTorrent implements BitTorrentClient{
 		return ProcessFinder.getPid(processName);
 	}
 	private void avviaClient(){
-		if(Os.isWindows() || Os.isLinux()){
+		if(Os.isWindows()){
 			String[] cmd = {
 				pathEseguibile	
 			};
@@ -190,6 +190,17 @@ public class UTorrent implements BitTorrentClient{
 			catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		else if(Os.isLinux()){
+			String[] cmd = {
+					System.getProperty("user.home")+File.separator+pathEseguibile	
+				};
+				try {
+					Runtime.getRuntime().exec(cmd);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 		}
 		else {
 			String[] cmd = {
@@ -212,7 +223,7 @@ public class UTorrent implements BitTorrentClient{
 		}
 		else if(Os.isLinux()){
 			String pathConf = pathEseguibile.substring(0, pathEseguibile.lastIndexOf("/"));
-			pathConf = System.getProperty("user.home")+File.separator+pathConf + File.separator + "utserver.conf";
+			pathConf = System.getProperty("user.home")+File.separator+pathConf + File.separator + "settings.dat";
 			f = new File(pathConf);
 		}
 		else if(Os.isMacOS()){
@@ -237,8 +248,8 @@ public class UTorrent implements BitTorrentClient{
 			Map<String, Object> options = file.readMap(Object.class);
 			file.close();
 			Object lastEnable = options.put("webui.enable", 1);
-			Object lastPort = options.put("webui.enable_listen", 1);
-			if((int)lastEnable!=1 || (int)lastPort!=1){
+			Object lastPort = options.put("webui.enable_listen", 0);
+			if((lastEnable!=null && (int)lastEnable!=1) || (lastPort!=null && (int)lastPort!=0)){
 				System.out.println("Le opzioni di utorrent devono essere cambiate");
 				ProcessFinder.closeProcessByPID(getUTorrentPid());
 				BencodingOutputStream fileO = new BencodingOutputStream(new FileOutputStream(f));
@@ -251,7 +262,10 @@ public class UTorrent implements BitTorrentClient{
 				}
 			}
 			else
-				port = "8080"; //options.get("bind_port").toString();
+				if(Os.isLinux())
+					port = "8080";
+				else
+					port = options.get("bind_port").toString();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
