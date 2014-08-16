@@ -3,7 +3,6 @@ package util.httpOperations;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -36,9 +35,8 @@ public class HttpOperations {
 		httpclient.close();
 		return statusCode==200;
 	}
-	
 	public static String POST_withResponse(String url, List<NameValuePair> parametri) throws Exception{
-		HttpPost post = new HttpPost(new URI("http://localhost:8080/command/download"));
+		HttpPost post = new HttpPost(new URI(url));
 		if(parametri!=null){
 			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(parametri, Consts.UTF_8);
 			post.setEntity(entity);
@@ -77,23 +75,7 @@ public class HttpOperations {
 		httpclient.close();
 		return statusCode==200;
 	}
-	
-	public static boolean GET_withBoolean_AuthBasic(String address, String port, String user, String pass, String cmd) throws Exception {
-		/*CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		AuthScope authScope = new AuthScope(address, Integer.parseInt(port));
-		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, pass);
-		credsProvider.setCredentials(authScope, credentials);
-		*/
-		
-		String encoding = new String(Base64.encodeBase64((user + ":" + pass).getBytes()));
-		HttpGet getter=new HttpGet(new URI(cmd));
-		getter.addHeader("Authorization", "Base "+encoding);
-		
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		CloseableHttpResponse response =  httpclient.execute(getter);
-		int statusCode = response.getStatusLine().getStatusCode();
-		response.close();
-		httpclient.close();
-		return statusCode==200;
+	public static CloseableHttpClient getClient(){
+		return HttpClients.createDefault();
 	}
 }

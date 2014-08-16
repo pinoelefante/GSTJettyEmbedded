@@ -2,8 +2,8 @@ package gst.download;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
-import util.httpOperations.HttpOperations;
 import util.os.Os;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
@@ -11,42 +11,46 @@ import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
 	private String pathEseguibile;
-	private String address, port,authToken, utorrent_user, utorrent_pass;
+	private String address="localhost", port, utorrent_user, utorrent_pass;
+	private UTorrentAPI api;
 	
 	public UTorrent() {}
 	public UTorrent(String path) {
 		pathEseguibile=path;
 	}
+	public void setUsername(String u){
+		utorrent_user=u;
+	}
+	public void setPassword(String p){
+		utorrent_pass=p;
+	}
+	public void setPort(String p) {
+		port = p;
+	}
 	
 	@Override
 	public boolean haveWebAPI() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isWebAPIEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
-
+	
 	@Override
 	public String auth(String username, String pass) {
-		// TODO Auto-generated method stub
+		if(api==null){
+			InetSocketAddress a = new InetSocketAddress(address, Integer.parseInt(port));
+			api = new UTorrentAPI(a, utorrent_user, utorrent_pass);
+		}
 		return null;
 	}
 
 	@Override
 	public boolean setDirectoryDownload(String dir) {
-		String cmd =  "http://"+address+":"+port+"/gui/?action=setsetting&&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir+"&token="+authToken;
-		try {
-			boolean resp = HttpOperations.GET_withBoolean(cmd);
-			return resp;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
+		String resp = api.get("action=setsetting&&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir);
+		return resp!=null;
 	}
 
 	@Override
@@ -55,8 +59,10 @@ public class UTorrent implements BitTorrentClient{
 			return downloadWebUI(t, path);
 		}
 		else {
-			return downloadCLI(t, path);
+			if(Os.isWindows())
+				return downloadCLI(t, path);
 		}
+		return false;
 	}
 	
 	public void setPathInstallazione(String p){
@@ -92,16 +98,8 @@ public class UTorrent implements BitTorrentClient{
 	}
 	public boolean downloadWebUI(Torrent t, String path){
 		if(setDirectoryDownload(path)){
-    		String cmd="http://"+address+":"+port+"/gui/?action=add-url&s="+t.getUrl()+"&token="+authToken;
-    		
-    		try {
-    			boolean b=HttpOperations.GET_withBoolean_AuthBasic(address, port, utorrent_user, utorrent_pass, cmd);
-    			return b;
-    		}
-    		catch (Exception e) {
-    			e.printStackTrace();
-    			return false;
-    		}
+    		String cmd="action=add-url&s="+t.getUrl();
+    		return api.get(cmd)!=null;
 		}
 		return false;
 	}
@@ -133,5 +131,13 @@ public class UTorrent implements BitTorrentClient{
 				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}
 		return null;
+	}
+	public static void main(String[] args){
+		UTorrent u=new UTorrent(UTorrent.rilevaInstallazione());
+		u.setUsername("admin");
+		u.setPassword("admin");
+		u.setPort("8080");
+		u.auth(null, null);
+		System.out.println(u.api.get("action=add-url&s=magnet:?xt=urn:btih:OABX6EEMFEW247HD3R6SWUEFRECOFTBU&dn=Married.S01E05.HDTV.x264-KILLERS&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.istole.it:80&tr=udp://open.demonii.com:80&tr=udp://tracker.coppersurfer.tk:80"));
 	}
 }
