@@ -159,7 +159,7 @@ public class UTorrent implements BitTorrentClient{
 				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}
 		else if(Os.isLinux()){
-			path = "tools"+File.separator+"utorrent"+File.separator+(Os.is32bit()?"32bit":"64bit")+File.separator+"utserver";
+			path = "tools"+File.separator+"utorrent"+File.separator+"linux"+File.separator+(Os.is32bit()?"32bit":"64bit")+File.separator+"utserver";
 			if(OperazioniFile.fileExists(path))
 				return path;
 		}

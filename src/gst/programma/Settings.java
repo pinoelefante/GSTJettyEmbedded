@@ -2,6 +2,7 @@ package gst.programma;
 
 import gst.download.BitTorrentClient;
 import gst.download.QBittorrent;
+import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
 import gst.serieTV.Preferenze;
@@ -122,9 +123,9 @@ public class Settings {
 		if(bitClient!=null)
 			return bitClient;
 		else {
-			String pathClient = QBittorrent.rilevaInstallazione();//UTorrent.rilevaInstallazione();
+			String pathClient = /*QBittorrent.rilevaInstallazione();*/UTorrent.rilevaInstallazione();
 			if(pathClient!=null){
-				bitClient = new QBittorrent(pathClient);//new UTorrent(pathClient);
+				bitClient = /*new QBittorrent(pathClient);*/new UTorrent(pathClient);
 				return bitClient;
 			}
 			else
