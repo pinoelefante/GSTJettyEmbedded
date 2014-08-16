@@ -212,7 +212,7 @@ public class UTorrent implements BitTorrentClient{
 		}
 		else if(Os.isLinux()){
 			String pathConf = pathEseguibile.substring(0, pathEseguibile.lastIndexOf("/"));
-			pathConf = pathConf + File.separator + "utserver.conf";
+			pathConf = System.getProperty("user.dir")+pathConf + File.separator + "utserver.conf";
 			f = new File(pathConf);
 		}
 		else if(Os.isMacOS()){
