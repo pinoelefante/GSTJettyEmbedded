@@ -13,7 +13,6 @@ function goToOpzioni(){
 		data : "action=showOpzioni",
 		dataType : "xml",
 		success : function(msg) {
-			showModal("Opzioni","La finestra delle operazioni si è aperta");
 		},
 		error : function(msg){
 			showModal("","Si è verificato un errore");

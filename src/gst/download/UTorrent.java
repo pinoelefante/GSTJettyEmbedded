@@ -130,13 +130,15 @@ public class UTorrent implements BitTorrentClient{
 			int retry = 0;
 			while(retry <= 5 && isWebAPIEnabled()){
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(3000);
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				retry++;
 			}
+			if(!isWebAPIEnabled())
+				return false;
 		}
 		
 		if(auth==false){
@@ -245,7 +247,7 @@ public class UTorrent implements BitTorrentClient{
 			f = new File(pathConf);
 		}
 		else if(Os.isMacOS()){
-			String path = System.getProperty("user.home")+File.separator+"Library"+File.separator; //TODO completare
+			String path = System.getProperty("user.home")+File.separator+"Library"+File.separator+"Application Support"+File.separator+"uTorrent"+File.separator+"settings.dat"; 
 			f = new File(path);
 		}
 		

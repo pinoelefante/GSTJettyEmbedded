@@ -70,7 +70,7 @@ public class ProcessFinder {
 			}
 		}
 		else if (Os.isLinux() || Os.isMacOS()) {
-			String[] cmd = { "kill", /*"-9",*/ "" + pid };
+			String[] cmd = { "kill", "-15", "" + pid };
 			try {
 				Runtime.getRuntime().exec(cmd).waitFor();
 			}
