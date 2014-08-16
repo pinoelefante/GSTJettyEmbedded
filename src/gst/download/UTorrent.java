@@ -25,7 +25,7 @@ import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
 	private String pathEseguibile;
-	private String address="localhost", port="8080", utorrent_user="admin", utorrent_pass="admin";
+	private String address="localhost", port="8080", utorrent_user="admin", utorrent_pass="";
 	private boolean auth = false;
 	private UTorrentAPI api;
 	
@@ -147,6 +147,7 @@ public class UTorrent implements BitTorrentClient{
 		}
 		if(setDirectoryDownload(path)){
     		String cmd="action=add-url&s="+t.getUrl();
+    		System.out.println("http://localhost:"+port);
     		String r = api.get(cmd);
     		return r!=null;
 		}
@@ -200,6 +201,7 @@ public class UTorrent implements BitTorrentClient{
 		return ProcessFinder.getPid(processName);
 	}
 	private void avviaClient(){
+		System.out.println("Avvio il client torrent");
 		if(Os.isWindows()){
 			String[] cmd = {
 				pathEseguibile	
@@ -243,8 +245,9 @@ public class UTorrent implements BitTorrentClient{
 		}
 		else if(Os.isLinux()){
 			String pathConf = pathEseguibile.substring(0, pathEseguibile.lastIndexOf("/"));
-			pathConf = System.getProperty("user.home")+File.separator+pathConf + File.separator + "settings.dat";
+			pathConf = "./"+pathConf + File.separator + "settings.dat";
 			f = new File(pathConf);
+			System.out.println(f.getAbsolutePath());
 		}
 		else if(Os.isMacOS()){
 			String path = System.getProperty("user.home")+File.separator+"Library"+File.separator+"Application Support"+File.separator+"uTorrent"+File.separator+"settings.dat"; 
@@ -291,6 +294,7 @@ public class UTorrent implements BitTorrentClient{
 			}
 		}
 		catch (FileNotFoundException e) {
+			port="8080";
 			e.printStackTrace();
 		}
 		catch (IOException e) {
