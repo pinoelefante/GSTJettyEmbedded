@@ -1,12 +1,21 @@
 package gst.download;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 import util.httpOperations.HttpOperations;
 import util.os.Os;
 import util.os.ProcessFinder;
+import gst.download.bencode.BencodingInputStream;
+import gst.download.bencode.BencodingOutputStream;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Torrent;
@@ -51,7 +60,7 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean setDirectoryDownload(String dir) {
-		String resp = api.get("action=setsetting&&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir);
+		String resp = api.get("action=setsettings&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir);
 		return resp!=null;
 	}
 
@@ -149,6 +158,11 @@ public class UTorrent implements BitTorrentClient{
 			if(OperazioniFile.fileExists("/Applications/uTorrent.app/Contents/MacOS/uTorrent"))
 				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}
+		else if(Os.isLinux()){
+			path = "tools"+File.separator+"utorrent"+File.separator+(Os.is32bit()?"32bit":"64bit")+File.separator+"utserver";
+			if(OperazioniFile.fileExists(path))
+				return path;
+		}
 		return null;
 	}
 	public boolean isRunning(){
@@ -190,12 +204,66 @@ public class UTorrent implements BitTorrentClient{
 			}
 		}
 	}
-	public static void main(String[] args){
-		UTorrent u=new UTorrent(UTorrent.rilevaInstallazione());
-		u.setUsername("admin");
-		u.setPassword("admin");
-		u.setPort("8080");
-		u.auth(null, null);
-		System.out.println(u.api.get("action=add-url&s=magnet:?xt=urn:btih:OABX6EEMFEW247HD3R6SWUEFRECOFTBU&dn=Married.S01E05.HDTV.x264-KILLERS&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.istole.it:80&tr=udp://open.demonii.com:80&tr=udp://tracker.coppersurfer.tk:80"));
+	private void injectOptions(){
+		File f = null;
+		if(Os.isWindows()){
+			f = new File(System.getenv("APPDATA")+File.separator+"uTorrent"+File.separator+"settings.dat");
+		}
+		else if(Os.isLinux()){
+			String pathConf = pathEseguibile.substring(0, pathEseguibile.lastIndexOf("/"));
+			pathConf = pathConf + File.separator + "utserver.conf";
+			f = new File(pathConf);
+		}
+		else if(Os.isMacOS()){
+			String path = System.getProperty("user.home")+File.separator+"Library"+File.separator; //TODO completare
+			f = new File(path);
+		}
+		
+		if(!f.exists()){
+			if(isRunning()){
+				ProcessFinder.closeProcessByPID(getUTorrentPid());
+				avviaClient();
+			}
+			else {
+				avviaClient();
+				ProcessFinder.closeProcessByPID(getUTorrentPid());
+				avviaClient();
+			}
+		}
+		
+		try {
+			BencodingInputStream file = new BencodingInputStream(new FileInputStream(f));
+			Map<String, Object> options = file.readMap(Object.class);
+			file.close();
+			Object lastEnable = options.put("webui.enable", 1);
+			Object lastPort = options.put("webui.enable_listen", 0);
+			if((int)lastEnable!=1 || (int)lastPort!=0){
+				System.out.println("Le opzioni di utorrent devono essere cambiate");
+				ProcessFinder.closeProcessByPID(getUTorrentPid());
+				BencodingOutputStream fileO = new BencodingOutputStream(new FileOutputStream(f));
+				fileO.writeMap(options);
+				fileO.close();
+				injectOptions();
+				if(isRunning()){
+					ProcessFinder.closeProcessByPID(getUTorrentPid());
+					avviaClient();
+				}
+			}
+			else
+				port = options.get("bind_port").toString();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args) throws IOException, URISyntaxException {
+		UTorrent u = new UTorrent(UTorrent.rilevaInstallazione());
+		u.injectOptions();
+		u.avviaClient();
+		Desktop d = Desktop.getDesktop();
+		d.browse(new URI("http://"+u.address+":"+u.port+"/gui"));
 	}
 }
