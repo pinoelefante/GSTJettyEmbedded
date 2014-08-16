@@ -161,7 +161,7 @@ public class UTorrent implements BitTorrentClient{
 		else if(Os.isLinux())
 			processName="utserver";
 		else if(Os.isMacOS())
-			processName="utorrent";
+			processName="uTorrent";
 		return ProcessFinder.getPid(processName);
 	}
 	private void avviaClient(){
@@ -179,6 +179,7 @@ public class UTorrent implements BitTorrentClient{
 		else {
 			String[] cmd = {
 					"open",
+					"-a",
 					"/Applications/uTorrent.app"
 			};
 			try {
