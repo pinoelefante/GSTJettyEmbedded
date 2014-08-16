@@ -6,9 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import util.httpOperations.HttpOperations;
@@ -22,7 +25,8 @@ import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
 	private String pathEseguibile;
-	private String address="localhost", port="8080", utorrent_user="admin", utorrent_pass="";
+	private String address="localhost", port="8080", utorrent_user="admin", utorrent_pass="admin";
+	private boolean auth = false;
 	private UTorrentAPI api;
 	
 	public UTorrent() {}
@@ -61,18 +65,26 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean setDirectoryDownload(String dir) {
-		String resp = api.get("action=setsettings&s=dir_active_download_flag&v=1&s=dir_active_download&v="+dir);
-		return resp!=null;
+		String resp = api.get("action=setsetting&s=dir_active_download_flag&v=1");
+		String resp2;
+		try {
+			resp2 = api.get("action=setsetting&s=dir_active_download&v="+URLEncoder.encode(dir,"UTF-8"));
+		}
+		catch (UnsupportedEncodingException e) {
+			return false;
+		}
+		return resp!=null && resp2!=null;
 	}
 
 	@Override
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
+		System.out.println("download torrent "+t.getUrl());
 		if(haveWebAPI()){
 			boolean d = downloadWebUI(t, path);
 			if(d==false && Os.isWindows()){
 				return downloadCLI(t, path);
 			}
-			return false;
+			return d;
 		}
 		else {
 			if(Os.isWindows())
@@ -126,9 +138,15 @@ public class UTorrent implements BitTorrentClient{
 				retry++;
 			}
 		}
+		
+		if(auth==false){
+			auth=true;
+			auth(null, null);
+		}
 		if(setDirectoryDownload(path)){
     		String cmd="action=add-url&s="+t.getUrl();
-    		return api.get(cmd)!=null;
+    		String r = api.get(cmd);
+    		return r!=null;
 		}
 		return false;
 	}
@@ -248,8 +266,8 @@ public class UTorrent implements BitTorrentClient{
 			Map<String, Object> options = file.readMap(Object.class);
 			file.close();
 			Object lastEnable = options.put("webui.enable", 1);
-			Object lastPort = options.put("webui.enable_listen", 0);
-			if((lastEnable!=null && (int)lastEnable!=1) || (lastPort!=null && (int)lastPort!=0)){
+			Object lastPort = options.put("webui.enable_listen", 1);
+			if((lastEnable==null || ((BigInteger)lastEnable).intValue()!=1) || (lastPort==null || ((BigInteger)lastPort).intValue()!=1)){
 				System.out.println("Le opzioni di utorrent devono essere cambiate");
 				ProcessFinder.closeProcessByPID(getUTorrentPid());
 				BencodingOutputStream fileO = new BencodingOutputStream(new FileOutputStream(f));
@@ -261,11 +279,14 @@ public class UTorrent implements BitTorrentClient{
 					avviaClient();
 				}
 			}
-			else
-				if(Os.isLinux())
-					port = "8080";
+			else {
+				Object portS = options.get("webui.port");
+				if(portS==null)
+					port="8080";
 				else
-					port = options.get("bind_port").toString();
+					port = portS.toString();
+				
+			}
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();

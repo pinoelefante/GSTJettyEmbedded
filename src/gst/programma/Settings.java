@@ -28,7 +28,6 @@ public class Settings {
 	private static Settings		singleton;
 	private static final int	VersioneSoftware		= 122;
 	
-	public static final String	IndirizzoDonazioni		= "http://pinoelefante.altervista.org/donazioni/donazione_gst.html";
 	private String	current_dir							= "";
 	private String	user_dir							= "";
 	
@@ -124,6 +123,7 @@ public class Settings {
 			return bitClient;
 		else {
 			String pathClient = /*QBittorrent.rilevaInstallazione();*/UTorrent.rilevaInstallazione();
+			System.out.println(pathClient);
 			if(pathClient!=null){
 				bitClient = /*new QBittorrent(pathClient);*/new UTorrent(pathClient);
 				return bitClient;
