@@ -28,6 +28,7 @@ public class UTorrent implements BitTorrentClient{
 	public UTorrent() {}
 	public UTorrent(String path) {
 		pathEseguibile=path;
+		injectOptions();
 	}
 	public void setUsername(String u){
 		utorrent_user=u;
