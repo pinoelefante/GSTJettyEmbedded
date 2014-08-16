@@ -237,8 +237,8 @@ public class UTorrent implements BitTorrentClient{
 			Map<String, Object> options = file.readMap(Object.class);
 			file.close();
 			Object lastEnable = options.put("webui.enable", 1);
-			Object lastPort = options.put("webui.enable_listen", 0);
-			if((int)lastEnable!=1 || (int)lastPort!=0){
+			Object lastPort = options.put("webui.enable_listen", 1);
+			if((int)lastEnable!=1 || (int)lastPort!=1){
 				System.out.println("Le opzioni di utorrent devono essere cambiate");
 				ProcessFinder.closeProcessByPID(getUTorrentPid());
 				BencodingOutputStream fileO = new BencodingOutputStream(new FileOutputStream(f));
@@ -251,7 +251,7 @@ public class UTorrent implements BitTorrentClient{
 				}
 			}
 			else
-				port = options.get("bind_port").toString();
+				port = "8080"; //options.get("bind_port").toString();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
