@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import util.httpOperations.HttpOperations;
 import util.os.Os;
+import util.os.ProcessFinder;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Torrent;
@@ -35,7 +37,7 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public boolean isWebAPIEnabled() {
-		return true;
+		return HttpOperations.isOnline(address, port);
 	}
 	
 	@Override
@@ -55,8 +57,12 @@ public class UTorrent implements BitTorrentClient{
 
 	@Override
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
-		if(haveWebAPI() && isWebAPIEnabled()){
-			return downloadWebUI(t, path);
+		if(haveWebAPI()){
+			boolean d = downloadWebUI(t, path);
+			if(d==false && Os.isWindows()){
+				return downloadCLI(t, path);
+			}
+			return false;
 		}
 		else {
 			if(Os.isWindows())
@@ -97,6 +103,19 @@ public class UTorrent implements BitTorrentClient{
 		return false;
 	}
 	public boolean downloadWebUI(Torrent t, String path){
+		if (!isRunning()){
+			avviaClient();
+			int retry = 0;
+			while(retry <= 5 && isWebAPIEnabled()){
+				try {
+					Thread.sleep(5000);
+				}
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				retry++;
+			}
+		}
 		if(setDirectoryDownload(path)){
     		String cmd="action=add-url&s="+t.getUrl();
     		return api.get(cmd)!=null;
@@ -131,6 +150,44 @@ public class UTorrent implements BitTorrentClient{
 				return "/Applications/uTorrent.app/Contents/MacOS/uTorrent";
 		}
 		return null;
+	}
+	public boolean isRunning(){
+		return getUTorrentPid()>0;
+	}
+	private int getUTorrentPid(){
+		String processName=null;
+		if(Os.isWindows())
+			processName="utorrent.exe";
+		else if(Os.isLinux())
+			processName="utserver";
+		else if(Os.isMacOS())
+			processName="utorrent";
+		return ProcessFinder.getPid(processName);
+	}
+	private void avviaClient(){
+		if(Os.isWindows() || Os.isLinux()){
+			String[] cmd = {
+				pathEseguibile	
+			};
+			try {
+				Runtime.getRuntime().exec(cmd);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			String[] cmd = {
+					"open",
+					"/Applications/uTorrent.app"
+			};
+			try {
+				Runtime.getRuntime().exec(cmd);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	public static void main(String[] args){
 		UTorrent u=new UTorrent(UTorrent.rilevaInstallazione());

@@ -78,4 +78,14 @@ public class HttpOperations {
 	public static CloseableHttpClient getClient(){
 		return HttpClients.createDefault();
 	}
+	public static boolean isOnline(String url, String port){
+		try {
+			GET_withBoolean("http://"+url+":"+port);
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }
