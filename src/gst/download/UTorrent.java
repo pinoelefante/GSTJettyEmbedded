@@ -22,7 +22,7 @@ import gst.serieTV.Torrent;
 
 public class UTorrent implements BitTorrentClient{
 	private String pathEseguibile;
-	private String address="localhost", port, utorrent_user, utorrent_pass;
+	private String address="localhost", port="8080", utorrent_user="admin", utorrent_pass="";
 	private UTorrentAPI api;
 	
 	public UTorrent() {}
