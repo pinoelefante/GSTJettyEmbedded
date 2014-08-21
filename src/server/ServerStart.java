@@ -1,10 +1,6 @@
 package server;
 
-import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import gst.database.Database;
 import gst.gui.InterfacciaGrafica;
@@ -12,8 +8,6 @@ import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.programma.importer.Importer;
 import gst.serieTV.GestioneSerieTV;
-import gst.services.SearchListener;
-import gst.services.ThreadRicercaEpisodi;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -68,43 +62,8 @@ public class ServerStart {
 			settings.setFirstStart(false);
 			settings.salvaSettings();
 		}
-		
-		gst.init();
-		
 		gst.subscribe(ui);
-		
-		ThreadRicercaEpisodi t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
-		t_search.subscribe(ui);
-		t_search.addSearchListener(new SearchListener() {
-			
-			@Override
-			public void searchStart() {
-				ui.sendNotify("Inizio la ricerca di nuovi episodi");
-			}
-			
-			@Override
-			public void searchEnd() {}
-
-			@Override
-			public void searchFirstEnd() {
-				if(!settings.isStartHidden()){
-					if(Desktop.isDesktopSupported()){
-		    			Desktop d = Desktop.getDesktop();
-		    			try {
-							d.browse(new URI("http://localhost:8585"));
-						}
-						catch (IOException | URISyntaxException e) {
-							ui.sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
-							e.printStackTrace();
-						}
-					}
-					else {
-						ui.sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
-					}
-				}
-			}
-		});
-		t_search.start();
+		gst.init(ui);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {

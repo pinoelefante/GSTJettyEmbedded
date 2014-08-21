@@ -1,11 +1,14 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.gui.InterfacciaGrafica;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.player.FileFinder;
 import gst.player.VideoPlayer;
 import gst.programma.Settings;
+import gst.services.SearchListener;
+import gst.services.ThreadRicercaEpisodi;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
@@ -24,9 +27,43 @@ public class GestioneSerieTV implements Notifier {
 		}
 		return instance;
 	}
-	public void init(){
+	public void init(Notificable ui){
 		for(int i=0;i<providers.size();i++)
 			providers.get(i).aggiornaElencoSerie();
+		
+		final Settings settings = Settings.getInstance();
+		
+		ThreadRicercaEpisodi t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
+		t_search.subscribe(ui);
+		t_search.addSearchListener(new SearchListener() {
+			
+			@Override
+			public void searchStart() {
+				inviaNotifica("Inizio la ricerca di nuovi episodi");
+			}
+			
+			@Override
+			public void searchEnd() {
+				if(settings.isDownloadAutomatico()){
+					inviaNotifica("Avvio il download dei nuovi episodi");
+					ArrayList<SerieTV> preferiti=getElencoSeriePreferite();
+					for(int i=0;i<preferiti.size();i++){
+						ArrayList<Episodio> eps=getEpisodiDaScaricareBySerie(preferiti.get(i).getIDDb());
+						for(int j=0;j<eps.size();j++){
+							downloadEpisodio(eps.get(i).getId());
+						}
+					}
+				}
+			}
+
+			@Override
+			public void searchFirstEnd() {
+				if(!settings.isStartHidden()){
+					InterfacciaGrafica.getInstance().apriInterfaccia();
+				}
+			}
+		});
+		t_search.start();
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);

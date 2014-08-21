@@ -255,7 +255,8 @@ public abstract class ProviderSerieTV {
 				return false;
 			}
 			if(Download.downloadTorrent(serie, torrent)){
-				changeStatusEpisodio(idEp, Episodio.SCARICATO);
+				if(ep.getStatoVisualizzazione()!=Episodio.SCARICATO && ep.getStatoVisualizzazione()!=Episodio.VISTO)
+					changeStatusEpisodio(idEp, Episodio.SCARICATO);
 				return true;
 			}
 		}
