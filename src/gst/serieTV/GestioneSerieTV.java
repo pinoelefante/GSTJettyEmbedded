@@ -111,6 +111,7 @@ public class GestioneSerieTV implements Notifier {
 	public void aggiornaEpisodiSerie(int idSerie, int idProvider){
 		ProviderSerieTV p = checkProvider(idProvider);
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+		inviaNotifica("Aggiorno gli episodi di: "+serie.getNomeSerie());
 		p.caricaEpisodiOnline(serie);
 	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
@@ -186,7 +187,8 @@ public class GestioneSerieTV implements Notifier {
 	
 	private ArrayList<Notificable> notificable;
 	public void subscribe(Notificable e) {
-		notificable.add(e);
+		if(e!=null)
+			notificable.add(e);
 	}
 	public void unsubscribe(Notificable e) {
 		notificable.remove(e);

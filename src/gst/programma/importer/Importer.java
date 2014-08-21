@@ -153,7 +153,8 @@ public class Importer implements Notifier{
 	private ArrayList<Notificable> subscribers;
 	@Override
 	public void subscribe(Notificable e) {
-		subscribers.add(e);		
+		if(e!=null)
+			subscribers.add(e);		
 	}
 	@Override
 	public void unsubscribe(Notificable e) {
