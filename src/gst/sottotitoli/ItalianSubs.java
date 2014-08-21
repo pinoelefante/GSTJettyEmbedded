@@ -27,27 +27,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.util.Cookie;
-
-import Database.Database;
-//TODO utilizzare serie sub al posto di serie tv
 public class ItalianSubs implements ProviderSottotitoli{
 	public final static int HDTV = 0,	
 							HD720p = 1,  
@@ -68,7 +53,6 @@ public class ItalianSubs implements ProviderSottotitoli{
 	private ArrayList<RSSItem> feed_rss; 
 	private ArrayList<SerieSub> elenco_serie;
 	
-	private WebClient webClient;
 	private boolean login_itasa=false;
 	private boolean locked=true;
 	private Thread LoggerItasa;
@@ -393,15 +377,15 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		*/
 	}
-	public boolean VerificaLogin(String username, String password){
+	public static boolean VerificaLogin(String username, String password){
 		String url_login=API_LOGIN.replace("<USERNAME>", username).replace("<PASSWORD>", password);
 		boolean stato=false;
 		
 		FileReader f_r=null;
 		Scanner file=null;
 		try {
-			Download.downloadFromUrl(url_login, Settings.getUserDir()+"response_login");
-			f_r=new FileReader(Settings.getUserDir()+"response_login");
+			Download.downloadFromUrl(url_login, Settings.getInstance().getUserDir()+"response_login");
+			f_r=new FileReader(Settings.getInstance().getUserDir()+"response_login");
 			file=new Scanner(f_r);
 			while(file.hasNextLine()){
 				String linea=file.nextLine().trim();
@@ -430,7 +414,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 			catch (IOException e) {	
 				ManagerException.registraEccezione(e);
 			}
-			OperazioniFile.deleteFile(Settings.getUserDir()+"response_login");
+			OperazioniFile.deleteFile(Settings.getInstance().getUserDir()+"response_login");
 		}
 		return stato;
 	}

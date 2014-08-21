@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import util.zip.ArchiviZip;
+
 public class Prerequisiti {
 	private static ArrayList<Dipendenza> list_dipendenze=new ArrayList<Dipendenza>();
 	public static void checkDipendenze() {

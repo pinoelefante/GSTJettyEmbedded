@@ -6,6 +6,7 @@ import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.rss.SubspediaRSSItem;
 
 import java.io.File;
 import java.io.IOException;

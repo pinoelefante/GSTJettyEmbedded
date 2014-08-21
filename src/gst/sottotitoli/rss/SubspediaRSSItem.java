@@ -1,4 +1,4 @@
-package gst.sottotitoli;
+package gst.sottotitoli.rss;
 
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;

@@ -1,4 +1,6 @@
-package gst.programma;
+package util.zip;
+
+import gst.programma.ManagerException;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;

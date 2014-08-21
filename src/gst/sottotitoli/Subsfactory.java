@@ -8,6 +8,7 @@ import gst.programma.Settings;
 import gst.serieTV.EZTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.rss.RSSItemSubsfactory;
 import gst.tda.db.KVResult;
 
 import java.io.File;

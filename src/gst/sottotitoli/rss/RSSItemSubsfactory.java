@@ -1,4 +1,4 @@
-package gst.sottotitoli;
+package gst.sottotitoli.rss;
 
 class RSSItemSubsfactory {
 	private String titolo, descrizione, url, url_download;

@@ -1,6 +1,7 @@
 package gst.gui;
 
 import gst.programma.Settings;
+import gst.sottotitoli.ItalianSubs;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -10,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.FlowLayout;
 
@@ -238,6 +241,7 @@ public class FrameOpzioni extends JFrame {
 		panel_19.add(btnSfogliaQbittorrent);
 		
 		addListener();
+		abilitaItasa();
 	}
 	private void addListener(){
 		btnSalva.addActionListener(new ActionListener() {
@@ -284,8 +288,7 @@ public class FrameOpzioni extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//TODO
-				boolean login=true;
+				boolean login=ItalianSubs.VerificaLogin(itasaUsername.getText(), new String(itasaPassword.getPassword()));
 				if(login){
 					labelItasaLoginStatus.setText("<html><b><font color='Green'>OK!</font></b></html>");
 				}
@@ -400,6 +403,17 @@ public class FrameOpzioni extends JFrame {
 				dirQbittorrent.setText(destinazione_path);
 			}
 		});
+		chckbxAbilitaItasa.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				abilitaItasa();
+			}
+		});
+	}
+	private void abilitaItasa(){
+		boolean selected = chckbxAbilitaItasa.isSelected();
+		btnVerificaItasa.setEnabled(selected);
+		itasaPassword.setEnabled(selected);
+		itasaUsername.setEnabled(selected);
 	}
 	public void init(){
 		chckbxAbilitaDownloadAutomatico.setSelected(s.isDownloadAutomatico());
