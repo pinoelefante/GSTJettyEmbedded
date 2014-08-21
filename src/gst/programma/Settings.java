@@ -1,7 +1,6 @@
 package gst.programma;
 
 import gst.download.BitTorrentClient;
-import gst.download.QBittorrent;
 import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
@@ -170,7 +169,7 @@ public class Settings {
 	}
 	public String getOpzione(String k){
 		if(opzioni!=null){
-			return opzioni.getProperty(k);
+			return opzioni.getProperty(k, "");
 		}
 		throw new RuntimeException();
 	}
@@ -259,6 +258,8 @@ public class Settings {
 		File f=new File(directoryDownload);
 		if(!f.exists())
 			f.mkdirs();
+		if(!directoryDownload.endsWith(File.separator))
+			directoryDownload+=File.separator;
 		opzioni.put("download_path", directoryDownload);
 	}
 	public void setDownloadAutomatico(boolean downloadAutomatico) {
@@ -296,6 +297,18 @@ public class Settings {
 	public void setStartHidden(boolean startHidden) {
 		aggiungiOpzione("start_hidden", startHidden+"");
 	}
+	public void setQBittorrentPath(String p){
+		aggiungiOpzione("qbittorrent_path", p);
+	}
+	public String getQBittorrentPath(){
+		return getOpzione("qbittorrent_path");
+	}
+	public void setUTorrentPath(String p){
+		aggiungiOpzione("utorrent_path", p);
+	}
+	public String getUTorrentPath(){
+		return getOpzione("utorrent_path");
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -314,6 +327,8 @@ public class Settings {
 				case "min_download_auto":
 				case "regola_download":
 				case "start_hidden":
+				case "utorrent_path":
+				case "qbittorrent_path":
 					break;
 				default:
 					opzioni.remove(item);
