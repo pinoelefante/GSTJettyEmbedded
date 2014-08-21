@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
+import server.ServerStart;
+
 public class OperazioniSistema extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -45,7 +47,7 @@ public class OperazioniSistema extends HttpServlet {
 		}
 		ResponseSender.sendResponse(resp, xml);
 		if(close){
-			System.exit(0);
+			ServerStart.close();
 		}
 	}
 }

@@ -16,6 +16,10 @@ import util.httpOperations.HttpOperations;
 
 
 public class ServerStart {
+	private static JettyServer jettyServer;
+	private static InterfacciaGrafica ui;
+	private static GestioneSerieTV gst;
+	
 	public static void main(String[] args) {
 		
 		try {
@@ -30,7 +34,7 @@ public class ServerStart {
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
 		contexts.setHandlers(new Handler[] { new AppContextBuilder().buildWebAppContext() });
 
-		final JettyServer jettyServer = new JettyServer();
+		jettyServer = new JettyServer();
 		jettyServer.setHandler(contexts);
 		try {
 			jettyServer.start();
@@ -42,11 +46,11 @@ public class ServerStart {
 		
 		final Settings settings = Settings.getInstance();
 		
-		final InterfacciaGrafica ui = InterfacciaGrafica.getInstance();
+		ui = InterfacciaGrafica.getInstance();
 		
 		Database.Connect();
 		
-		final GestioneSerieTV gst = GestioneSerieTV.getInstance();
+		gst = GestioneSerieTV.getInstance();
 		
 		String dbPath = Settings.getInstance().getUserDir()+File.separator+"database2.sqlite";
 		if(settings.isFirstStart() && OperazioniFile.fileExists(dbPath)){
@@ -62,7 +66,6 @@ public class ServerStart {
 			settings.setFirstStart(false);
 			settings.salvaSettings();
 		}
-		gst.subscribe(ui);
 		gst.init(ui);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -70,15 +73,30 @@ public class ServerStart {
 				if(jettyServer.isStarted()) {
 					try {
 						jettyServer.stop();
-						Database.Disconnect();
-						gst.unsubscribe(ui);
-						ui.removeTray();
 					} 
 					catch (Exception exception) {
 						exception.printStackTrace();
 					}
 				}
+				Database.Disconnect();
+				gst.close();
+				ui.removeTray();
+				System.exit(0);
 			}
 		},"Stop Jetty Hook")); 
+	}
+	public static void close(){
+		if(jettyServer.isStarted()) {
+			try {
+				jettyServer.stop();
+			} 
+			catch (Exception exception) {
+				exception.printStackTrace();
+			}
+		}
+		Database.Disconnect();
+		gst.close();
+		ui.removeTray();
+		Runtime.getRuntime().halt(0);
 	}
 }

@@ -51,6 +51,7 @@ public class ThreadRicercaEpisodi extends Thread implements Notifier{
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
+					return;
 				}
 			}
 		}

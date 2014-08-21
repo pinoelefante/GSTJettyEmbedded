@@ -28,6 +28,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import server.ServerStart;
+
 public class InterfacciaGrafica implements Notificable {
 	private static InterfacciaGrafica sing;
 	private JFrame frameOpzioni;
@@ -103,10 +105,10 @@ public class InterfacciaGrafica implements Notificable {
 			public void actionPerformed(ActionEvent e) {
 				if(Settings.getInstance().isAskOnClose()){
 					if(showConfirmDialog("Conferma chiusura", "Vuoi veramente chiudere Gestione Serie TV?"))
-						System.exit(0);
+						ServerStart.close();
 				}
 				else
-					System.exit(0);
+					ServerStart.close();
 			}
 		});
 	}

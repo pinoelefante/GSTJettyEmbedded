@@ -9,7 +9,6 @@ import gst.player.VideoPlayer;
 import gst.programma.Settings;
 import gst.services.SearchListener;
 import gst.services.ThreadRicercaEpisodi;
-import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
 import java.io.File;
@@ -18,8 +17,7 @@ import java.util.ArrayList;
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
-
-	private GestoreSottotitoli submanager;
+	private ThreadRicercaEpisodi t_search;
 	
 	public static GestioneSerieTV getInstance(){
 		if(instance==null){
@@ -28,18 +26,26 @@ public class GestioneSerieTV implements Notifier {
 		return instance;
 	}
 	public void init(Notificable ui){
-		for(int i=0;i<providers.size();i++)
+		subscribe(ui);
+		/*
+		//Aggiorna l'elenco delle serie
+		int count_serie_nuove = 0;
+		for(int i=0;i<providers.size();i++){
 			providers.get(i).aggiornaElencoSerie();
+			count_serie_nuove+=providers.get(i).getElencoSerieNuove().size();
+		}
+		inviaNotifica("Sono state trovate "+count_serie_nuove+" nuove serie");
 		
 		final Settings settings = Settings.getInstance();
 		
-		ThreadRicercaEpisodi t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
+		//Avvia la ricerca dei nuovi episodi
+		t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
 		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
 			
 			@Override
 			public void searchStart() {
-				inviaNotifica("Inizio la ricerca di nuovi episodi");
+				
 			}
 			
 			@Override
@@ -64,11 +70,11 @@ public class GestioneSerieTV implements Notifier {
 			}
 		});
 		t_search.start();
+		*/
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
 		notificable=new ArrayList<Notificable>();
-		//TODO submanager=new GestoreSottotitoli();
 		providers.add(new EZTV());
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
@@ -209,19 +215,6 @@ public class GestioneSerieTV implements Notifier {
 		}
 	}
 	
-	public GestoreSottotitoli getSubManager(){
-		return submanager;
-	}
-		
-	private boolean loading=false;
-	public boolean isLoading() {
-		return loading;
-	}
-	private boolean firstLoading=false;
-	public boolean isFirstLoaded(){
-		return firstLoading;
-	}
-	
 	private ArrayList<Notificable> notificable;
 	public void subscribe(Notificable e) {
 		if(e!=null)
@@ -234,5 +227,9 @@ public class GestioneSerieTV implements Notifier {
 		for(int i=0;i<notificable.size();i++){
 			notificable.get(i).sendNotify(text);
 		}
+	}
+	public void close(){
+		if(t_search!=null)
+			t_search.interrupt();
 	}
 }
