@@ -237,7 +237,6 @@ public class FrameOpzioni extends JFrame {
 		btnSfogliaQbittorrent = new JButton("Sfoglia");
 		panel_19.add(btnSfogliaQbittorrent);
 		
-		init();
 		addListener();
 	}
 	private void addListener(){
@@ -390,7 +389,7 @@ public class FrameOpzioni extends JFrame {
 				else if(Os.isMacOS()){
 					filename="qbittorrent";
 				}
-				chooser.setFileFilter(new ClientFilter("QBittorrent", filename)); // TODO fare multi piattaforma
+				chooser.setFileFilter(new ClientFilter("QBittorrent", filename));
 
 				if (chooser.showOpenDialog(FrameOpzioni.this) == JFileChooser.APPROVE_OPTION) {
 					destinazione_path = chooser.getSelectedFile().getAbsolutePath();
@@ -402,7 +401,7 @@ public class FrameOpzioni extends JFrame {
 			}
 		});
 	}
-	private void init(){
+	public void init(){
 		chckbxAbilitaDownloadAutomatico.setSelected(s.isDownloadAutomatico());
 		chckbxAbilitaDownloadSottotitoli.setSelected(s.isRicercaSottotitoli());
 		chckbxAbilitaItasa.setSelected(s.isEnableITASA());

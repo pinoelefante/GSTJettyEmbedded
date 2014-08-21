@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -32,7 +31,7 @@ import server.ServerStart;
 
 public class InterfacciaGrafica implements Notificable {
 	private static InterfacciaGrafica sing;
-	private JFrame frameOpzioni;
+	private FrameOpzioni frameOpzioni;
 	
 	public static InterfacciaGrafica getInstance(){
 		if(sing==null)
@@ -104,6 +103,7 @@ public class InterfacciaGrafica implements Notificable {
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(Settings.getInstance().isAskOnClose()){
+					chiudiFinestraOpzioni();
 					if(showConfirmDialog("Conferma chiusura", "Vuoi veramente chiudere Gestione Serie TV?"))
 						ServerStart.close();
 				}
@@ -131,7 +131,12 @@ public class InterfacciaGrafica implements Notificable {
 		if(frameOpzioni==null)
 			frameOpzioni=new FrameOpzioni();
 		centraFinestra(Toolkit.getDefaultToolkit().getScreenSize(), frameOpzioni);
+		frameOpzioni.init();
 		frameOpzioni.setVisible(true);
+	}
+	public void chiudiFinestraOpzioni(){
+		if(frameOpzioni!=null)
+			frameOpzioni.setVisible(false);
 	}
 	public boolean showConfirmDialog(String titolo, String text){
 		if(JOptionPane.showConfirmDialog(null, text, titolo, JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
