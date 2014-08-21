@@ -27,7 +27,7 @@ public class GestioneSerieTV implements Notifier {
 	}
 	public void init(Notificable ui){
 		subscribe(ui);
-		/*
+		
 		//Aggiorna l'elenco delle serie
 		int count_serie_nuove = 0;
 		for(int i=0;i<providers.size();i++){
@@ -70,7 +70,6 @@ public class GestioneSerieTV implements Notifier {
 			}
 		});
 		t_search.start();
-		*/
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
