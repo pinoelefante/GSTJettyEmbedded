@@ -31,6 +31,10 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.JTabbedPane;
 
 import util.os.Os;
+import javax.swing.border.EtchedBorder;
+import java.awt.BorderLayout;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class FrameOpzioni extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -58,6 +62,9 @@ public class FrameOpzioni extends JFrame {
 	private JButton btnSfogliaUtorrent;
 	private JButton btnSfogliaQbittorrent;
 	private JButton btnChiudi2;
+	private JTextField utorrentUser;
+	private JPasswordField utorrentPassword;
+	private JTextField utorrentPorta;
 	
 	public FrameOpzioni(){
 		super("Gestione Serie TV - Opzioni");
@@ -212,12 +219,17 @@ public class FrameOpzioni extends JFrame {
 		btnChiudi2 = new JButton("Chiudi");
 		panel_17.add(btnChiudi2);
 		
+		JPanel panel_21 = new JPanel();
+		panel_21.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "uTorrent", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		panel_21.setBounds(12, 12, 611, 190);
+		panel_16.add(panel_21);
+		panel_21.setLayout(new BorderLayout(0, 0));
+		
 		JPanel panel_18 = new JPanel();
+		panel_21.add(panel_18, BorderLayout.NORTH);
 		FlowLayout flowLayout = (FlowLayout) panel_18.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel_18.setBorder(new TitledBorder(null, "uTorrent", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_18.setBounds(10, 11, 615, 60);
-		panel_16.add(panel_18);
+		panel_18.setBorder(new TitledBorder(null, "Percorso installazione", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		
 		dirUtorrent = new JTextField();
 		panel_18.add(dirUtorrent);
@@ -226,12 +238,58 @@ public class FrameOpzioni extends JFrame {
 		btnSfogliaUtorrent = new JButton("Sfoglia");
 		panel_18.add(btnSfogliaUtorrent);
 		
+		JPanel panel_22 = new JPanel();
+		panel_22.setBorder(new TitledBorder(null, "webUI", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_21.add(panel_22, BorderLayout.CENTER);
+		panel_22.setLayout(new GridLayout(3, 0, 0, 0));
+		
+		JPanel panel_23 = new JPanel();
+		FlowLayout flowLayout_3 = (FlowLayout) panel_23.getLayout();
+		flowLayout_3.setAlignment(FlowLayout.LEFT);
+		panel_22.add(panel_23);
+		
+		JLabel lblUsername_1 = new JLabel("Username");
+		panel_23.add(lblUsername_1);
+		
+		utorrentUser = new JTextField();
+		panel_23.add(utorrentUser);
+		utorrentUser.setColumns(20);
+		
+		JPanel panel_24 = new JPanel();
+		FlowLayout flowLayout_4 = (FlowLayout) panel_24.getLayout();
+		flowLayout_4.setAlignment(FlowLayout.LEFT);
+		panel_22.add(panel_24);
+		
+		JLabel lblPassword_1 = new JLabel("Password");
+		panel_24.add(lblPassword_1);
+		
+		utorrentPassword = new JPasswordField();
+		utorrentPassword.setColumns(20);
+		panel_24.add(utorrentPassword);
+		
+		JPanel panel_25 = new JPanel();
+		FlowLayout flowLayout_5 = (FlowLayout) panel_25.getLayout();
+		flowLayout_5.setAlignment(FlowLayout.LEFT);
+		panel_22.add(panel_25);
+		
+		JLabel lblPorta = new JLabel("Porta       ");
+		panel_25.add(lblPorta);
+		
+		utorrentPorta = new JTextField();
+		panel_25.add(utorrentPorta);
+		utorrentPorta.setColumns(5);
+		
+		JPanel panel_26 = new JPanel();
+		panel_26.setBorder(new TitledBorder(null, "qBittorrent", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		panel_26.setBounds(10, 229, 615, 85);
+		panel_16.add(panel_26);
+		panel_26.setLayout(new BorderLayout(0, 0));
+		
 		JPanel panel_19 = new JPanel();
+		panel_26.add(panel_19, BorderLayout.NORTH);
 		FlowLayout flowLayout_1 = (FlowLayout) panel_19.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		panel_19.setBorder(new TitledBorder(null, "qBittorrent", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_19.setBounds(10, 82, 615, 60);
-		panel_16.add(panel_19);
+		panel_19.setBorder(new TitledBorder(new LineBorder(new Color(184, 207, 229)), "Percorso installazione", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		
 		dirQbittorrent = new JTextField();
 		panel_19.add(dirQbittorrent);
@@ -273,6 +331,7 @@ public class FrameOpzioni extends JFrame {
 				s.setItasaUsername(usernameItasa);
 				s.setItasaPassword(passItasa);
 				s.salvaSettings();
+				init();
 			}
 		});
 		btnSalvaClient.addActionListener(new ActionListener() {
