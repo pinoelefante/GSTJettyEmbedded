@@ -1,6 +1,7 @@
 package gst.programma;
 
 import gst.download.BitTorrentClient;
+import gst.download.QBittorrent;
 import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
@@ -118,17 +119,30 @@ public class Settings {
 		setStartHidden(false);
 	}
 	public BitTorrentClient getClientTorrent() throws Exception{
-		if(bitClient!=null)
-			return bitClient;
-		else {
-			String pathClient = /*QBittorrent.rilevaInstallazione();*/UTorrent.rilevaInstallazione();
-			System.out.println(pathClient);
-			if(pathClient!=null){
-				bitClient = /*new QBittorrent(pathClient);*/new UTorrent(pathClient);
+		try {
+			if(bitClient!=null)
 				return bitClient;
+			String utPath = getUTorrentPath();
+			if(utPath.isEmpty() || !OperazioniFile.fileExists(utPath))
+				utPath = UTorrent.rilevaInstallazione();
+			if(utPath!=null && !utPath.isEmpty()) {
+				if(utPath.toLowerCase().compareTo(getUTorrentPath())!=0)
+					setUTorrentPath(utPath);
+				return new UTorrent(utPath);
 			}
-			else
-				throw new Exception("Client torrent non trovato");
+			
+			String qBitPath = getQBittorrentPath();
+			if(qBitPath.isEmpty() || !OperazioniFile.fileExists(qBitPath))
+				qBitPath = QBittorrent.rilevaInstallazione();
+			if(qBitPath!=null){
+				if(qBitPath.compareToIgnoreCase(getQBittorrentPath())!=0)
+					setQBittorrentPath(qBitPath);
+				return new QBittorrent(qBitPath);
+			}
+			throw new Exception("Client torrent non trovato");
+		}
+		finally {
+			salvaSettings();
 		}
 	}
 	public VideoPlayer getVideoPlayer() throws Exception{
