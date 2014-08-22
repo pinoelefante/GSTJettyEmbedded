@@ -1,18 +1,16 @@
 package gst.download;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import com.dd.plist.NSNumber;
 
 import util.httpOperations.HttpOperations;
 import util.os.Os;
@@ -32,6 +30,7 @@ public class UTorrent implements BitTorrentClient{
 	public UTorrent() {}
 	public UTorrent(String path) {
 		pathEseguibile=path;
+		readOptionFile();
 		injectOptions();
 	}
 	public void setUsername(String u){
@@ -79,16 +78,15 @@ public class UTorrent implements BitTorrentClient{
 	@Override
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
 		System.out.println("download torrent "+t.getUrl());
-		if(haveWebAPI()){
+		if(Os.isWindows()){
+			return downloadCLI(t, path);
+		}
+		else if(haveWebAPI()){
 			boolean d = downloadWebUI(t, path);
 			if(d==false && Os.isWindows()){
 				return downloadCLI(t, path);
 			}
 			return d;
-		}
-		else {
-			if(Os.isWindows())
-				return downloadCLI(t, path);
 		}
 		return false;
 	}
@@ -239,13 +237,83 @@ public class UTorrent implements BitTorrentClient{
 		}
 	}
 	private void injectOptions(){
+		Map<String, Object> options = getOptionMap();
+		boolean toClose = false;
+		if(!options.containsKey("webui.enable_listen")){
+			options.put("webui.enable_listen", new NSNumber(1));
+			toClose=true;
+		}
+		if(!options.containsKey("webui.port")){
+			options.put("webui.port", new NSNumber(Integer.parseInt(port)));
+			toClose = true;
+		}
+		if(options.get("webui.enable").toString().compareTo("0")==0){
+			options.put("webui.enable", new NSNumber(1));
+			toClose = true;
+		}
+		
+		boolean toStart = false;
+		if(toClose){
+			if(isRunning()){
+				ProcessFinder.closeProcessByPID(getUTorrentPid());
+				toStart=true;
+			}
+			BencodingOutputStream out = null;
+			try {
+				out = new BencodingOutputStream(new FileOutputStream(getOptionFile()));
+				out.writeMap(options);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			finally {
+				try {
+					if(out!=null)
+						out.close();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+				finally {
+					if(toStart)
+						avviaClient();
+				}
+			}
+		}
+	}
+	private Map<String, Object> getOptionMap(){
+		try {
+    		BencodingInputStream file = new BencodingInputStream(new FileInputStream(getOptionFile()));
+    		Map<String, Object> options = file.readMap(Object.class);
+    		file.close();
+    		return options;
+		}
+		catch(Exception e){}
+		return null;
+	}
+	public void readOptionFile(){
+    	Map<String, Object> options = getOptionMap();
+    	
+    	if(!options.containsKey("webui.enable_listen")){
+    		port = options.get("bind_port").toString();
+    	}
+    	
+    	for(Entry<String, Object> e : options.entrySet()){
+    		System.out.println(e.getKey()+"="+e.getValue());
+    	}
+	}
+	public static void main(String[] args){
+		UTorrent u = new UTorrent();
+		u.readOptionFile();
+	}
+	private File getOptionFile(){
 		File f = null;
 		if(Os.isWindows()){
 			f = new File(System.getenv("APPDATA")+File.separator+"uTorrent"+File.separator+"settings.dat");
 		}
 		else if(Os.isLinux()){
 			String pathConf = pathEseguibile.substring(0, pathEseguibile.lastIndexOf("/"));
-			pathConf = "./"+pathConf + File.separator + "settings.dat";
+			pathConf = pathConf + File.separator + "settings.dat";
 			f = new File(pathConf);
 			System.out.println(f.getAbsolutePath());
 		}
@@ -253,59 +321,6 @@ public class UTorrent implements BitTorrentClient{
 			String path = System.getProperty("user.home")+File.separator+"Library"+File.separator+"Application Support"+File.separator+"uTorrent"+File.separator+"settings.dat"; 
 			f = new File(path);
 		}
-		
-		if(!f.exists()){
-			if(isRunning()){
-				ProcessFinder.closeProcessByPID(getUTorrentPid());
-				avviaClient();
-			}
-			else {
-				avviaClient();
-				ProcessFinder.closeProcessByPID(getUTorrentPid());
-				avviaClient();
-			}
-		}
-		
-		try {
-			BencodingInputStream file = new BencodingInputStream(new FileInputStream(f));
-			Map<String, Object> options = file.readMap(Object.class);
-			file.close();
-			Object lastEnable = options.put("webui.enable", 1);
-			Object lastPort = options.put("webui.enable_listen", 1);
-			if((lastEnable==null || ((BigInteger)lastEnable).intValue()!=1) || (lastPort==null || ((BigInteger)lastPort).intValue()!=1)){
-				System.out.println("Le opzioni di utorrent devono essere cambiate");
-				ProcessFinder.closeProcessByPID(getUTorrentPid());
-				BencodingOutputStream fileO = new BencodingOutputStream(new FileOutputStream(f));
-				fileO.writeMap(options);
-				fileO.close();
-				injectOptions();
-				if(isRunning()){
-					ProcessFinder.closeProcessByPID(getUTorrentPid());
-					avviaClient();
-				}
-			}
-			else {
-				Object portS = options.get("webui.port");
-				if(portS==null)
-					port="8080";
-				else
-					port = portS.toString();
-				
-			}
-		}
-		catch (FileNotFoundException e) {
-			port="8080";
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public static void main(String[] args) throws IOException, URISyntaxException {
-		UTorrent u = new UTorrent(UTorrent.rilevaInstallazione());
-		u.injectOptions();
-		u.avviaClient();
-		Desktop d = Desktop.getDesktop();
-		d.browse(new URI("http://"+u.address+":"+u.port+"/gui"));
+		return f;
 	}
 }

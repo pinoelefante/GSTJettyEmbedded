@@ -119,6 +119,8 @@ public class Settings {
 		setStartHidden(false);
 	}
 	public BitTorrentClient getClientTorrent() throws Exception{
+		if(bitClient != null)
+			return bitClient;
 		try {
 			if(bitClient!=null)
 				return bitClient;
@@ -128,7 +130,12 @@ public class Settings {
 			if(utPath!=null && !utPath.isEmpty()) {
 				if(utPath.toLowerCase().compareTo(getUTorrentPath())!=0)
 					setUTorrentPath(utPath);
-				return new UTorrent(utPath);
+				UTorrent client = new UTorrent(utPath);
+				client.setUsername(getUTorrentUsername());
+				client.setPassword(getUTorrentPassword());
+				client.setPort(getUTorrentPort());
+				bitClient=client;
+				return client;
 			}
 			
 			String qBitPath = getQBittorrentPath();
@@ -137,7 +144,9 @@ public class Settings {
 			if(qBitPath!=null){
 				if(qBitPath.compareToIgnoreCase(getQBittorrentPath())!=0)
 					setQBittorrentPath(qBitPath);
-				return new QBittorrent(qBitPath);
+				QBittorrent client = new QBittorrent(qBitPath);
+				bitClient=client;
+				return client;
 			}
 			throw new Exception("Client torrent non trovato");
 		}
@@ -324,13 +333,22 @@ public class Settings {
 		return getOpzione("utorrent_path");
 	}
 	public String getUTorrentUsername(){
-		return getOpzione("utorrent_username");
+		String opt=getOpzione("utorrent_username");
+		if(opt.isEmpty())
+			opt="admin";
+		return opt;
 	}
 	public String getUTorrentPassword(){
-		return getOpzione("utorrent_password");
+		String opt=getOpzione("utorrent_password");
+		if(opt.isEmpty())
+			opt="admin";
+		return opt;
 	}
 	public String getUTorrentPort(){
-		return getOpzione("utorrent_port");
+		String opt=getOpzione("utorrent_port");
+		if(opt.isEmpty())
+			opt="8080";
+		return opt;
 	}
 	public void setUTorrentUsername(String u){
 		aggiungiOpzione("utorrent_username", u);
