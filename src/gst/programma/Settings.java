@@ -309,6 +309,24 @@ public class Settings {
 	public String getUTorrentPath(){
 		return getOpzione("utorrent_path");
 	}
+	public String getUTorrentUsername(){
+		return getOpzione("utorrent_username");
+	}
+	public String getUTorrentPassword(){
+		return getOpzione("utorrent_password");
+	}
+	public String getUTorrentPort(){
+		return getOpzione("utorrent_port");
+	}
+	public void setUTorrentUsername(String u){
+		aggiungiOpzione("utorrent_username", u);
+	}
+	public void setUTorrentPassword(String u){
+		aggiungiOpzione("utorrent_password", u);
+	}
+	public void setUTorrentPort(String u){
+		aggiungiOpzione("utorrent_port", u);
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -328,6 +346,9 @@ public class Settings {
 				case "regola_download":
 				case "start_hidden":
 				case "utorrent_path":
+				case "utorrent_username":
+				case "utorrent_password":
+				case "utorrent_port":
 				case "qbittorrent_path":
 					break;
 				default:

@@ -31,7 +31,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.JTabbedPane;
 
 import util.os.Os;
-import javax.swing.border.EtchedBorder;
+
 import java.awt.BorderLayout;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -338,9 +338,16 @@ public class FrameOpzioni extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String ut=dirUtorrent.getText().trim();
 				String qbit=dirQbittorrent.getText().trim();
+				String ut_user=utorrentUser.getText().trim(), 
+						ut_pass=new String(utorrentPassword.getPassword()), 
+						ut_port=utorrentPorta.getText();
 				s.setUTorrentPath(ut);
 				s.setQBittorrentPath(qbit);
+				s.setUTorrentUsername(ut_user);
+				s.setUTorrentPassword(ut_pass);
+				s.setUTorrentPort(ut_port);
 				s.salvaSettings();
+				init();
 			}
 		});
 		btnVerificaItasa.addActionListener(new ActionListener() {
@@ -486,5 +493,8 @@ public class FrameOpzioni extends JFrame {
 		dirUtorrent.setText(s.getUTorrentPath());
 		itasaUsername.setText(s.getItasaUsername());
 		itasaPassword.setText(s.getItasaPassword());
+		utorrentUser.setText(s.getUTorrentUsername());
+		utorrentPassword.setText(s.getUTorrentPassword());
+		utorrentPorta.setText(s.getUTorrentPort());
 	}
 }
