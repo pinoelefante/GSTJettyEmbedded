@@ -78,9 +78,13 @@ public class Settings {
 			file = new FileInputStream(getUserDir()+File.separator+"settings.properties"); 
 			opzioni.load(file);
 			file.close();
+			getClientTorrent();
 		}
 		catch (IOException e) {
 			defaultSettings();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		finally {
 			if(file!=null)
@@ -134,6 +138,8 @@ public class Settings {
 				client.setUsername(getUTorrentUsername());
 				client.setPassword(getUTorrentPassword());
 				client.setPort(getUTorrentPort());
+				client.readOptionFile();
+				client.injectOptions();
 				bitClient=client;
 				return client;
 			}

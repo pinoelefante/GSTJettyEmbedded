@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.dd.plist.NSNumber;
+import com.dd.plist.NSObject;
 
 import util.httpOperations.HttpOperations;
 import util.os.Os;
@@ -30,8 +31,6 @@ public class UTorrent implements BitTorrentClient{
 	public UTorrent() {}
 	public UTorrent(String path) {
 		pathEseguibile=path;
-		readOptionFile();
-		injectOptions();
 	}
 	public void setUsername(String u){
 		utorrent_user=u;
@@ -78,10 +77,11 @@ public class UTorrent implements BitTorrentClient{
 	@Override
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
 		System.out.println("download torrent "+t.getUrl());
+		/*
 		if(Os.isWindows()){
 			return downloadCLI(t, path);
 		}
-		else if(haveWebAPI()){
+		else */if(haveWebAPI()){
 			boolean d = downloadWebUI(t, path);
 			if(d==false && Os.isWindows()){
 				return downloadCLI(t, path);
@@ -236,19 +236,24 @@ public class UTorrent implements BitTorrentClient{
 			}
 		}
 	}
-	private void injectOptions(){
-		Map<String, Object> options = getOptionMap();
+	public void injectOptions(){
+		Map<String, NSObject> options = getOptionMap();
+		if(options==null){
+			System.out.println("Opzioni null");
+			return;
+		}
 		boolean toClose = false;
-		if(!options.containsKey("webui.enable_listen")){
-			options.put("webui.enable_listen", new NSNumber(1));
+		if(options.get("webui.enable_listen")==null){
+			System.out.println("webui.enable_listen non in settings.dat");
+			options.put("webui.enable_listen", new NSNumber(true));
 			toClose=true;
 		}
-		if(!options.containsKey("webui.port")){
+		if(options.get("webui.port")==null){
 			options.put("webui.port", new NSNumber(Integer.parseInt(port)));
 			toClose = true;
 		}
 		if(options.get("webui.enable").toString().compareTo("0")==0){
-			options.put("webui.enable", new NSNumber(1));
+			options.put("webui.enable", new NSNumber(true));
 			toClose = true;
 		}
 		
@@ -281,17 +286,37 @@ public class UTorrent implements BitTorrentClient{
 			}
 		}
 	}
-	private Map<String, Object> getOptionMap(){
+	private Map<String, NSObject> getOptionMap(){
+		FileInputStream in=null;
+		BencodingInputStream file=null;
 		try {
-    		BencodingInputStream file = new BencodingInputStream(new FileInputStream(getOptionFile()));
-    		Map<String, Object> options = file.readMap(Object.class);
+			in=new FileInputStream(getOptionFile());
+    		file = new BencodingInputStream(in);
+    		Map<String, NSObject> options = file.readMap(NSObject.class);
     		file.close();
     		return options;
 		}
 		catch(Exception e){}
+		finally {
+			try {
+				if(in!=null)
+					in.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				if(file!=null)
+					file.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 	public void readOptionFile(){
+		/*
     	Map<String, Object> options = getOptionMap();
     	
     	if(!options.containsKey("webui.enable_listen")){
@@ -301,10 +326,15 @@ public class UTorrent implements BitTorrentClient{
     	for(Entry<String, Object> e : options.entrySet()){
     		System.out.println(e.getKey()+"="+e.getValue());
     	}
+    	*/
 	}
 	public static void main(String[] args){
 		UTorrent u = new UTorrent();
-		u.readOptionFile();
+		Map<String, NSObject> opts = u.getOptionMap();
+		System.out.println("webui.enable_listen contenuto="+opts.containsKey("webui.enable_listen"));
+		System.out.println("webui.enable_listen="+opts.get("webui.enable_listen"));
+		opts.put("webui.enable_listen", new NSNumber(1));
+		System.out.println("webui.enable_listen="+opts.get("webui.enable_listen"));
 	}
 	private File getOptionFile(){
 		File f = null;
