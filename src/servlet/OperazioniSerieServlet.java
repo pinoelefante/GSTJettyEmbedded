@@ -62,6 +62,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseDownload(idEpisodio, d);
 				break;
 			}
+			case "getElencoSerie": {
+				ArrayList<SerieTV> serie = manager.getSerie();
+				xml = ResponseSender.createResponseSerie(serie);
+				break;
+			}
 			case "getEpisodiBySerie": {
 				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				ArrayList<Episodio> episodi = manager.getEpisodiSerie(idSerie);
@@ -77,34 +82,9 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "getSeriePreferite":
 				xml = ResponseSender.createResponseSerie(manager.getElencoSeriePreferite());
 				break;
-			case "getProviders":
-				xml = ResponseSender.createResponseProviders(manager.getProviders());
-				break;
-			case "getSerieFromProvider": {
-				try {
-					int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
-					ArrayList<SerieTV> serie = manager.getSerieFromProvider(provider);
-					xml = ResponseSender.createResponseSerie(serie);
-				}
-				catch(Exception e){
-					xml = ResponseSender.createResponseBoolean(false);
-				}
-				break;
-			}
 			case "getSerieNuove": {
 				ArrayList<SerieTV> serie = manager.getSerieNuove();
 				xml = ResponseSender.createResponseSerie(serie);
-				break;
-			}
-			case "getSerieNuoveFromProvider": {
-				try {
-					int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
-					ArrayList<SerieTV> serie = manager.getSerieNuoveByProvider(provider);
-					xml = ResponseSender.createResponseSerie(serie);
-				}
-				catch(Exception e){
-					xml = ResponseSender.createResponseBoolean(false);
-				}
 				break;
 			}
 			case "play": {
@@ -128,8 +108,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 				break;
 			}
 			case "updateListSeries":{
-				int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
-				boolean res = manager.aggiornaListaSerie(provider);
+				boolean res = manager.aggiornaListeSerie();
 				xml = ResponseSender.createResponseBoolean(res);
 				break;
 			}

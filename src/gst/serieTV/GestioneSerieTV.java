@@ -95,6 +95,13 @@ public class GestioneSerieTV implements Notifier {
 		}
 		return provider.getElencoSerieDB();
 	}
+	public ArrayList<SerieTV> getSerie(){
+		ArrayList<ArrayList<SerieTV>> serie = new ArrayList<ArrayList<SerieTV>>();
+		for(int i=0;i<providers.size();i++){
+			serie.add(providers.get(i).getElencoSerieDB());
+		}
+		return Merger.mergeListsSerieTV(serie);
+	}
 	public ProviderSerieTV checkProvider(int id){
 		for(int i=0;i<providers.size();i++)
 			if(providers.get(i).getProviderID()==id)
@@ -128,6 +135,7 @@ public class GestioneSerieTV implements Notifier {
 		}
 		return false;
 	}
+	/*
 	public boolean aggiornaListaSerie(int idProvider){
 		ProviderSerieTV p = checkProvider(idProvider);
 		if(p!=null){
@@ -135,6 +143,13 @@ public class GestioneSerieTV implements Notifier {
 			return true;
 		}
 		return false;
+	}
+	*/
+	public boolean aggiornaListeSerie(){
+		for(int i=0;i<providers.size();i++){
+			providers.get(i).aggiornaElencoSerie();
+		}
+		return true;
 	}
 	
 	public ArrayList<SerieTV> getElencoSeriePreferite(){

@@ -111,8 +111,8 @@ div#operazioniLista {
 	height:50px;
 }
 
-select#selectSerie, select#selectProvider {
-	width: 20%;
+select#selectSerie {
+	width: 50%;
 	display: inline-block;
 }
 

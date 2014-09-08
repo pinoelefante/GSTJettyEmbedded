@@ -69,14 +69,17 @@ public class ResponseSender {
 		for(int i=0;i<serie.size();i++){
 			Element serie_tag=new Element("serie");
 			Element nome = new Element("name");
+			Element provider_name = new Element("provider_name");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
 			Element provider = new Element("provider");
 			provider.addContent(serie.get(i).getProviderID()+"");
+			provider_name.addContent(ProviderSerieTV.getProviderNameByID(serie.get(i).getProviderID()));
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
+			serie_tag.addContent(provider_name);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);

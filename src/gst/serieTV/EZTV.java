@@ -23,7 +23,7 @@ public class EZTV extends ProviderSerieTV {
 		super(ProviderSerieTV.PROVIDER_EZTV);
 		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
-		baseUrls.add("http://eztv.it");
+		baseUrls.add("https://eztv.it");
 		baseUrls.add("http://eztv.openinternet.biz");
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);

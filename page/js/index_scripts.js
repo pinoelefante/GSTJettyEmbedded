@@ -1,23 +1,58 @@
 $(document).ready(function() {
-	caricaProvider();
 	loadSeriePreferite();
 	caricaSerieNuove();
+	caricaElencoSerieCompleto();
 	bootbox.setDefaults({
 		locale: "it"
 	});
 });
-function aggiungiSerie(p, s, nomeSerie) {
-	var provider = (p == null ? selectProvider.options[selectProvider.selectedIndex].value : p);
-	var serie = (s == null ? selectSerie.options[selectSerie.selectedIndex].value : s);
-	var nome = (nomeSerie == null ? selectSerie.options[selectSerie.selectedIndex].innerHTML : nomeSerie);
-	if(provider == null || provider==""){
-		showModal("","Devi selezionare un provider");
-		return;
-	}
+function aggiungiSerieBottone(){
+	var serie = selectSerie.options[selectSerie.selectedIndex];
+	
 	if(serie==null || serie==""){
 		showModal("","Devi selezionare una serie da aggiungere");
 		return;
 	}
+	
+	var id_serie = serie.value;
+	var nome = serie.innerHTML;
+	var provider = serie.provider;
+	
+	operazioneInCorso("Aggiungo la serie alle preferite");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=add&serie=" + id_serie + "&provider=" + provider,
+		dataType : "xml",
+		success : function(msg) {
+			var response = parseBooleanXML(msg);
+			if (response) {
+				var elem = creaSerieElementoPagina(nome, id_serie, provider);
+				addSerieInOrder(elem, nome);
+				operazioneInCorso("");
+				aggiornaEpisodi(id_serie, provider);
+			}
+			else {
+				showModal("","Serie non aggiunta");
+			}
+			operazioneInCorso("");
+		},
+		error : function(msg){
+			showModal("Si è verificato un errore");
+			operazioneInCorso("");
+		}
+	});
+}
+function aggiungiSerie(provider, serie, nome) {
+	if(serie==null || serie=="" || serie <=0){
+		showModal("","Devi selezionare una serie da aggiungere");
+		return;
+	}
+	if(provider==null || provider=="" || provider<=0){
+		showModal("","La serie selezionata non ha un provider settato");
+		return;
+	}
+
 	operazioneInCorso("Aggiungo la serie alle preferite");
 	$.ajax({
 		type : "POST",
@@ -62,11 +97,11 @@ function creaSerieElementoPagina(nome, id, provider) {
 	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
 	return element;
 }
-function caricaSerieByProvider(provider) {
+function caricaElencoSerieCompleto(){
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
-		data : "action=getSerieFromProvider&provider=" + provider,
+		data : "action=getElencoSerie",
 		dataType : "xml",
 		success : function(msg) {
 			optSelectSerie.innerHTML = "";
@@ -81,13 +116,13 @@ function caricaSerieByProvider(provider) {
 				var nome = $(this).find("name").text();
 				var id = $(this).find("id").text();
 				var provider = $(this).find("provider").text();
+				var provider_name = $(this).find("provider_name").text();
 				var serie = document.createElement("option");
 				serie.value = id;
 				serie.provider = provider;
-				serie.innerHTML = nome;
+				serie.innerHTML = nome+" - "+provider_name;
 				$("#optSelectSerie").append(serie);
 			});
-			//caricaSerieNuove(provider);
 			operazioneInCorso("");
 		},
 		error : function(msg) {
@@ -96,15 +131,6 @@ function caricaSerieByProvider(provider) {
 			return;
 		}
 	});
-}
-function caricaSerieFromProvider() {
-	var provider = selectProvider.options[selectProvider.selectedIndex];
-	if (provider.value == null || provider.value == undefined || provider.value <= 0) {
-		optSelectSerie.innerHTML = "";
-		return;
-	}
-	operazioneInCorso("Invio richiesta serie per provider " + provider.innerHTML);
-	caricaSerieByProvider(provider.value);
 }
 function caricaSerieNuove(){
 	operazioneInCorso("Invio richiesta nuove serie");
@@ -124,9 +150,10 @@ function caricaSerieNuove(){
 				var nome = $(this).find("name").text();
 				var id = $(this).find("id").text();
 				var provider = $(this).find("provider").text();
+				var provider_name = $(this).find("provider_name").text();
 				var serie = document.createElement("div");
 				$(serie).addClass("panel-serieNuova");
-				serie.innerHTML = "<h4 class='panel-title'>" + nome + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
+				serie.innerHTML = "<h4 class='panel-title'>" + nome +" - "+provider_name + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
 				$("#serieNuoveDivContainer").append(serie);
 			});
 			operazioneInCorso("");
@@ -135,32 +162,6 @@ function caricaSerieNuove(){
 			operazioneInCorso("");
 			showModal("", "Si è verificato un errore durante il caricamento delle serie");
 			return;
-		}
-	});
-}
-function caricaProvider() {
-	operazioneInCorso("Invio richiesta provider");
-	$.ajax({
-		type : "POST",
-		url : "./OperazioniSerieServlet",
-		data : "action=getProviders",
-		dataType : "xml",
-		success : function(msg) {
-			operazioneInCorso("Carico i provider");
-			groupProvider.innerHTML = "";
-			$(msg).find("provider").each(function() {
-				var nome = $(this).find("name").text();
-				var id = $(this).find("id").text();
-				var provider = document.createElement("option");
-				provider.value = id;
-				provider.innerHTML = nome;
-				$("#groupProvider").append(provider);
-			});
-			operazioneInCorso("");
-		},
-		error : function(msg) {
-			operazioneInCorso("");
-			showModal("","Si è verificato un errore durante il caricamento dei provider");
 		}
 	});
 }
@@ -181,24 +182,21 @@ function download() {
 }
 
 function ignora() {
-	
+	//TODO
 	 location.reload(); 
 }
 function aggiornaSerie(bottone) {
 	$(bottone).prop("disabled", "true");
-	var provider = selectProvider.options[selectProvider.selectedIndex];
-	if (provider == null)
-		return;
 	operazioneInCorso("Aggiorno l'elenco delle serie tv di " + provider.innerHTML);
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
-		data : "action=updateListSeries&provider=" + provider.value,
+		data : "action=updateListSeries",
 		dataType : "xml",
 		success : function(msg) {
 			if (parseBooleanXML(msg)) {
 				operazioneInCorso("Aggiornamento dell'elenco delle serie completato con successo");
-				caricaSerieByProvider(provider.value);
+				caricaElencoSerieCompleto();
 			}
 			else
 				showModal("", "Si è verificato un errore durante l'aggiornamento");
