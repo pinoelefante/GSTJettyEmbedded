@@ -18,10 +18,11 @@ public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
 	private ThreadRicercaEpisodi t_search;
+	private Settings settings;
 	
 	public static GestioneSerieTV getInstance(){
 		if(instance==null){
-			instance=new GestioneSerieTV();    		
+			instance=new GestioneSerieTV();   		
 		}
 		return instance;
 	}
@@ -35,8 +36,6 @@ public class GestioneSerieTV implements Notifier {
 			count_serie_nuove+=providers.get(i).getElencoSerieNuove().size();
 		}
 		inviaNotifica("Sono state trovate "+count_serie_nuove+" nuove serie");
-		
-		final Settings settings = Settings.getInstance();
 		
 		//Avvia la ricerca dei nuovi episodi
 		t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
@@ -75,6 +74,7 @@ public class GestioneSerieTV implements Notifier {
 		providers=new ArrayList<ProviderSerieTV>(1);
 		notificable=new ArrayList<Notificable>();
 		providers.add(new EZTV());
+		settings = Settings.getInstance();
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
 		return providers;
@@ -233,5 +233,14 @@ public class GestioneSerieTV implements Notifier {
 	public void close(){
 		if(t_search!=null)
 			t_search.interrupt();
+	}
+	public ArrayList<Episodio> getEpisodiDaVedere(){ //TODO
+		if(settings.isRicercaSottotitoli()){
+			
+		}
+		else {
+			
+		}
+		return null;
 	}
 }

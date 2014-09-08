@@ -66,7 +66,7 @@ public class ServerStart {
 			settings.setFirstStart(false);
 			settings.salvaSettings();
 		}
-		//gst.init(ui);
+		gst.init(ui);
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {

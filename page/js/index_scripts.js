@@ -381,10 +381,10 @@ function getEpisodi(id) {
 				$(html).appendTo(accordionStagione);
 			});
 			if(daScaricare == 0){
-				$("#episodiScaricare" + id)	.text("(Nessun episodo da scaricare. Da vedere: "+daVedere+")");
+				$("#episodiScaricare" + id)	.text("(Nessun episodo da scaricare. Vedere: "+daVedere+")");
 			}
 			else {
-				$("#episodiScaricare" + id)	.text("(" + daScaricare + " episodi da scaricare. Da vedere: "+daVedere+")");
+				$("#episodiScaricare" + id)	.text("(" + daScaricare + " da scaricare. Vedere: "+daVedere+")");
 			}
 			selezionaTutto();
 			operazioneInCorso("");
