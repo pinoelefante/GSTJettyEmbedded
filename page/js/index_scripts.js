@@ -57,7 +57,7 @@ function aggiungiSerie(provider, serie, nome) {
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
-		data : "action=add&serie=" + serie + "&provider=" + provider,
+		data : "action=add&serie=" + serie,
 		dataType : "xml",
 		success : function(msg) {
 			var response = parseBooleanXML(msg);
@@ -83,8 +83,8 @@ function addSerieInOrder(elem, nomeSerie) {
 	$(".seriePreferita").each(function() {
 		if (inserita)
 			return;
-		var nome = $(this).find("a").text();
-		if (nomeSerie < nome) {
+		var nome = $(this).find("a.nomeSerie").text();
+		if ($(nomeSerie).text() < nome) {
 			$(elem).insertBefore(this);
 			inserita = true;
 			return;
@@ -94,7 +94,7 @@ function addSerieInOrder(elem, nomeSerie) {
 		$("#accordion").append(elem);
 }
 function creaSerieElementoPagina(nome, id, provider) {
-	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
+	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
 	return element;
 }
 function caricaElencoSerieCompleto(){
@@ -153,7 +153,7 @@ function caricaSerieNuove(){
 				var provider_name = $(this).find("provider_name").text();
 				var serie = document.createElement("div");
 				$(serie).addClass("panel-serieNuova");
-				serie.innerHTML = "<h4 class='panel-title'><b>" + nome +"</b> - "+provider_name + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
+				serie.innerHTML = "<h4 class='panel-title'><b>" + nome +"</b> - "+provider_name + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'<b>"+nome.replace("'","\\'")+"</b>"+" - "+provider_name+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
 				$("#serieNuoveDivContainer").append(serie);
 			});
 			operazioneInCorso("");
@@ -187,7 +187,7 @@ function ignora() {
 }
 function aggiornaSerie(bottone) {
 	$(bottone).prop("disabled", "true");
-	operazioneInCorso("Aggiorno l'elenco delle serie tv di " + provider.innerHTML);
+	operazioneInCorso("Aggiorno l'elenco delle serie tv");
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
@@ -197,6 +197,7 @@ function aggiornaSerie(bottone) {
 			if (parseBooleanXML(msg)) {
 				operazioneInCorso("Aggiornamento dell'elenco delle serie completato con successo");
 				caricaElencoSerieCompleto();
+				caricaSerieNuove();
 			}
 			else
 				showModal("", "Si è verificato un errore durante l'aggiornamento");

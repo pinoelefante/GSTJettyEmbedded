@@ -39,9 +39,8 @@ public class OperazioniSerieServlet extends HttpServlet {
 		Document xml = null;
 		switch(action){
 			case "add": {
-				int provider = Integer.parseInt(checkParameter("provider", resp, req, false));
 				int serie = Integer.parseInt(checkParameter("serie", resp, req, false));
-				boolean res = manager.aggiungiSerieAPreferiti(provider, serie);
+				boolean res = manager.aggiungiSerieAPreferiti(serie);
 				xml = ResponseSender.createResponseBoolean(res);
 				break;
 			}
@@ -120,12 +119,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 					xml = ResponseSender.createResponseBoolean(true);
 				}
 				catch(Exception e){
-					xml = ResponseSender.createResponseBoolean(true);
+					xml = ResponseSender.createResponseBoolean(false);
 				}
 				break;
 			}
 		}
-		
 		ResponseSender.sendResponse(resp, xml);
 	}
 	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{

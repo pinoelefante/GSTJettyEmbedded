@@ -124,27 +124,15 @@ public class GestioneSerieTV implements Notifier {
 		return Merger.mergeListsSerieTV(serie);
 	}
 	
-	public boolean aggiungiSerieAPreferiti(int provider, int idSerie){
-		ProviderSerieTV p = checkProvider(provider);
-		if(p!=null){
-			SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
-			if(st!=null){
-				boolean r = ProviderSerieTV.aggiungiSerieAPreferiti(st);
-				return r;
-			}
+	public boolean aggiungiSerieAPreferiti(int idSerie){
+		SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
+		if(st!=null){
+			boolean r = ProviderSerieTV.aggiungiSerieAPreferiti(st);
+			return r;
 		}
 		return false;
 	}
-	/*
-	public boolean aggiornaListaSerie(int idProvider){
-		ProviderSerieTV p = checkProvider(idProvider);
-		if(p!=null){
-			p.aggiornaElencoSerie();
-			return true;
-		}
-		return false;
-	}
-	*/
+	
 	public boolean aggiornaListeSerie(){
 		for(int i=0;i<providers.size();i++){
 			providers.get(i).aggiornaElencoSerie();
