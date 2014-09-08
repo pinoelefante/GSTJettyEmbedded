@@ -120,7 +120,7 @@ function caricaElencoSerieCompleto(){
 				var serie = document.createElement("option");
 				serie.value = id;
 				serie.provider = provider;
-				serie.innerHTML = nome+" - "+provider_name;
+				serie.innerHTML = "<b>"+nome+"</b> - "+provider_name;
 				$("#optSelectSerie").append(serie);
 			});
 			operazioneInCorso("");
@@ -153,7 +153,7 @@ function caricaSerieNuove(){
 				var provider_name = $(this).find("provider_name").text();
 				var serie = document.createElement("div");
 				$(serie).addClass("panel-serieNuova");
-				serie.innerHTML = "<h4 class='panel-title'>" + nome +" - "+provider_name + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
+				serie.innerHTML = "<h4 class='panel-title'><b>" + nome +"</b> - "+provider_name + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiungi' onclick=\"aggiungiSerie("+provider+","+id+",'"+nome.replace("'","\\'")+"')\"><span class='glyphicon glyphicon-plus'></span></button>&nbsp;" + "<button class='btn btn-warning' title='Info Serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign'></span></button>" + "</div>";
 				$("#serieNuoveDivContainer").append(serie);
 			});
 			operazioneInCorso("");
@@ -248,7 +248,8 @@ function loadSeriePreferite() {
 				var nome = $(this).find("name").text();
 				var id = $(this).find("id").text();
 				var provider = $(this).find("provider").text();
-				var elem = creaSerieElementoPagina(nome, id, provider);
+				var provider_name = $(this).find("provider_name").text();
+				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider);
 				$("#accordion").append(elem);
 				arrayID[i]=id;
 				i++;
@@ -429,6 +430,8 @@ function downloadS(id){
 					$("#divEP_"+id).addClass("episodioDaVedere");
 				}
 			}
+			else
+				showModal("","Episodio non scaricato");
 		},
 		error : function(msg) {
 			operazioneInCorso("");
