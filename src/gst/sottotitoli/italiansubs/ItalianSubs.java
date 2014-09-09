@@ -1,4 +1,4 @@
-package gst.sottotitoli;
+package gst.sottotitoli.italiansubs;
 
 import gst.download.Download;
 import gst.naming.Renamer;
@@ -7,6 +7,10 @@ import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.GestoreSottotitoli;
+import gst.sottotitoli.ItasaSubNotFound;
+import gst.sottotitoli.ProviderSottotitoli;
+import gst.sottotitoli.SerieSub;
 import gst.tda.db.KVResult;
 
 import java.io.BufferedInputStream;
@@ -379,44 +383,23 @@ public class ItalianSubs implements ProviderSottotitoli{
 	}
 	public static boolean VerificaLogin(String username, String password){
 		String url_login=API_LOGIN.replace("<USERNAME>", username).replace("<PASSWORD>", password);
-		boolean stato=false;
-		
-		FileReader f_r=null;
-		Scanner file=null;
+		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder domparser = null;
 		try {
-			Download.downloadFromUrl(url_login, Settings.getInstance().getUserDir()+"response_login");
-			f_r=new FileReader(Settings.getInstance().getUserDir()+"response_login");
-			file=new Scanner(f_r);
-			while(file.hasNextLine()){
-				String linea=file.nextLine().trim();
-				if(linea.startsWith("<root>")){
-					String status=linea.substring(linea.indexOf("<status>"), linea.indexOf("</status>")).trim().replace("<status>", "");
-					if(status.compareToIgnoreCase("success")==0){
-						AUTHCODE=linea.substring(linea.indexOf("<authcode>"), linea.indexOf("</authcode>")).trim().replace("<authcode>", "").trim();
-						stato=true;
-					}
-					else{
-						AUTHCODE="";
-						stato=false;
-					}
-					break;
-				}
-			}
+			domparser = dbfactory.newDocumentBuilder();
+			Document doc = domparser.parse(url_login);
+			
+			NodeList elenco_shows=doc.getElementsByTagName("authcode");
+			if(elenco_shows.getLength()>0)
+				return true;
+		} 
+		catch (SAXException | ParserConfigurationException e) {
+			e.printStackTrace();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
 		}
-		catch (IOException e) {	
-			ManagerException.registraEccezione(e);
-		}
-		finally{
-			file.close();
-			try {
-				f_r.close();
-			}
-			catch (IOException e) {	
-				ManagerException.registraEccezione(e);
-			}
-			OperazioniFile.deleteFile(Settings.getInstance().getUserDir()+"response_login");
-		}
-		return stato;
+		return false;
 	}
 	public void loggaItasa() {
 		class LoggerItasa extends Thread{

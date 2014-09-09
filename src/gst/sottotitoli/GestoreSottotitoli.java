@@ -7,6 +7,7 @@ import gst.programma.Settings;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.tda.db.KVResult;
 
 import java.io.File;

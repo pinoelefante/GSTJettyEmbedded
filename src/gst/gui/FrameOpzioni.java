@@ -1,7 +1,7 @@
 package gst.gui;
 
 import gst.programma.Settings;
-import gst.sottotitoli.ItalianSubs;
+import gst.sottotitoli.italiansubs.ItalianSubs;
 
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -33,7 +33,9 @@ import javax.swing.JTabbedPane;
 import util.os.Os;
 
 import java.awt.BorderLayout;
+
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
 
 public class FrameOpzioni extends JFrame {
