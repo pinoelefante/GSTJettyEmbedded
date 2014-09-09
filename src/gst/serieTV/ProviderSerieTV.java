@@ -262,7 +262,7 @@ public abstract class ProviderSerieTV {
 		}
 		return false;
 	}
-	private static Torrent searchTorrent(Preferenze p, ArrayList<Torrent> list){
+	public static Torrent searchTorrent(Preferenze p, ArrayList<Torrent> list){
 		if(p.isPreferisciHD()){
 			for(int i=0;i<list.size();i++){
 				if(list.get(i).getStats().is720p())

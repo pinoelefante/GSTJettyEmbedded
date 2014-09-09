@@ -171,6 +171,15 @@ public class GestioneSerieTV implements Notifier {
 	public boolean downloadEpisodio(int idEp) {
 		return ProviderSerieTV.downloadEpisodio(idEp);
 	}
+	public Torrent getLinkDownload(int idEp){
+		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
+		if(ep==null)
+			return null;
+		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+		if(serie==null)
+			return null;
+		return ProviderSerieTV.searchTorrent(serie.getPreferenze(), ep.getLinks());
+	}
 	
 	public boolean deleteEpisodio(int idEp){
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
