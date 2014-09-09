@@ -161,7 +161,7 @@ public class ItasaAPI {
 	}
 	public String download(int idSub, String folder) throws Exception {
 		if(AUTHCODE.isEmpty())
-			throw new Exception("Not logged in");
+			throw new Exception("Not logged in - Check your credentials");
 		
 		String url=API_DOWNLOAD.replace("<ID_SUB>", ""+idSub).replace("<AUTHCODE>", AUTHCODE);
 		HttpGet req=new HttpGet(url);

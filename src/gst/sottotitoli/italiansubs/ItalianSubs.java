@@ -3,7 +3,6 @@ package gst.sottotitoli.italiansubs;
 import gst.database.Database;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
-import gst.naming.Renamer;
 import gst.programma.ManagerException;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
@@ -11,35 +10,15 @@ import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
-import gst.sottotitoli.GestoreSottotitoli;
-import gst.sottotitoli.ItasaSubNotFound;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 import gst.tda.db.KVResult;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import util.zip.ArchiviZip;
 
@@ -74,13 +53,19 @@ public class ItalianSubs implements ProviderSottotitoli{
 	private ItalianSubs(){
 		settings = Settings.getInstance();
 		api = new ItasaAPI();
+	}
+	private boolean logga(){
 		loggato=api.login(!settings.getItasaUsername().isEmpty()?settings.getItasaUsername():"GestioneSerieTV",
-						  !settings.getItasaPassword().isEmpty()?settings.getItasaPassword():"gestione@90");
+				  		  !settings.getItasaPassword().isEmpty()?settings.getItasaPassword():"gestione@90");
+		return loggato;
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio episodio) {
 		if(serie.getIDItasa()<=0)
 			return false;
+		
+		if(!loggato)
+			logga();
 		
 		Torrent link = GestioneSerieTV.getInstance().getLinkDownload(episodio.getId());
 		if(link==null)
