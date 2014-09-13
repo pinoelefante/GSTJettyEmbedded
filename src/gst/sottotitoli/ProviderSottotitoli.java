@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public abstract interface ProviderSottotitoli {
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep);
-	public SerieSub cercaSerieAssociata(SerieTV serie);
 	public ArrayList<SerieSub> getElencoSerie();
 	public String getProviderName();
+	public void associaSerie(SerieTV s);
 }

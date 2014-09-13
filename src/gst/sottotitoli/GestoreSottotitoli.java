@@ -13,16 +13,18 @@ import gst.tda.db.KVResult;
 import java.io.File;
 import java.util.ArrayList;
 
-
 public class GestoreSottotitoli {
+	private static GestoreSottotitoli instance;
 	public static GestoreSottotitoli getInstance(){
-		return null;
+		if(instance==null)
+			instance=new GestoreSottotitoli();
+		return instance;
 	}
 	
 	class AssociatoreAutomatico extends Thread {
 		public void run(){
 			System.out.println("Avvio associatore");
-			ArrayList<SerieTV> st=GestioneSerieTV.getElencoSerieInserite();
+			ArrayList<SerieTV> st=GestioneSerieTV.getInstance().getElencoSeriePreferite();
 			for(int i=0;i<st.size();i++){
 				SerieTV s=st.get(i);
 				associaSerie(s);
@@ -32,10 +34,7 @@ public class GestoreSottotitoli {
 	class RicercaSottotitoliAutomatica extends Thread{
 		public void run(){
 			long sleep_time=/*un minuto*/(60*1000)*10/*10 minuti*/;
-			
-			if(((ItalianSubs)itasa).isLocked())
-				((ItalianSubs)itasa).attendiUnlock();
-			
+		
 			try {
 				Thread t=new AssociatoreAutomatico();
 				t.start();
@@ -79,9 +78,9 @@ public class GestoreSottotitoli {
 	
 	private ArrayList<Torrent> sottotitoli_da_scaricare;
 	
-	public GestoreSottotitoli(){
+	private GestoreSottotitoli(){
 		sottotitoli_da_scaricare=new ArrayList<Torrent>();
-		itasa=new ItalianSubs();
+		itasa=ItalianSubs.getInstance();
 		subsfactory=new Subsfactory();
 		subspedia=new Subspedia();
 		ricerca_automatica=new RicercaSottotitoliAutomatica();

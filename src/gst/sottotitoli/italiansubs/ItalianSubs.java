@@ -7,6 +7,7 @@ import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 import gst.tda.db.KVResult;
 
@@ -26,7 +27,7 @@ import org.xml.sax.SAXException;
 
 import util.zip.ArchiviZip;
 
-public class ItalianSubs {
+public class ItalianSubs implements ProviderSottotitoli{
 	private static ItalianSubs itasa;
 	public final static String HDTV = "Normale",	
 							HD720p = "720p",
@@ -298,9 +299,23 @@ public class ItalianSubs {
 		}
 		return null;
 	}
+	public void associaSerie(SerieTV s){
+		if(s.getIDItasa()>0)
+			return;
+		
+		SerieSub s_sub=getSerieAssociata(s);
+		if(s_sub!=null){
+			associaSerie(s, s_sub.getIDDB());
+		}
+	}
 	public void associaSerie(SerieTV serie, int idItasa){
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa="+idItasa+" WHERE id="+serie.getIDDb();
 		Database.updateQuery(query);
+	}
+
+	@Override
+	public ArrayList<SerieSub> getElencoSerie() {
+		return getElencoSerie("nome");
 	}
 }
 
