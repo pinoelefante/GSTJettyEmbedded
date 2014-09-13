@@ -115,7 +115,6 @@ public class Settings {
 		setAutostart(true);
 		setDirectoryDownload(getUserDir()+"Download");
 		setDownloadAutomatico(false);
-		setEnableITASA(true);
 		setFirstStart(true);
 		setMinRicerca(480);
 		setRegolaDownloadDefault(Preferenze.HD);
@@ -221,9 +220,6 @@ public class Settings {
 	public boolean isDownloadAutomatico() {
 		return Boolean.parseBoolean(getOpzione("download_auto"));
 	}
-	public boolean isEnableITASA() {
-		return Boolean.parseBoolean(getOpzione("itasa"));
-	}
 	public boolean isFirstStart(){
 		return Boolean.parseBoolean(getOpzione("first_start"));
 	}
@@ -293,9 +289,6 @@ public class Settings {
 	}
 	public void setDownloadAutomatico(boolean downloadAutomatico) {
 		aggiungiOpzione("download_auto", downloadAutomatico+"");
-	}
-	public void setEnableITASA(boolean enableITASA) {
-		aggiungiOpzione("itasa", enableITASA+"");
 	}
 	public void setFirstStart(boolean firstStart){
 		aggiungiOpzione("first_start", firstStart+"");
@@ -376,7 +369,6 @@ public class Settings {
 				case "download_path":
 				case "download_sottotitoli":
 				case "first_start":
-				case "itasa":
 				case "itasa_user":
 				case "itasa_pass":
 				case "last_version":

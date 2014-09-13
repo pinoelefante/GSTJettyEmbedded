@@ -1,19 +1,20 @@
 package gst.sottotitoli;
 
-import gst.naming.Renamer;
+import gst.database.Database;
+import gst.interfacce.Notificable;
+import gst.interfacce.Notifier;
 import gst.programma.ManagerException;
-import gst.programma.OperazioniFile;
 import gst.programma.Settings;
+import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
+import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
-import gst.serieTV.Torrent;
 import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.tda.db.KVResult;
 
-import java.io.File;
 import java.util.ArrayList;
 
-public class GestoreSottotitoli {
+public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
 	public static GestoreSottotitoli getInstance(){
 		if(instance==null)
@@ -45,29 +46,20 @@ public class GestoreSottotitoli {
 				ManagerException.registraEccezione(e1);
 			}
 			
-			System.out.println("Avvio thread ricerca automatica sottotitoli");
-			if(sottotitoli_da_scaricare.size()==0)
-				System.out.println("Ricerca sottotitoli - Coda vuota");
-			
-			do{
-				for(int i=0;i<sottotitoli_da_scaricare.size();){
-					Torrent t=sottotitoli_da_scaricare.get(i);
-					if(t==null)
-						continue;
-					System.out.println("Thread sottotitolo - Cercando "+t);
-					if(!scaricaSottotitolo(t))
-						i++;
+			while(true) {
+				ArrayList<Episodio> episodi = getSottotitoliDaScaricare();
+				for(int i=0;i<episodi.size();i++){
+					scaricaSottotitolo(episodi.get(i));
 				}
+				episodi.clear();
+				episodi=null;
 				try {
-					System.out.println("Thread ricerca sottotitoli - pausa");
 					sleep(sleep_time);
 				}
 				catch (InterruptedException e) {
 					e.printStackTrace();
-					ManagerException.registraEccezione(e);
-					break;
 				}
-			}while(true);
+			}
 		}
 	}
 	public final static int ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
@@ -75,156 +67,74 @@ public class GestoreSottotitoli {
 	private ProviderSottotitoli itasa;
 	private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
-	
-	private ArrayList<Torrent> sottotitoli_da_scaricare;
-	
+	private Settings settings;
+		
 	private GestoreSottotitoli(){
-		sottotitoli_da_scaricare=new ArrayList<Torrent>();
 		itasa=ItalianSubs.getInstance();
 		subsfactory=new Subsfactory();
 		subspedia=new Subspedia();
-		ricerca_automatica=new RicercaSottotitoliAutomatica();
+		notificable=new ArrayList<Notificable>(2);
+		settings=Settings.getInstance();
+		if(settings.isRicercaSottotitoli())
+			avviaRicercaAutomatica();
 	}
 	public void avviaRicercaAutomatica(){
-		if(ricerca_automatica==null)
+		if(ricerca_automatica==null || !ricerca_automatica.isAlive())
 			ricerca_automatica=new RicercaSottotitoliAutomatica();
-		else if(!ricerca_automatica.isAlive())
-			ricerca_automatica=new RicercaSottotitoliAutomatica();
+		else if(ricerca_automatica.isAlive())
+			return;
 		ricerca_automatica.start();
 	}
 	public void stopRicercaAutomatica(){
-		if(ricerca_automatica!=null){
+		if(ricerca_automatica!=null && ricerca_automatica.isAlive()){
 			ricerca_automatica.interrupt();
 			ricerca_automatica=null;
 		}
 	}
-	public ArrayList<Torrent> getSottotitoliDaScaricare(){
-		return sottotitoli_da_scaricare;
-	}
-	public void cercaAssociazioniSub(){
-		ArrayList<SerieTV> elenco_serie=GestioneSerieTV.getElencoSerieCompleto();
-		for(int i=0;i<elenco_serie.size();i++){
-			SerieTV s=elenco_serie.get(i);
-			associaSerie(s);
-		}
-		elenco_serie.clear();
-		elenco_serie.trimToSize();
-		elenco_serie=null;
-	}
-	public void aggiungiLogEntry(Torrent t, ProviderSottotitoli provider){
-		String query="INSERT INTO "+Database.TABLE_LOGSUB+" (serie, stagione, episodio, id_provider) VALUES ("+
-				"\""+t.getSerieTV().getNomeSerie()+"\""+
-				","+t.getStagione()+
-				","+t.getEpisodio()+
-				","+provider.getProviderID()+")";
-		Database.updateQuery(query);
-		Interfaccia.getInterfaccia().addEntrySottotitolo(t.getNomeSerie(), t.getStagione(), t.getEpisodio(), provider.getProviderName(), true);
-	}
-	private void aggiungiLogEntry(String serie, int stagione, int episodio, int provider, boolean tray_notify){
-		Interfaccia.getInterfaccia().addEntrySottotitolo(serie, stagione,episodio, getProvider(provider).getProviderName(), tray_notify);
-	}
-	public void loadLast10(){
-		String query="SELECT * FROM "+Database.TABLE_LOGSUB+" ORDER BY id DESC LIMIT 10";
-		ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
-		for(int i=res.size()-1;i>=0;i--){
-			KVResult<String, Object> r=res.get(i);
-			String nomeserie=(String) r.getValueByKey("serie");
-			int stagione=(int) r.getValueByKey("stagione");
-			int episodio=(int) r.getValueByKey("episodio");
-			int id_provider=(int) r.getValueByKey("id_provider");
-			aggiungiLogEntry(nomeserie, stagione, episodio, id_provider, false);
-		}
-	}
-	public void aggiungiEpisodio(Torrent t){
-		for(int i=0;i<sottotitoli_da_scaricare.size();i++){
-			Torrent t1=sottotitoli_da_scaricare.get(i);
-			if(t.getUrl().compareToIgnoreCase(t1.getUrl())==0)
-				return;
-		}
-		sottotitoli_da_scaricare.add(t);
-		if(Interfaccia.getInterfaccia()!=null)
-			Interfaccia.getInterfaccia().subAddSubDownload(t);
-	}
-
-	public void rimuoviEpisodio(Torrent torrent) {
-		sottotitoli_da_scaricare.remove(torrent);
-	}
-	public boolean associaSerie(SerieTV s){
-		boolean itasa_assoc=false, it_al=false, subs_assoc=false, subs_al=false;
+	public void associaSerie(SerieTV s){
 		if(s.getIDItasa()<=0){
-			SerieSub id=itasa.getSerieAssociata(s);
-			if(id!=null){
-				s.setIDItasa((int)id.getIDDB());
-				itasa_assoc=true;
-			}
+			itasa.associaSerie(s);
 		}
-		else
-			it_al=true;
-		
-		if(s.getIDDBSubsfactory()==0){
-			SerieSubSubsfactory id=(SerieSubSubsfactory) subsfactory.getSerieAssociata(s);
-			if(id!=null){
-				s.setIDSubsfactory((int)id.getIDDB(), false);
-				s.setSubsfactoryDirectory(id.getDirectory());
-				subs_assoc=true;
-			}
+			
+		if(s.getIDDBSubsfactory()<=0){
+			subsfactory.associaSerie(s);
 		}
-		else
-			subs_al=true;
 		
-		if(itasa_assoc || subs_assoc)
-			s.aggiornaDB();
-		
-		return (itasa_assoc || subs_assoc) || (it_al || subs_al);
+		if(s.getIDSubspedia()<=0){
+			subspedia.associaSerie(s);
+		}
 	}
-	public boolean cercaSottotitolo(Torrent t){
-		boolean itasa=false, subsfactory, subspedia;
-		if(Settings.isEnableITASA())
-			itasa=this.itasa.cercaSottotitolo(t);
-		subsfactory=this.subsfactory.cercaSottotitolo(t);
-		subspedia=this.subspedia.cercaSottotitolo(t);
-		return (itasa || subsfactory || subspedia);
+	
+	public boolean scaricaSottotitolo(Episodio e){
+		SerieTV s = ProviderSerieTV.getSerieByID(e.getSerie());
+		return scaricaSottotitolo(s, e);
 	}
-	public boolean scaricaSottotitolo(Torrent t){
-		if(itasa.scaricaSottotitolo(t)){
-			aggiungiLogEntry(t, this.itasa);
+	
+	public boolean scaricaSottotitolo(SerieTV s, Episodio e){
+		boolean scaricato = true;
+		
+		String episodio="S"+(e.getStagione()<10?"0"+e.getStagione():e.getStagione())+"E"+(e.getEpisodio()<10?"0"+e.getEpisodio():e.getEpisodio());
+		if(itasa.scaricaSottotitolo(s, e)){
+			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
 		}
-		else if(subsfactory.scaricaSottotitolo(t)){
-			aggiungiLogEntry(t, this.subsfactory);
+		else if(subsfactory.scaricaSottotitolo(s, e)){
+			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
 		}
-		else if(subspedia.scaricaSottotitolo(t)){
-			aggiungiLogEntry(t, this.subspedia);
+		else if(subspedia.scaricaSottotitolo(s, e)){
+			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
 		}
 		else 
-			return false;
+			scaricato = false;
 		
-		Renamer.rinominaSottotitolo(t);
-		return true;
-	}
-	public boolean scaricaSottotitolo(Torrent t, String destinazione){
-		//boolean itasa=false, subsf=false, subsp=false;
-		switch(0){
-			case 1:
-				if(Settings.isEnableITASA())
-		    		if(this.itasa.scaricaSottotitolo(t))
-		    			break;
-			case 2:
-				if(subsfactory.scaricaSottotitolo(t))
-					break;
-			case 3:
-				if(subspedia.scaricaSottotitolo(t))
-					break;
-			default:
-				return true;
+		if(scaricato){
+			String query="UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+e.getId();
+			Database.updateQuery(query);
+			//TODO renamer
 		}
 		
-    	String nome=Renamer.generaNomeDownload(t);
-    	String path=Settings.getDirectoryDownload()+t.getSerieTV().getFolderSerie()+File.separator+nome;
-    	OperazioniFile.copyfile(path, destinazione+File.separator+nome);
-		OperazioniFile.deleteFile(path);
-		
-		return true;
+		return scaricato;
 	}
+	
 	public ArrayList<SerieSub> getElencoSerie(int provider){
 		switch(provider){
 			case ITASA:
@@ -247,11 +157,26 @@ public class GestoreSottotitoli {
 		}
 		return null;
 	}
-	public boolean localSearch(Torrent t){
-		//TODO ricerca locale del sottotitolo
-		return false;
+	
+	private ArrayList<Notificable> notificable;
+	public void subscribe(Notificable e) {
+		notificable.add(e);
 	}
-	public void changeSubDownloadStatus(int idEpisodio, boolean stato){
-		
+	public void unsubscribe(Notificable e) {
+		notificable.remove(e);
+	}
+	public void inviaNotifica(String text) {
+		for(int i=0;i<notificable.size();i++)
+			notificable.get(i).sendNotify(text);
+	}
+	public ArrayList<Episodio> getSottotitoliDaScaricare(){
+		ArrayList<Episodio> eps = new ArrayList<Episodio>();
+		String query = "SELECT * FROM "+Database.TABLE_EPISODI+" WHERE sottotitolo=1";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		for(int i=0;i<res.size();i++){
+			Episodio e=ProviderSerieTV.parseEpisodio(res.get(i));
+			eps.add(e);
+		}
+		return eps;
 	}
 }

@@ -11,8 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.FlowLayout;
 
@@ -50,7 +48,6 @@ public class FrameOpzioni extends JFrame {
 	private JCheckBox chckbxAbilitaDownloadAutomatico;
 	private JSpinner minRicerca;
 	private JCheckBox chckbxAbilitaDownloadSottotitoli;
-	private JCheckBox chckbxAbilitaItasa;
 	private JButton btnVerificaItasa;
 	private JButton btnSalva;
 	private JButton btnChiudi;
@@ -98,48 +95,43 @@ public class FrameOpzioni extends JFrame {
 		panel_itasa.setBounds(10, 265, 615, 89);
 		panel_15.add(panel_itasa);
 		panel_itasa.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_itasa.setLayout(new GridLayout(2, 3, 0, 0));
+		panel_itasa.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JPanel panel_1 = new JPanel();
 		panel_itasa.add(panel_1);
 		
-		chckbxAbilitaItasa = new JCheckBox("Abilita");
-		panel_1.add(chckbxAbilitaItasa);
-		
-		JPanel panel_2 = new JPanel();
-		panel_itasa.add(panel_2);
-		
 		JLabel lblUsername = new JLabel("Username");
-		panel_2.add(lblUsername);
+		panel_1.add(lblUsername);
 		
 		itasaUsername = new JTextField();
-		panel_2.add(itasaUsername);
-		itasaUsername.setColumns(10);
+		panel_1.add(itasaUsername);
+		itasaUsername.setColumns(20);
+		
+		JPanel panel_2 = new JPanel();
+		FlowLayout flowLayout_6 = (FlowLayout) panel_2.getLayout();
+		flowLayout_6.setAlignment(FlowLayout.LEFT);
+		panel_itasa.add(panel_2);
+		
+		btnVerificaItasa = new JButton("Verifica");
+		panel_2.add(btnVerificaItasa);
 		
 		JPanel panel_3 = new JPanel();
 		panel_itasa.add(panel_3);
 		
-		btnVerificaItasa = new JButton("Verifica");
-		panel_3.add(btnVerificaItasa);
-		
-		JPanel panel_4 = new JPanel();
-		panel_itasa.add(panel_4);
-		
-		JPanel panel_5 = new JPanel();
-		panel_itasa.add(panel_5);
-		
 		JLabel lblPassword = new JLabel("Password");
-		panel_5.add(lblPassword);
+		panel_3.add(lblPassword);
 		
 		itasaPassword = new JPasswordField();
-		itasaPassword.setColumns(10);
-		panel_5.add(itasaPassword);
+		panel_3.add(itasaPassword);
+		itasaPassword.setColumns(20);
 		
-		JPanel panel_6 = new JPanel();
-		panel_itasa.add(panel_6);
+		JPanel panel_4 = new JPanel();
+		FlowLayout flowLayout_7 = (FlowLayout) panel_4.getLayout();
+		flowLayout_7.setAlignment(FlowLayout.LEFT);
+		panel_itasa.add(panel_4);
 		
 		labelItasaLoginStatus = new JLabel("");
-		panel_6.add(labelItasaLoginStatus);
+		panel_4.add(labelItasaLoginStatus);
 		
 		JPanel panel_7 = new JPanel();
 		panel_7.setBounds(10, 11, 615, 125);
@@ -301,7 +293,6 @@ public class FrameOpzioni extends JFrame {
 		panel_19.add(btnSfogliaQbittorrent);
 		
 		addListener();
-		abilitaItasa();
 	}
 	private void addListener(){
 		btnSalva.addActionListener(new ActionListener() {
@@ -311,7 +302,6 @@ public class FrameOpzioni extends JFrame {
 				boolean subDown = chckbxAbilitaDownloadSottotitoli.isSelected();
 				boolean hidden=chkbStartHidden.isSelected();
 				boolean autodown=chckbxAbilitaDownloadAutomatico.isSelected();
-				boolean itasaOn=chckbxAbilitaItasa.isSelected();
 				boolean autostart = chkbAutostart.isSelected();
 				String dirDown = dirDownload.getText().trim();
 				int min=480;
@@ -326,7 +316,6 @@ public class FrameOpzioni extends JFrame {
 				s.setRicercaSottotitoli(subDown);
 				s.setStartHidden(hidden);
 				s.setDownloadAutomatico(autodown);
-				s.setEnableITASA(itasaOn);
 				s.setAutostart(autostart);
 				s.setDirectoryDownload(dirDown);
 				s.setMinRicerca(min);
@@ -471,22 +460,10 @@ public class FrameOpzioni extends JFrame {
 				dirQbittorrent.setText(destinazione_path);
 			}
 		});
-		chckbxAbilitaItasa.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				abilitaItasa();
-			}
-		});
-	}
-	private void abilitaItasa(){
-		boolean selected = chckbxAbilitaItasa.isSelected();
-		btnVerificaItasa.setEnabled(selected);
-		itasaPassword.setEnabled(selected);
-		itasaUsername.setEnabled(selected);
 	}
 	public void init(){
 		chckbxAbilitaDownloadAutomatico.setSelected(s.isDownloadAutomatico());
 		chckbxAbilitaDownloadSottotitoli.setSelected(s.isRicercaSottotitoli());
-		chckbxAbilitaItasa.setSelected(s.isEnableITASA());
 		chckbxAskOnClose.setSelected(s.isAskOnClose());
 		chkbAutostart.setSelected(s.isAutostart());
 		chkbStartHidden.setSelected(s.isStartHidden());

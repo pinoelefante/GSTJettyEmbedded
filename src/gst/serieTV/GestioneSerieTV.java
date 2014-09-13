@@ -9,6 +9,7 @@ import gst.player.VideoPlayer;
 import gst.programma.Settings;
 import gst.services.SearchListener;
 import gst.services.ThreadRicercaEpisodi;
+import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
 import java.io.File;
@@ -128,6 +129,8 @@ public class GestioneSerieTV implements Notifier {
 		SerieTV st=ProviderSerieTV.getSerieByID(idSerie);
 		if(st!=null){
 			boolean r = ProviderSerieTV.aggiungiSerieAPreferiti(st);
+			if(r && settings.isRicercaSottotitoli())
+				GestoreSottotitoli.getInstance().associaSerie(st);
 			return r;
 		}
 		return false;

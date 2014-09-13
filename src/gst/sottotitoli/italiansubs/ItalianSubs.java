@@ -305,6 +305,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 		
 		SerieSub s_sub=getSerieAssociata(s);
 		if(s_sub!=null){
+			s.setIDItasa(s_sub.getIDDB());
 			associaSerie(s, s_sub.getIDDB());
 		}
 	}

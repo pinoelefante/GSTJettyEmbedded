@@ -193,7 +193,7 @@ public abstract class ProviderSerieTV {
 		}
 		return episodi;
 	}
-	private static Episodio parseEpisodio(KVResult<String, Object> res){
+	public static Episodio parseEpisodio(KVResult<String, Object> res){
 		int id = (int) res.getValueByKey("id");
 		int serie = (int) res.getValueByKey("serie");
 		int stagione = (int) res.getValueByKey("stagione");
