@@ -14,8 +14,8 @@ class RSSItemItalianSubs{
 	private int idserie;
 	private int idsub;
 	
-	public RSSItemItalianSubs(ItalianSubs italianSubs, String itemname, String url){
-		this.italianSubs = italianSubs;
+	public RSSItemItalianSubs(String itemname, String url){
+		this.italianSubs = ItalianSubs.getInstance();
 		this.setUrl(url);
 		parse(itemname);
 	}
@@ -44,7 +44,7 @@ class RSSItemItalianSubs{
 		}
 		
 		if (nome.contains("Preair"))
-			nome.replace("Preair", "");
+			nome=nome.replace("Preair", "");
 		if(nome.contains(" ")){
 			String str_index = nome.substring(nome.lastIndexOf(" ")).trim();
 			try {

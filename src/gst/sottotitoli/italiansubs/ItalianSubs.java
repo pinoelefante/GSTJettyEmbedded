@@ -1,28 +1,32 @@
 package gst.sottotitoli.italiansubs;
 
 import gst.database.Database;
-import gst.download.Download;
 import gst.naming.CaratteristicheFile;
-import gst.programma.ManagerException;
-import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
-import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 import gst.tda.db.KVResult;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import util.zip.ArchiviZip;
 
-public class ItalianSubs implements ProviderSottotitoli{
+public class ItalianSubs {
 	private static ItalianSubs itasa;
 	public final static String HDTV = "Normale",	
 							HD720p = "720p",
@@ -53,6 +57,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 	private ItalianSubs(){
 		settings = Settings.getInstance();
 		api = new ItasaAPI();
+		feed_rss = new ArrayList<RSSItemItalianSubs>();
 	}
 	private boolean logga(){
 		loggato=api.login(!settings.getItasaUsername().isEmpty()?settings.getItasaUsername():"GestioneSerieTV",
@@ -135,98 +140,102 @@ public class ItalianSubs implements ProviderSottotitoli{
 	private void aggiornaFeedRSS(){
 		RSS_UltimoAggiornamento=new GregorianCalendar();
 		feed_rss.clear();
+		
+		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder domparser = null;
 		try {
-			Download.downloadFromUrl("http://feeds.feedburner.com/ITASA-Ultimi-Sottotitoli", settings.getUserDir()+"feed_itasa");
-			FileReader f_r=new FileReader(settings.getUserDir()+"feed_itasa");
-			Scanner file=new Scanner(f_r);
-			while(file.hasNextLine()){
-				String riga=file.nextLine().trim();
-				if(riga.contains("<item>")){
-					String linea=file.nextLine().trim();
-					String nome="", url="";
-					boolean n_done=false, 
-							u_done=false;
-					while(!linea.contains("</item>")){
-						if(linea.contains("<title>")){
-							nome=linea.replace("<title>", "").replace("</title>", "").trim();
-							n_done=true;
-						}
-						else if(linea.startsWith("<guid")){
-							url=linea.substring(linea.indexOf("\">")+2, linea.indexOf("</guid>")).replace("&amp;", "&");
-							u_done=true;
-						}
-						if(u_done && n_done){
-							RSSItemItalianSubs sub=new RSSItemItalianSubs(this, nome, url);
-							feed_rss.add(sub);
-							u_done=false;
-							n_done=false;
-						}
-						linea=file.nextLine().trim();
+			domparser = dbfactory.newDocumentBuilder();
+			Document doc = domparser.parse("http://feeds.feedburner.com/ITASA-Ultimi-Sottotitoli");
+			
+			NodeList items=doc.getElementsByTagName("item");
+			for(int i=0;i<items.getLength();i++){
+				Node item = items.item(i);
+				NodeList childs = item.getChildNodes();
+				
+				String nome = null, url = null;
+				for(int j=0;j<childs.getLength();j++){
+					Node node = (Element) childs.item(j);
+					Element attr;
+					if(node instanceof Element)
+						attr = (Element)node;
+					else
+						continue;
+					switch(attr.getTagName()){
+						case "title":
+							nome=attr.getTextContent();
+							break;
+						case "guid":
+							url=attr.getTextContent();
+							break;
 					}
 				}
+				RSSItemItalianSubs itemRss=new RSSItemItalianSubs(nome, url);
+				feed_rss.add(itemRss);
 			}
-			file.close();
-			f_r.close();
-			OperazioniFile.deleteFile(settings.getUserDir()+"feed_itasa");
-		} 
+		}
+		catch(ParserConfigurationException e){
+			e.printStackTrace();
+		}
+		catch (SAXException e) {
+			e.printStackTrace();
+		}
 		catch (IOException e) {
-			ManagerException.registraEccezione(e);
+			e.printStackTrace();
 		}
 	}
-	
+	public static void main(String[] args){
+		ItalianSubs i=getInstance();
+		i.aggiornaFeedRSS();
+		for(int j=0;j<i.feed_rss.size();j++){
+			System.out.println(i.feed_rss.get(j));
+		}
+	}
 	private boolean isSeriePresente(int id){
-		if(elenco_serie.isEmpty())
-			return false;
-		for(int i=0;i<elenco_serie.size();i++){
-			SerieSub s=elenco_serie.get(i);
-			if((int)s.getIDDB()==id)
-				return true;
-		}
-		return false;
+		String query = "SELECT * FROM "+Database.TABLE_ITASA+" WHERE id="+id;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		return res.size()>0;
 	}
 	
-	private boolean addSerie(SerieSub toInsert){
-		if(elenco_serie.isEmpty()){
-			elenco_serie.add(toInsert);
-			return true;
-		}
-		
-		boolean insert=false;
-		for(int i=0;i<elenco_serie.size();i++){
-			SerieSub s=elenco_serie.get(i);
-			int compare=toInsert.getNomeSerie().compareToIgnoreCase(s.getNomeSerie());
-			if(compare<0){
-				elenco_serie.add(i, toInsert);
-				return true;
-			}
-			else if(compare==0){
-				return false;
-			}
-		}
-		if(!insert){
-			elenco_serie.add(toInsert);
-			return true;
+	private boolean insertSerie(SerieSub toInsert){
+		if(!isSeriePresente(toInsert.getIDDB())){
+			String query = "INSERT INTO "+Database.TABLE_ITASA+" (id,nome) VALUES("+toInsert.getIDDB()+",\""+toInsert.getNomeSerie()+"\")";
+			return Database.updateQuery(query);
 		}
 		return false;
-	}
-	private void salvaInDB(SerieSub serie){
-		String query="INSERT INTO "+Database.TABLE_ITASA+" (id_serie, nome_serie) VALUES ("+(int)serie.getIDDB()+", \""+serie.getNomeSerie()+"\")";
-		Database.updateQuery(query);
 	}
 	public void aggiornaElencoSerieOnline(){
-		
+		ArrayList<SerieSub> on=api.caricaElencoSerieOnlineXML();
+		ArrayList<SerieSub> db=getElencoSerie("id");
+		int found = 0;
+		for(int i=0;i<on.size();i++){
+			SerieSub s_on=on.get(i);
+			boolean inserire = false;
+			for(int j=i-found;j<db.size();j++){
+				SerieSub s_db=db.get(j);
+				if(s_db.getIDDB()==s_on.getIDDB())
+					break;
+				else if(s_on.getIDDB()>s_db.getIDDB()){
+					inserire = true;
+					break;
+				}
+			}
+			if(inserire){
+				found++;
+				insertSerie(s_on);
+			}
+		}
 	}
 	
 	public static boolean VerificaLogin(String username, String password){
 		return itasa.api.verificaLogin(username, password)!=null;
 	}
-	int cercaSerie(String nome){
-		for(int i=0;i<elenco_serie.size();i++){
-			SerieSub s=elenco_serie.get(i);
-			if(s.getNomeSerie().compareToIgnoreCase(nome)==0)
-				return (int)s.getIDDB();
-		}
-		return -1;
+	public int cercaSerie(String nome){
+		String query = "SELECT * FROM "+Database.TABLE_ITASA+" WHERE nome=\""+nome+"\"";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res.size()!=1)
+			return -1;
+		else
+			return (int) res.get(0).getValueByKey("id");
 	}
 	public String toStringFeed(){
 		String str="";
@@ -238,23 +247,19 @@ public class ItalianSubs implements ProviderSottotitoli{
 	public String toString(){
 		return "Italiansubs";
 	}
-	
-	public SerieSub getSerieAssociata(SerieTV serie) {
-		if(serie.getIDItasa()>0){
-			int id=serie.getIDItasa();
-			for(int i=0;i<elenco_serie.size();i++){
-				SerieSub s=elenco_serie.get(i);
-				if(s.getIDDB()==id)
-					return s;
-			}
-		}
-		for(int i=0;i<elenco_serie.size();i++)
-			if(elenco_serie.get(i).getNomeSerie().compareToIgnoreCase(serie.getNomeSerie())==0)
-				return elenco_serie.get(i);
+	private SerieSub getSerie(int id){
 		return null;
 	}
+	public SerieSub getSerieAssociata(SerieTV serie) {
+		if(serie.getIDItasa()>0){
+			return getSerie(serie.getIDItasa());
+		}
+		else {
+			int id=cercaSerie(serie.getNomeSerie());
+			return (id<=0?null:cercaSerieAssociata(serie));
+		}
+	}
 
-	@Override
 	public String getProviderName() {
 		return "ItalianSubs.net";
 	}
@@ -270,26 +275,32 @@ public class ItalianSubs implements ProviderSottotitoli{
 		return false;
 	}
 	
-	public ArrayList<SerieSub> getElencoSerie(){
-		//TODO modificare
-		String query = "SELECT * FROM "+Database.TABLE_ITASA+" ORDER BY nome_serie DESC";
+	public ArrayList<SerieSub> getElencoSerie(String orderParam){
+		String query = "SELECT * FROM "+Database.TABLE_ITASA+" ORDER BY "+orderParam+" ASC";
 		ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
 		elenco_serie = new ArrayList<SerieSub>();
 		for(int i=0;i<res.size();i++){
 			KVResult<String, Object> r=res.get(i);
-			String nome=(String) r.getValueByKey("nome_serie");
-			Integer id=(Integer) r.getValueByKey("id_serie");
+			String nome=(String) r.getValueByKey("nome");
+			Integer id=(Integer) r.getValueByKey("id");
 			SerieSub serie=new SerieSub(nome, id);
-			elenco_serie.add(0,serie);
+			elenco_serie.add(serie);
 		}
 		return elenco_serie;
 	}
 
-	@Override
 	public SerieSub cercaSerieAssociata(SerieTV serie) {
-		//TODO query ricerca
+		String query = "SELECT * FROM "+Database.TABLE_ITASA+" WHERE nome=\"" + serie.getNomeSerie() + "\"";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res.size()==1){
+			SerieSub s=new SerieSub((String) res.get(0).getValueByKey("nome"), (int)(res.get(0).getValueByKey("id")));
+			return s;
+		}
 		return null;
 	}
-
+	public void associaSerie(SerieTV serie, int idItasa){
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa="+idItasa+" WHERE id="+serie.getIDDb();
+		Database.updateQuery(query);
+	}
 }
 

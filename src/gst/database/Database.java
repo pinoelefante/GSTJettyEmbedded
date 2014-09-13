@@ -110,16 +110,19 @@ public class Database {
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_ITASA+" (" +
-					"id INTEGER PRIMARY KEY)");
+					"id INTEGER PRIMARY KEY,"+ 
+					"nome TEXT NOT NULL)");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSFACTORY +" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ "directory TEXT"
+					+ "directory TEXT NOT NULL,"
+					+ "nome TEXT NOT NULL"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSPEDIA+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ "url TEXT"
+					+ "url TEXT,"
+					+ "nome TEXT NOT NULL"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SERIETV+" (" +
