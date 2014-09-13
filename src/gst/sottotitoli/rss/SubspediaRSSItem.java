@@ -3,7 +3,7 @@ package gst.sottotitoli.rss;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 
-class SubspediaRSSItem {
+public class SubspediaRSSItem {
 	private String titolo;
 	private String link;
 	private CaratteristicheFile stats;
