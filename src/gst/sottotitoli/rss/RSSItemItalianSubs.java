@@ -1,6 +1,8 @@
-package gst.sottotitoli.italiansubs;
+package gst.sottotitoli.rss;
 
-class RSSItemItalianSubs{
+import gst.sottotitoli.italiansubs.ItalianSubs;
+
+public class RSSItemItalianSubs{
 	/**
 	 * 
 	 */

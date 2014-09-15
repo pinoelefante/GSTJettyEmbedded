@@ -1,6 +1,6 @@
 package gst.sottotitoli.rss;
 
-class RSSItemSubsfactory {
+public class RSSItemSubsfactory {
 	private String titolo, descrizione, url, url_download;
 	private String ID="";
 	private int stagione=0, episodio=0;

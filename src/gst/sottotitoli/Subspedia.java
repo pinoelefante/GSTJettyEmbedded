@@ -4,6 +4,8 @@ import gst.download.Download;
 import gst.naming.Renamer;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
+import gst.serieTV.Episodio;
+import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
 import gst.sottotitoli.rss.SubspediaRSSItem;
@@ -27,26 +29,31 @@ public class Subspedia implements ProviderSottotitoli {
 	private long time_update=(1000*60)* 20L/*minuti*/;
 	private long last_update=0L;
 	private static ArrayList<SubspediaRSSItem> rss;
+	private Settings settings;
 	
 	public Subspedia(){
 		rss=new ArrayList<SubspediaRSSItem>();
+		settings = Settings.getInstance();
 	}
 	
-	public boolean scaricaSottotitolo(Torrent t) {
-		String link=cercaSottotitolo(t, false);
+	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
+		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
+		
+		String link=cercaSottotitolo(s, t, false);
 		if(link==null)
 			return false;
 		else {
 			link=link.replace(" ", "%20");
-			if(scaricaSub(link, Renamer.generaNomeDownload(t), t.getNomeSerieFolder())){
-				t.setSubDownload(false, true);
+			if(scaricaSub(link, Renamer.generaNomeDownload(t), s.getFolderSerie())){
+				e.setSubDownload(false);
+				GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
 				return true;
 			}
 			return false;
 		}
 	}
 	private boolean scaricaSub(String url, String nome, String folder){
-		String dir_s=Settings.getDirectoryDownload()+(Settings.getDirectoryDownload().endsWith(File.pathSeparator)?folder:(File.separator+folder));
+		String dir_s=settings.getDirectoryDownload()+(settings.getDirectoryDownload().endsWith(File.pathSeparator)?folder:(File.separator+folder));
 		String destinazione=dir_s+File.separator+nome;
 		try {
 			Download.downloadFromUrl(url, destinazione);
@@ -60,26 +67,27 @@ public class Subspedia implements ProviderSottotitoli {
 		}
 	}
 	public SerieSub getSerieAssociata(SerieTV serie) {return null;}
-	public boolean cercaSottotitolo(Torrent t) {
+	
+	public boolean cercaSottotitolo(SerieTV s, Torrent t) {
 		scaricaFeed();
 		for(int i=0;i<rss.size();i++){
 			SubspediaRSSItem item=rss.get(i);
-			if(item.getTitolo().compareToIgnoreCase(t.getNomeSerie())==0){
-				if(item.getStagione()==t.getStagione()){
-					if(item.getEpisodio()==t.getEpisodio())
+			if(item.getTitolo().compareToIgnoreCase(s.getNomeSerie())==0){
+				if(item.getStagione()==t.getStats().getStagione()){
+					if(item.getEpisodio()==t.getStats().getEpisodio())
 						return true;
 				}
 			}
 		}
 		return false;
 	}
-	private String cercaSottotitolo(Torrent t,boolean b) {
+	private String cercaSottotitolo(SerieTV s, Torrent t,boolean b) {
 		scaricaFeed();
 		for(int i=0;i<rss.size();i++){
 			SubspediaRSSItem item=rss.get(i);
-			if(item.getTitolo().compareToIgnoreCase(t.getNomeSerie())==0){
-				if(item.getStagione()==t.getStagione()){
-					if(item.getEpisodio()==t.getEpisodio())
+			if(item.getTitolo().compareToIgnoreCase(s.getNomeSerie())==0){
+				if(item.getStagione()==t.getStats().getStagione()){
+					if(item.getEpisodio()==t.getStats().getEpisodio())
 						return item.getLink();
 				}
 			}
@@ -155,15 +163,17 @@ public class Subspedia implements ProviderSottotitoli {
 			System.out.println(rss.get(i));
 		}
 	}
-
-	@Override
-	public int getProviderID() {
-		return GestoreSottotitoli.SUBSPEDIA;
-	}
+	
 	public static void main(String[] args){
 		Subspedia sp=new Subspedia();
 		sp.scaricaFeed();
 		sp.stampaFeed();
+	}
+
+	@Override
+	public void associaSerie(SerieTV s) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

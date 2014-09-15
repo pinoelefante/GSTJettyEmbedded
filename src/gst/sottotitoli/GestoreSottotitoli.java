@@ -179,4 +179,8 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return eps;
 	}
+	public static void setSottotitoloDownload(int idEpisodio, boolean stato){
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo="+(stato?1:0)+" WHERE id="+idEpisodio;
+		Database.updateQuery(query);
+	}
 }

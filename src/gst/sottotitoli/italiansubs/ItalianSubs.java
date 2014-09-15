@@ -7,8 +7,10 @@ import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
+import gst.sottotitoli.rss.RSSItemItalianSubs;
 import gst.tda.db.KVResult;
 
 import java.io.IOException;
@@ -101,9 +103,9 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		if(pathFile!=null){
 			ArchiviZip.estrai_tutto(pathFile, dirDown);
+			GestoreSottotitoli.setSottotitoloDownload(episodio.getId(), false);
 			return true;
 		}
-		//TODO modifica statoSub in db in GestioneSottotitoli
 		
 		return false;
 	}
