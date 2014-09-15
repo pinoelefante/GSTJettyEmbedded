@@ -76,14 +76,14 @@ div#containerCenter {
 
 div#addSerie {
 	position: absolute;
-	overflow: auto;
+	z-index: 20;
 	top: 0px;
 	left: 0px;
 	right: 0px;
 	height: 150px;
 	border: 1px solid gray;
 	border-radius: 10px;
-	min-height: 150px;
+	max-height: 150px;
 }
 
 div#selectSerieDiv {

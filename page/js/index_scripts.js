@@ -15,7 +15,7 @@ function aggiungiSerieBottone(){
 	}
 	
 	var id_serie = serie.value;
-	var nome = serie.innerHTML;
+	var nome = serie.nomeSerie;
 	var provider = serie.provider;
 	
 	operazioneInCorso("Aggiungo la serie alle preferite");
@@ -27,8 +27,9 @@ function aggiungiSerieBottone(){
 		success : function(msg) {
 			var response = parseBooleanXML(msg);
 			if (response) {
-				var elem = creaSerieElementoPagina(nome, id_serie, provider);
-				addSerieInOrder(elem, nome);
+				var text="<b>"+nome+"</b> - "+serie.providerNome;
+				var elem = creaSerieElementoPagina(text, id_serie, provider);
+				addSerieInOrder(elem, text);
 				operazioneInCorso("");
 				aggiornaEpisodi(id_serie, provider);
 			}
@@ -104,7 +105,7 @@ function caricaElencoSerieCompleto(){
 		data : "action=getElencoSerie",
 		dataType : "xml",
 		success : function(msg) {
-			optSelectSerie.innerHTML = "";
+			selectSerie.innerHTML = "<option selected></option>";
 			var response = parseBooleanXML(msg);
 			if (!response) {
 				operazioneInCorso("");
@@ -120,9 +121,21 @@ function caricaElencoSerieCompleto(){
 				var serie = document.createElement("option");
 				serie.value = id;
 				serie.provider = provider;
-				serie.innerHTML = "<b>"+nome+"</b> - "+provider_name;
-				$("#optSelectSerie").append(serie);
+				serie.providerNome=provider_name;
+				serie.nomeSerie = nome;
+				serie.innerHTML = nome+"<span style='float:right'> ("+provider_name+")</span>";//"<b>"+nome+"</b> - "+provider_name;
+				$("#selectSerie").append(serie);
 			});
+			var config = {
+				'.chosen-select'           : {},
+				'.chosen-select-deselect'  : {allow_single_deselect:true},
+				'.chosen-select-no-single' : {disable_search_threshold:10},
+				'.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+				'.chosen-select-width'     : {width:"95%"}
+			}
+			for (var selector in config) {
+				$(selector).chosen(config[selector]);
+			}
 			operazioneInCorso("");
 		},
 		error : function(msg) {
