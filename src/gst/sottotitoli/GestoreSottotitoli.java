@@ -10,6 +10,8 @@ import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.italiansubs.ItalianSubs;
+import gst.sottotitoli.subsfactory.Subsfactory;
+import gst.sottotitoli.subspedia.Subspedia;
 import gst.tda.db.KVResult;
 
 import java.util.ArrayList;
@@ -71,7 +73,7 @@ public class GestoreSottotitoli implements Notifier{
 		
 	private GestoreSottotitoli(){
 		itasa=ItalianSubs.getInstance();
-		subsfactory=new Subsfactory();
+		subsfactory=Subsfactory.getInstance();
 		subspedia=new Subspedia();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();

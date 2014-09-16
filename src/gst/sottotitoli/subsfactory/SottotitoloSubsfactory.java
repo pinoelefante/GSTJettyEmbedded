@@ -1,4 +1,4 @@
-package gst.sottotitoli;
+package gst.sottotitoli.subsfactory;
 
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;

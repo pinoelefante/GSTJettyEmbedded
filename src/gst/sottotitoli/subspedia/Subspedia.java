@@ -1,5 +1,6 @@
-package gst.sottotitoli;
+package gst.sottotitoli.subspedia;
 
+import gst.database.Database;
 import gst.download.Download;
 import gst.naming.Renamer;
 import gst.programma.ManagerException;
@@ -8,6 +9,9 @@ import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.GestoreSottotitoli;
+import gst.sottotitoli.ProviderSottotitoli;
+import gst.sottotitoli.SerieSub;
 import gst.sottotitoli.rss.SubspediaRSSItem;
 
 import java.io.File;
@@ -18,6 +22,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,7 +30,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Subspedia implements ProviderSottotitoli {
-	private final String URLFeedRSS="http://subspedia.weebly.com/1/feed";
+	private final String BASEURL = "http://subspedia.weebly.com";
+	private final String URL_ELENCO_SERIE=BASEURL+"/serie-tv.html";
+	private final String URLFeedRSS=BASEURL+"/1/feed";
 	private long time_update=(1000*60)* 20L/*minuti*/;
 	private long last_update=0L;
 	private static ArrayList<SubspediaRSSItem> rss;
@@ -39,7 +46,7 @@ public class Subspedia implements ProviderSottotitoli {
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
 		
-		String link=cercaSottotitolo(s, t, false);
+		String link=cercaSottotitoloLink(s, t);
 		if(link==null)
 			return false;
 		else {
@@ -81,7 +88,7 @@ public class Subspedia implements ProviderSottotitoli {
 		}
 		return false;
 	}
-	private String cercaSottotitolo(SerieTV s, Torrent t,boolean b) {
+	private String cercaSottotitoloLink(SerieTV s, Torrent t) {
 		scaricaFeed();
 		for(int i=0;i<rss.size();i++){
 			SubspediaRSSItem item=rss.get(i);
@@ -95,19 +102,45 @@ public class Subspedia implements ProviderSottotitoli {
 		return null;
 	}
 	public ArrayList<SerieSub> getElencoSerie() {return null;}
+	
 	public String getProviderName() {
 		return "Subspedia";
 	}
-	public void aggiornaElencoSerieOnline() {}
+	public void aggiornaElencoSerieOnline() {
+		try {
+			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE).get();
+			org.jsoup.select.Elements select = page.select("div#wsite-content").select("div.paragraph");
+			org.jsoup.select.Elements series = select.select("a");
+			for(int i=0;i<series.size();i++){
+				org.jsoup.nodes.Element o=series.get(i);
+				String nome = o.html().replace("&nbsp;", " ").replace("&amp;", "&").trim().replaceAll("\\<[^>]*>", "").replaceAll("[^\\w ]", "").trim();
+				String url = o.attr("href").replace(BASEURL, "");
+				if(url.startsWith("http"))
+					continue;
+				addSerie(nome, url);
+			}
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	private void addSerie(String nome, String url){
+		if(isPresente(url))
+			return;
+		String query = "INSERT INTO "+Database.TABLE_SUBSPEDIA+" (nome, url) VALUES (\""+nome+"\",\""+url+"\")";
+		Database.updateQuery(query);
+	}
+	private boolean isPresente(String dir){
+		String query = "SELECT * FROM "+Database.TABLE_SUBSPEDIA+" WHERE url=\""+dir+"\"";
+		return Database.selectQuery(query).size()>0;
+	}
 	
 	private void scaricaFeed() {
-		/* Aggiorna il feed RSS ogni time_update minuti */
 		if(System.currentTimeMillis()-last_update<time_update)
 			return;
 		
 		last_update=System.currentTimeMillis();
 		try {
-			//Download.downloadFromUrl(URLFeedRSS, Settings.getCurrentDir()+"feed_subspedia");
 			rss.clear();
 			
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
@@ -127,7 +160,6 @@ public class Subspedia implements ProviderSottotitoli {
 						switch(attr.getTagName()){
 							case "title":
 								titolo=attr.getTextContent();
-								//System.out.println(titolo);
 								break;
 							case "content:encoded":
 								if(attr.getTextContent().contains("a href")){
@@ -142,7 +174,6 @@ public class Subspedia implements ProviderSottotitoli {
 				}
 				rss.add(new SubspediaRSSItem(titolo, link));
 			}
-			//OperazioniFile.deleteFile(Settings.getCurrentDir()+"feed_subspedia");
 		} 
 		catch (IOException e) {	
 			e.printStackTrace();
@@ -169,11 +200,19 @@ public class Subspedia implements ProviderSottotitoli {
 		sp.scaricaFeed();
 		sp.stampaFeed();
 	}
-
 	@Override
 	public void associaSerie(SerieTV s) {
-		// TODO Auto-generated method stub
-		
+		ArrayList<SerieSub> dbSerie = getElencoSerie();
+		for(int i=0;i<dbSerie.size();i++){
+			if(dbSerie.get(i).getNomeSerie().compareToIgnoreCase(s.getNomeSerie())==0){
+				associa(s.getIDDb(), dbSerie.get(i).getIDDB());
+				break;
+			}
+		}
+	}
+	private void associa(int idSerie, int idSubspedia) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSubspedia+" WHERE id="+idSerie;
+		Database.updateQuery(query);
 	}
 
 }

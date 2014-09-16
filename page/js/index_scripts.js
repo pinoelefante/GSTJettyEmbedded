@@ -5,6 +5,16 @@ $(document).ready(function() {
 	bootbox.setDefaults({
 		locale: "it"
 	});
+	var config = {
+		'.chosen-select'           : {},
+		'.chosen-select-deselect'  : {allow_single_deselect:true},
+		'.chosen-select-no-single' : {disable_search_threshold:10},
+		'.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+		'.chosen-select-width'     : {width:"95%"}
+	}
+	for (var selector in config) {
+		$(selector).chosen(config[selector]);
+	}
 });
 function aggiungiSerieBottone(){
 	var serie = selectSerie.options[selectSerie.selectedIndex];
@@ -126,16 +136,7 @@ function caricaElencoSerieCompleto(){
 				serie.innerHTML = nome+"<span style='float:right'> ("+provider_name+")</span>";//"<b>"+nome+"</b> - "+provider_name;
 				$("#selectSerie").append(serie);
 			});
-			var config = {
-				'.chosen-select'           : {},
-				'.chosen-select-deselect'  : {allow_single_deselect:true},
-				'.chosen-select-no-single' : {disable_search_threshold:10},
-				'.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
-				'.chosen-select-width'     : {width:"95%"}
-			}
-			for (var selector in config) {
-				$(selector).chosen(config[selector]);
-			}
+			$("#selectSerie").trigger("chosen:updated");
 			operazioneInCorso("");
 		},
 		error : function(msg) {

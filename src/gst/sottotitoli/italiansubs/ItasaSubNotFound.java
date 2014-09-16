@@ -1,4 +1,4 @@
-package gst.sottotitoli;
+package gst.sottotitoli.italiansubs;
 
 @SuppressWarnings("serial")
 public class ItasaSubNotFound extends Exception {
