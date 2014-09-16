@@ -6,6 +6,7 @@ import gst.download.UTorrent;
 import gst.player.VLC;
 import gst.player.VideoPlayer;
 import gst.serieTV.Preferenze;
+import gst.sottotitoli.GestoreSottotitoli;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,13 +21,8 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 
 public class Settings {
-	public static Settings getInstance(){
-		if(singleton==null)
-			singleton=new Settings();
-		return singleton;
-	}
 	private static Settings		singleton;
-	private static final int	VersioneSoftware		= 122;
+	private static final int	VersioneSoftware		= 1;
 	
 	private String	current_dir							= "";
 	private String	user_dir							= "";
@@ -36,6 +32,11 @@ public class Settings {
 	private BitTorrentClient bitClient					= null;
 	private VideoPlayer		 videoPlayer				= null;	
 	
+	public static Settings getInstance(){
+		if(singleton==null)
+			singleton=new Settings();
+		return singleton;
+	}
 	
 	private Settings(){
 		opzioni = new Properties();
@@ -78,7 +79,6 @@ public class Settings {
 			file = new FileInputStream(getUserDir()+File.separator+"settings.properties"); 
 			opzioni.load(file);
 			file.close();
-			getClientTorrent();
 		}
 		catch (IOException e) {
 			defaultSettings();
@@ -289,6 +289,7 @@ public class Settings {
 	}
 	public void setDownloadAutomatico(boolean downloadAutomatico) {
 		aggiungiOpzione("download_auto", downloadAutomatico+"");
+		//TODO avvio download automatico
 	}
 	public void setFirstStart(boolean firstStart){
 		aggiungiOpzione("first_start", firstStart+"");
@@ -315,6 +316,10 @@ public class Settings {
 	
 	public void setRicercaSottotitoli(boolean ricercaSottotitoli) {
 		aggiungiOpzione("download_sottotitoli", ricercaSottotitoli+"");
+		if(ricercaSottotitoli)
+			GestoreSottotitoli.getInstance().avviaRicercaAutomatica();
+		else
+			GestoreSottotitoli.getInstance().stopRicercaAutomatica();
 	}
 	public void setStartHidden(boolean startHidden) {
 		aggiungiOpzione("start_hidden", startHidden+"");

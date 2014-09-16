@@ -8,6 +8,7 @@ import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.programma.importer.Importer;
 import gst.serieTV.GestioneSerieTV;
+import gst.sottotitoli.GestoreSottotitoli;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -19,6 +20,7 @@ public class ServerStart {
 	private static JettyServer jettyServer;
 	private static InterfacciaGrafica ui;
 	private static GestioneSerieTV gst;
+	private static GestoreSottotitoli subManager;
 	
 	public static void main(String[] args) {
 		
@@ -66,8 +68,11 @@ public class ServerStart {
 			settings.setFirstStart(false);
 			settings.salvaSettings();
 		}
-		//gst.init(ui);
-		
+		/*
+		gst.init(ui);
+		subManager=GestoreSottotitoli.getInstance();
+		subManager.subscribe(ui);
+		*/
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
 				if(jettyServer.isStarted()) {

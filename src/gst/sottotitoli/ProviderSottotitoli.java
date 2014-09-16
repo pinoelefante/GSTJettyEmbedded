@@ -10,4 +10,5 @@ public abstract interface ProviderSottotitoli {
 	public ArrayList<SerieSub> getElencoSerie();
 	public String getProviderName();
 	public void associaSerie(SerieTV s);
+	public void aggiornaElencoSerieOnline();
 }

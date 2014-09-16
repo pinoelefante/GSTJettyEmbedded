@@ -3,10 +3,8 @@ package gst.sottotitoli;
 import gst.database.Database;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
-import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
-import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.italiansubs.ItalianSubs;
@@ -15,82 +13,74 @@ import gst.sottotitoli.subspedia.Subspedia;
 import gst.tda.db.KVResult;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
+
+	public final static int ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
+	private ProviderSottotitoli itasa;
+	private ProviderSottotitoli subsfactory;
+	private ProviderSottotitoli subspedia;
+	private Settings settings;
+	private Timer timer;
+	private TimerTask aggiornaElenchi, associaSerie, ricercaSottotitoli;
+	
+	public static void main(String[] args){
+		Settings.getInstance();
+		Database.Connect();
+		GestoreSottotitoli g = getInstance();
+	}
+	
 	public static GestoreSottotitoli getInstance(){
 		if(instance==null)
 			instance=new GestoreSottotitoli();
 		return instance;
 	}
-	
-	class AssociatoreAutomatico extends Thread {
-		public void run(){
-			System.out.println("Avvio associatore");
-			ArrayList<SerieTV> st=GestioneSerieTV.getInstance().getElencoSeriePreferite();
-			for(int i=0;i<st.size();i++){
-				SerieTV s=st.get(i);
-				associaSerie(s);
-			}
-		}
-	}
-	class RicercaSottotitoliAutomatica extends Thread{
-		public void run(){
-			long sleep_time=/*un minuto*/(60*1000)*10/*10 minuti*/;
-		
-			try {
-				Thread t=new AssociatoreAutomatico();
-				t.start();
-				t.join();
-			} 
-			catch (InterruptedException e1) {
-				e1.printStackTrace();
-				ManagerException.registraEccezione(e1);
-			}
-			
-			while(true) {
-				ArrayList<Episodio> episodi = getSottotitoliDaScaricare();
-				for(int i=0;i<episodi.size();i++){
-					scaricaSottotitolo(episodi.get(i));
-				}
-				episodi.clear();
-				episodi=null;
-				try {
-					sleep(sleep_time);
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	public final static int ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
-	private Thread ricerca_automatica;
-	private ProviderSottotitoli itasa;
-	private ProviderSottotitoli subsfactory;
-	private ProviderSottotitoli subspedia;
-	private Settings settings;
-		
 	private GestoreSottotitoli(){
 		itasa=ItalianSubs.getInstance();
 		subsfactory=Subsfactory.getInstance();
-		subspedia=new Subspedia();
+		subspedia=Subspedia.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
+		timer = new Timer();
+		timer.scheduleAtFixedRate(aggiornaElenchi=new TaskAggiornaElenchi(), 1000, 43200000); //12 ore
+		timer.scheduleAtFixedRate(associaSerie=new TaskAssociaSerie(), 10000, 3600000); //1 ora
 		if(settings.isRicercaSottotitoli())
 			avviaRicercaAutomatica();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+			public void run(){
+				aggiornaElenchi.cancel();
+				associaSerie.cancel();
+				stopRicercaAutomatica();
+				timer.cancel();
+				timer.purge();
+			}
+		});
 	}
 	public void avviaRicercaAutomatica(){
-		if(ricerca_automatica==null || !ricerca_automatica.isAlive())
-			ricerca_automatica=new RicercaSottotitoliAutomatica();
-		else if(ricerca_automatica.isAlive())
-			return;
-		ricerca_automatica.start();
+		if(ricercaSottotitoli==null)
+			timer.scheduleAtFixedRate(ricercaSottotitoli=new TaskRicercaSottotitoli(), 30000, 900000); //15 minuti
 	}
 	public void stopRicercaAutomatica(){
-		if(ricerca_automatica!=null && ricerca_automatica.isAlive()){
-			ricerca_automatica.interrupt();
-			ricerca_automatica=null;
+		if(ricercaSottotitoli!=null){
+			ricercaSottotitoli.cancel();
+			timer.purge();
+		}
+	}
+	public void aggiornaElenco(int idProvider){
+		switch(idProvider){
+			case ITASA:
+				itasa.aggiornaElencoSerieOnline();
+				break;
+			case SUBSFACTORY:
+				subsfactory.aggiornaElencoSerieOnline();
+				break;
+			case SUBSPEDIA:
+				subspedia.aggiornaElencoSerieOnline();
+				break;
 		}
 	}
 	public void associaSerie(SerieTV s){

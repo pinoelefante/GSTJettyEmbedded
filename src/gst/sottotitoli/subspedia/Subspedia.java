@@ -12,7 +12,9 @@ import gst.serieTV.Torrent;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
+import gst.sottotitoli.SerieSubConDirectory;
 import gst.sottotitoli.rss.SubspediaRSSItem;
+import gst.tda.db.KVResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class Subspedia implements ProviderSottotitoli {
+	private static Subspedia instance;
 	private final String BASEURL = "http://subspedia.weebly.com";
 	private final String URL_ELENCO_SERIE=BASEURL+"/serie-tv.html";
 	private final String URLFeedRSS=BASEURL+"/1/feed";
@@ -38,7 +41,13 @@ public class Subspedia implements ProviderSottotitoli {
 	private static ArrayList<SubspediaRSSItem> rss;
 	private Settings settings;
 	
-	public Subspedia(){
+	public static Subspedia getInstance(){
+		if(instance==null)
+			instance= new Subspedia();
+		return instance;
+	}
+	
+	private Subspedia(){
 		rss=new ArrayList<SubspediaRSSItem>();
 		settings = Settings.getInstance();
 	}
@@ -101,8 +110,22 @@ public class Subspedia implements ProviderSottotitoli {
 		}
 		return null;
 	}
-	public ArrayList<SerieSub> getElencoSerie() {return null;}
-	
+	public ArrayList<SerieSub> getElencoSerie() {
+		String query = "SELECT * FROM "+Database.TABLE_SUBSPEDIA;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		ArrayList<SerieSub> el = new ArrayList<SerieSub>();
+		for(int i=0;i<res.size();i++){
+			el.add(parseDB(res.get(i)));
+		}
+		return el;
+	}
+	private SerieSubConDirectory parseDB(KVResult<String, Object> r){
+		int id = (Integer)r.getValueByKey("id");
+		String nome = (String)r.getValueByKey("nome");
+		String url = (String)r.getValueByKey("url");
+		SerieSubConDirectory s = new SerieSubConDirectory(nome, id, url);
+		return s;
+	}
 	public String getProviderName() {
 		return "Subspedia";
 	}
@@ -115,7 +138,7 @@ public class Subspedia implements ProviderSottotitoli {
 				org.jsoup.nodes.Element o=series.get(i);
 				String nome = o.html().replace("&nbsp;", " ").replace("&amp;", "&").trim().replaceAll("\\<[^>]*>", "").replaceAll("[^\\w ]", "").trim();
 				String url = o.attr("href").replace(BASEURL, "");
-				if(url.startsWith("http"))
+				if(url.startsWith("http") || nome.isEmpty())
 					continue;
 				addSerie(nome, url);
 			}
@@ -196,9 +219,15 @@ public class Subspedia implements ProviderSottotitoli {
 	}
 	
 	public static void main(String[] args){
+		/*
 		Subspedia sp=new Subspedia();
 		sp.scaricaFeed();
 		sp.stampaFeed();
+		*/
+		Settings.getInstance();
+		Database.Connect();
+		Subspedia s = getInstance();
+		s.aggiornaElencoSerieOnline();
 	}
 	@Override
 	public void associaSerie(SerieTV s) {
@@ -214,5 +243,4 @@ public class Subspedia implements ProviderSottotitoli {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSubspedia+" WHERE id="+idSerie;
 		Database.updateQuery(query);
 	}
-
 }
