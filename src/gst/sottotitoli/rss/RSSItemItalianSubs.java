@@ -1,13 +1,13 @@
 package gst.sottotitoli.rss;
 
+import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
 import gst.sottotitoli.italiansubs.ItalianSubs;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class RSSItemItalianSubs{
-	/**
-	 * 
-	 */
-	private final ItalianSubs italianSubs;
-	private String url;
 	private String nomeserie;
 	private int stagione, episodio;
 	private boolean hd720p;
@@ -15,66 +15,46 @@ public class RSSItemItalianSubs{
 	private boolean normale=true;
 	private int idserie;
 	private int idsub;
+	private ItalianSubs itasa = ItalianSubs.getInstance();
 	
-	public RSSItemItalianSubs(String itemname, String url){
-		this.italianSubs = ItalianSubs.getInstance();
-		this.setUrl(url);
-		parse(itemname);
+	public RSSItemItalianSubs(String title, String guid){
+		parse(title);
+		parseLinks(guid);
+	}
+	private void parseLinks(String guid){
+		try {
+			URL orig = new URL(guid);
+			if(orig.getQuery()==null)
+				return;
+			String[] params = orig.getQuery().split("&");
+			for(int i=0;i<params.length;i++){
+				if(params[i].toLowerCase().startsWith("id")){
+					setIDSub(Integer.parseInt(params[i].split("=")[1]));
+				}
+			}
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
 	}
 	private void parse(String item){
-		String nome = item;
-		if (nome.contains("720p")) {
-			nome = nome.replace("720p", "").trim();
-			setNormale(false);
-			set720p(true);
-		}
-		else if (nome.contains("Bluray")) {
-			nome = nome.replace("Bluray", "").trim();
-			setNormale(false);
-		}
-		else if (nome.contains("DVDRip")) {
-			nome = nome.replace("DVDRip", "").trim();
-			setNormale(false);
-		}
-		else if (nome.contains("BDRip")) {
-			nome = nome.replace("BDRip", "").trim();
-			setNormale(false);
-		}
-		else if (nome.contains("WEB-DL")) {
-			nome = nome.replace("WEB-DL", "").trim();
-			setNormale(false);
-		}
+		CaratteristicheFile stat = Naming.parse(item, null);
+		stagione=stat.getStagione();
+		episodio=stat.getEpisodio();
+		hd720p=stat.is720p();
+		normale=!stat.is720p();
 		
-		if (nome.contains("Preair"))
-			nome=nome.replace("Preair", "");
+		String nome = item.replace("720p", "")
+				.replace("Bluray", "")
+				.replace("DVDRip", "")
+				.replace("BDRip", "")
+				.replace("WEB-DL", "")
+				.replace("Preair", "").trim();
 		if(nome.contains(" ")){
-			String str_index = nome.substring(nome.lastIndexOf(" ")).trim();
-			try {
-				if (!str_index.contains("x")) {
-					setEpisodio(Integer.parseInt(str_index));
-				}
-				else {
-					setStagione(Integer.parseInt(str_index.substring(0, str_index.indexOf("x"))));
-					setEpisodio(Integer.parseInt(str_index.substring(str_index.indexOf("x") + 1)));
-				}
-			}
-			catch (NumberFormatException e) {
-				//ManagerException.registraEccezione(e);
-				return;
-			}
-			setNomeSerie(nome.substring(0, nome.indexOf(str_index)).trim().replace("&amp;", "&"));
-			setIDSerie(this.italianSubs.cercaSerie(getNomeSerie()));
-			setIDSub(Integer.parseInt(getUrl().substring(getUrl().indexOf("&id=")+"&id=".length())));
+			nome=nome.substring(0, nome.lastIndexOf(" ")).trim();
 		}
-		else {
-			setNomeSerie(nome);
-		}
-	}
-	public String getUrl() {
-		return url;
-	}
-	public void setUrl(String url) {
-		this.url = url;
+		setNomeSerie(nome);
+		setIDSerie(itasa.cercaSerie(nome));
 	}
 	public String getNomeSerie() {
 		return nomeserie;

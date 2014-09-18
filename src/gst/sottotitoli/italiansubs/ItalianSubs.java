@@ -152,12 +152,11 @@ public class ItalianSubs implements ProviderSottotitoli{
 			
 			NodeList items=doc.getElementsByTagName("item");
 			for(int i=0;i<items.getLength();i++){
-				Node item = items.item(i);
-				NodeList childs = item.getChildNodes();
+				NodeList childs = items.item(i).getChildNodes();
 				
 				String nome = null, url = null;
 				for(int j=0;j<childs.getLength();j++){
-					Node node = (Element) childs.item(j);
+					Node node = childs.item(j);
 					Element attr;
 					if(node instanceof Element)
 						attr = (Element)node;
@@ -168,7 +167,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 							nome=attr.getTextContent();
 							break;
 						case "guid":
-							url=attr.getTextContent();
+							url=attr.getTextContent().replace("&amp;", "&");
 							break;
 					}
 				}
@@ -184,13 +183,6 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-	public static void main(String[] args){
-		ItalianSubs i=getInstance();
-		i.aggiornaFeedRSS();
-		for(int j=0;j<i.feed_rss.size();j++){
-			System.out.println(i.feed_rss.get(j));
 		}
 	}
 	private boolean isSeriePresente(int id){
