@@ -2,7 +2,6 @@ package gst.sottotitoli.subspedia;
 
 import gst.database.Database;
 import gst.download.Download;
-import gst.naming.Renamer;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
@@ -19,17 +18,22 @@ import gst.tda.db.KVResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import util.zip.ArchiviZip;
 
 public class Subspedia implements ProviderSottotitoli {
 	private static Subspedia instance;
@@ -41,6 +45,8 @@ public class Subspedia implements ProviderSottotitoli {
 	private static ArrayList<SubspediaRSSItem> rss;
 	private Settings settings;
 	
+	private Map<Integer, ArrayList<SottotitoloSubspedia>> cache;
+	
 	public static Subspedia getInstance(){
 		if(instance==null)
 			instance= new Subspedia();
@@ -50,39 +56,44 @@ public class Subspedia implements ProviderSottotitoli {
 	private Subspedia(){
 		rss=new ArrayList<SubspediaRSSItem>();
 		settings = Settings.getInstance();
+		cache = new HashMap<Integer, ArrayList<SottotitoloSubspedia>>();
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
+		SerieSubConDirectory ssub = getSerieAssociata(s);
+		if(s==null)
+			return false;
 		
-		String link=cercaSottotitoloLink(s, t);
+		String link = cercaInCartella(ssub, t);
+		if(link==null)
+			link=cercaSottotitoloLink(s, t);
+		
 		if(link==null)
 			return false;
 		else {
 			link=link.replace(" ", "%20");
-			if(scaricaSub(link, Renamer.generaNomeDownload(t), s.getFolderSerie())){
+			String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+".zip";
+			try {
+				Download.downloadFromUrl(link, zip);
+				ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
 				e.setSubDownload(false);
 				GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
 				return true;
 			}
-			return false;
+			catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
+		return false;
 	}
-	private boolean scaricaSub(String url, String nome, String folder){
-		String dir_s=settings.getDirectoryDownload()+(settings.getDirectoryDownload().endsWith(File.pathSeparator)?folder:(File.separator+folder));
-		String destinazione=dir_s+File.separator+nome;
-		try {
-			Download.downloadFromUrl(url, destinazione);
-			
-			return true;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-			return false;
-		}
+	public SerieSubConDirectory getSerieAssociata(SerieTV serie) {
+		String query = "SELECT * FROM "+Database.TABLE_SUBSPEDIA+" WHERE id="+serie.getIDSubspedia();
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res.size()==1)
+			return parseDB(res.get(0));
+		return null;
 	}
-	public SerieSub getSerieAssociata(SerieTV serie) {return null;}
 	
 	public boolean cercaSottotitolo(SerieTV s, Torrent t) {
 		scaricaFeed();
@@ -212,22 +223,13 @@ public class Subspedia implements ProviderSottotitoli {
 		}
 	}
 	
-	private void stampaFeed(){
-		for(int i=0;i<rss.size();i++){
-			System.out.println(rss.get(i));
-		}
-	}
-	
 	public static void main(String[] args){
-		/*
-		Subspedia sp=new Subspedia();
-		sp.scaricaFeed();
-		sp.stampaFeed();
-		*/
-		Settings.getInstance();
-		Database.Connect();
-		Subspedia s = getInstance();
-		s.aggiornaElencoSerieOnline();
+		Subspedia subspedia = getInstance();
+		SerieSubConDirectory s = new SerieSubConDirectory("", 0, "/the-100.html");
+		ArrayList<SottotitoloSubspedia> subs = subspedia.caricaCartella(s);
+		for(int i=0;i<subs.size();i++){
+			System.out.println(subs.get(i).getUrlDownload());
+		}
 	}
 	@Override
 	public void associaSerie(SerieTV s) {
@@ -242,5 +244,46 @@ public class Subspedia implements ProviderSottotitoli {
 	private void associa(int idSerie, int idSubspedia) {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSubspedia+" WHERE id="+idSerie;
 		Database.updateQuery(query);
+	}
+	
+	private ArrayList<SottotitoloSubspedia> caricaCartella(SerieSubConDirectory serie){
+		ArrayList<SottotitoloSubspedia> subs = new ArrayList<SottotitoloSubspedia>();
+		try {
+			org.jsoup.nodes.Document doc = Jsoup.connect(BASEURL+serie.getDirectory()).get();
+			Elements links = doc.select("a");
+			for(int i=0;i<links.size();i++){
+				org.jsoup.nodes.Element a = links.get(i);
+				if(a.hasAttr("href") && a.attr("href").toLowerCase().endsWith("zip")){
+					String nomefile = a.attr("href").substring(a.attr("href").lastIndexOf("/"));
+					SottotitoloSubspedia sub = new SottotitoloSubspedia(nomefile);
+					sub.setUrlDownload(a.attr("href").startsWith("http")?a.attr("href"):BASEURL+a.attr("href"));
+					subs.add(sub);
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return subs;
+	}
+	private String cercaInCartella(SerieSubConDirectory serie, Torrent t) {
+		ArrayList<SottotitoloSubspedia> subs = cache.get(serie.getIDDB());
+		if(subs == null){
+			subs = caricaCartella(serie);
+			if(subs == null)
+				return null;
+			else
+				cache.put(serie.getIDDB(), subs);
+		}
+		
+		for(int i=0;i<subs.size();i++){
+			SottotitoloSubspedia sub = subs.get(i);
+			if(t.getStats().getEpisodio()==sub.getEpisodio() && t.getStats().getStagione()==sub.getStagione())
+				return sub.getUrlDownload();
+		}
+		
+		return null;
 	}
 }
