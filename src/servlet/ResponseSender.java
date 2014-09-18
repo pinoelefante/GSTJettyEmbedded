@@ -3,10 +3,15 @@ package servlet;
 import gst.serieTV.Episodio;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
+import gst.sottotitoli.ProviderSottotitoli;
+import gst.sottotitoli.SerieSub;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,7 +19,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 
 public class ResponseSender {
 	public static void sendResponse(HttpServletResponse response, Document doc){
@@ -125,5 +129,34 @@ public class ResponseSender {
 		root.addContent(episodio);
 		Document doc = new Document(root);
 		return doc;
+	}
+	public static Document createProviderSottotitoli(Map<ProviderSottotitoli, ArrayList<SerieSub>> map) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		
+		Set<Entry<ProviderSottotitoli, ArrayList<SerieSub>>> list=map.entrySet();
+		for(Entry<ProviderSottotitoli, ArrayList<SerieSub>> provider : list){
+			ProviderSottotitoli p = provider.getKey();
+			ArrayList<SerieSub> elenco = provider.getValue();
+			
+			Element e_provider = new Element("provider");
+			e_provider=e_provider.setAttribute("nome", p.getProviderName());
+			root.addContent(e_provider);
+			Element e_elenco = new Element("series");
+			e_provider.addContent(e_elenco);
+			for(int i=0;i<elenco.size();i++){
+				Element e_serie = new Element("serie");
+				e_elenco.addContent(e_serie);
+				Element e_nome = new Element("nome");
+				e_nome.addContent(elenco.get(i).getNomeSerie());
+				e_serie.addContent(e_nome);
+				Element e_id=new Element("id");
+				e_id.addContent(elenco.get(i).getIDDB()+"");
+				e_serie.addContent(e_id);
+			}
+ 		}
+		return new Document(root);
 	}
 }

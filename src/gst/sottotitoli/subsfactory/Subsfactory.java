@@ -240,7 +240,7 @@ public class Subsfactory implements ProviderSottotitoli {
 	}
 
 	private ArrayList<SerieSub> getSerieDB(){
-		String query="SELECT * FROM "+Database.TABLE_SUBSFACTORY+" ORDER BY nome_serie ASC";
+		String query="SELECT * FROM "+Database.TABLE_SUBSFACTORY+" ORDER BY nome ASC";
 		ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
 		ArrayList<SerieSub> elenco_serie=new ArrayList<SerieSub>();
 		for(int i=0;i<res.size();i++){
@@ -258,7 +258,7 @@ public class Subsfactory implements ProviderSottotitoli {
 	private SerieSubConDirectory parseSerieDB(KVResult<String, Object> r){
 		String path=(String) r.getValueByKey("directory");
 		int db=(int) r.getValueByKey("id");
-		String nome=(String) r.getValueByKey("nome_serie");
+		String nome=(String) r.getValueByKey("nome");
 		return new SerieSubConDirectory(nome, db ,path);
 	}
 	public String toString(){

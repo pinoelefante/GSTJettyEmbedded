@@ -4,6 +4,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 import servlet.OperazioniSerieServlet;
 import servlet.OperazioniSistema;
+import servlet.SottotitoliServlet;
 
 public class AppContextBuilder {
 	private WebAppContext webAppContext;
@@ -16,6 +17,7 @@ public class AppContextBuilder {
 		
 		webAppContext.addServlet(OperazioniSerieServlet.class, "/OperazioniSerieServlet");
 		webAppContext.addServlet(OperazioniSistema.class, "/OperazioniSistemaServlet");
+		webAppContext.addServlet(SottotitoliServlet.class, "/OperazioniSottotitoliServlet");
 		
 		return webAppContext;
 	}

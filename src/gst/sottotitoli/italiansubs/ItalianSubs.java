@@ -208,24 +208,9 @@ public class ItalianSubs implements ProviderSottotitoli{
 	}
 	public void aggiornaElencoSerieOnline(){
 		ArrayList<SerieSub> on=api.caricaElencoSerieOnlineXML();
-		ArrayList<SerieSub> db=getElencoSerie("id");
-		int found = 0;
 		for(int i=0;i<on.size();i++){
-			SerieSub s_on=on.get(i);
-			boolean inserire = false;
-			for(int j=i-found;j<db.size();j++){
-				SerieSub s_db=db.get(j);
-				if(s_db.getIDDB()==s_on.getIDDB())
-					break;
-				else if(s_on.getIDDB()>s_db.getIDDB()){
-					inserire = true;
-					break;
-				}
-			}
-			if(inserire){
-				found++;
-				insertSerie(s_on);
-			}
+			if(!isSeriePresente(on.get(i).getIDDB()))
+				insertSerie(on.get(i));
 		}
 	}
 	
