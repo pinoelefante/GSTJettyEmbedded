@@ -16,6 +16,7 @@ div#containerLeft {
 	position: absolute;
 	left: 0%;
 	right: 70%;
+	top: 50px;
 	height: 100%;
 	width: 33%;
 	border: 1px solid gray;
@@ -25,16 +26,31 @@ div#containerCenter {
 	position: absolute;
 	left: 33%;
 	right: 33%;
+	top: 50px;
 	height: 100%;
 	width: 34%;
 	border: 1px solid gray;
 	border-radius: 10px;
 }
+div#containerPreferite {
+	position: absolute;
+	left: 33%;
+	right: 33%;
+	height: 50px;
+	width: 34%;
+	border: 1px solid gray;
+	border-radius: 10px;
+	align-content: center;
+}
 div#containerRight {
 	position: absolute;
 	left: 67%;
+	top: 50px;
 	height: 100%;
 	width: 33%;
 	border: 1px solid gray;
 	border-radius: 10px;
+}
+select {
+	width: 50%;
 }
