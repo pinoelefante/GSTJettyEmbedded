@@ -1,0 +1,40 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+div#container {
+	position: relative;
+	margin-top: 70px;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 90%;
+}
+div#containerLeft {
+	position: absolute;
+	left: 0%;
+	right: 70%;
+	height: 100%;
+	width: 33%;
+	border: 1px solid gray;
+	border-radius: 10px;
+}
+div#containerCenter {
+	position: absolute;
+	left: 33%;
+	right: 33%;
+	height: 100%;
+	width: 34%;
+	border: 1px solid gray;
+	border-radius: 10px;
+}
+div#containerRight {
+	position: absolute;
+	left: 67%;
+	height: 100%;
+	width: 33%;
+	border: 1px solid gray;
+	border-radius: 10px;
+}

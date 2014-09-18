@@ -19,7 +19,7 @@ div#container {
 div#containerLeft {
 	position: absolute;
 	left: 0%;
-	right: 70;
+	right: 70%;
 	height: 100%;
 	width: 30%;
 	border: 1px solid gray;

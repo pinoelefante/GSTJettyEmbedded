@@ -74,16 +74,25 @@ public class ResponseSender {
 			Element serie_tag=new Element("serie");
 			Element nome = new Element("name");
 			Element provider_name = new Element("provider_name");
+			Element id_itasa = new Element("id_itasa");
+			Element id_subspedia = new Element("id_subspedia");
+			Element id_subsfactory = new Element("id_subsfactory");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
 			Element provider = new Element("provider");
 			provider.addContent(serie.get(i).getProviderID()+"");
 			provider_name.addContent(ProviderSerieTV.getProviderNameByID(serie.get(i).getProviderID()));
+			id_itasa.addContent(serie.get(i).getIDItasa()+"");
+			id_subsfactory.addContent(""+serie.get(i).getIDDBSubsfactory());
+			id_subspedia.addContent(serie.get(i).getIDSubspedia()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
 			serie_tag.addContent(provider_name);
+			serie_tag.addContent(id_itasa);
+			serie_tag.addContent(id_subsfactory);
+			serie_tag.addContent(id_subspedia);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);
