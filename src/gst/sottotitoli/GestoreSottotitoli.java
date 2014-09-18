@@ -8,6 +8,7 @@ import gst.serieTV.Episodio;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.italiansubs.ItalianSubs;
+import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.subsfactory.Subsfactory;
 import gst.sottotitoli.subspedia.Subspedia;
 import gst.tda.db.KVResult;
@@ -23,15 +24,10 @@ public class GestoreSottotitoli implements Notifier{
 	private ProviderSottotitoli itasa;
 	private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
+	private ProviderSottotitoli localsubs;
 	private Settings settings;
 	private Timer timer;
 	private TimerTask aggiornaElenchi, associaSerie, ricercaSottotitoli;
-	
-	public static void main(String[] args){
-		Settings.getInstance();
-		Database.Connect();
-		GestoreSottotitoli g = getInstance();
-	}
 	
 	public static GestoreSottotitoli getInstance(){
 		if(instance==null)
@@ -42,6 +38,7 @@ public class GestoreSottotitoli implements Notifier{
 		itasa=ItalianSubs.getInstance();
 		subsfactory=Subsfactory.getInstance();
 		subspedia=Subspedia.getInstance();
+		localsubs=LocalSubs.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
 		timer = new Timer();
@@ -105,9 +102,14 @@ public class GestoreSottotitoli implements Notifier{
 	
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e){
 		boolean scaricato = true;
-		
+		boolean online = true;
 		String episodio="S"+(e.getStagione()<10?"0"+e.getStagione():e.getStagione())+"E"+(e.getEpisodio()<10?"0"+e.getEpisodio():e.getEpisodio());
-		if(itasa.scaricaSottotitolo(s, e)){
+		
+		if(localsubs.scaricaSottotitolo(s, e)){
+			online=false;
+			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
+		}
+		else if(itasa.scaricaSottotitolo(s, e)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
 		}
 		else if(subsfactory.scaricaSottotitolo(s, e)){
@@ -122,9 +124,10 @@ public class GestoreSottotitoli implements Notifier{
 		if(scaricato){
 			String query="UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+e.getId();
 			Database.updateQuery(query);
-			//TODO renamer
 		}
-		
+		if(scaricato && online){
+			localsubs.scaricaSottotitolo(s, e); //rename
+		}
 		return scaricato;
 	}
 	
