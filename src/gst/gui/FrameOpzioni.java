@@ -313,7 +313,7 @@ public class FrameOpzioni extends JFrame {
 				String passItasa=new String(itasaPassword.getPassword());
 					
 				s.setAskOnClose(askClose);
-				s.setRicercaSottotitoli(subDown);
+				s.setRicercaSottotitoli(subDown,true);
 				s.setStartHidden(hidden);
 				s.setDownloadAutomatico(autodown);
 				s.setAutostart(autostart);

@@ -52,6 +52,7 @@ public class GestoreSottotitoli implements Notifier{
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
+				System.out.println("shutdown hook subs");
 				aggiornaElenchi.cancel();
 				associaSerie.cancel();
 				stopRicercaAutomatica();

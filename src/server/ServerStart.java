@@ -73,8 +73,10 @@ public class ServerStart {
 		subManager=GestoreSottotitoli.getInstance();
 		subManager.subscribe(ui);
 		*/
+		subManager=GestoreSottotitoli.getInstance();
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
+				System.out.println("Shutdown hook - main");
 				if(jettyServer.isStarted()) {
 					try {
 						jettyServer.stop();

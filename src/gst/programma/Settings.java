@@ -118,7 +118,7 @@ public class Settings {
 		setFirstStart(true);
 		setMinRicerca(480);
 		setRegolaDownloadDefault(Preferenze.HD);
-		setRicercaSottotitoli(true);
+		setRicercaSottotitoli(true, false);
 		setStartHidden(false);
 	}
 	public BitTorrentClient getClientTorrent() throws Exception{
@@ -314,12 +314,14 @@ public class Settings {
 		aggiungiOpzione("regola_download", d+"");
 	}
 	
-	public void setRicercaSottotitoli(boolean ricercaSottotitoli) {
+	public void setRicercaSottotitoli(boolean ricercaSottotitoli, boolean toStart) {
 		aggiungiOpzione("download_sottotitoli", ricercaSottotitoli+"");
-		if(ricercaSottotitoli)
-			GestoreSottotitoli.getInstance().avviaRicercaAutomatica();
-		else
-			GestoreSottotitoli.getInstance().stopRicercaAutomatica();
+		if(toStart){
+    		if(ricercaSottotitoli)
+    			GestoreSottotitoli.getInstance().avviaRicercaAutomatica();
+    		else
+    			GestoreSottotitoli.getInstance().stopRicercaAutomatica();
+		}
 	}
 	public void setStartHidden(boolean startHidden) {
 		aggiungiOpzione("start_hidden", startHidden+"");
