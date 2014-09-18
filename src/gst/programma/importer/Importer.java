@@ -16,6 +16,7 @@ import gst.serieTV.Preferenze;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
+import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
 public class Importer implements Notifier{
@@ -70,12 +71,10 @@ public class Importer implements Notifier{
 				for(Entry<Integer, Integer> entry: statoEpisodi.entrySet()){
 					ProviderSerieTV.changeStatusEpisodio(entry.getKey(), entry.getValue());
 				}
-				//TODO stato sottotitoli da scaricare
-				
-				
+				for(Entry<Integer, Boolean> subDEntry: subDownload.entrySet()){
+					GestoreSottotitoli.setSottotitoloDownload(subDEntry.getKey(), subDEntry.getValue());
+				}
 				dbCon.close();
-				
-				//TODO eliminazione file quando GSTJetty diventa definitivo
 			}
 			catch (Exception e) {
 				e.printStackTrace();
