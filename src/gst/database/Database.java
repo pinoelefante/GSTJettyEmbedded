@@ -168,7 +168,12 @@ public class Database {
 					+ ")");
 					
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_LOGSUB+" (" +
-					"id INTEGER PRIMARY KEY AUTOINCREMENT)");
+					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "episodio INTEGER NOT NULL,"
+					+ "provider INTEGER NOT NULL,"
+					+ "FOREIGN KEY(episodio) REFERENCES episodi(id)"
+					+ ""
+					+ ")");
 			
 			stat.close();
 			

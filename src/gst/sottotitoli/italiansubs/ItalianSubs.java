@@ -297,5 +297,10 @@ public class ItalianSubs implements ProviderSottotitoli{
 	public ArrayList<SerieSub> getElencoSerie() {
 		return getElencoSerie("nome");
 	}
+
+	@Override
+	public int getProviderID() {
+		return GestoreSottotitoli.ITASA;
+	}
 }
 

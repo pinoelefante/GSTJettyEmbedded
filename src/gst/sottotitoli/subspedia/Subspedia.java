@@ -286,4 +286,9 @@ public class Subspedia implements ProviderSottotitoli {
 		
 		return null;
 	}
+
+	@Override
+	public int getProviderID() {
+		return GestoreSottotitoli.SUBSPEDIA;
+	}
 }

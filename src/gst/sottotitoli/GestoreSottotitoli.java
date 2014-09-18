@@ -20,7 +20,7 @@ import java.util.TimerTask;
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
 
-	public final static int ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
+	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
 	private ProviderSottotitoli itasa;
 	private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
@@ -108,15 +108,19 @@ public class GestoreSottotitoli implements Notifier{
 		if(localsubs.scaricaSottotitolo(s, e)){
 			online=false;
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
+			inserisciLog(e, localsubs);
 		}
 		else if(itasa.scaricaSottotitolo(s, e)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
+			inserisciLog(e, itasa);
 		}
 		else if(subsfactory.scaricaSottotitolo(s, e)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
+			inserisciLog(e, subsfactory);
 		}
 		else if(subspedia.scaricaSottotitolo(s, e)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
+			inserisciLog(e, subspedia);
 		}
 		else 
 			scaricato = false;
@@ -130,7 +134,10 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return scaricato;
 	}
-	
+	private void inserisciLog(Episodio e, ProviderSottotitoli p){
+		String query = "INSERT INTO "+Database.TABLE_LOGSUB+" (episodio, provider) VALUES ("+e.getId()+","+p.getProviderID()+")";
+		Database.updateQuery(query);
+	}
 	public ArrayList<SerieSub> getElencoSerie(int provider){
 		switch(provider){
 			case ITASA:

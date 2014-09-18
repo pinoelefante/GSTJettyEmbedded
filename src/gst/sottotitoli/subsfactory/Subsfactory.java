@@ -308,4 +308,9 @@ public class Subsfactory implements ProviderSottotitoli {
 		}
 		return serie;
 	}
+
+	@Override
+	public int getProviderID() {
+		return GestoreSottotitoli.SUBSFACTORY;
+	}
 }

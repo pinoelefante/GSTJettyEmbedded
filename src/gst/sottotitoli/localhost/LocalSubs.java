@@ -5,6 +5,7 @@ import gst.naming.Naming;
 import gst.player.FileFinder;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
+import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 
@@ -59,4 +60,8 @@ public class LocalSubs implements ProviderSottotitoli{
 	public String getProviderName() { return "Offline";}
 	public void associaSerie(SerieTV s) {}
 	public void aggiornaElencoSerieOnline() {}
+	@Override
+	public int getProviderID() {
+		return GestoreSottotitoli.LOCALE;
+	}
 }
