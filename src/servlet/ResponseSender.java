@@ -168,4 +168,41 @@ public class ResponseSender {
  		}
 		return new Document(root);
 	}
+	public static Document createResponseSubDownload(Map<SerieTV, ArrayList<Episodio>> map) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		
+		for(Entry<SerieTV, ArrayList<Episodio>> entry: map.entrySet()){
+			SerieTV s = entry.getKey();
+			Element serie = new Element("serie");
+			Element nome=new Element("nome");
+			nome.addContent(s.getNomeSerie());
+			Element id_s = new Element("id_serie");
+			id_s.addContent(s.getIDDb()+"");
+			Element episodi = new Element("episodi");
+			serie.addContent(nome);
+			serie.addContent(id_s);
+			serie.addContent(episodi);
+			ArrayList<Episodio> eps = entry.getValue();
+			for(int i=0;i<eps.size();i++){
+				Episodio ep = eps.get(i);
+				Element episodio = new Element("episodio");
+				Element id_e = new Element("id_episodio");
+				id_e.addContent(""+ep.getId());
+				Element stagione = new Element("season");
+				stagione.addContent(""+ep.getStagione());
+				Element episode = new Element("episode");
+				episode.addContent(""+ep.getEpisodio());
+				episodio.addContent(id_e);
+				episodio.addContent(stagione);
+				episodio.addContent(episode);
+				episodi.addContent(episodio);
+			}
+			root.addContent(serie);
+		}
+		
+		return new Document(root);
+	}
 }

@@ -26,6 +26,13 @@ public class SerieSubConDirectory extends SerieSub {
 		return super.getIDDB();
 	}
 	public String getDirectory(){
+		if(directory==null || directory.isEmpty()){
+			String query="SELECT directory FROM "+Database.TABLE_SUBSFACTORY+" WHERE id="+getIDDB();
+			ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
+			if(res.size()==1){
+				setDirectory(((String)res.get(0).getValueByKey("directory")));
+			}
+		}
 		return directory;
 	}
 	public void setDirectory(String dir){

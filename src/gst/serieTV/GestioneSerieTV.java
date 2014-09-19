@@ -172,7 +172,13 @@ public class GestioneSerieTV implements Notifier {
 	}
 	
 	public boolean downloadEpisodio(int idEp) {
-		return ProviderSerieTV.downloadEpisodio(idEp);
+		boolean status = ProviderSerieTV.downloadEpisodio(idEp);
+		if(status){
+			if(settings.isRicercaSottotitoli()){
+				GestoreSottotitoli.setSottotitoloDownload(idEp, true);
+			}
+		}
+		return status;
 	}
 	public Torrent getLinkDownload(int idEp){
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
@@ -181,7 +187,8 @@ public class GestioneSerieTV implements Notifier {
 		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
 		if(serie==null)
 			return null;
-		return ProviderSerieTV.searchTorrent(serie.getPreferenze(), ep.getLinks());
+		Torrent t=ProviderSerieTV.searchTorrent(serie.getPreferenze(), ep.getLinks());
+		return t;
 	}
 	
 	public boolean deleteEpisodio(int idEp){

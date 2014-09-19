@@ -68,12 +68,11 @@ public class ServerStart {
 			settings.setFirstStart(false);
 			settings.salvaSettings();
 		}
-		/*
+		
 		gst.init(ui);
 		subManager=GestoreSottotitoli.getInstance();
 		subManager.subscribe(ui);
-		*/
-		subManager=GestoreSottotitoli.getInstance();
+		
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
 				System.out.println("Shutdown hook - main");

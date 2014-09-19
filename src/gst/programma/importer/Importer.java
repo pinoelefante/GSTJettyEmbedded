@@ -144,7 +144,7 @@ public class Importer implements Notifier{
 		private int idSerie, statoVisualizzazione;
 		private boolean subDown; 
 		public TorrentOld(String link, int idDB, int idEpisodio) {
-			super(link, idDB, idEpisodio, true);
+			super(link, idDB, idEpisodio);
 		}
 		
 	}

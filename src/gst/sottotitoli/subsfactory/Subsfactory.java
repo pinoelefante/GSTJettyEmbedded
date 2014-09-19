@@ -94,7 +94,7 @@ public class Subsfactory implements ProviderSottotitoli {
 	private String cercaURLInCartella(SerieSubConDirectory serie_sub, Torrent t){
 		ArrayList<SerieSubConDirectory> dirs=getDirectoryAssociate(serie_sub);
 		for(int i=0;i<dirs.size();i++){
-			ArrayList<SottotitoloSubsfactory> subs=cache_dir.get(dirs.get(i));
+			ArrayList<SottotitoloSubsfactory> subs=cache_dir.get(dirs.get(i).getIDDB());
 			if(subs == null){
 				subs = caricaCartella(dirs.get(i));
 				if(subs==null)
@@ -174,6 +174,11 @@ public class Subsfactory implements ProviderSottotitoli {
 			}
 		}
 		return null;
+	}
+	public static void main(String[] args){
+		Subsfactory s = getInstance();
+		s.aggiornaFeedRSS();
+		s.stampa_feed();
 	}
 	private void aggiornaFeedRSS(){
 		RSS_UltimoAggiornamento=new GregorianCalendar();
@@ -288,6 +293,9 @@ public class Subsfactory implements ProviderSottotitoli {
 			for(int i=0;i<options.size();i++){
 				org.jsoup.nodes.Element o=options.get(i);
 				String dir = o.val().replace("files/", "");
+				if(dir.endsWith("/")){
+					dir=dir.substring(0, dir.length()-1);
+				}
 				if(!dir.isEmpty()){
 					String nomeSerie = o.html().replace("&nbsp;", "").trim();
 					addSerie(new SerieSubConDirectory(nomeSerie, 0, dir));

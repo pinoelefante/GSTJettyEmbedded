@@ -39,7 +39,7 @@ public class LocalSubs implements ProviderSottotitoli{
 				CaratteristicheFile subStats=Naming.parse(sub.getName(), null);
 				if(videoStat.is720p()==subStats.is720p()){	
 					do{
-						String newFile = video.getParent()+video.getName().substring(0, video.getName().lastIndexOf("."))+(subCount==0?"":subCount)+".srt";
+						String newFile = video.getParent()+File.separator+video.getName().substring(0, video.getName().lastIndexOf("."))+(subCount==0?"":subCount)+".srt";
 						File f = new File(newFile);
 						if(f.exists()){
 							subCount++;

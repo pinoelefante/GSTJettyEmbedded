@@ -1,5 +1,11 @@
 package gst.sottotitoli.rss;
 
+import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class RSSItemSubsfactory {
 	private String titolo, descrizione, url, url_download;
 	private String ID="";
@@ -8,10 +14,38 @@ public class RSSItemSubsfactory {
 	public RSSItemSubsfactory(String t, String d, String u){
 		setTitolo(t);
 		setDescrizione(d);
-		setUrl(u);
+		setUrl(u.replace("%20", " ").replace("%2F", "/").replace("action=view", "action=downloadfile"));
 		parse();
 	}
 	private void parse(){
+		try {
+			URL url = new URL(getUrl());
+			String[] par = url.getQuery().split("&");
+			for(int i=0;i<par.length;i++){
+				String[] kv = par[i].split("=");
+				switch(kv[0]){
+					case "directory":
+						setID(kv[1]);
+						break;
+					case "filename": {
+						CaratteristicheFile stat = Naming.parse(kv[1], null);
+						setStagione(stat.getStagione());
+						setEpisodio(stat.getEpisodio());
+						set720p(stat.is720p());
+						setNormale(!stat.is720p());
+						break;
+					}
+				}
+			}
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if(descrizione.contains("normale") || descrizione.contains("Normale"))
+			setNormale(true);
+		if(descrizione.contains("720p"))
+			set720p(true);
+		/*
 		String id=getUrl().substring(getUrl().indexOf("directory=")+"directory=".length(), getUrl().indexOf("&filename")).replace("%2F", "/").replace("%20", " ");
 		String url_d=getUrl().replace("action=view", "action=downloadfile");
 		String filename=getUrl().substring(getUrl().indexOf("filename")+"filename=".length());
@@ -32,6 +66,7 @@ public class RSSItemSubsfactory {
 			set720p(true);
 		if(descrizione.toLowerCase().contains("WEB-DL".toLowerCase()))
 			setNormale(false);
+		*/
 	}
 	public boolean isValid(){
 		return (getStagione()!=0 && getEpisodio()!=0);

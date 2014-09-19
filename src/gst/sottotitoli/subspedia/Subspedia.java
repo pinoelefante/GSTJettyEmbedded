@@ -60,9 +60,11 @@ public class Subspedia implements ProviderSottotitoli {
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
+		if(s.getIDSubspedia()<=0)
+			return false;
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
 		SerieSubConDirectory ssub = getSerieAssociata(s);
-		if(s==null)
+		if(s==null || ssub==null)
 			return false;
 		
 		String link = cercaInCartella(ssub, t);

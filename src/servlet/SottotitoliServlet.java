@@ -1,12 +1,13 @@
 package servlet;
 
+import gst.serieTV.Episodio;
+import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -33,13 +34,18 @@ public class SottotitoliServlet extends HttpServlet{
 		Document xml = null;
 		switch(action){
 			case "getProviders": {
-				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = new HashMap<ProviderSottotitoli, ArrayList<SerieSub>>();
-				for(int i=1;i<=3;i++){
-					ProviderSottotitoli p = GestoreSottotitoli.getInstance().getProvider(i);
-					ArrayList<SerieSub> s = p.getElencoSerie();
-					map.put(p, s);
-				}
+				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = GestoreSottotitoli.getInstance().getProviders();
 				xml = ResponseSender.createProviderSottotitoli(map);
+				break;
+			}
+			case "getSottotitoliDaScaricare": {
+				Map<SerieTV, ArrayList<Episodio>> map = GestoreSottotitoli.getInstance().sottotitoliDaScaricare();
+				xml = ResponseSender.createResponseSubDownload(map);
+				break;
+			}
+			case "scaricaSubByID": {
+				Integer idEPisodio = Integer.parseInt(checkParameter("id", resp, req, false));
+				xml = ResponseSender.createResponseBoolean(true);
 				break;
 			}
 		}

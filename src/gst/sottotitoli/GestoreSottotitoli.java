@@ -5,6 +5,7 @@ import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
+import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.italiansubs.ItalianSubs;
@@ -14,6 +15,8 @@ import gst.sottotitoli.subspedia.Subspedia;
 import gst.tda.db.KVResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -181,6 +184,33 @@ public class GestoreSottotitoli implements Notifier{
 			eps.add(e);
 		}
 		return eps;
+	}
+	public Map<SerieTV, ArrayList<Episodio>> sottotitoliDaScaricare() {
+		Map<SerieTV, ArrayList<Episodio>> map = new HashMap<SerieTV, ArrayList<Episodio>>();
+		ArrayList<SerieTV> series = GestioneSerieTV.getInstance().getElencoSeriePreferite();
+		for(int i=0;i<series.size();i++){
+			SerieTV s = series.get(i);
+			String query = "SELECT * FROM "+Database.TABLE_EPISODI+" WHERE sottotitolo=1 AND serie="+s.getIDDb()+" ORDER BY stagione, episodio ASC";
+			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+			ArrayList<Episodio> eps = new ArrayList<Episodio>();
+			for(int j=0;j<res.size();j++){
+				Episodio e = ProviderSerieTV.parseEpisodio(res.get(j));
+				eps.add(e);
+			}
+			if(eps.size()>0){
+				map.put(s, eps);
+			}
+		}
+		return map;
+	}
+	public Map<ProviderSottotitoli, ArrayList<SerieSub>> getProviders(){
+		Map<ProviderSottotitoli, ArrayList<SerieSub>> map = new HashMap<ProviderSottotitoli, ArrayList<SerieSub>>();
+		for(int i=1;i<=3;i++){
+			ProviderSottotitoli p = GestoreSottotitoli.getInstance().getProvider(i);
+			ArrayList<SerieSub> s = p.getElencoSerie();
+			map.put(p, s);
+		}
+		return map;
 	}
 	public static void setSottotitoloDownload(int idEpisodio, boolean stato){
 		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo="+(stato?1:0)+" WHERE id="+idEpisodio;

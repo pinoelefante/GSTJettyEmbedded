@@ -10,17 +10,10 @@ public class Torrent {
 	private int id, idEpisodio;
 	
 	public Torrent(String link, int idDB, int idEpisodio) {
-		this(link, idDB, idEpisodio, false);
-	}
-	public Torrent(String link, int idDB, int idEpisodio, boolean parse) {
 		setUrl(link);
 		setId(idDB);
 		setIdEpisodio(idEpisodio);
-		if(parse)
-			parse();
-		else {
-			prop_torrent=new CaratteristicheFile();
-		}
+		parse();
 	}
 	
 	public String getUrl() {
