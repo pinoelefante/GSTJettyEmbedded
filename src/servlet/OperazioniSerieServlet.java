@@ -6,6 +6,7 @@ import gst.serieTV.SerieTV;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -70,6 +71,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				ArrayList<Episodio> episodi = manager.getEpisodiSerie(idSerie);
 				xml = ResponseSender.createResponseEpisodi(idSerie, episodi);
+				break;
+			}
+			case "getEpisodiDaVedere": {
+				Map<SerieTV, ArrayList<Episodio>> map = manager.getEpisodiDaVedere();
+				xml = ResponseSender.createResponseEpisodiVedere(map);
 				break;
 			}
 			case "getEpisodiDaScaricareBySerie": {

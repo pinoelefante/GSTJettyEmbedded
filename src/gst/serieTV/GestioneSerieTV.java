@@ -14,6 +14,8 @@ import gst.tda.db.KVResult;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
@@ -253,14 +255,18 @@ public class GestioneSerieTV implements Notifier {
 		if(t_search!=null)
 			t_search.interrupt();
 	}
-	public ArrayList<Episodio> getEpisodiDaVedere(){ //TODO
-		if(settings.isRicercaSottotitoli()){
-			//SELECT * FROM preferiti pref JOIN serietv serie ON pref.id_serie = serie.id ORDER BY serie.nome ASC
-			String query = "SELECT * FROM episodi WHERE sottotitolo=0 AND stato_visualizzazione=1";
+	public Map<SerieTV, ArrayList<Episodio>> getEpisodiDaVedere(){
+		Map<SerieTV, ArrayList<Episodio>> map = new HashMap<SerieTV, ArrayList<Episodio>>();
+		for(SerieTV st: getElencoSeriePreferite()){
+			String query = "SELECT * FROM episodi WHERE serie="+st.getIDDb()+" AND stato_visualizzazione=1 "+(settings.isRicercaSottotitoli()?("AND sottotitolo=0"):"")+" ORDER BY stagione, episodio ASC";
+			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+			ArrayList<Episodio> eps = new ArrayList<Episodio>();
+			for(int i=0;i<res.size();i++){
+				Episodio ep = ProviderSerieTV.parseEpisodio(res.get(i));
+				eps.add(ep);
+			}
+			map.put(st, eps);
 		}
-		else {
-			String query = "SELECT episodi.id AS ep_id FROM episodi ep JOIN serietv s ON ep.serie=s.id AND ep.stato_visualizzazione=1 ORDER BY stagione, episodio ASC";
-		}
-		return null;
+		return map;
 	}
 }

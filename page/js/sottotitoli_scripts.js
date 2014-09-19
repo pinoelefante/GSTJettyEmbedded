@@ -1,6 +1,9 @@
 $(document).ready(function() {
 	loadSeriePreferite();
-	
+	loadProviders();
+	chosenConfig();
+});
+function chosenConfig(){
 	var config = {
 		'.chosen-select'           : {},
 		'.chosen-select-deselect'  : {allow_single_deselect:true},
@@ -11,7 +14,7 @@ $(document).ready(function() {
 	for (var selector in config) {
 		$(selector).chosen(config[selector]);
 	}
-});
+}
 function loadSeriePreferite() {
 	$.ajax({
 		type : "POST",
@@ -46,6 +49,85 @@ function loadSeriePreferite() {
 		}
 	});
 }
+function loadProviders(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=getProviders",
+		dataType : "xml",
+		success : function(msg) {
+			$(msg).find("provider").each(function() {
+				var nome = $(this).find("name").text();
+				var id_provider = $(this).attr("id_provider");
+				var select;
+				switch(id_provider){
+					case "1":
+						select=$("#selectItasa");
+						break;
+					case "2":
+						select=$("#selectSubsfactory");
+						break;
+					case "3":
+						select=$("#selectSubspedia");
+						break;
+					case "4":
+						select=$("#selectPodnapisi");
+						break;
+					case "5":
+						select=$("#selectOpensubtitles");
+						break;
+					case "6":
+						select=$("#selectIAddic7ed");
+						break;
+					default:
+						alert("DEFAULT CASE!!!!");
+				}
+				$(this).find("serie").each(function(){
+					var nomeSerie = $(this).find("nome").text();
+					var idSerie = $(this).find("id").text();
+					var option = document.createElement("option");
+					option.value = idSerie;
+					option.innerHTML = nomeSerie;
+					
+					$(option).appendTo(select);
+				});
+				$(select).trigger("chosen:updated");
+			});
+			
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
 function onchangePreferita(val){
+	var serie = $("#seriePreferite option:selected");
+	if(serie.length==0 || serie == null || serie.value == "undefined"){
+		alert("Seleziona serie");
+		return;
+	}
 	
+	var itasa=parseInt($(serie).prop("itasa"));
+	if(itasa>0)
+		$('#selectItasa option[value="' + itasa + '"]').prop('selected', true);
+	else
+		$("#selectItasa option.noValue").prop('selected', true);
+	$("#selectItasa").trigger("chosen:updated");
+	$("#selectItasa").trigger("change");
+	
+	var subsfactory=parseInt($(serie).prop("subsfactory"));
+	if(subsfactory>0)
+		$('#selectSubsfactory option[value="' + subsfactory + '"]').prop('selected', true);
+	else 
+		$("#selectSubsfactory option.noValue").prop('selected', true);
+	$("#selectSubsfactory").trigger("chosen:updated");
+	$("#selectSubsfactory").trigger("change");
+	
+	var subspedia=parseInt($(serie).prop("subspedia"));
+	if(subspedia>0)
+		$('#selectSubspedia option[value="' + subspedia + '"]').prop('selected', true);
+	else 
+		$("#selectSubspedia option.noValue").prop('selected', true);
+	$("#selectSubspedia").trigger("chosen:updated");
+	$("#selectSubspedia").trigger("change");
 }

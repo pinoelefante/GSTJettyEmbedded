@@ -52,14 +52,90 @@
     </div>
 	<div id="container">
 		<div id="containerPreferite">
-			<label>Serie preferite</label>
-			<select id="seriePreferite" class="chosen-select" data-placeholder="Serie preferite" onchange="onchangePreferita(this)">
-				<option></option>
-			</select>
+			<div id="contSelectPref">
+				<select id="seriePreferite" class="chosen-select" data-placeholder="Serie preferite" onchange="onchangePreferita(this)">
+					<option></option>
+				</select>
+			</div>
 		</div>
-		<div id="containerRight">Destra</div>
-		<div id="containerCenter">Centro</div>
-		<div id="containerLeft">Sinistra</div>
+		<div id="containerLeft">
+			<div class="contProviderL1">
+				<fieldset>
+					<legend><a href="http://www.italiansubs.net">Italiansubs</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectItasa">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+			<div class="contProviderL2">
+				<fieldset>
+					<legend><a href="http://www.podnapisi.net">Podnapisi</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectPodnapisi">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+		</div>
+		<div id="containerCenter">
+			<div class="contProviderL1">
+				<fieldset>
+					<legend><a href="http://www.subsfactory.it">Subsfactory</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectSubsfactory">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+			<div class="contProviderL2">
+				<fieldset>
+					<legend><a href="http://www.opensubtitles.org">Opensubtitles</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectOpensubtitles">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+		</div>
+		<div id="containerRight">
+			<div class="contProviderL1">
+				<fieldset>
+					<legend><a href="http://subspedia.weebly.com">Subspedia</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectSubspedia">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+			<div class="contProviderL2">
+				<fieldset>
+					<legend><a href="http://www.addic7ed.com">Addic7ed</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectAddic7ed">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </body>

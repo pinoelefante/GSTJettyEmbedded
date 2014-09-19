@@ -3,54 +3,104 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
+    border: 1px solid white;
 }
-
 div#container {
 	position: relative;
 	margin-top: 70px;
 	margin-left: 20px;
 	margin-right: 20px;
 	height: 90%;
+	min-width: 1024px;
 }
 div#containerLeft {
 	position: absolute;
 	left: 0%;
 	right: 70%;
-	top: 50px;
-	height: 100%;
+	top: 40px;
+	height: 50%;
 	width: 33%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
+	min-height: 400px;
 }
 div#containerCenter {
 	position: absolute;
 	left: 33%;
 	right: 33%;
-	top: 50px;
-	height: 100%;
+	top: 40px;
+	height: 50%;
 	width: 34%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
+	min-height: 400px;
 }
 div#containerPreferite {
 	position: absolute;
 	left: 33%;
 	right: 33%;
-	height: 50px;
+	height: 40px;
 	width: 34%;
+	/*
 	border: 1px solid gray;
-	border-radius: 10px;
-	align-content: center;
+	*/
+}
+div#contSelectPref{
+	position:absolute;
+	left: 20%;
+	right: 20%;
+	top:20%;
+	bottom:20%;
+}
+div.contProviderL1 {
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	left: 5%;
+	height: 30%;
+	/*
+	border: 1px solid gray;
+	*/
+	min-height: 150px;
+}
+div.contProviderL2 {
+	position: absolute;
+	top: 45%;
+	right: 5%;
+	left: 5%;
+	height: 30%;
+	/*
+	border: 1px solid gray;
+	*/
+	min-height: 150px;
+}
+.divBottoniProvider {
+	position: absolute;
+	top: 60%;
+	height: 30%;
+} 
+#seriePreferite {
+	width: 100%;
 }
 div#containerRight {
 	position: absolute;
 	left: 67%;
-	top: 50px;
-	height: 100%;
+	top: 40px;
+	height: 50%;
 	width: 33%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
+	min-height: 400px;
 }
-select {
-	width: 50%;
+.SelectSerieProvider {
+	width:100%;
+}
+.chosen-container {
+	width: 95% !important;
 }

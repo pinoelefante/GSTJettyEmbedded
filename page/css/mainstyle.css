@@ -4,6 +4,7 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
+    border: 1px solid white;
 }
 label, select {
 	display: inline;
@@ -14,6 +15,7 @@ div#container {
 	margin-left: 20px;
 	margin-right: 20px;
 	height: 90%;
+	min-width: 950px;
 }
 
 div#containerLeft {
@@ -24,6 +26,7 @@ div#containerLeft {
 	width: 30%;
 	border: 1px solid gray;
 	border-radius: 10px;
+	min-width: 280px;
 }
 
 div#serieNuove {
@@ -72,6 +75,7 @@ div#containerCenter {
 	width: 40%;
 	border: 1px solid gray;
 	border-radius: 10px;
+	min-width: 300px;
 }
 
 div#addSerie {
@@ -114,6 +118,9 @@ div#operazioniLista {
 select#selectSerie {
 	width: 50%;
 	display: inline-block;
+}
+.chosen-container {
+	width: 50% !important;
 }
 
 div#listSerie {
@@ -164,6 +171,7 @@ div#containerRight {
 	width: 30%;
 	border: 1px solid gray;
 	border-radius: 10px;
+	min-width: 280px;
 }
 
 div#boxInfo {
