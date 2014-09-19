@@ -248,10 +248,11 @@ public class GestioneSerieTV implements Notifier {
 	}
 	public ArrayList<Episodio> getEpisodiDaVedere(){ //TODO
 		if(settings.isRicercaSottotitoli()){
-			
+			//SELECT * FROM preferiti pref JOIN serietv serie ON pref.id_serie = serie.id ORDER BY serie.nome ASC
+			String query = "SELECT * FROM episodi WHERE sottotitolo=0 AND stato_visualizzazione=1";
 		}
 		else {
-			
+			String query = "SELECT episodi.id AS ep_id FROM episodi ep JOIN serietv s ON ep.serie=s.id AND ep.stato_visualizzazione=1 ORDER BY stagione, episodio ASC";
 		}
 		return null;
 	}
