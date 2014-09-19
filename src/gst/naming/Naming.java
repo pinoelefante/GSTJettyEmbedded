@@ -33,7 +33,7 @@ public class Naming {
 		};
 	}
 	public static final String 
-			PATTERN_SnEn="[Ss][0-9]{1,}[Ee][0-9]{1,}",							//S00E00  s00e00
+			PATTERN_SnEn="[Ss][0-9]{1,}[.]{0,1}[Ee][0-9]{1,}",					//S00E00  s00e00
 			PATTERN_SxE="[0-9]{1,}[x|.][0-9]{1,}",								//0[.x]0
 			PATTERN_Sn="[Ss][0-9]{1,}",											//s00
 			PATTERN_nofn="[0-9]{1,}of[0-9]{1,}",								//00of00
@@ -94,7 +94,7 @@ public class Naming {
 		String[] dati=null; 
 		switch(pattern[current_pattern]){
 			case PATTERN_SnEn:
-				splitted=splitted.replace("S", "").replace("s", "").replace("E", "_").replace("e", "_");
+				splitted=splitted.replace("S", "").replace("s", "").replace("E", "_").replace("e", "_").replace(".", "");
 				dati=splitted.split("_");
 				break;
 			case PATTERN_SxE:
