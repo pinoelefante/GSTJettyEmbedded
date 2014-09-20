@@ -83,6 +83,8 @@ public class Subsfactory implements ProviderSottotitoli {
 			}
 		}
 		else {
+			if(t==null)
+				return false;
 			String url = cercaURLInCartella(ssubs, t);
 			if(url == null || url.isEmpty())
 				url = cercaFeed(ssubs.getDirectory(), t);
@@ -104,8 +106,8 @@ public class Subsfactory implements ProviderSottotitoli {
 					e1.printStackTrace();
 				}
 			}
-			e.setSubDownload(false);
-			GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
+			e.setSubDownload(!down);
+			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down);
 			return down;
 		}
 		return false;
