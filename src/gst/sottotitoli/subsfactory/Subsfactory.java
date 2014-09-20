@@ -2,6 +2,9 @@ package gst.sottotitoli.subsfactory;
 
 import gst.database.Database;
 import gst.download.Download;
+import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
+import gst.player.FileFinder;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
@@ -67,31 +70,50 @@ public class Subsfactory implements ProviderSottotitoli {
 			return false;
 		SerieSubConDirectory ssubs = new SerieSubConDirectory(s.getIDDBSubsfactory());
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
-		String url=null;
-	
-		url = cercaURLInCartella(ssubs, t);
-		if(url == null || url.isEmpty())
-			url = cercaFeed(ssubs.getDirectory(), t);
+		ArrayList<File> videoFiles = FileFinder.getInstance().cercaFileVideo(s, e);
+		ArrayList<String> urls = new ArrayList<String>();
+		if(videoFiles.size()>0){
+			for(int i=0;i<videoFiles.size();i++){
+				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
+				String url = cercaURLInCartella(ssubs, stat);
+				if(url == null || url.isEmpty())
+					url = cercaFeed(ssubs.getDirectory(), stat);
+				if(url!=null)
+					urls.add(url);
+			}
+		}
+		else {
+			String url = cercaURLInCartella(ssubs, t);
+			if(url == null || url.isEmpty())
+				url = cercaFeed(ssubs.getDirectory(), t);
+			if(url!=null)
+				urls.add(url);
+		}
 		
-		if(url!=null && !url.isEmpty()){
-			if(url.length()>0){
-				url=url.replace(" ", "%20");
+		if(urls.size()>0){
+			boolean down = false;
+			for(int i=0;i<urls.size();i++){
+				String url = urls.get(i).replace(" ", "%20");
 				try {
-					String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+".zip";
+					String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 					Download.downloadFromUrl(url, zip);
 					ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
-					e.setSubDownload(false);
-					GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
-					return true;
+					down = true;
 				}
 				catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			}
+			e.setSubDownload(false);
+			GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
+			return down;
 		}
 		return false;
 	}
-	private String cercaURLInCartella(SerieSubConDirectory serie_sub, Torrent t){
+	private String cercaURLInCartella(SerieSubConDirectory s, Torrent t){
+		return cercaURLInCartella(s, t.getStats());
+	}
+	private String cercaURLInCartella(SerieSubConDirectory serie_sub, CaratteristicheFile t){
 		ArrayList<SerieSubConDirectory> dirs=getDirectoryAssociate(serie_sub);
 		for(int i=0;i<dirs.size();i++){
 			ArrayList<SottotitoloSubsfactory> subs=cache_dir.get(dirs.get(i).getIDDB());
@@ -103,9 +125,9 @@ public class Subsfactory implements ProviderSottotitoli {
 			}
 			for(int j=0;j<subs.size();j++){
 				SottotitoloSubsfactory sub = subs.get(j);
-				if(t.getStats().is720p()==sub.is720p()){
-					if(t.getStats().getEpisodio()==sub.getEpisodio()){
-						if(t.getStats().getStagione()==sub.getStagione())
+				if(t.is720p()==sub.is720p()){
+					if(t.getEpisodio()==sub.getEpisodio()){
+						if(t.getStagione()==sub.getStagione())
 							return sub.getUrlDownload();
 					}
 				}
@@ -154,8 +176,10 @@ public class Subsfactory implements ProviderSottotitoli {
 		String query = "INSERT INTO "+Database.TABLE_SUBSFACTORY+" (nome, directory) VALUES (\""+s.getNomeSerie()+"\",\""+s.getDirectory()+"\")";
 		return Database.updateQuery(query);
 	}
-	
-	private String cercaFeed(String id_subs, Torrent t){
+	private String cercaFeed(String id, Torrent t){
+		return cercaFeed(id, t.getStats());
+	}
+	private String cercaFeed(String id_subs, CaratteristicheFile t){
 		if(verificaTempo(update_time_rss, RSS_UltimoAggiornamento)){
 			System.out.println("Aggiornando il feed RSS - Subsfactory.it");
 			aggiornaFeedRSS();
@@ -163,11 +187,11 @@ public class Subsfactory implements ProviderSottotitoli {
 		for(int i=0;i<feed_rss.size();i++){
 			RSSItemSubsfactory rss=feed_rss.get(i);
 			if(rss.getID().toLowerCase().startsWith(id_subs.toLowerCase())){
-				if(rss.getStagione()==t.getStats().getStagione()){
-					if(rss.getEpisodio()==t.getStats().getEpisodio()){
-						if(rss.isNormale()==!t.getStats().is720p())
+				if(rss.getStagione()==t.getStagione()){
+					if(rss.getEpisodio()==t.getEpisodio()){
+						if(rss.isNormale()==!t.is720p())
 							return rss.getUrlDownload();
-						else if(rss.is720p()==t.getStats().is720p())
+						else if(rss.is720p()==t.is720p())
 							return rss.getUrlDownload();
 					}
 				}
