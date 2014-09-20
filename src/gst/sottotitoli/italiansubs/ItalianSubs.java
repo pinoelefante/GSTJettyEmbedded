@@ -2,6 +2,8 @@ package gst.sottotitoli.italiansubs;
 
 import gst.database.Database;
 import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
+import gst.player.FileFinder;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
@@ -13,6 +15,7 @@ import gst.sottotitoli.SerieSub;
 import gst.sottotitoli.rss.RSSItemItalianSubs;
 import gst.tda.db.KVResult;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -76,48 +79,62 @@ public class ItalianSubs implements ProviderSottotitoli{
 			logga();
 		
 		Torrent link = GestioneSerieTV.getInstance().getLinkDownload(episodio.getId());
-		if(link==null)
-			return false;
-		
-		String pathFile = null;
-		int idSub = api.cercaSottotitolo(serie.getIDItasa(), episodio.getStagione(), episodio.getEpisodio(), getVersione(link));
-		String dirDown = settings.getDirectoryDownload()+serie.getFolderSerie();
-		if(idSub>0){
-			try {
-				pathFile=api.download(idSub, dirDown);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
+		ArrayList<File> videoFiles=FileFinder.getInstance().cercaFileVideo(serie, episodio);
+		ArrayList<Integer> ids = new ArrayList<Integer>(2);
+		if(videoFiles.size()>0){
+			for(int i=0;i<videoFiles.size();i++){
+				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
+				int id=api.cercaSottotitolo(serie, stat);
+				if(id>0)
+					ids.add(id);
 			}
 		}
-		else {
-			idSub=cercaFeed(serie.getIDItasa(), link);
-			if(idSub>0){
+		else {	
+			if(link==null)
+				return false;
+			int id = api.cercaSottotitolo(serie, link.getStats());
+			if(id>0)
+				ids.add(id);
+		}
+		
+		ArrayList<String> subFiles=new ArrayList<String>(ids.size()+1);
+		String dirDown = settings.getDirectoryDownload()+serie.getFolderSerie();
+		if(ids.size()>0){
+			for(int i=0;i<ids.size();i++){
 				try {
-					pathFile=api.download(idSub, dirDown);
+					String pathFile = api.download(ids.get(i), dirDown);
+					if(pathFile!=null && !pathFile.isEmpty()){
+						subFiles.add(pathFile);
+					}
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		if(pathFile!=null){
-			ArchiviZip.estrai_tutto(pathFile, dirDown);
+		else {
+			int idSub=cercaFeed(serie.getIDItasa(), link);
+			if(idSub>0){
+				try {
+					String pathFile=api.download(idSub, dirDown);
+					if(pathFile!=null && !pathFile.isEmpty())
+						subFiles.add(pathFile);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+			
+		if(subFiles.size()>0){
+			for(int i=0;i<subFiles.size();i++){
+				String pathFile = subFiles.get(i);
+				ArchiviZip.estrai_tutto(pathFile, dirDown);
+			}
 			GestoreSottotitoli.setSottotitoloDownload(episodio.getId(), false);
 			return true;
 		}
-		
 		return false;
-	}
-	private String getVersione(Torrent t){
-		CaratteristicheFile c = t.getCaratteristiche();
-		
-		if(c.isDVDRip())
-			return DVDRIP;
-		if(c.is720p())
-			return HD720p;
-		
-		return HDTV;
 	}
 	private int cercaFeed(int iditasa, Torrent t){
 		if(verificaTempo(update_time_rss, RSS_UltimoAggiornamento)){
