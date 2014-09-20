@@ -228,7 +228,8 @@ public class GestioneSerieTV implements Notifier {
 				if(settings.isRicercaSottotitoli() && FileFinder.getInstance().cercaFileSottotitoli(serie, ep).size()==0){
 					inviaNotifica("Attendere la ricerca dei sottotitoli...");
 					boolean f=GestoreSottotitoli.getInstance().scaricaSottotitolo(serie, ep);
-					inviaNotifica(f?"Sottotitoli trovati":"Sottotitoli non trovati");
+					if(!f)
+						inviaNotifica("Sottotitoli non trovati");
 				}
 				videoPlayer = Settings.getInstance().getVideoPlayer();
 				videoPlayer.playVideo(files.get(0).getAbsolutePath());
