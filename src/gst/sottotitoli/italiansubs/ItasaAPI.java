@@ -1,5 +1,7 @@
 package gst.sottotitoli.italiansubs;
 
+import gst.naming.CaratteristicheFile;
+import gst.serieTV.SerieTV;
 import gst.sottotitoli.SerieSub;
 
 import java.io.File;
@@ -191,6 +193,20 @@ public class ItasaAPI {
 			if(fos!=null)
 				fos.close();
 		}
+	}
+	private String getVersione(CaratteristicheFile c){
+		if(c.isDVDRip())
+			return ItalianSubs.DVDRIP;
+		if(c.is720p())
+			return ItalianSubs.HD720p;
+		
+		return ItalianSubs.HDTV;
+	}
+	public int cercaSottotitolo(SerieTV serie, CaratteristicheFile stat){
+		return cercaSottotitolo(serie.getIDItasa(), stat.getStagione(), stat.getEpisodio(),getVersione(stat));
+	}
+	public int cercaSottotitolo(SerieSub serie, CaratteristicheFile stat){
+		return cercaSottotitolo(serie.getIDDB(), stat.getStagione(), stat.getEpisodio(), getVersione(stat));
 	}
 	public int cercaSottotitolo(int idSerie, int stagione, int episodio, String qualita){
 		String query = stagione + "x"	+ (episodio < 10 ? "0" + episodio : episodio); 

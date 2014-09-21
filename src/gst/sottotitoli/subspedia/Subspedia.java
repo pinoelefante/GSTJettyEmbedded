@@ -2,6 +2,9 @@ package gst.sottotitoli.subspedia;
 
 import gst.database.Database;
 import gst.download.Download;
+import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
+import gst.player.FileFinder;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
@@ -62,30 +65,50 @@ public class Subspedia implements ProviderSottotitoli {
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
 		if(s.getIDSubspedia()<=0)
 			return false;
-		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
+		
 		SerieSubConDirectory ssub = getSerieAssociata(s);
-		if(s==null || ssub==null)
-			return false;
+		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
+		ArrayList<File> videoFiles = FileFinder.getInstance().cercaFileVideo(s, e);
+		ArrayList<String> urls = new ArrayList<String>();
 		
-		String link = cercaInCartella(ssub, t);
-		if(link==null)
-			link=cercaSottotitoloLink(s, t);
-		
-		if(link==null)
-			return false;
+		if(videoFiles.size()>0){
+			for(int i=0;i<videoFiles.size();i++){
+				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
+				String url = cercaInCartella(ssub, stat);
+				if(url==null)
+					url=cercaSottotitoloLink(s, stat);
+				if(url!=null)
+					urls.add(url);
+			}
+		}
 		else {
-			link=link.replace(" ", "%20");
-			String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+".zip";
-			try {
-				Download.downloadFromUrl(link, zip);
-				ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
-				e.setSubDownload(false);
-				GestoreSottotitoli.setSottotitoloDownload(e.getId(), false);
-				return true;
+			if(t==null)
+				return false;
+			String link = cercaInCartella(ssub, t);
+			if(link==null)
+				link=cercaSottotitoloLink(s, t);
+			if(link!=null)
+				urls.add(link);
+		}
+	
+		if(urls.size()>0) {
+			boolean down = false;
+			for(int i=0;i<urls.size();i++){
+				String link = urls.get(i).replace(" ", "%20");
+				String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
+				try {
+					Download.downloadFromUrl(link, zip);
+					ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
+					down = true;
+				}
+				catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
-			catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			e.setSubDownload(!down);
+			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down);
+			return down;
+			
 		}
 		return false;
 	}
@@ -111,12 +134,15 @@ public class Subspedia implements ProviderSottotitoli {
 		return false;
 	}
 	private String cercaSottotitoloLink(SerieTV s, Torrent t) {
+		return cercaSottotitoloLink(s, t.getStats());
+	}
+	private String cercaSottotitoloLink(SerieTV s, CaratteristicheFile t) {
 		scaricaFeed();
 		for(int i=0;i<rss.size();i++){
 			SubspediaRSSItem item=rss.get(i);
 			if(item.getTitolo().compareToIgnoreCase(s.getNomeSerie())==0){
-				if(item.getStagione()==t.getStats().getStagione()){
-					if(item.getEpisodio()==t.getStats().getEpisodio())
+				if(item.getStagione()==t.getStagione()){
+					if(item.getEpisodio()==t.getEpisodio())
 						return item.getLink();
 				}
 			}
@@ -271,6 +297,9 @@ public class Subspedia implements ProviderSottotitoli {
 		return subs;
 	}
 	private String cercaInCartella(SerieSubConDirectory serie, Torrent t) {
+		return cercaInCartella(serie, t.getStats());
+	}
+	private String cercaInCartella(SerieSubConDirectory serie, CaratteristicheFile t) {
 		ArrayList<SottotitoloSubspedia> subs = cache.get(serie.getIDDB());
 		if(subs == null){
 			subs = caricaCartella(serie);
@@ -282,7 +311,7 @@ public class Subspedia implements ProviderSottotitoli {
 		
 		for(int i=0;i<subs.size();i++){
 			SottotitoloSubspedia sub = subs.get(i);
-			if(t.getStats().getEpisodio()==sub.getEpisodio() && t.getStats().getStagione()==sub.getStagione())
+			if(t.getEpisodio()==sub.getEpisodio() && t.getStagione()==sub.getStagione())
 				return sub.getUrlDownload();
 		}
 		
