@@ -1,4 +1,4 @@
-package gst.infoManager;
+package gst.infoManager.thetvdb;
 
 import java.util.ArrayList;
 
@@ -9,19 +9,17 @@ public class SerieTVDB {
 	private ArrayList<String> generi;
 	private float rating;
 	private String network;
+	private String lang;
 	
-	private ArrayList<ActorTVDB> attori;
-	
-	public SerieTVDB(int id, String nomeserie, String descrizione, String banner, String inizio){
+	public SerieTVDB(int id, String nomeserie, String descrizione, String banner, String inizio, String lang){
 		this.setId(id);
 		this.setNomeSerie(nomeserie);
 		this.setDescrizione(descrizione);
 		this.setUrlBanner(banner);
 		this.setDataInizio(inizio);
+		this.setLang(lang);
 	}
-	public void addAttori(String attori){
-		
-	}
+	
 	private void setDataInizio(String inizio) {
 		if(inizio.length()>0){
     		String[] comp=inizio.split("-");
@@ -30,8 +28,11 @@ public class SerieTVDB {
     		i_giorno=Integer.parseInt(comp[2]);
 		}
 	}
+	public String getDataInizioITA(){
+		return i_giorno+"-"+i_mese+"-"+i_anno;
+	}
 	public String getDataInizio(){
-		return i_giorno+"/"+i_mese+"/"+i_anno;
+		return i_anno+"-"+i_mese+"-"+i_giorno;
 	}
 
 	public int getId() {
@@ -98,5 +99,11 @@ public class SerieTVDB {
 	}
 	public ArrayList<String> getGeneri(){
 		return generi;
+	}
+	public String getLang() {
+		return lang;
+	}
+	public void setLang(String lang) {
+		this.lang = lang;
 	}
 }

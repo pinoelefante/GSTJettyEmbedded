@@ -1,13 +1,14 @@
-package gst.infoManager;
+package gst.infoManager.thetvdb;
 
 public class ActorTVDB {
 	private String nome, url_file, ruolo;
-	private int id;
 	
-	public ActorTVDB(int id, String nome, String url){
-		this.setId(id);
+	public ActorTVDB(String nome, String ruolo){
 		this.setNome(nome);
-		this.setUrlFile(url);
+		this.setRuolo(ruolo);
+	}
+	public ActorTVDB(String nome){
+		setNome(nome);
 	}
 
 	public String getNome() {
@@ -18,11 +19,11 @@ public class ActorTVDB {
 		this.nome = nome;
 	}
 
-	public String getUrlFile() {
+	public String getUrlImage() {
 		return url_file;
 	}
 
-	public void setUrlFile(String url_file) {
+	public void setUrlImage(String url_file) {
 		this.url_file = url_file;
 	}
 	public void setRuolo(String ruolo){
@@ -30,13 +31,5 @@ public class ActorTVDB {
 	}
 	public String getRuolo(){
 		return ruolo;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 }

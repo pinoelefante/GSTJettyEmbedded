@@ -365,6 +365,13 @@ public class Settings {
 	public void setUTorrentPort(String u){
 		aggiungiOpzione("utorrent_port", u);
 	}
+	public void setTVDBPreferredLang(String lang){
+		aggiungiOpzione("tvdb_lang", lang);
+	}
+	public String getTVDBPreferredLang(){
+		String op=getOpzione("tvdb_lang");
+		return op.isEmpty()?"en":op;
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -387,6 +394,7 @@ public class Settings {
 				case "utorrent_password":
 				case "utorrent_port":
 				case "qbittorrent_path":
+				case "tvdb_lang":
 					break;
 				default:
 					opzioni.remove(item);

@@ -13,9 +13,9 @@ import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
@@ -261,8 +261,8 @@ public class GestioneSerieTV implements Notifier {
 		if(t_search!=null)
 			t_search.interrupt();
 	}
-	public Map<SerieTV, ArrayList<Episodio>> getEpisodiDaVedere(){
-		Map<SerieTV, ArrayList<Episodio>> map = new HashMap<SerieTV, ArrayList<Episodio>>();
+	public ArrayList<Entry<SerieTV, ArrayList<Episodio>>> getEpisodiDaVedere(){
+		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> results = new ArrayList<>();
 		for(SerieTV st: getElencoSeriePreferite()){
 			String query = "SELECT * FROM episodi WHERE serie="+st.getIDDb()+" AND stato_visualizzazione=1 "+(settings.isRicercaSottotitoli()?("AND sottotitolo=0"):"")+" ORDER BY stagione, episodio ASC";
 			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
@@ -271,8 +271,10 @@ public class GestioneSerieTV implements Notifier {
 				Episodio ep = ProviderSerieTV.parseEpisodio(res.get(i));
 				eps.add(ep);
 			}
-			map.put(st, eps);
+			Entry<SerieTV, ArrayList<Episodio>> entry = new AbstractMap.SimpleEntry<SerieTV, ArrayList<Episodio>>(st, eps);
+			results.add(entry);
+			
 		}
-		return map;
+		return results;
 	}
 }

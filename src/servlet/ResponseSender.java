@@ -205,13 +205,13 @@ public class ResponseSender {
 		
 		return new Document(root);
 	}
-	public static Document createResponseEpisodiVedere(Map<SerieTV, ArrayList<Episodio>> map) {
+	public static Document createResponseEpisodiVedere(ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
 		ok.addContent(true+"");
 		root.addContent(ok);
 		
-		for(Entry<SerieTV, ArrayList<Episodio>> entry : map.entrySet()){
+		for(Entry<SerieTV, ArrayList<Episodio>> entry : map){
 			SerieTV st = entry.getKey();
 			ArrayList<Episodio> eps = entry.getValue();
 			for(int i=0;i<eps.size();i++){

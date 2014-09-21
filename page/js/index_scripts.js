@@ -2,6 +2,7 @@ $(document).ready(function() {
 	loadSeriePreferite();
 	caricaSerieNuove();
 	caricaElencoSerieCompleto();
+	getEpisodiDaVedere();
 	bootbox.setDefaults({
 		locale: "it"
 	});
@@ -420,10 +421,10 @@ function createAccordionStagione(stagione, idserie) {
 	return elem;
 }
 function infoSerie(id){
-	
+	showModalInfo("", "");
 }
 function infoEpisodio(idEp){
-	
+	showModalInfo();
 }
 function downloadS(id){
 	$.ajax({
@@ -515,4 +516,41 @@ function cancellaEpisodio(id){
 			}
 		});
 	}
+}
+function getEpisodiDaVedere() {
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getEpisodiDaVedere",
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			if(r){
+				$("#listEpisodiDaVedere").empty();
+				$(msg).find("episodio").each(function(){
+					var nome = $(this).find("titolo").text();
+					var id = $(this).find("id").text();
+					
+					var tr = document.createElement("tr");
+					$(tr).addClass("EpisodioDaVedere");
+					tr.innerHTML="<td class='titoloVedere'>"+nome+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td>";
+					$(tr).appendTo("#listEpisodiDaVedere");
+				});
+			}
+			else {
+				showModal("","Si è verificato un errore");
+			}
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore");
+		}
+	});
+}
+function showModalInfo(title, body){
+	$(".modal-wide-info").on("show.bs.modal", function() {
+		var height = $(window).height() - 200;
+		$(this).find(".modal-body-info").css("max-height", height);
+	});
+	$("#tallModal").modal('show');
+	$("#modalInfoBody").html("<iframe style='width:100%;height:80%;' src='http://pinoelefante.altervista.org'></iframe>");
 }

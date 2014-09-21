@@ -6,7 +6,7 @@ import gst.serieTV.SerieTV;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -74,7 +74,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 				break;
 			}
 			case "getEpisodiDaVedere": {
-				Map<SerieTV, ArrayList<Episodio>> map = manager.getEpisodiDaVedere();
+				ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map = manager.getEpisodiDaVedere();
 				xml = ResponseSender.createResponseEpisodiVedere(map);
 				break;
 			}

@@ -27,6 +27,7 @@ div#containerLeft {
 	border: 1px solid gray;
 	border-radius: 10px;
 	min-width: 280px;
+	min-height: 500px;
 }
 
 div#serieNuove {
@@ -75,7 +76,8 @@ div#containerCenter {
 	width: 40%;
 	border: 1px solid gray;
 	border-radius: 10px;
-	min-width: 300px;
+	min-width: 320px;
+	min-height: 500px;
 }
 
 div#addSerie {
@@ -88,6 +90,7 @@ div#addSerie {
 	border: 1px solid gray;
 	border-radius: 10px;
 	max-height: 150px;
+	min-width: 320px;
 }
 
 div#selectSerieDiv {
@@ -132,6 +135,7 @@ div#listSerie {
 	bottom: 80px;
 	border: 1px solid gray;
 	border-radius: 10px;
+	min-height: 150px;
 }
 
 h4.panel-title {
@@ -156,10 +160,10 @@ div#buttonCenter {
 
 div#divContainerButtons {
 	position: absolute;
-	top: 20px;
+	top: 30px;
 	bottom: 10px;
 	left: 35%;
-	height: 50px;
+	height: 55px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -172,32 +176,18 @@ div#containerRight {
 	border: 1px solid gray;
 	border-radius: 10px;
 	min-width: 280px;
+	min-height: 500px;
 }
 
-div#boxInfo {
+div#altro {
 	position: absolute;
 	top: 5%;
 	bottom: 5%;
 	right: 5%;
 	left: 5%;
 	width: 90%;
-	height: 50%;
+	height: 90%;
 	overflow: auto;
-	border: 1px solid gray;
-	border-radius: 10px;
-}
-
-div#altro {
-	position: absolute;
-	top: 60%;
-	bottom: 5%;
-	right: 5%;
-	left: 5%;
-	width: 90%;
-	height: 32%;
-	overflow: hidden;
-	border: 1px solid gray;
-	border-radius: 10px;
 }
 
 div.episodio {
@@ -255,3 +245,39 @@ div.episodioButtons {
 #divLegenda {
 	margin-left: 20px;
 }
+table#listEpisodiDaVedere {
+	width:100%;
+}
+tr.EpisodioDaVedere {
+	background-color: oldlace;
+	height: 50px;
+	min-height: 50px;
+	width: 100%;
+}
+td.titoloVedere {
+	width: 90%;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+td.bottoneVedere {
+	width: 10%;
+}
+
+
+.modal-info .modal-wide-info .modal-dialog-info {
+	width: 80%;
+	height: 60%;
+}
+.modal-wide-info .modal-body-info {
+  overflow: auto;
+}
+.modal-body-info{
+	padding: 10px;
+}
+#tallModal { 
+	position: absolute;
+	top: 10%;
+	bottom: 10%;
+	left:10%;
+	right: 10%;
+ }

@@ -105,14 +105,14 @@
 				</div>
 			</div>
 			<div id="listSerie">
-				<div id="divLegenda">
+				<div class="panel-group" id="accordion"></div>
+			</div>
+			<div id="buttonCenter">
+			<div id="divLegenda">
 					<label>Vedere</label><span class="legenda episodioDaVedere">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<label>Rimosso</label><span class="legenda episodioRimosso">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 					<label>Ignorato</label><span class="legenda episodioIgnorato">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 				</div>
-				<div class="panel-group" id="accordion"></div>
-			</div>
-			<div id="buttonCenter">
 				<div id="divContainerButtons">
 					<input class="btn-lg btn btn-success" type="button"	value="Download" id="btnDownload" onclick="download()" /> 
 					<input class="btn-lg btn btn-danger" type="button" value="Ignora"	id="btnIgnora" onclick="ignora()" />
@@ -120,8 +120,12 @@
 			</div>
 		</div>
 		<div id="containerRight">
-			<div id="boxInfo">Info</div>
-			<div id="altro">Episodi da vedere</div>
+			<div id="altro">
+				<fieldset>
+					<legend><a href="javascript:void(0);" onclick="getEpisodiDaVedere()">Episodi da vedere</a></legend>
+				</fieldset>
+				<table id="listEpisodiDaVedere"></table>
+			</div>
 		</div>
 	</div>
 
@@ -147,6 +151,23 @@
 		<!-- /.modal-dialog -->
 	</div>
 	<!-- /.modal -->
+	
+	<div id="tallModal" class="modal modal-info modal-wide-info fade">
+  		<div class="modal-dialog-info">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        			<h4 class="modal-title">Modal title</h4>
+      			</div>
+      			<div class="modal-body-info" id="modalInfoBody">
+      			
+      			</div>
+      			<div class="modal-footer">
+        			<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+      			</div>
+    		</div><!-- /.modal-content -->
+  		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
 	<!-- Piwik -->
 	<script type="text/javascript">

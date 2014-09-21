@@ -1,4 +1,4 @@
-package gst.infoManager;
+package gst.infoManager.thetvdb;
 
 public class Mirror {
 	private int id, mask;
