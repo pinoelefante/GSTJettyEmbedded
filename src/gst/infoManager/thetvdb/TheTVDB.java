@@ -36,7 +36,7 @@ public class TheTVDB {
 
 	public ArrayList<Entry<String, String>> lingueDisponibili;
 
-	public TheTVDB getInstance() {
+	public static TheTVDB getInstance() {
 		if (instance == null)
 			instance = new TheTVDB();
 		return instance;
@@ -204,7 +204,7 @@ public class TheTVDB {
 						}
 					}
 				}
-				SerieTVDB newSerie = new SerieTVDB(id, nome_serie, descrizione, banner_path, data_inizio, lang);
+				SerieTVDB newSerie = new SerieTVDB(id, nome_serie, descrizione, getBannerURL(banner_path), data_inizio, lang);
 				serie_trovate.add(newSerie);
 			}
 		}
@@ -306,7 +306,7 @@ public class TheTVDB {
 				}
 			}
 		}
-		SerieTVDBFull newSerie = new SerieTVDBFull(idSerie, nome_serie, descrizione, banner_path, data_inizio, lang);
+		SerieTVDBFull newSerie = new SerieTVDBFull(idSerie, nome_serie, descrizione, getBannerURL(banner_path), data_inizio, lang);
 		newSerie.setDurataEpisodi(Integer.parseInt(durateEpisodi));
 		newSerie.setGiornoSettimana(giornoTrasmissione);
 		newSerie.setOraTrasmissione(oraTrasmissione);
@@ -314,7 +314,7 @@ public class TheTVDB {
 		newSerie.setNetwork(network);
 		newSerie.setRating(rating);
 		newSerie.setStatoSerie(status);
-		newSerie.setPoster(posterURL);
+		newSerie.setPoster(getBannerURL(posterURL));
 		newSerie.setAttoriString(attori);
 		getAttori(newSerie);
 		return newSerie;
@@ -367,13 +367,9 @@ public class TheTVDB {
 				}
 			}
 			ActorTVDB act = new ActorTVDB(nome, ruolo);
-			act.setUrlImage(image);
+			act.setUrlImage(getBannerURL(image));
 			serie.aggiungiAttore(act);
 		}
-	}
-
-	public String getBannerURL(SerieTVDB s) {
-		return getBannerURL(s.getUrlBanner());
 	}
 
 	public String getBannerURL(String path) {
