@@ -470,14 +470,53 @@ function infoSerie(id){
 						"<p><b>Durata: </b>"+durataEpisodi+"</p>" +
 						"<p><b>Stato: </b>"+stato+"</p>" +
 						"<p><b>Descrizione: </b>"+descrizione+"</p>";
-				
-				var gallery = "<div class='image-row'><h2>Gallery</h2>" +
-						"	<div class='image-set' id='info-gallery'>";
+    			
+				var item_count = 0;
+				var images = new Array();
 				$(msg).find("posters").find("poster").each(function(){
 					var image = $(this).text();
-					gallery+=creaImmagineGallery(image);
-				})
-				gallery+=	"</div></div>";
+					images[item_count]=image;
+					item_count++;
+					
+				});
+				
+				var listPage = "<br>";
+				var listDiv = "";
+				var pagina = 1;
+				var i=0;
+				var curDiv = "";
+				var aperto=false;
+				for(i=0;i<images.length;i++){
+					if(aperto==false){
+						listPage+="<li class=''><a href='#GalPag"+pagina+"' role='tab' data-toggle='tab'>"+pagina+"</a></li>";
+						curDiv+="<div class='tab-pane fade' id='GalPag"+pagina+"'>";
+						aperto=true;
+					}
+					
+					curDiv+=creaImmagineGallery(images[i]);
+					if(i>0 && i%5==0 && aperto==true){
+						curDiv+="</div>";
+						listDiv+=curDiv;
+						pagina++;
+						curDiv="";
+						aperto=false;
+					}
+				}
+				if(aperto==true){
+					curDiv+="</div>";
+					listDiv+=curDiv;
+					curDiv="";
+					aperto=false;
+				}
+							
+				var gallery= "<div class='bs-example bs-example-tabs'>"+
+			    				"<ul id='myTabGallery' class='nav nav-tabs' role='tablist'>"+
+				    				listPage +
+				    			"</ul>"+
+				    			"<div id='myTabGalleryContent' class='tab-content'>"+
+			    					listDiv+
+			    				"</div>"+
+		    				"</div>";
 				
 				body+="<p id='infoBannerIMG'><img src='"+banner+"'></p>";
 				body+= "<div class='bs-example bs-example-tabs'>"+
@@ -499,6 +538,7 @@ function infoSerie(id){
 			    "</div>"+
 			"</div>";
 				showModalInfo(nome, body);
+				$("#GalPag1").addClass("active in");
 			}
 			else
 				showModal("","Si è verificato un errore");
