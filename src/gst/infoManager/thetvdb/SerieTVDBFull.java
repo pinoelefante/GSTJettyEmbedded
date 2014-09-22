@@ -7,12 +7,16 @@ public class SerieTVDBFull extends SerieTVDB {
 	private String ora;
 	private int durataEpisodi;
 	private String stato_serie;
-	private String poster;
+	private ArrayList<String> poster;
+	private ArrayList<String> banners;
 	private ArrayList<ActorTVDB> attori;
 	private String attoriString;
+	
 	public SerieTVDBFull(int id, String nomeserie, String descrizione, String banner, String inizio, String lang) {
 		super(id, nomeserie, descrizione, banner, inizio, lang);
 		attori = new ArrayList<ActorTVDB>();
+		poster = new ArrayList<String>();
+		banners = new ArrayList<String>();
 	}
 	public SerieTVDBFull(SerieTVDB serie){
 		super(serie.getId(), serie.getNomeSerie(), serie.getDescrizione(), serie.getUrlBanner(), serie.getDataInizio(), serie.getLang());
@@ -50,12 +54,12 @@ public class SerieTVDBFull extends SerieTVDB {
 		this.stato_serie = stato_serie;
 	}
 
-	public String getPoster() {
+	public ArrayList<String> getPoster() {
 		return poster;
 	}
 
-	public void setPoster(String poster) {
-		this.poster = poster;
+	public void aggiungiPoster(String poster) {
+		this.poster.add(poster);
 	}
 	public ArrayList<ActorTVDB> getAttori() {
 		return attori;
@@ -76,6 +80,12 @@ public class SerieTVDBFull extends SerieTVDB {
 			return attoriSplit;
 		}
 		return null;
+	}
+	public ArrayList<String> getBanners(){
+		return banners;
+	}
+	public void aggiungiBanner(String b){
+		banners.add(b);
 	}
 	public void setAttoriString(String attoriString) {
 		this.attoriString = attoriString;

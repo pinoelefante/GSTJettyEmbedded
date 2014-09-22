@@ -32,7 +32,9 @@ public class TheTVDB {
 	private static String				   API_CERCA_SERIE_LINGUA = "<mirrorpath>/api/GetSeries.php?seriesname=<seriesname>&language=<language>";
 	private static String				   API_GET_SERIE_INFO	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/<language>.xml";
 	private static String				   API_GET_ATTORI_SERIE	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/actors.xml";
+	private static String				   API_GET_IMAGES	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/banners.xml";
 	private String						   defaultLang			= "en";
+	private final String FANART="fanart", POSTER="poster";
 
 	public ArrayList<Entry<String, String>> lingueDisponibili;
 
@@ -255,7 +257,7 @@ public class TheTVDB {
 		Node serie = elementi.item(0);
 		NodeList attributi = serie.getChildNodes();
 		String banner_path = "", descrizione = "", data_inizio = "", nome_serie = "", lang = "";
-		String attori ="", giornoTrasmissione="", oraTrasmissione="", generi="", network="", durateEpisodi="", rating="", status="", posterURL="";
+		String attori ="", giornoTrasmissione="", oraTrasmissione="", generi="", network="", durateEpisodi="", rating="", status="";
 		for (int j = 0; j < attributi.getLength(); j++) {
 			Node attributo = attributi.item(j);
 			if (attributo instanceof Element) {
@@ -300,9 +302,6 @@ public class TheTVDB {
 					case "Status":
 						status = attr.getTextContent();
 						break;
-					case "poster":
-						posterURL = attr.getTextContent();
-						break;
 				}
 			}
 		}
@@ -314,9 +313,9 @@ public class TheTVDB {
 		newSerie.setNetwork(network);
 		newSerie.setRating(rating);
 		newSerie.setStatoSerie(status);
-		newSerie.setPoster(getBannerURL(posterURL));
 		newSerie.setAttoriString(attori);
 		getAttori(newSerie);
+		getImmagini(newSerie);
 		return newSerie;
 	}
 	
@@ -379,5 +378,57 @@ public class TheTVDB {
 			return url_API;
 		}
 		return path;
+	}
+	public void getImmagini(SerieTVDBFull s) {
+		Mirror mirr = getBannerMirror();
+		if(mirr==null)
+			return;
+		String apiCall = API_GET_IMAGES.replace("<mirrorpath>", mirr.getUrl()).replace("<idserie>", ""+s.getId());
+		
+		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder domparser;
+		try {
+			domparser = dbfactory.newDocumentBuilder();
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return;
+		}
+		Document doc;
+		try {
+			doc = domparser.parse(apiCall);
+		}
+		catch (SAXException | IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		NodeList banners = doc.getElementsByTagName("Banner");
+		for(int i=0;i<banners.getLength();i++){
+			Node attore = banners.item(i);
+			NodeList attributi = attore.getChildNodes();
+			String image="", ruolo="";
+			for (int j = 0; j < attributi.getLength(); j++) {
+				Node attributo = attributi.item(j);
+				if (attributo instanceof Element) {
+					Element attr = (Element) attributo;
+					switch (attr.getTagName()) {
+						case "BannerPath":
+							image = attr.getTextContent();
+							break;
+						case "BannerType":
+							ruolo = attr.getTextContent();
+							break;
+					}
+				}
+			}
+			if(ruolo.compareToIgnoreCase(FANART)==0 || ruolo.compareToIgnoreCase(POSTER)==0){
+				s.aggiungiPoster(getBannerURL(image));
+			}
+			else {
+				s.aggiungiBanner(getBannerURL(image));
+			}
+		}
+		
 	}
 }

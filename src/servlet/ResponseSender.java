@@ -279,9 +279,6 @@ public class ResponseSender {
 		Element banner_url=new Element("banner_url");
 		banner_url.addContent(serie.getUrlBanner());
 		root.addContent(banner_url);
-		Element poster_url = new Element("poster_url");
-		poster_url.addContent(serie.getPoster());
-		root.addContent(poster_url);
 		Element descrizione = new Element("descrizione");
 		descrizione.addContent(serie.getDescrizione());
 		root.addContent(descrizione);
@@ -309,6 +306,21 @@ public class ResponseSender {
 			attori.addContent(attore);
 		}
 		root.addContent(attori);
+		Element poster_url = new Element("posters");
+		for(String p: serie.getPoster()){
+			Element poster = new Element("poster");
+			poster.addContent(p);
+			poster_url.addContent(poster);
+		}
+		root.addContent(poster_url);
+		Element banners = new Element("banners");
+		for(String b : serie.getBanners()){
+			Element banner = new Element("banner");
+			banner.addContent(b);
+			banners.addContent(banner);
+		}
+		root.addContent(banners);
+		
 		return new Document(root);
 	}
 }

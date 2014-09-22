@@ -459,9 +459,12 @@ function infoSerie(id){
 						"<p><b>Stato: </b>"+stato+"</p>" +
 						"<p><b>Descrizione: </b>"+descrizione+"</p>" +
 						"<div class='image-row'><h2>Gallery</h2>" +
-						"	<div class='image-set' id='info-gallery'>" +
-						creaImmagineGallery(poster)+
-						"	</div>" +
+						"	<div class='image-set' id='info-gallery'>";
+				$(msg).find("posters").find("poster").each(function(){
+					var image = $(this).text();
+					body+=creaImmagineGallery(image);
+				})
+				body+=	"	</div>" +
 						"</div>";
 				showModalInfo(nome, body);
 			}
