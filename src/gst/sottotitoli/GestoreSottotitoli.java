@@ -97,9 +97,18 @@ public class GestoreSottotitoli implements Notifier{
 			subspedia.associaSerie(s);
 		}
 	}
-	
+	public boolean scaricaSottotitolo(int idSub){
+		if(idSub<=0)
+			return false;
+		Episodio ep = ProviderSerieTV.getEpisodio(idSub);
+		if(ep==null)
+			return false;
+		return scaricaSottotitolo(ep);
+	}
 	public boolean scaricaSottotitolo(Episodio e){
 		SerieTV s = ProviderSerieTV.getSerieByID(e.getSerie());
+		if(s==null)
+			return false;
 		return scaricaSottotitolo(s, e);
 	}
 	

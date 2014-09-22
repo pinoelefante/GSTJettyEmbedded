@@ -421,7 +421,58 @@ function createAccordionStagione(stagione, idserie) {
 	return elem;
 }
 function infoSerie(id){
-	showModalInfo("", "");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=getInfoSerie&id=75760",
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var body = "";
+				var nome = $(msg).find("nome_serie").text();
+				var id=$(msg).find("id_serie").text();
+				var primo_air = $(msg).find("first_air").text();
+				var rating=$(msg).find("rating").text();
+				var network=$(msg).find("network").text();
+				var airDay=$(msg).find("air_day").text();
+				var airHour=$(msg).find("air_hour").text();
+				var durataEpisodi=$(msg).find("durata_episodi").text();
+				var stato=$(msg).find("stato_serie").text();
+				var banner=$(msg).find("banner_url").text();
+				var poster=$(msg).find("poster_url").text();
+				var descrizione = $(msg).find("descrizione").text();
+				$(msg).find("generi").find("genere").each(function(){
+					
+				});
+				$(msg).find("attori").find("attore").each(function(){
+					
+				});
+				body = "<img src='"+banner+"'>" +
+						"<p><b>Titolo: </b>"+nome+"</p>" +
+						"<p><b>Rating: </b>"+rating+"</p>" +
+						"<p><b>Network: </b>"+network+"</p>" +
+						"<p><b>Inizio: </b>"+primo_air+"</p>" +
+						"<p><b>Giorno: </b>"+airDay+"</p>" +
+						"<p><b>Ora: </b>"+airHour+"</p>" +
+						"<p><b>Durata: </b>"+durataEpisodi+"</p>" +
+						"<p><b>Stato: </b>"+stato+"</p>" +
+						"<p><b>Descrizione: </b>"+descrizione+"</p>" +
+						"<div class='image-row'><h2>Gallery</h2>" +
+						"	<div class='image-set' id='info-gallery'>" +
+						creaImmagineGallery(poster)+
+						"	</div>" +
+						"</div>";
+				showModalInfo(nome, body);
+			}
+			else
+				showModal("","Si è verificato un errore");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
 }
 function infoEpisodio(idEp){
 	showModalInfo();
@@ -546,11 +597,16 @@ function getEpisodiDaVedere() {
 		}
 	});
 }
+function creaImmagineGallery(imageURL){
+	var image = "<a href='"+imageURL+"' data-lightbox='image-gallery'><img class='image-thumb' src='"+imageURL+"'></a>";
+	return image;
+}
 function showModalInfo(title, body){
 	$(".modal-wide-info").on("show.bs.modal", function() {
 		var height = $(window).height() - 200;
 		$(this).find(".modal-body-info").css("max-height", height);
 	});
 	$("#tallModal").modal('show');
-	$("#modalInfoBody").html("<iframe style='width:100%;height:80%;' src='http://pinoelefante.altervista.org'></iframe>");
+	$("#info-modal-title").text(title);
+	$("#modalInfoBody").html(body);
 }

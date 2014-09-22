@@ -2,6 +2,9 @@ package servlet;
 
 import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.infoManager.thetvdb.TheTVDB;
+import gst.serieTV.GestioneSerieTV;
+import gst.serieTV.ProviderSerieTV;
+import gst.serieTV.SerieTV;
 
 import java.io.IOException;
 
@@ -31,11 +34,19 @@ public class OperazioniInfoServlet extends HttpServlet {
 				xml = ResponseSender.createResponseInfoSerie(serie);
 				break;
 			}
+			case "getIdTVDB": {
+				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
+				SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
+				xml = ResponseSender.createResponseInteger(s==null?0:s.getIDTvdb());
+				break;
+			}
 			case "cercaInfoSerie": {
 				
+				break;
 			}
 			case "associa": {
 				
+				break;
 			}
 		}
 		ResponseSender.sendResponse(resp, xml);

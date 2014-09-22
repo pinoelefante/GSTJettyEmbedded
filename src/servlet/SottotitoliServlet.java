@@ -45,7 +45,8 @@ public class SottotitoliServlet extends HttpServlet{
 			}
 			case "scaricaSubByID": {
 				Integer idEPisodio = Integer.parseInt(checkParameter("id", resp, req, false));
-				xml = ResponseSender.createResponseBoolean(true);
+				boolean r = GestoreSottotitoli.getInstance().scaricaSottotitolo(idEPisodio);
+				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 		}
