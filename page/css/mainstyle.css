@@ -280,4 +280,10 @@ td.bottoneVedere {
 	bottom: 10%;
 	left:10%;
 	right: 10%;
- }
+	min-height: 20%;
+	max-height: 78%;
+}
+.image-thumb {
+	max-width: 196px;
+	max-height: 196px;
+}

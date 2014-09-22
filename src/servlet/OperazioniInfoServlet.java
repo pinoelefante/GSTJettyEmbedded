@@ -1,14 +1,12 @@
 package servlet;
 
-import gst.serieTV.Episodio;
+import gst.infoManager.thetvdb.SerieTVDBFull;
+import gst.infoManager.thetvdb.TheTVDB;
+import gst.serieTV.GestioneSerieTV;
+import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
-import gst.sottotitoli.GestoreSottotitoli;
-import gst.sottotitoli.ProviderSottotitoli;
-import gst.sottotitoli.SerieSub;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,36 +15,37 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
-public class SottotitoliServlet extends HttpServlet{
+public class OperazioniInfoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
 	}
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String action = req.getParameter("action");
-		if(action == null || action.isEmpty()){
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "action not sended");
-			return;
-		}
+		String action = checkParameter("action", resp, req, false);
 		Document xml = null;
 		switch(action){
-			case "getProviders": {
-				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = GestoreSottotitoli.getInstance().getProviders();
-				xml = ResponseSender.createProviderSottotitoli(map);
+			case "getInfoSerie": {
+				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
+				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie);
+				xml = ResponseSender.createResponseInfoSerie(serie);
 				break;
 			}
-			case "getSottotitoliDaScaricare": {
-				Map<SerieTV, ArrayList<Episodio>> map = GestoreSottotitoli.getInstance().sottotitoliDaScaricare();
-				xml = ResponseSender.createResponseSubDownload(map);
+			case "getIdTVDB": {
+				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
+				SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
+				xml = ResponseSender.createResponseInteger(s==null?0:s.getIDTvdb());
 				break;
 			}
-			case "scaricaSubByID": {
-				Integer idEPisodio = Integer.parseInt(checkParameter("id", resp, req, false));
-				boolean r = GestoreSottotitoli.getInstance().scaricaSottotitolo(idEPisodio);
-				xml = ResponseSender.createResponseBoolean(r);
+			case "cercaInfoSerie": {
+				
+				break;
+			}
+			case "associa": {
+				
 				break;
 			}
 		}

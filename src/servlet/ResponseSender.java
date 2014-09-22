@@ -1,5 +1,7 @@
 package servlet;
 
+import gst.infoManager.thetvdb.ActorTVDB;
+import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.serieTV.Episodio;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
@@ -43,6 +45,17 @@ public class ResponseSender {
 		Document doc = new Document(root);
 		return doc;
 	}
+	public static Document createResponseInteger(int n){
+		Element root = new Element("response");
+		Element valore = new Element("booleanResponse");
+		valore.addContent((n>0?true:false)+"");
+		root.addContent(valore);
+		Element integer = new Element("Integer");
+		integer.addContent(n+"");
+		root.addContent(integer);
+		Document doc = new Document(root);
+		return doc;
+	}
 	public static Document createResponseProviders(ArrayList<ProviderSerieTV> p){
 		Element root = new Element("response");
 		Element providers = new Element("providers");
@@ -77,6 +90,7 @@ public class ResponseSender {
 			Element id_itasa = new Element("id_itasa");
 			Element id_subspedia = new Element("id_subspedia");
 			Element id_subsfactory = new Element("id_subsfactory");
+			Element id_tvdb = new Element("id_tvdb");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
@@ -86,6 +100,7 @@ public class ResponseSender {
 			id_itasa.addContent(serie.get(i).getIDItasa()+"");
 			id_subsfactory.addContent(""+serie.get(i).getIDDBSubsfactory());
 			id_subspedia.addContent(serie.get(i).getIDSubspedia()+"");
+			id_tvdb.addContent(serie.get(i).getIDTvdb()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
@@ -93,6 +108,7 @@ public class ResponseSender {
 			serie_tag.addContent(id_itasa);
 			serie_tag.addContent(id_subsfactory);
 			serie_tag.addContent(id_subspedia);
+			serie_tag.addContent(id_tvdb);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);
@@ -226,6 +242,73 @@ public class ResponseSender {
 				root.addContent(episodio);
 			}
 		}
+		return new Document(root);
+	}
+	public static Document createResponseInfoSerie(SerieTVDBFull serie) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element id_serie = new Element("id_serie");
+		id_serie.addContent(serie.getId()+"");
+		root.addContent(id_serie);
+		Element nome_serie = new Element("nome_serie");
+		nome_serie.addContent(serie.getNomeSerie());
+		root.addContent(nome_serie);
+		Element first_air = new Element("first_air");
+		first_air.addContent(serie.getDataInizioITA());
+		root.addContent(first_air);
+		Element rating = new Element("rating");
+		rating.addContent(serie.getRating()+"");
+		root.addContent(rating);
+		Element network = new Element("network");
+		network.addContent(serie.getNetwork());
+		root.addContent(network);
+		Element air_day = new Element("air_day");
+		air_day.addContent(serie.getGiornoSettimana());
+		root.addContent(air_day);
+		Element air_hour = new Element("air_hour");
+		air_hour.addContent(serie.getOraTrasmissione());
+		root.addContent(air_hour);
+		Element durata = new Element("durata_episodi");
+		durata.addContent(serie.getDurataEpisodi()+"");
+		root.addContent(durata);
+		Element stato_serie = new Element("stato_serie");
+		stato_serie.addContent(serie.getStatoSerie());
+		root.addContent(stato_serie);
+		Element banner_url=new Element("banner_url");
+		banner_url.addContent(serie.getUrlBanner());
+		root.addContent(banner_url);
+		Element poster_url = new Element("poster_url");
+		poster_url.addContent(serie.getPoster());
+		root.addContent(poster_url);
+		Element descrizione = new Element("descrizione");
+		descrizione.addContent(serie.getDescrizione());
+		root.addContent(descrizione);
+	
+		Element generi = new Element("generi");
+		for(String genere: serie.getGeneri()){
+			Element g = new Element("genere");
+			g.addContent(genere);
+			generi.addContent(g);
+		}
+		root.addContent(generi);
+		Element attori = new Element("attori");
+		ArrayList<ActorTVDB> elenco_attori = serie.getAttori().size()>0?serie.getAttori():serie.getAttoriString();
+		for(ActorTVDB a:elenco_attori){
+			Element attore = new Element("attore");
+			Element nome = new Element("nome_attore");
+			nome.addContent(a.getNome());
+			Element ruolo = new Element("ruolo_attore");
+			ruolo.addContent(a.getRuolo());
+			Element img_attore=new Element("img_attore");
+			img_attore.addContent(a.getUrlImage());
+			attore.addContent(nome);
+			attore.addContent(ruolo);
+			attore.addContent(img_attore);
+			attori.addContent(attore);
+		}
+		root.addContent(attori);
 		return new Document(root);
 	}
 }
