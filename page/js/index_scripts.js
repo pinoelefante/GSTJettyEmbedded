@@ -442,30 +442,62 @@ function infoSerie(id){
 				var banner=$(msg).find("banner_url").text();
 				var poster=$(msg).find("poster_url").text();
 				var descrizione = $(msg).find("descrizione").text();
+				var generi = "";
 				$(msg).find("generi").find("genere").each(function(){
-					
+					generi+=$(this).text()+" ";
 				});
 				$(msg).find("attori").find("attore").each(function(){
 					
 				});
-				body = "<img src='"+banner+"'>" +
-						"<p><b>Titolo: </b>"+nome+"</p>" +
+				/*
+				body+="<div id='sliderFrame'>"+
+						"<div id='slider'>";
+				$(msg).find("banners").find("banner").each(function(){
+					var image = $(this).text();
+					body+= "<img src='"+image+"' />";
+				});
+				body+="</div></div>";
+				*/
+				
+				//body+="<p id='infoBannerIMG'><img src='"+banner+"'></p>"
+				var info= "<br><p><b>Titolo: </b>"+nome+"</p>" +
 						"<p><b>Rating: </b>"+rating+"</p>" +
+						"<p><b>Genere: </b>"+generi+"</p>" +
 						"<p><b>Network: </b>"+network+"</p>" +
 						"<p><b>Inizio: </b>"+primo_air+"</p>" +
 						"<p><b>Giorno: </b>"+airDay+"</p>" +
 						"<p><b>Ora: </b>"+airHour+"</p>" +
 						"<p><b>Durata: </b>"+durataEpisodi+"</p>" +
 						"<p><b>Stato: </b>"+stato+"</p>" +
-						"<p><b>Descrizione: </b>"+descrizione+"</p>" +
-						"<div class='image-row'><h2>Gallery</h2>" +
+						"<p><b>Descrizione: </b>"+descrizione+"</p>";
+				
+				var gallery = "<div class='image-row'><h2>Gallery</h2>" +
 						"	<div class='image-set' id='info-gallery'>";
 				$(msg).find("posters").find("poster").each(function(){
 					var image = $(this).text();
-					body+=creaImmagineGallery(image);
+					gallery+=creaImmagineGallery(image);
 				})
-				body+=	"	</div>" +
-						"</div>";
+				gallery+=	"</div></div>";
+				
+				body+="<p id='infoBannerIMG'><img src='"+banner+"'></p>";
+				body+= "<div class='bs-example bs-example-tabs'>"+
+			    "<ul id='myTab' class='nav nav-tabs' role='tablist'>"+
+			      "<li class=''><a href='#Info' role='tab' data-toggle='tab'>Informazioni</a></li>"+
+			      "<li class=''><a href='#Attori' role='tab' data-toggle='tab'>Attori</a></li>"+
+			      "<li class=''><a href='#Gallery' role='tab' data-toggle='tab'>Gallery</a></li>"+
+			    "</ul>"+
+			    "<div id='myTabContent' class='tab-content'>"+
+			      "<div class='tab-pane fade active in' id='Info'>"+
+			        info +
+			      "</div>"+
+			      "<div class='tab-pane fade' id='Attori'>"+
+			        "Qui vanno gli attori" +
+			      "</div>"+
+			      "<div class='tab-pane fade' id='Gallery'>"+
+			        gallery +
+			      "</div>"+
+			    "</div>"+
+			"</div>";
 				showModalInfo(nome, body);
 			}
 			else

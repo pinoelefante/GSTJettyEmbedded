@@ -286,4 +286,11 @@ td.bottoneVedere {
 .image-thumb {
 	max-width: 196px;
 	max-height: 196px;
+	margin: 5px;
+	border: 2px solid black;
+}
+#infoBannerIMG {
+	position:relative;
+    width:70%;
+    margin: 0 auto;
 }
