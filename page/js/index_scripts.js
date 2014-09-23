@@ -420,11 +420,82 @@ function createAccordionStagione(stagione, idserie) {
 	var elem = "<div class='panel panel-default'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion" + idserie + "' href='#collapse" + idserie + "_" + stagione + "'> " + (stagione == 0 ? "Speciali" : "Stagione " + stagione) + " </a>" + "</h4>" + "</div>" + "<div id='collapse" + idserie + "_" + stagione + "' class='panel-collapse collapse'>" + "<div class='panel-body' id='listTorrent" + idserie + "_" + stagione + "'></div>" + "</div>" + "</div>";
 	return elem;
 }
-function infoSerie(id){
+function infoSerie(idSerie){
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniInfoServlet",
-		data : "action=getInfoSerie&id=75760",
+		data : "action=getIdTVDB&idSerie="+idSerie,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var idTVDB=parseInt($(msg).find("Integer").text());
+				if(idTVDB>0){
+					showInfoTVDB(idTVDB);
+				}
+				else {
+					showAssociaSerie(idSerie);
+				}
+			}
+			else
+				showModal("","Si è verificato un errore");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
+}
+function showAssociaSerie(idSerie){
+	showModalAssociaTVDB("Attendi...", "<center><img src='img/loading.gif' /></center>");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=cercaSerieAssociabili&id="+idSerie,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var num_serie=$(msg).find("serie").size();
+				alert("Sono state trovate "+num_serie+" serie");
+				if(num_serie==0){
+					showModalAssociaTVDB("Associa serie", "<center>Non ci sono serie che soddisfano i requisiti</center>");
+				}
+				else if(num_serie == 1){
+					var serie = $(msg).find("serie");
+					var idTVDB = parseInt($(serie).find("id_serie").text());
+					var nomeSerie = $(serie).find("nome_serie").text();
+					associaSerieTVDB(idSerie, idTVDB);
+					$("#associaTVDBModal").modal('hide');
+					showModal("Associa", "La serie è stata associata automaticamente a "+nomeSerie);
+					showInfoTVDB(idTVDB);
+				}
+				else {
+					$("#associaTVDBModal").modal('hide');
+					showModal("","Attendere implementazione");
+				}
+			}
+			else
+				showModal("","Si è verificato un errore");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
+}
+function associaSerieTVDB(idSerie, idTVDB){
+	
+}
+function infoEpisodio(idEp){
+	showModalInfo();
+}
+function showInfoTVDB(idTVDB){
+	showModalInfo("Attendi...", "<center><img src='img/loading.gif' /></center>");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=getInfoSerie&id="+idTVDB,
 		dataType : "xml",
 		success : function(msg) {
 			var resp = parseBooleanXML(msg);
@@ -449,17 +520,6 @@ function infoSerie(id){
 				$(msg).find("attori").find("attore").each(function(){
 					
 				});
-				/*
-				body+="<div id='sliderFrame'>"+
-						"<div id='slider'>";
-				$(msg).find("banners").find("banner").each(function(){
-					var image = $(this).text();
-					body+= "<img src='"+image+"' />";
-				});
-				body+="</div></div>";
-				*/
-				
-				//body+="<p id='infoBannerIMG'><img src='"+banner+"'></p>"
 				var info= "<br><p><b>Titolo: </b>"+nome+"</p>" +
 						"<p><b>Rating: </b>"+rating+"</p>" +
 						"<p><b>Genere: </b>"+generi+"</p>" +
@@ -548,9 +608,6 @@ function infoSerie(id){
 			showModal("","Si è verificato un errore");
 		}
 	});
-}
-function infoEpisodio(idEp){
-	showModalInfo();
 }
 function downloadS(id){
 	$.ajax({
@@ -643,6 +700,7 @@ function cancellaEpisodio(id){
 		});
 	}
 }
+
 function getEpisodiDaVedere() {
 	$.ajax({
 		type : "POST",
@@ -684,4 +742,13 @@ function showModalInfo(title, body){
 	$("#tallModal").modal('show');
 	$("#info-modal-title").text(title);
 	$("#modalInfoBody").html(body);
+}
+function showModalAssociaTVDB(titolo, corpo) {
+	$(".modal-wide-info").on("show.bs.modal", function() {
+		var height = $(window).height() - 200;
+		$(this).find(".modal-body-info").css("max-height", height);
+	});
+	$("#associaTVDBModal").modal('show');
+	$("#associaTVDBtitle").text(titolo);
+	$("#associaTVDBBody").html(corpo);
 }

@@ -294,3 +294,12 @@ td.bottoneVedere {
     width:70%;
     margin: 0 auto;
 }
+#associaTVDBModal { 
+	position: absolute;
+	top: 15%;
+	bottom: 15%;
+	left:15%;
+	right: 15%;
+	min-height: 20%;
+	max-height: 50%;
+}

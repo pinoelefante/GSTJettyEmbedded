@@ -24,6 +24,7 @@ public class EZTV extends ProviderSerieTV {
 		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
 		baseUrls.add("https://eztv.it");
+		baseUrls.add("http://gestioneserietv.altervista.org/proxy.php?url=https://eztv.it");
 		baseUrls.add("http://tvshowsmanager.hostei.com/?url=https://eztv.it");
 		/*
 		baseUrls.add("http://sitenable.com/surf.php?u=https://eztv.it");

@@ -1,12 +1,13 @@
 package servlet;
 
+import gst.infoManager.thetvdb.SerieTVDB;
 import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.infoManager.thetvdb.TheTVDB;
-import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -37,15 +38,29 @@ public class OperazioniInfoServlet extends HttpServlet {
 			case "getIdTVDB": {
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
 				SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
-				xml = ResponseSender.createResponseInteger(s==null?0:s.getIDTvdb());
+				if(s==null)
+					xml = ResponseSender.createResponseBoolean(false);
+				else
+					xml = ResponseSender.createResponseInteger(s.getIDTvdb());
 				break;
 			}
-			case "cercaInfoSerie": {
-				
+			case "cercaSerieAssociabili": {
+				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
+				SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+				if(serie==null)
+					xml=ResponseSender.createResponseBoolean(false);
+				else {
+					ArrayList<SerieTVDB> list=TheTVDB.getInstance().cercaSerie(serie);
+					System.out.println(list.size()+" serie trovate");
+					xml=ResponseSender.createResponseTVDBList(list);
+				}
 				break;
 			}
 			case "associa": {
-				
+				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
+				int idTvdb = Integer.parseInt(checkParameter("id_tvdb", resp, req, false));
+				boolean r=ProviderSerieTV.associaSerieTVDB(idSerie, idTvdb);
+				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 		}

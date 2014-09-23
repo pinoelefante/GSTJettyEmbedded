@@ -280,6 +280,10 @@ public abstract class ProviderSerieTV {
 			return list.get(0);
 		return null;
 	}
+	public static boolean associaSerieTVDB(int idSerie, int idTVDB){
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_tvdb="+idTVDB+" WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
 	
 	public abstract String getProviderName();
 	public abstract String getBaseURL();

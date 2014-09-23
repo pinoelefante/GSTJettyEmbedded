@@ -1,6 +1,7 @@
 package servlet;
 
 import gst.infoManager.thetvdb.ActorTVDB;
+import gst.infoManager.thetvdb.SerieTVDB;
 import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.serieTV.Episodio;
 import gst.serieTV.ProviderSerieTV;
@@ -48,7 +49,7 @@ public class ResponseSender {
 	public static Document createResponseInteger(int n){
 		Element root = new Element("response");
 		Element valore = new Element("booleanResponse");
-		valore.addContent((n>0?true:false)+"");
+		valore.addContent(true+"");
 		root.addContent(valore);
 		Element integer = new Element("Integer");
 		integer.addContent(n+"");
@@ -320,6 +321,36 @@ public class ResponseSender {
 			banners.addContent(banner);
 		}
 		root.addContent(banners);
+		
+		return new Document(root);
+	}
+	public static Document createResponseTVDBList(ArrayList<SerieTVDB> list) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element series = new Element("series");
+		root.addContent(series);
+		for(int i=0;i<list.size();i++){
+			SerieTVDB serie = list.get(i);
+			Element s = new Element("serie");
+			Element id_serie = new Element("id_serie");
+			id_serie.addContent(serie.getId()+"");
+			s.addContent(id_serie);
+			Element nome_serie = new Element("nome_serie");
+			nome_serie.addContent(serie.getNomeSerie());
+			s.addContent(nome_serie);
+			Element first_air = new Element("first_air");
+			first_air.addContent(serie.getDataInizioITA());
+			s.addContent(first_air);
+			Element banner_url=new Element("banner_url");
+			banner_url.addContent(serie.getUrlBanner());
+			s.addContent(banner_url);
+			Element descrizione = new Element("descrizione");
+			descrizione.addContent(serie.getDescrizione());
+			s.addContent(descrizione);
+			series.addContent(s);
+		}
 		
 		return new Document(root);
 	}

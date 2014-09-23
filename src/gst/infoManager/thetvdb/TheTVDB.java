@@ -207,7 +207,7 @@ public class TheTVDB {
 					}
 				}
 				SerieTVDB newSerie = new SerieTVDB(id, nome_serie, descrizione, getBannerURL(banner_path), data_inizio, lang);
-				serie_trovate.add(newSerie);
+				addSerieToList(serie_trovate, newSerie);
 			}
 		}
 		catch (IOException e) {
@@ -222,8 +222,35 @@ public class TheTVDB {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
 		}
-
+		filtraRisultati(serie_trovate, serietv.getNomeSerie());
 		return serie_trovate;
+	}
+	private void filtraRisultati(ArrayList<SerieTVDB> list, String nomeSerie ){
+		ArrayList<SerieTVDB> resOK = new ArrayList<>(2);
+		for(int i=0;i<list.size();i++){
+			if(list.get(i).getNomeSerie().compareToIgnoreCase(nomeSerie)==0){
+				resOK.add(list.get(i));
+			}
+		}
+		if(resOK.size()>0){
+			list.clear();
+			list.addAll(resOK);
+		}
+	}
+	private void addSerieToList(ArrayList<SerieTVDB> list, SerieTVDB serie){
+		boolean trovata = false;
+		for(int i=0;i<list.size() && !trovata;i++){
+			if(list.get(i).getId()==serie.getId()){
+				if(serie.getLang().compareToIgnoreCase(defaultLang)==0){
+					list.remove(i);
+					list.add(i, serie);
+					trovata=true;
+				}
+			}
+		}
+		if(!trovata){
+			list.add(serie);
+		}
 	}
 
 	public SerieTVDBFull getSerie(int idSerie) {
