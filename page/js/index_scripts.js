@@ -455,6 +455,16 @@ function infoSerie(idSerie){
 		}
 	});
 }
+function associaBottone(){
+	var val=$("input[name='associaSerie']:checked").val();
+	if(val==null || val=="undefined" || val.length==0){
+		showModal("Associa", "Devi selezionare una serie dall'elenco");
+		return;
+	}
+	var idSerie = $("#associaSerieIDSerie").val();
+	associaSerieTVDB(idSerie, val);
+	$("#associaTVDBModal").modal('hide');
+}
 function showAssociaSerie(idSerie){
 	showModalAssociaTVDB("Attendi...", "<center><img src='img/loading.gif' /></center>");
 	$.ajax({
@@ -466,7 +476,6 @@ function showAssociaSerie(idSerie){
 			var resp = parseBooleanXML(msg);
 			if(resp){
 				var num_serie=$(msg).find("serie").size();
-				//alert("Sono state trovate "+num_serie+" serie");
 				if(num_serie==0){
 					showModalAssociaTVDB("Associa serie", "<center>Non ci sono serie che soddisfano i requisiti</center>");
 				}
@@ -480,8 +489,18 @@ function showAssociaSerie(idSerie){
 					showInfoTVDB(idTVDB);
 				}
 				else {
-					$("#associaTVDBModal").modal('hide');
-					showModal("","Attendere implementazione");
+					var bodyAssocia = "<br>";
+					$(msg).find("serie").each(function(){
+						var nome=$(this).find("nome_serie").text();
+						var id = $(this).find("id_serie").text();
+						var anno = $(this).find("anno_inizio").text();
+						var input="<p class='pAssociatore'><input type='radio' name='associaSerie' value='"+id+"'>"+nome+" ("+anno+")</input><button class='btn btn-warning btnViewAssocia' onclick='showInfoTVDB("+id+")'>Visualizza</button></p><br>";
+						bodyAssocia+=input;
+					});
+					$("#associaSerieIDSerie").val(idSerie);
+					showModalAssociaTVDB("Associa serie", bodyAssocia);
+					//$("#associaTVDBModal").modal('hide');
+					//showModal("","Attendere implementazione");
 				}
 			}
 			else

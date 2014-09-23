@@ -303,3 +303,11 @@ td.bottoneVedere {
 	min-height: 20%;
 	max-height: 50%;
 }
+.btnViewAssocia {
+	position:absolute;
+	right:0;
+}
+.pAssociatore {
+	padding-right: 10px;
+	padding-left: 10px;
+}

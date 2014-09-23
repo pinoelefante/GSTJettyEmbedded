@@ -343,6 +343,9 @@ public class ResponseSender {
 			Element first_air = new Element("first_air");
 			first_air.addContent(serie.getDataInizioITA());
 			s.addContent(first_air);
+			Element anno=new Element("anno_inizio");
+			anno.addContent(""+serie.getAnnoInizio());
+			s.addContent(anno);
 			Element banner_url=new Element("banner_url");
 			banner_url.addContent(serie.getUrlBanner());
 			s.addContent(banner_url);

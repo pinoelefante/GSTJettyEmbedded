@@ -28,6 +28,9 @@ public class SerieTVDB {
     		i_giorno=Integer.parseInt(comp[2]);
 		}
 	}
+	public int getAnnoInizio(){
+		return i_anno;
+	}
 	public String getDataInizioITA(){
 		return i_giorno+"-"+i_mese+"-"+i_anno;
 	}
