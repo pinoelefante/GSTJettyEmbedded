@@ -485,7 +485,7 @@ function showAssociaSerie(idSerie){
 					var nomeSerie = $(serie).find("nome_serie").text();
 					associaSerieTVDB(idSerie, idTVDB);
 					$("#associaTVDBModal").modal('hide');
-					showModal("Associa", "La serie è stata associata automaticamente a "+nomeSerie);
+					//showModal("Associa", "La serie è stata associata automaticamente a "+nomeSerie);
 					showInfoTVDB(idTVDB);
 				}
 				else {
