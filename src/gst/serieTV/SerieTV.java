@@ -134,24 +134,7 @@ public class SerieTV {
 		return formattato;
 	}
 	private int id_openSubtitles;
-	/*
-	public String getSubsfactoryDirectory(){
-		if(SubsfactoryOnlineDirectory.isEmpty()){
-			if(getIDDBSubsfactory()>0){
-				String query="SELECT directory FROM "+Database.TABLE_SUBSFACTORY+" WHERE id="+getIDDBSubsfactory();
-				ArrayList<KVResult<String, Object>> res=Database.selectQuery(query);
-				if(res.size()==1){
-					SubsfactoryOnlineDirectory=(String) res.get(0).getValueByKey("directory");
-				}
-			}
-		}
-		return SubsfactoryOnlineDirectory;
-	}
-
-	public void setSubsfactoryDirectory(String id) {
-		SubsfactoryOnlineDirectory=id;
-	}
-*/
+	
 	public void setIDOpenSubtitles(int id_opensub) {
 		id_openSubtitles = id_opensub;
 		

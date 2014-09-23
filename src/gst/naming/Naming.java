@@ -154,5 +154,7 @@ public class Naming {
 			stats.setEpisodio(0);
 		}
 	}
-	
+	public static String rimuoviAnnoInParentesi(String s){
+		return s.replaceAll("[(0-9)]{6}", "").trim();
+	}
 }

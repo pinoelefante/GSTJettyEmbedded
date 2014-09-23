@@ -1,5 +1,6 @@
 package gst.infoManager.thetvdb;
 
+import gst.naming.Naming;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.SerieTV;
@@ -228,7 +229,7 @@ public class TheTVDB {
 	private void filtraRisultati(ArrayList<SerieTVDB> list, String nomeSerie ){
 		ArrayList<SerieTVDB> resOK = new ArrayList<>(2);
 		for(int i=0;i<list.size();i++){
-			if(list.get(i).getNomeSerie().compareToIgnoreCase(nomeSerie)==0){
+			if(Naming.rimuoviAnnoInParentesi(list.get(i).getNomeSerie()).compareToIgnoreCase(nomeSerie)==0){
 				resOK.add(list.get(i));
 			}
 		}
