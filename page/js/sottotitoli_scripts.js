@@ -15,6 +15,15 @@ function chosenConfig(){
 		$(selector).chosen(config[selector]);
 	}
 }
+function cleanSelects(){
+	$("#selectItasa").innerHTML="<option class='noValue'></option>";
+	$("#selectSubsfactory").innerHTML="<option class='noValue'></option>";
+	$("#selectSubspedia").innerHTML="<option class='noValue'></option>";
+	$("#selectPodnapisi").innerHTML="<option class='noValue'></option>";
+	$("#selectOpensubtitles").innerHTML="<option class='noValue'></option>";
+	$("#selectIAddic7ed").innerHTML="<option class='noValue'></option>";
+	$("#seriePreferite").innerHTML="<option class='noValue'></option>";
+}
 function loadSeriePreferite() {
 	$.ajax({
 		type : "POST",
@@ -130,4 +139,48 @@ function onchangePreferita(val){
 		$("#selectSubspedia option.noValue").prop('selected', true);
 	$("#selectSubspedia").trigger("chosen:updated");
 	$("#selectSubspedia").trigger("change");
+}
+function associa(idProvider){
+	var idSerie = $("#seriePreferite").val();
+	if(idSerie==null || idSerie=="undefined" || idSerie.length==0){
+		showModal("Associa serie sub", "Devi selezionare una serie tra quelle preferite");
+		return;
+	}
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=associa&provider="+idProvider+"&serie="+idSerie,
+		dataType : "xml",
+		success : function(msg) {
+			cleanSelects();
+			loadSeriePreferite();
+			loadProviders();
+			chosenConfig();
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function associa(idProvider){
+	var idSerie = $("#seriePreferite").val();
+	if(idSerie==null || idSerie=="undefined" || idSerie.length==0){
+		showModal("Associa serie sub", "Devi selezionare una serie tra quelle preferite");
+		return;
+	}
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=disassocia&provider="+idProvider+"&serie="+idSerie",
+		dataType : "xml",
+		success : function(msg) {
+			cleanSelects();
+			loadSeriePreferite();
+			loadProviders();
+			chosenConfig();
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
 }

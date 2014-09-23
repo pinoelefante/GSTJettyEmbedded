@@ -49,6 +49,12 @@ public class SottotitoliServlet extends HttpServlet{
 				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
+			case "associa": {
+				break;
+			}
+			case "disassocia": {
+				
+			}
 		}
 		ResponseSender.sendResponse(resp, xml);
 	}
