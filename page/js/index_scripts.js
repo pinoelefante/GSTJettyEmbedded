@@ -563,9 +563,31 @@ function showInfoTVDB(idTVDB){
 				$(msg).find("generi").find("genere").each(function(){
 					generi+=$(this).text()+" ";
 				});
+				var attori="<br><table class='tableAct'>";
+				
+				var aperto=false;
+				var c = 0;
 				$(msg).find("attori").find("attore").each(function(){
-					
+					var nome=$(this).find("nome_attore").text();
+					var ruolo=$(this).find("ruolo_attore").text();
+					var img=$(this).find("img_attore").text();
+					var g_img = creaImmagineAttore(img, nome, ruolo);
+					if(aperto==false){
+						attori+="<tr>";
+						aperto=true;
+					}
+					attori+="<td>"+g_img+" "+nome+"<br> <b>"+ruolo+"</b></td>";
+					c++;
+					if(c%2==0){
+						attori+="</tr>";
+						aperto=false;
+					}
 				});
+				if(aperto==true){
+					attori+="</tr>";
+				}
+				attori+="</table>";
+				
 				var info= "<br><p><b>Titolo: </b>"+nome+"</p>" +
 						"<p><b>Rating: </b>"+rating+"</p>" +
 						"<p><b>Genere: </b>"+generi+"</p>" +
@@ -636,7 +658,7 @@ function showInfoTVDB(idTVDB){
 			        info +
 			      "</div>"+
 			      "<div class='tab-pane fade' id='Attori'>"+
-			        "Qui vanno gli attori" +
+			      	attori + //"Qui vanno gli attori" +
 			      "</div>"+
 			      "<div class='tab-pane fade' id='Gallery'>"+
 			        gallery +
@@ -782,6 +804,10 @@ function getEpisodiDaVedere() {
 }
 function creaImmagineGallery(imageURL){
 	var image = "<a href='"+imageURL+"' data-lightbox='image-gallery'><img class='image-thumb' src='"+imageURL+"'></a>";
+	return image;
+}
+function creaImmagineAttore(imageURL, nomeAttore, ruolo){
+	var image = "<a href='"+imageURL+"' data-lightbox='image-attore' data-title='"+nomeAttore+" \350 "+ruolo+"'><img class='image-thumb2' src='"+imageURL+"'></a>";
 	return image;
 }
 function showModalInfo(title, body){

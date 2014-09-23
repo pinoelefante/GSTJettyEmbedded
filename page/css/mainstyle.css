@@ -311,3 +311,18 @@ td.bottoneVedere {
 	padding-right: 10px;
 	padding-left: 10px;
 }
+.image-thumb2 {
+	max-width: 256px;
+	max-height: 256px;
+	margin: 5px;
+	border: 2px solid black;
+}
+.tdAct{
+	width:50%;
+}
+.tableAct {
+	width:100%;
+}
+.tableAct tr{
+	width:100%;
+}
