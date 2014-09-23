@@ -241,10 +241,13 @@ public class TheTVDB {
 		boolean trovata = false;
 		for(int i=0;i<list.size() && !trovata;i++){
 			if(list.get(i).getId()==serie.getId()){
-				if(serie.getLang().compareToIgnoreCase(defaultLang)==0){
-					list.remove(i);
-					list.add(i, serie);
+				if(list.get(i).getLang().compareToIgnoreCase(defaultLang)==0){
 					trovata=true;
+				}
+				else {
+					list.remove(i);
+					list.add(serie);
+					trovata = true;
 				}
 			}
 		}

@@ -20,7 +20,7 @@ $(document).ready(function() {
 function aggiungiSerieBottone(){
 	var serie = selectSerie.options[selectSerie.selectedIndex];
 	
-	if(serie==null || serie==""){
+	if(serie==null || serie=="" || serie=="undefined" || serie.length==0 || serie.value==""){
 		showModal("","Devi selezionare una serie da aggiungere");
 		return;
 	}
@@ -420,6 +420,15 @@ function createAccordionStagione(stagione, idserie) {
 	var elem = "<div class='panel panel-default'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a data-toggle='collapse' data-parent='#accordion" + idserie + "' href='#collapse" + idserie + "_" + stagione + "'> " + (stagione == 0 ? "Speciali" : "Stagione " + stagione) + " </a>" + "</h4>" + "</div>" + "<div id='collapse" + idserie + "_" + stagione + "' class='panel-collapse collapse'>" + "<div class='panel-body' id='listTorrent" + idserie + "_" + stagione + "'></div>" + "</div>" + "</div>";
 	return elem;
 }
+function infoSerieButton(){
+	var serie = selectSerie.options[selectSerie.selectedIndex];
+	if(serie==null || serie=="" || serie=="undefined" || serie.length==0 || serie.value==""){
+		showModal("","Devi selezionare una serie");
+		return;
+	}
+	var id_serie = serie.value;
+	infoSerie(id_serie);
+}
 function infoSerie(idSerie){
 	$.ajax({
 		type : "POST",
@@ -457,7 +466,7 @@ function showAssociaSerie(idSerie){
 			var resp = parseBooleanXML(msg);
 			if(resp){
 				var num_serie=$(msg).find("serie").size();
-				alert("Sono state trovate "+num_serie+" serie");
+				//alert("Sono state trovate "+num_serie+" serie");
 				if(num_serie==0){
 					showModalAssociaTVDB("Associa serie", "<center>Non ci sono serie che soddisfano i requisiti</center>");
 				}
@@ -485,7 +494,24 @@ function showAssociaSerie(idSerie){
 	});
 }
 function associaSerieTVDB(idSerie, idTVDB){
-	
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=associa&idSerie="+idSerie+"&id_tvdb="+idTVDB,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				
+			}
+			else 
+				showModal("","Errore durante l'associazione");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
 }
 function infoEpisodio(idEp){
 	showModalInfo();
@@ -599,6 +625,10 @@ function showInfoTVDB(idTVDB){
 			"</div>";
 				showModalInfo(nome, body);
 				$("#GalPag1").addClass("active in");
+				$("img").error(function () { 
+				    $(this).attr("src", "img/no_image.gif");
+				    $(this).parent().attr("href", "img/no_image.gif").attr("data-lightbox", "image-error");
+				});
 			}
 			else
 				showModal("","Si è verificato un errore");
