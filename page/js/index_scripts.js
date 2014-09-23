@@ -464,6 +464,7 @@ function associaBottone(){
 	var idSerie = $("#associaSerieIDSerie").val();
 	associaSerieTVDB(idSerie, val);
 	$("#associaTVDBModal").modal('hide');
+	showInfoTVDB(val);
 }
 function showAssociaSerie(idSerie){
 	showModalAssociaTVDB("Attendi...", "<center><img src='img/loading.gif' /></center>");
@@ -623,7 +624,7 @@ function showInfoTVDB(idTVDB){
 			    				"</div>"+
 		    				"</div>";
 				
-				body+="<p id='infoBannerIMG'><img src='"+banner+"'></p>";
+				body+="<p><center><img src='"+banner+"'></center></p>";
 				body+= "<div class='bs-example bs-example-tabs'>"+
 			    "<ul id='myTab' class='nav nav-tabs' role='tablist'>"+
 			      "<li class=''><a href='#Info' role='tab' data-toggle='tab'>Informazioni</a></li>"+
