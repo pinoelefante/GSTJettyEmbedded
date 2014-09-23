@@ -207,7 +207,7 @@ public class TheTVDB {
 						}
 					}
 				}
-				SerieTVDB newSerie = new SerieTVDB(id, nome_serie, descrizione, getBannerURL(banner_path), data_inizio, lang);
+				SerieTVDB newSerie = new SerieTVDB(id, Naming.rimuoviAnnoInParentesi(nome_serie), descrizione, getBannerURL(banner_path), data_inizio, lang);
 				addSerieToList(serie_trovate, newSerie);
 			}
 		}
@@ -229,7 +229,7 @@ public class TheTVDB {
 	private void filtraRisultati(ArrayList<SerieTVDB> list, String nomeSerie ){
 		ArrayList<SerieTVDB> resOK = new ArrayList<>(2);
 		for(int i=0;i<list.size();i++){
-			if(Naming.rimuoviAnnoInParentesi(list.get(i).getNomeSerie()).compareToIgnoreCase(nomeSerie)==0){
+			if(list.get(i).getNomeSerie().compareToIgnoreCase(nomeSerie)==0){
 				resOK.add(list.get(i));
 			}
 		}
