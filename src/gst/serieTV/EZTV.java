@@ -11,6 +11,9 @@ import gst.tda.db.KVResult;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,9 +26,13 @@ public class EZTV extends ProviderSerieTV {
 		super(ProviderSerieTV.PROVIDER_EZTV);
 		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
+		
 		baseUrls.add("https://eztv.it");
+		/*
 		baseUrls.add("http://gestioneserietv.altervista.org/proxy.php?url=https://eztv.it");
 		baseUrls.add("http://tvshowsmanager.hostei.com/?url=https://eztv.it");
+		*/
+		caricaListaProxy();
 		/*
 		baseUrls.add("http://sitenable.com/surf.php?u=https://eztv.it");
 		baseUrls.add("http://freeproxy.io/surf.php?u=https://eztv.it");
@@ -271,5 +278,29 @@ public class EZTV extends ProviderSerieTV {
 				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 04\"" };
 		for (int j = 0; j < query.length; j++)
 			Database.updateQuery(query[j]);
+	}
+	public void caricaListaProxy(){
+		String urlListProxy = "http://pinoelefante.altervista.org/software/GSTJetty/proxy.txt";
+		URLConnection urlConn;
+		try {
+			urlConn = new URL(urlListProxy).openConnection();
+			InputStream is = urlConn.getInputStream();
+			String list="";
+			int read=0;
+			byte[] buffer=new byte[256];
+			while((read=is.read(buffer))>0){
+				list+=new String(buffer).substring(0, read);
+			}
+			is.close();
+			
+			System.out.println(list);
+			String[] proxies = list.split("\n");
+			for(int i=0;i<proxies.length;i++){
+				baseUrls.add(proxies[i]);
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
