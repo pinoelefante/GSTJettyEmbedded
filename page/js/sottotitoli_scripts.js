@@ -146,10 +146,15 @@ function associa(idProvider){
 		showModal("Associa serie sub", "Devi selezionare una serie tra quelle preferite");
 		return;
 	}
+	var idSerieSub=getSerieSelezionataByProvider(idProvider);
+	if(idSerieSub==null || idSerieSub=="undefined" || idSerieSub.length==0){
+		showModal("Associa serie sub", "Devi selezionare una serie da associare");
+		return;
+	}
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSottotitoliServlet",
-		data : "action=associa&provider="+idProvider+"&serie="+idSerie,
+		data : "action=associa&idProvider="+idProvider+"&idSerie="+idSerie+"&idSerieSub="+idSerieSub,
 		dataType : "xml",
 		success : function(msg) {
 			cleanSelects();
@@ -162,7 +167,20 @@ function associa(idProvider){
 		}
 	});
 }
-function associa(idProvider){
+function getSerieSelezionataByProvider(idProvider){
+	switch(idProvider){
+	case 1:
+		return $("#selectItasa").val();
+	case 2:
+		return $("#selectSubsfactory").val();
+	case 3:
+		return $("#selectSubspedia").val();
+	case 4:
+	case 5:
+	case 6:
+	}
+}
+function disassocia(idProvider){
 	var idSerie = $("#seriePreferite").val();
 	if(idSerie==null || idSerie=="undefined" || idSerie.length==0){
 		showModal("Associa serie sub", "Devi selezionare una serie tra quelle preferite");
@@ -171,7 +189,7 @@ function associa(idProvider){
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSottotitoliServlet",
-		data : "action=disassocia&provider="+idProvider+"&serie="+idSerie",
+		data : "action=disassocia&idProvider="+idProvider+"&idSerie="+idSerie",
 		dataType : "xml",
 		success : function(msg) {
 			cleanSelects();

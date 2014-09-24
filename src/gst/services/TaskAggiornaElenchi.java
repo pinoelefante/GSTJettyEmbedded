@@ -1,4 +1,6 @@
-package gst.sottotitoli;
+package gst.services;
+
+import gst.sottotitoli.GestoreSottotitoli;
 
 import java.util.TimerTask;
 

@@ -8,7 +8,7 @@ import gst.player.FileFinder;
 import gst.player.VideoPlayer;
 import gst.programma.Settings;
 import gst.services.SearchListener;
-import gst.services.ThreadRicercaEpisodi;
+import gst.services.TaskRicercaEpisodi;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.tda.db.KVResult;
 
@@ -16,12 +16,14 @@ import java.io.File;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Timer;
 
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
-	private ThreadRicercaEpisodi t_search;
+	private TaskRicercaEpisodi t_search;
 	private Settings settings;
+	private Timer timer;
 	
 	public static GestioneSerieTV getInstance(){
 		if(instance==null){
@@ -41,7 +43,8 @@ public class GestioneSerieTV implements Notifier {
 		inviaNotifica("Sono state trovate "+count_serie_nuove+" nuove serie");
 		
 		//Avvia la ricerca dei nuovi episodi
-		t_search = new ThreadRicercaEpisodi(settings.getMinRicerca());
+		t_search = new TaskRicercaEpisodi();
+		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
 		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
 			
@@ -71,13 +74,13 @@ public class GestioneSerieTV implements Notifier {
 				}
 			}
 		});
-		t_search.start();
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
 		notificable=new ArrayList<Notificable>();
 		providers.add(new EZTV());
 		settings = Settings.getInstance();
+		timer = new Timer();
 	}
 	public ArrayList<ProviderSerieTV> getProviders(){
 		return providers;
@@ -258,8 +261,8 @@ public class GestioneSerieTV implements Notifier {
 		}
 	}
 	public void close(){
-		if(t_search!=null)
-			t_search.interrupt();
+		timer.cancel();
+		timer.purge();
 	}
 	public ArrayList<Entry<SerieTV, ArrayList<Episodio>>> getEpisodiDaVedere(){
 		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> results = new ArrayList<>();

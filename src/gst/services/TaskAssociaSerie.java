@@ -1,7 +1,8 @@
-package gst.sottotitoli;
+package gst.services;
 
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
+import gst.sottotitoli.GestoreSottotitoli;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
