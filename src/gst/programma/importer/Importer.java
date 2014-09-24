@@ -12,6 +12,7 @@ import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
+import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.Preferenze;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
@@ -80,6 +81,9 @@ public class Importer implements Notifier{
 				e.printStackTrace();
 			}
 		}
+	}
+	public void importStage2(){
+		//TODO verifica esistenza file
 	}
 	public static void main(String[] args){
 		Settings.getInstance();
