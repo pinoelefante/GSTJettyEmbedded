@@ -53,6 +53,7 @@ public class SottotitoliServlet extends HttpServlet{
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
 				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
 				int idSerieSub = Integer.parseInt(checkParameter("idSerieSub", resp, req, false));
+				System.out.println("idSerie="+idSerie+" idSerieSub="+idSerieSub+" idProvider="+idProvider);
 				boolean r=GestoreSottotitoli.getInstance().associaSerie(idSerie, idProvider, idSerieSub);
 				xml=ResponseSender.createResponseBoolean(r);
 				break;
@@ -61,6 +62,7 @@ public class SottotitoliServlet extends HttpServlet{
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
 				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
 				boolean r=GestoreSottotitoli.getInstance().disassociaSerie(idSerie, idProvider);
+				System.out.println("idSerie="+idSerie+" idProvider="+idProvider);
 				xml=ResponseSender.createResponseBoolean(r);
 				break;
 			}

@@ -23,6 +23,13 @@ function cleanSelects(){
 	$("#selectOpensubtitles").innerHTML="<option class='noValue'></option>";
 	$("#selectIAddic7ed").innerHTML="<option class='noValue'></option>";
 	$("#seriePreferite").innerHTML="<option class='noValue'></option>";
+	$("#selectItasa").trigger("chosen:updated");
+	$("#selectSubsfactory").trigger("chosen:updated");
+	$("#selectSubspedia").trigger("chosen:updated");
+	$("#selectPodnapisi").trigger("chosen:updated");
+	$("#selectOpensubtitles").trigger("chosen:updated");
+	$("#selectIAddic7ed").trigger("chosen:updated");
+	$("#seriePreferite").trigger("chosen:updated");
 }
 function loadSeriePreferite() {
 	$.ajax({
@@ -140,45 +147,80 @@ function onchangePreferita(val){
 	$("#selectSubspedia").trigger("chosen:updated");
 	$("#selectSubspedia").trigger("change");
 }
+
+function setSerieAssociata(idProvider,idSerieSub){
+	switch(idProvider){
+		case 1:
+			$("#seriePreferite option:selected").prop("itasa",idSerieSub);
+			break;
+		case 2:
+			$("#seriePreferite option:selected").prop("subsfactory",idSerieSub);
+			break;
+		case 3:
+			$("#seriePreferite option:selected").prop("subspedia", idSerieSub);
+			break;
+		case 4:
+		case 5:
+		case 6:
+	}
+}
+function getSerieSelezionataByProvider(idProvider){
+	switch(idProvider){
+		case 1:
+			return $("#selectItasa").val();
+		case 2:
+			return $("#selectSubsfactory").val();
+		case 3:
+			return $("#selectSubspedia").val();
+		case 4:
+		case 5:
+		case 6:
+	}
+}
+function selectEmptyItem(idProvider){
+	function getSerieSelezionataByProvider(idProvider){
+		switch(idProvider){
+			case 1:
+				$("#selectItasa option.noValue").prop("selected", true);
+				break;
+			case 2:
+				$("#selectSubsfactory option.noValue").prop("selected", true);
+				break;
+			case 3:
+				$("#selectSubspedia option.noValue").prop("selected", true);
+				break;
+			case 4:
+			case 5:
+			case 6:
+		}
+	}
+}
 function associa(idProvider){
 	var idSerie = $("#seriePreferite").val();
-	if(idSerie==null || idSerie=="undefined" || idSerie.length==0){
-		showModal("Associa serie sub", "Devi selezionare una serie tra quelle preferite");
+	if(idSerie==null || idSerie=="undefined" || idSerie.length==0 || idSerie==0){
+		showModal("Associa","Devi selezionare una serie tra quelle preferite");
 		return;
 	}
 	var idSerieSub=getSerieSelezionataByProvider(idProvider);
-	if(idSerieSub==null || idSerieSub=="undefined" || idSerieSub.length==0){
-		showModal("Associa serie sub", "Devi selezionare una serie da associare");
+	if(idSerieSub==null || idSerieSub=="undefined" || idSerieSub.length==0 || idSerieSub==0){
+		showModal("Associa","Devi selezionare una serie da associare");
 		return;
 	}
+	
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSottotitoliServlet",
 		data : "action=associa&idProvider="+idProvider+"&idSerie="+idSerie+"&idSerieSub="+idSerieSub,
 		dataType : "xml",
 		success : function(msg) {
-			cleanSelects();
-			loadSeriePreferite();
-			loadProviders();
-			chosenConfig();
+			setSerieAssociata(idProvider, idSerieSub);
+			onchangePreferita(0);
+			showModal("Associa","Serie associata con successo");
 		},
 		error : function(msg) {
-			showModal("","Si è verificato un errore durante l'aggiornamento");
+			alert("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
-}
-function getSerieSelezionataByProvider(idProvider){
-	switch(idProvider){
-	case 1:
-		return $("#selectItasa").val();
-	case 2:
-		return $("#selectSubsfactory").val();
-	case 3:
-		return $("#selectSubspedia").val();
-	case 4:
-	case 5:
-	case 6:
-	}
 }
 function disassocia(idProvider){
 	var idSerie = $("#seriePreferite").val();
@@ -189,13 +231,13 @@ function disassocia(idProvider){
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSottotitoliServlet",
-		data : "action=disassocia&idProvider="+idProvider+"&idSerie="+idSerie",
+		data : "action=disassocia&idProvider="+idProvider+"&idSerie="+idSerie,
 		dataType : "xml",
 		success : function(msg) {
-			cleanSelects();
-			loadSeriePreferite();
-			loadProviders();
-			chosenConfig();
+			setSerieAssociata(idProvider, null);
+			selectEmptyItem(idProvider);
+			onchangePreferita(0);
+			showModal("Disassocia", "Serie disassociata correttamente");
 		},
 		error : function(msg) {
 			showModal("","Si è verificato un errore durante l'aggiornamento");
