@@ -698,7 +698,8 @@ function downloadS(id){
 				$("#chkEp_"+id).attr("stato_visualizzazione","1");
 				
 				if(!$("#divEP_"+id).hasClass("episodioVisto")){
-					$("#divEP_"+id).addClass("episodioDaVedere");
+					$("#divEP_"+id).removeClass();
+					$("#divEP_"+id).addClass("episodio episodioDaVedere");
 				}
 			}
 			else

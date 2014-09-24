@@ -34,6 +34,20 @@ public class FileFinder {
 		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
 		return fileTrovati;
 	}
+	public ArrayList<File> cercaFileSottotitoli(SerieTV serie, Episodio ep, String videoName){
+		ArrayList<File> fileTrovati = new ArrayList<File>();
+		String pathBase=Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		File dir = new File(pathBase);
+		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		videoName=videoName.substring(0, videoName.lastIndexOf("."));
+		for(int i=0;i<fileTrovati.size();){
+			if(fileTrovati.get(i).getName().toLowerCase().startsWith(videoName.toLowerCase()))
+				i++;
+			else
+				fileTrovati.remove(i);
+		}
+		return fileTrovati;
+	}
 	
 	private void cercaFile(File dir, ArrayList<File> trovati,Episodio ep,  String[] estensioni){
 		visitDir(dir, trovati, ep, estensioni);
