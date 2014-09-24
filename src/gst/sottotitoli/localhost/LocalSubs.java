@@ -64,4 +64,8 @@ public class LocalSubs implements ProviderSottotitoli{
 	public int getProviderID() {
 		return GestoreSottotitoli.LOCALE;
 	}
+	@Override
+	public boolean associa(int idSerie, int idSub) {return false;}
+	@Override
+	public boolean disassocia(int idSerie) {return false;}
 }

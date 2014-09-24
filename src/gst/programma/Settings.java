@@ -116,7 +116,6 @@ public class Settings {
 		setDirectoryDownload(getUserDir()+"Download");
 		setDownloadAutomatico(false);
 		setFirstStart(true);
-		setMinRicerca(480);
 		setRegolaDownloadDefault(Preferenze.HD);
 		setRicercaSottotitoli(true, false);
 		setStartHidden(false);
@@ -191,9 +190,6 @@ public class Settings {
 	}
 	public int getLastVersion() {
 		return Integer.parseInt(getOpzione("last_version"));
-	}
-	public int getMinRicerca() {
-		return Integer.parseInt(getOpzione("min_download_auto"));
 	}
 	public String getOpzione(String k){
 		if(opzioni!=null){
@@ -306,9 +302,6 @@ public class Settings {
 	public void setLastVersion(int lastVersion) {
 		aggiungiOpzione("last_version", lastVersion+"");
 	}
-	public void setMinRicerca(int minRicerca) {
-		aggiungiOpzione("min_download_auto", minRicerca+"");
-	}
 	
 	public void setRegolaDownloadDefault(int d){
 		aggiungiOpzione("regola_download", d+"");
@@ -386,7 +379,6 @@ public class Settings {
 				case "itasa_user":
 				case "itasa_pass":
 				case "last_version":
-				case "min_download_auto":
 				case "regola_download":
 				case "start_hidden":
 				case "utorrent_path":

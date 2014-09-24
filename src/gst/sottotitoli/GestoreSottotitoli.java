@@ -97,6 +97,34 @@ public class GestoreSottotitoli implements Notifier{
 			subspedia.associaSerie(s);
 		}
 	}
+	public boolean associaSerie(int idSerie, int idProvider, int idSerieSub){
+		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+		if(serie==null)
+			return false;
+		switch(idProvider){
+			case ITASA:
+				return itasa.associa(idSerie, idSerieSub);
+			case SUBSFACTORY:
+				return subsfactory.associa(idSerie, idSerieSub);
+			case SUBSPEDIA:
+				return subspedia.associa(idSerie, idSerieSub);
+		}
+		return false;
+	}
+	public boolean disassociaSerie(int idSerie, int idProvider){
+		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+		if(serie==null)
+			return false;
+		switch(idProvider){
+			case ITASA:
+				return itasa.disassocia(idSerie);
+			case SUBSFACTORY:
+				return subsfactory.disassocia(idSerie);
+			case SUBSPEDIA:
+				return subspedia.disassocia(idSerie);
+		}
+		return false;
+	}
 	public boolean scaricaSottotitolo(int idSub){
 		if(idSub<=0)
 			return false;

@@ -269,9 +269,15 @@ public class Subspedia implements ProviderSottotitoli {
 			}
 		}
 	}
-	private void associa(int idSerie, int idSubspedia) {
+	public boolean associa(int idSerie, int idSubspedia) {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSubspedia+" WHERE id="+idSerie;
-		Database.updateQuery(query);
+		return Database.updateQuery(query);
+	}
+	
+	@Override
+	public boolean disassocia(int idSerie) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=0 WHERE id="+idSerie;
+		return Database.updateQuery(query);
 	}
 	
 	private ArrayList<SottotitoloSubspedia> caricaCartella(SerieSubConDirectory serie){

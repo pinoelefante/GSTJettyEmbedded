@@ -24,8 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.UIManager;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.JTabbedPane;
 
 import util.os.Os;
@@ -46,7 +44,6 @@ public class FrameOpzioni extends JFrame {
 	private JCheckBox chkbStartHidden;
 	private JCheckBox chckbxAskOnClose;
 	private JCheckBox chckbxAbilitaDownloadAutomatico;
-	private JSpinner minRicerca;
 	private JCheckBox chckbxAbilitaDownloadSottotitoli;
 	private JButton btnVerificaItasa;
 	private JButton btnSalva;
@@ -92,7 +89,7 @@ public class FrameOpzioni extends JFrame {
 		panel.add(btnChiudi);
 		
 		JPanel panel_itasa = new JPanel();
-		panel_itasa.setBounds(10, 265, 615, 89);
+		panel_itasa.setBounds(10, 240, 615, 89);
 		panel_15.add(panel_itasa);
 		panel_itasa.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel_itasa.setLayout(new GridLayout(0, 2, 0, 0));
@@ -158,26 +155,16 @@ public class FrameOpzioni extends JFrame {
 		panel_10.add(chckbxAskOnClose);
 		
 		JPanel panel_11 = new JPanel();
-		panel_11.setBounds(10, 140, 615, 125);
+		panel_11.setBounds(10, 140, 615, 89);
 		panel_15.add(panel_11);
 		panel_11.setBorder(new TitledBorder(null, "Serie TV", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_11.setLayout(new GridLayout(3, 1, 0, 0));
+		panel_11.setLayout(new GridLayout(2, 1, 0, 0));
 		
 		JPanel panel_12 = new JPanel();
 		panel_11.add(panel_12);
 		
 		chckbxAbilitaDownloadAutomatico = new JCheckBox("Abilita download automatico");
 		panel_12.add(chckbxAbilitaDownloadAutomatico);
-		
-		JPanel panel_13 = new JPanel();
-		panel_11.add(panel_13);
-		
-		minRicerca = new JSpinner();
-		minRicerca.setModel(new SpinnerNumberModel(480, 60, 1440, 5));
-		panel_13.add(minRicerca);
-		
-		JLabel lblMinutiTraOgni = new JLabel("minuti tra ogni ricerca");
-		panel_13.add(lblMinutiTraOgni);
 		
 		JPanel panel_14 = new JPanel();
 		panel_11.add(panel_14);
@@ -189,7 +176,7 @@ public class FrameOpzioni extends JFrame {
 		FlowLayout flowLayout_2 = (FlowLayout) panel_20.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		panel_20.setBorder(new TitledBorder(null, "Directory Download", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_20.setBounds(10, 357, 615, 55);
+		panel_20.setBounds(10, 340, 615, 55);
 		panel_15.add(panel_20);
 		
 		dirDownload = new JTextField();
@@ -304,11 +291,6 @@ public class FrameOpzioni extends JFrame {
 				boolean autodown=chckbxAbilitaDownloadAutomatico.isSelected();
 				boolean autostart = chkbAutostart.isSelected();
 				String dirDown = dirDownload.getText().trim();
-				int min=480;
-				try {
-					min=Integer.parseInt(minRicerca.getValue().toString());
-				}
-				catch(Exception e1){}
 				String usernameItasa=itasaUsername.getText();
 				String passItasa=new String(itasaPassword.getPassword());
 					
@@ -318,7 +300,6 @@ public class FrameOpzioni extends JFrame {
 				s.setDownloadAutomatico(autodown);
 				s.setAutostart(autostart);
 				s.setDirectoryDownload(dirDown);
-				s.setMinRicerca(min);
 				s.setItasaUsername(usernameItasa);
 				s.setItasaPassword(passItasa);
 				s.salvaSettings();

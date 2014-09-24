@@ -12,4 +12,6 @@ public abstract interface ProviderSottotitoli {
 	public int getProviderID();
 	public void associaSerie(SerieTV s);
 	public void aggiornaElencoSerieOnline();
+	public boolean associa(int idSerie, int idSub);
+	public boolean disassocia(int idSerie);
 }

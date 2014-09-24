@@ -319,5 +319,17 @@ public class ItalianSubs implements ProviderSottotitoli{
 	public int getProviderID() {
 		return GestoreSottotitoli.ITASA;
 	}
+
+	@Override
+	public boolean associa(int idSerie, int idSub) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa="+idSub+" WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
+
+	@Override
+	public boolean disassocia(int idSerie) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=0 WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
 }
 

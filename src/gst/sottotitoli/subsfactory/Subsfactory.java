@@ -347,4 +347,15 @@ public class Subsfactory implements ProviderSottotitoli {
 	public int getProviderID() {
 		return GestoreSottotitoli.SUBSFACTORY;
 	}
+	@Override
+	public boolean associa(int idSerie, int idSub) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory="+idSub+" WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
+
+	@Override
+	public boolean disassocia(int idSerie) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=0 WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
 }
