@@ -10,8 +10,10 @@ import java.util.Map.Entry;
 import gst.database.Database;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
+import gst.player.FileFinder;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
+import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.Preferenze;
 import gst.serieTV.ProviderSerieTV;
@@ -83,7 +85,29 @@ public class Importer implements Notifier{
 		}
 	}
 	public void importStage2(){
-		//TODO verifica esistenza file
+		ArrayList<SerieTV> prefs = GestioneSerieTV.getInstance().getElencoSeriePreferite();
+		for(SerieTV s : prefs){
+			ArrayList<Episodio> eps = ProviderSerieTV.getEpisodiSerie(s.getIDDb());
+			for(Episodio e:eps){
+				boolean found=FileFinder.getInstance().cercaFileVideo(s, e).size()>0;
+				if(found){
+					if(e.getStatoVisualizzazione()==Episodio.SCARICARE){
+						ProviderSerieTV.changeStatusEpisodio(e.getId(), Episodio.SCARICATO);
+					}
+					else if(e.getStatoVisualizzazione()>Episodio.VISTO){
+						ProviderSerieTV.changeStatusEpisodio(e.getId(), Episodio.VISTO);
+					}
+				}
+				else {
+					if(e.getStatoVisualizzazione()==Episodio.VISTO)
+						ProviderSerieTV.changeStatusEpisodio(e.getId(), Episodio.RIMOSSO);
+					else if(e.getStatoVisualizzazione()==Episodio.SCARICATO){
+						ProviderSerieTV.changeStatusEpisodio(e.getId(), Episodio.SCARICARE);
+					}
+				}
+					
+			}
+		}
 	}
 	public static void main(String[] args){
 		Settings.getInstance();

@@ -56,14 +56,17 @@ public class ServerStart {
 		
 		String dbPath = Settings.getInstance().getUserDir()+File.separator+"database2.sqlite";
 		if(settings.isFirstStart() && OperazioniFile.fileExists(dbPath)){
-			if(ui.showConfirmDialog("Importa", "Vuoi importare i dati da una versione precedente di Gestione Serie TV?")){
-    			Importer importer = new Importer();
+			Importer importer = new Importer();
+			boolean importer_ask;
+			if(importer_ask=ui.showConfirmDialog("Importa", "Vuoi importare i dati da una versione precedente di Gestione Serie TV?")){
     			importer.subscribe(ui);
     			importer.startImport();
     			importer.unsubscribe(ui);
 			}
 			if(ui.showConfirmDialog("Opzioni", "Vuoi modificare le impostazioni predefinite dell'applicazione?"))
 				ui.mostraFinestraOpzioni();
+			if(importer_ask)
+				importer.importStage2();
 			
 			settings.setFirstStart(false);
 			settings.salvaSettings();
