@@ -23,6 +23,8 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
+import util.Object3Value;
+
 public class ResponseSender {
 	public static void sendResponse(HttpServletResponse response, Document doc){
 		XMLOutputter xml_out = new XMLOutputter();
@@ -355,6 +357,34 @@ public class ResponseSender {
 			series.addContent(s);
 		}
 		
+		return new Document(root);
+	}
+	public static Document createResponseLogSub(ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element subs = new Element("subs");
+		for(Object3Value<ProviderSottotitoli, SerieTV, Episodio> s : list){
+			Element sub = new Element("sub");
+			Element nomeSerie = new Element("nomeSerie");
+			nomeSerie.addContent(s.getV().getNomeSerie());
+			Element id_episodio = new Element("id_episodio");
+			id_episodio.addContent(s.getT().getId()+"");
+			Element stagione = new Element("stagione");
+			stagione.addContent(s.getT().getStagione()+"");
+			Element episodio = new Element("episodio");
+			episodio.addContent(s.getT().getEpisodio()+"");
+			Element provider = new Element("provider");
+			provider.addContent(s.getK().getProviderName());
+			sub.addContent(nomeSerie);
+			sub.addContent(id_episodio);
+			sub.addContent(stagione);
+			sub.addContent(episodio);
+			sub.addContent(provider);
+			subs.addContent(sub);
+		}
+		root.addContent(subs);
 		return new Document(root);
 	}
 }

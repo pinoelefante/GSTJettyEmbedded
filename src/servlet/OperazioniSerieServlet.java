@@ -1,7 +1,10 @@
 package servlet;
 
+import gst.gui.InterfacciaGrafica;
+import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
+import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 
 import java.io.IOException;
@@ -90,6 +93,13 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "getSerieNuove": {
 				ArrayList<SerieTV> serie = manager.getSerieNuove();
 				xml = ResponseSender.createResponseSerie(serie);
+				break;
+			}
+			case "openFolder": {
+				int id = Integer.parseInt(checkParameter("id", resp, req, false));
+				SerieTV serie = ProviderSerieTV.getSerieByID(id);
+				boolean r = InterfacciaGrafica.getInstance().openFolder(Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie());
+				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "play": {

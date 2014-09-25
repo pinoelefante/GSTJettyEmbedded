@@ -20,8 +20,11 @@ import gst.tda.db.KVResult;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import util.Object3Value;
 
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
@@ -255,5 +258,21 @@ public class GestoreSottotitoli implements Notifier{
 	public static void setSottotitoloDownload(int idEpisodio, boolean stato){
 		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo="+(stato?1:0)+" WHERE id="+idEpisodio;
 		Database.updateQuery(query);
+	}
+	public ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> getLast50LogSub(){
+		String query = "SELECT * FROM logsub ORDER BY id DESC LIMIT 50";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list = new ArrayList<Object3Value<ProviderSottotitoli,SerieTV,Episodio>>();
+		for(int i=res.size()-1;i>=0;i--){
+			KVResult<String,Object> r = res.get(i);
+			int idEpisodio = (int) r.getValueByKey("episodio");
+			int provider = (int) r.getValueByKey("provider");
+			Episodio ep = ProviderSerieTV.getEpisodio(idEpisodio);
+			SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+			ProviderSottotitoli prov = getProvider(provider);
+			Object3Value<ProviderSottotitoli, SerieTV, Episodio> val = new Object3Value<ProviderSottotitoli, SerieTV, Episodio>(prov, serie, ep);
+			list.add(val);
+		}
+		return list;
 	}
 }

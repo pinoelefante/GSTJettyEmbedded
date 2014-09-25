@@ -58,6 +58,26 @@
 			</div>
 		</div>
 		<div id="containerLeft">
+			<div class="listScaricati">
+				<fieldset>
+					<legend><a href="javascript:void(0)" onclick='loadsubScaricati()'>Sottotitoli scaricati</a></legend>
+				</fieldset>
+				<table id="listaScaricati">
+				
+				</table>
+			</div>
+			
+			<div class="listScaricare">
+				<fieldset>
+					<legend><a href="javascript:void(0)" onclick='loadsubScaricare()'>Sottotitoli da scaricare</a></legend>
+				</fieldset>
+				<table id="listaScaricare">
+				
+				</table>
+			</div>
+			
+		</div>
+		<div id="containerCenter">
 			<div class="contProviderL1">
 				<fieldset>
 					<legend><a href="http://www.italiansubs.net">Italiansubs</a></legend>
@@ -70,11 +90,25 @@
 					<button class="btn btn-warning" onclick='disassocia(1);'>Disassocia</button>
 				</div>
 			</div>
+			
 			<div class="contProviderL2">
 				<fieldset>
-					<legend><a href="http://www.podnapisi.net">Podnapisi</a></legend>
+					<legend><a href="http://subspedia.weebly.com">Subspedia</a></legend>
 				</fieldset>
-				<select class="SelectSerieProvider chosen-select" id="selectPodnapisi">
+				<select class="SelectSerieProvider chosen-select" id="selectSubspedia">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary" onclick='associa(3);'>Associa</button>
+					<button class="btn btn-warning" onclick='disassocia(3);'>Disassocia</button>
+				</div>
+			</div>
+			
+			<div class="contProviderL3 disabled">
+				<fieldset>
+					<legend><a href="http://www.opensubtitles.org">Opensubtitles</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectOpensubtitles">
 					<option class="noValue"></option>
 				</select>
 				<div class="divBottoniProvider">
@@ -82,8 +116,9 @@
 					<button class="btn btn-warning">Disassocia</button>
 				</div>
 			</div>
+			
 		</div>
-		<div id="containerCenter">
+		<div id="containerRight">
 			<div class="contProviderL1">
 				<fieldset>
 					<legend><a href="http://www.subsfactory.it">Subsfactory</a></legend>
@@ -96,33 +131,8 @@
 					<button class="btn btn-warning" onclick='disassocia(2);'>Disassocia</button>
 				</div>
 			</div>
-			<div class="contProviderL2">
-				<fieldset>
-					<legend><a href="http://www.opensubtitles.org">Opensubtitles</a></legend>
-				</fieldset>
-				<select class="SelectSerieProvider chosen-select" id="selectOpensubtitles">
-					<option class="noValue"></option>
-				</select>
-				<div class="divBottoniProvider">
-					<button class="btn btn-primary">Associa</button>
-					<button class="btn btn-warning">Disassocia</button>
-				</div>
-			</div>
-		</div>
-		<div id="containerRight">
-			<div class="contProviderL1">
-				<fieldset>
-					<legend><a href="http://subspedia.weebly.com">Subspedia</a></legend>
-				</fieldset>
-				<select class="SelectSerieProvider chosen-select" id="selectSubspedia">
-					<option class="noValue"></option>
-				</select>
-				<div class="divBottoniProvider">
-					<button class="btn btn-primary" onclick='associa(3);'>Associa</button>
-					<button class="btn btn-warning" onclick='disassocia(3);'>Disassocia</button>
-				</div>
-			</div>
-			<div class="contProviderL2">
+			
+			<div class="contProviderL2 disabled">
 				<fieldset>
 					<legend><a href="http://www.addic7ed.com">Addic7ed</a></legend>
 				</fieldset>
@@ -134,6 +144,20 @@
 					<button class="btn btn-warning">Disassocia</button>
 				</div>
 			</div>
+			 
+			<div class="contProviderL3 disabled">
+				<fieldset>
+					<legend><a href="http://www.podnapisi.net">Podnapisi</a></legend>
+				</fieldset>
+				<select class="SelectSerieProvider chosen-select" id="selectPodnapisi">
+					<option class="noValue"></option>
+				</select>
+				<div class="divBottoniProvider">
+					<button class="btn btn-primary">Associa</button>
+					<button class="btn btn-warning">Disassocia</button>
+				</div>
+			</div>
+			 
 		</div>
 	</div>
 	

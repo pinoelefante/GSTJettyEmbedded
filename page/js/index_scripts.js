@@ -106,8 +106,46 @@ function addSerieInOrder(elem, nomeSerie) {
 		$("#accordion").append(elem);
 }
 function creaSerieElementoPagina(nome, id, provider) {
-	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
+	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;"+"<button class='btn btn-warning' title='Apri cartella' onclick='openFolder(" + id + ")'><span class='glyphicon glyphicon-folder-open'></span></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
 	return element;
+}
+function openFolder(id){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=openFolder&id="+id,
+		dataType : "xml",
+		success : function(msg) {
+			selectSerie.innerHTML = "<option selected></option>";
+			var response = parseBooleanXML(msg);
+			if (!response) {
+				operazioneInCorso("");
+				showModal("", "Si è verificato un errore durante il caricamento delle serie");
+				return;
+			}
+			operazioneInCorso("Carico le serie");
+			$(msg).find("serie").each(function() {
+				var nome = $(this).find("name").text();
+				var id = $(this).find("id").text();
+				var provider = $(this).find("provider").text();
+				var provider_name = $(this).find("provider_name").text();
+				var serie = document.createElement("option");
+				serie.value = id;
+				serie.provider = provider;
+				serie.providerNome=provider_name;
+				serie.nomeSerie = nome;
+				serie.innerHTML = nome+"<span style='float:right'> ("+provider_name+")</span>";//"<b>"+nome+"</b> - "+provider_name;
+				$("#selectSerie").append(serie);
+			});
+			$("#selectSerie").trigger("chosen:updated");
+			operazioneInCorso("");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("", "Si è verificato un errore durante il caricamento delle serie");
+			return;
+		}
+	});
 }
 function caricaElencoSerieCompleto(){
 	$.ajax({

@@ -18,7 +18,7 @@ div#containerLeft {
 	left: 0%;
 	right: 70%;
 	top: 40px;
-	height: 50%;
+	height: 80%;
 	width: 33%;
 	/*
 	border: 1px solid gray;
@@ -31,7 +31,7 @@ div#containerCenter {
 	left: 33%;
 	right: 33%;
 	top: 40px;
-	height: 50%;
+	height: 80%;
 	width: 34%;
 	/*
 	border: 1px solid gray;
@@ -56,9 +56,30 @@ div#contSelectPref{
 	top:20%;
 	bottom:20%;
 }
+
+div.listScaricati {
+	position:absolute;
+	top: 5%;
+	right:5%;
+	left:5%;
+	height: 45%;
+	min-height: 150px;
+	overflow: auto;
+	width: 90%;
+}
+div.listScaricare {
+	position:absolute;
+	top: 55%;
+	right:5%;
+	left:5%;
+	height: 45%;
+	min-height: 150px;
+	overflow: auto;
+	width: 90%;
+}
 div.contProviderL1 {
 	position: absolute;
-	top: 5%;
+	top: 3%;
 	right: 5%;
 	left: 5%;
 	height: 30%;
@@ -69,15 +90,19 @@ div.contProviderL1 {
 }
 div.contProviderL2 {
 	position: absolute;
-	top: 45%;
+	top: 36%;
 	right: 5%;
 	left: 5%;
 	height: 30%;
-	/*
-	border: 1px solid gray;
-	*/
 	min-height: 150px;
-	display: none;
+}
+div.contProviderL3 {
+	position: absolute;
+	top: 69%;
+	right: 5%;
+	left: 5%;
+	height: 30%;
+	min-height: 150px;
 }
 .divBottoniProvider {
 	position: absolute;
@@ -91,7 +116,7 @@ div#containerRight {
 	position: absolute;
 	left: 67%;
 	top: 40px;
-	height: 50%;
+	height: 80%;
 	width: 33%;
 	/*
 	border: 1px solid gray;
@@ -104,4 +129,22 @@ div#containerRight {
 }
 .chosen-container {
 	width: 95% !important;
+}
+.disabled {
+	display: none;
+}
+
+.SubEp, #listaScaricati, #listaScaricare {
+	width:100%;
+}
+.SubEp {
+	border-bottom: 1px solid black;
+}
+.tableProv, .tableNome {
+	padding: 5px;
+	width: 90%;
+}
+
+.tablePlay {
+	width: 10%;
 }

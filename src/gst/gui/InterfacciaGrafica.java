@@ -17,6 +17,7 @@ import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -164,5 +165,21 @@ public class InterfacciaGrafica implements Notificable {
 		int x=risoluzione.width/2-finestra.getSize().width/2;
 		int y=risoluzione.height/2-finestra.getSize().width/2;
 		finestra.setLocation(x, y);
+	}
+
+	public boolean openFolder(String string) {
+		File dir=new File(string);
+		if(dir.isDirectory()){
+			Desktop d=Desktop.getDesktop();
+			try {
+				d.open(dir);
+				return true;
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
 	}
 }

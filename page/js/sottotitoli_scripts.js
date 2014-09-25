@@ -2,6 +2,8 @@ $(document).ready(function() {
 	loadSeriePreferite();
 	loadProviders();
 	chosenConfig();
+	loadsubScaricati();
+	loadsubScaricare();
 });
 function chosenConfig(){
 	var config = {
@@ -243,4 +245,81 @@ function disassocia(idProvider){
 			showModal("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
+}
+function loadsubScaricati(){
+	//$("#listScaricati").innerHTML="";
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=getLogSub",
+		dataType : "xml",
+		success : function(msg) {
+			$("#listaScaricati").empty();
+			$(msg).find("subs").find("sub").each(function(){
+				var nome = $(this).find("nomeSerie").text();
+				var id=$(this).find("id_episodio").text();
+				var stag=$(this).find("stagione").text();
+				var ep=$(this).find("episodio").text();
+				var prov=$(this).find("provider").text();
+				var elem = "<tr><td><table class='SubEp'><tr><td class='tableNome'>"+nome+" "+stag+"x"+(ep<10?"0"+ep:ep)+"</td><td rowspan='2' class='tablePlay'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td></tr><tr><td class='tableProv'><b>"+prov+"</b></td></tr></table></td></tr>";
+				$(elem).appendTo("#listaScaricati");
+			});
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function loadsubScaricare(){
+	//$("#listScaricati").innerHTML="";
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=getSottotitoliDaScaricare",
+		dataType : "xml",
+		success : function(msg) {
+			$("#listaScaricare").empty();
+			$(msg).find("serie").each(function(){
+				var nome = $(this).find("nome").text();
+				$(this).find("episodi").find("episodio").each(function(){
+					var id=$(this).find("id_episodio").text();
+					var stag=$(this).find("season").text();
+					var ep=$(this).find("episode").text();
+					var elem = "<tr id='subToDown"+id+"'><td><table class='SubEp'><tr><td class='tableNome'>"+nome +" "+stag+"x"+(ep<10?"0"+ep:ep)+"</td><td class='tablePlay'><button class='btn btn-primary' onclick='scaricaSub("+id+")'><span class='glyphicon glyphicon-search' /></button></td></tr></table></td></tr>";
+					$(elem).appendTo("#listaScaricare");
+				});				
+			});
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function scaricaSub(id){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=scaricaSubByID&id="+id,
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			if(r){
+				$("#subToDown"+id).remove();
+				loadsubScaricati();
+			}
+			else {
+				showModal("Ricerca sottotitolo", "Sottotitolo non trovato");
+			}
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function parseBooleanXML(xml) {
+	var valore = $(xml).find("booleanResponse").text();
+	if (valore == 'true')
+		return true;
+	else
+		return false;
 }

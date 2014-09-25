@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
+import util.Object3Value;
+
 public class SottotitoliServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	
@@ -64,6 +66,11 @@ public class SottotitoliServlet extends HttpServlet{
 				boolean r=GestoreSottotitoli.getInstance().disassociaSerie(idSerie, idProvider);
 				System.out.println("idSerie="+idSerie+" idProvider="+idProvider);
 				xml=ResponseSender.createResponseBoolean(r);
+				break;
+			}
+			case "getLogSub": {
+				ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list = GestoreSottotitoli.getInstance().getLast50LogSub();
+				xml = ResponseSender.createResponseLogSub(list);
 				break;
 			}
 		}
