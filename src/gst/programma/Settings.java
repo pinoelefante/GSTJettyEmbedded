@@ -137,7 +137,7 @@ public class Settings {
 				client.setPassword(getUTorrentPassword());
 				client.setPort(getUTorrentPort());
 				client.readOptionFile();
-				client.injectOptions();
+				//client.injectOptions();
 				bitClient=client;
 				return client;
 			}

@@ -197,6 +197,8 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	public ProviderSottotitoli getProvider(int provider){
 		switch(provider){
+			case LOCALE:
+				return localsubs;
 			case ITASA:
 				return itasa;
 			case SUBSFACTORY:

@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.dd.plist.NSNumber;
 import com.dd.plist.NSObject;
@@ -77,11 +76,11 @@ public class UTorrent implements BitTorrentClient{
 	@Override
 	public synchronized boolean downloadTorrent(Torrent t, String path) {
 		System.out.println("download torrent "+t.getUrl());
-		/*
-		if(Os.isWindows()){
-			return downloadCLI(t, path);
+		
+		if(Os.isWindows() && downloadCLI(t, path)){
+			return true;
 		}
-		else */if(haveWebAPI()){
+		else if(haveWebAPI()){
 			boolean d = downloadWebUI(t, path);
 			if(d==false && Os.isWindows()){
 				return downloadCLI(t, path);
