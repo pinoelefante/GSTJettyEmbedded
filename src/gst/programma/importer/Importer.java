@@ -85,6 +85,7 @@ public class Importer implements Notifier{
 		}
 	}
 	public void importStage2(){
+		inviaNotifica("Verifico i file");
 		ArrayList<SerieTV> prefs = GestioneSerieTV.getInstance().getElencoSeriePreferite();
 		for(SerieTV s : prefs){
 			ArrayList<Episodio> eps = ProviderSerieTV.getEpisodiSerie(s.getIDDb());

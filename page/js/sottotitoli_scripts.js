@@ -285,7 +285,7 @@ function loadsubScaricare(){
 					var id=$(this).find("id_episodio").text();
 					var stag=$(this).find("season").text();
 					var ep=$(this).find("episode").text();
-					var elem = "<tr id='subToDown"+id+"'><td><table class='SubEp'><tr><td class='tableNome'>"+nome +" "+stag+"x"+(ep<10?"0"+ep:ep)+"</td><td class='tablePlay'><button class='btn btn-primary' onclick='scaricaSub("+id+")'><span class='glyphicon glyphicon-search' /></button></td></tr></table></td></tr>";
+					var elem = "<tr id='subToDown"+id+"'><td><table class='SubEp'><tr><td class='tableNome2'>"+nome +" "+stag+"x"+(ep<10?"0"+ep:ep)+"</td><td class='tableSearch'><button class='btn btn-primary' onclick='scaricaSub("+id+")'><span class='glyphicon glyphicon-search' /></button><button class='btn btn-danger' onclick='removeSub("+id+")'><span class='glyphicon glyphicon-remove' /></button></td></tr></table></td></tr>";
 					$(elem).appendTo("#listaScaricare");
 				});				
 			});
@@ -309,6 +309,26 @@ function scaricaSub(id){
 			}
 			else {
 				showModal("Ricerca sottotitolo", "Sottotitolo non trovato");
+			}
+		},
+		error : function(msg) {
+			showModal("","Si è verificato un errore durante l'aggiornamento");
+		}
+	});
+}
+function removeSub(id){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSottotitoliServlet",
+		data : "action=removeSubByID&id="+id,
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			if(r){
+				$("#subToDown"+id).remove();
+			}
+			else {
+				showModal("Ricerca sottotitolo", "Sottotitolo non rimosso dalla ricerca");
 			}
 		},
 		error : function(msg) {

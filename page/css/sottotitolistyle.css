@@ -144,7 +144,15 @@ div#containerRight {
 	padding: 5px;
 	width: 90%;
 }
+.tableNome2 {
+	padding: 5px;
+	width: 80%;
+}
 
 .tablePlay {
 	width: 10%;
+}
+.tableSearch {
+	width: 20%;
+	min-width: 90px;
 }

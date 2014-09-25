@@ -51,6 +51,12 @@ public class SottotitoliServlet extends HttpServlet{
 				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
+			case "removeSubByID": {
+				int idEpisodio = Integer.parseInt(checkParameter("id", resp, req, false));
+				GestoreSottotitoli.setSottotitoloDownload(idEpisodio, false);
+				xml = ResponseSender.createResponseBoolean(true);
+				break;
+			}
 			case "associa": {
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
 				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
