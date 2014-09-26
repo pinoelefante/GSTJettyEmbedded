@@ -244,6 +244,7 @@ public class Settings {
 		FileOutputStream file = null;
 		try {
 			file = new FileOutputStream(getUserDir()+File.separator+"settings.properties");
+			aggiungiOpzione("current_version", getVersioneSoftware()+"");
 			opzioni.store(file, "");
 		}
 		catch (IOException e) {
@@ -371,6 +372,9 @@ public class Settings {
 	public String getClientID(){
 		return getOpzione("clientID");
 	}
+	public String getCurrentFileVersion(){
+		return getOpzione("current_version");
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -379,6 +383,7 @@ public class Settings {
 				case "ask_on_close":
 				case "autostart":
 				case "clientID":
+				case "current_version":
 				case "download_auto":
 				case "download_path":
 				case "download_sottotitoli":
