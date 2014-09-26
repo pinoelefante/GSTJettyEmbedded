@@ -334,3 +334,6 @@ td.bottoneVedere {
 .tableAct tr{
 	width:100%;
 }
+.donationIMG {
+	cursor: pointer;
+}

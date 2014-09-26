@@ -365,6 +365,12 @@ public class Settings {
 		String op=getOpzione("tvdb_lang");
 		return op.isEmpty()?"en":op;
 	}
+	public void setClientID(String c){
+		aggiungiOpzione("clientID", c);
+	}
+	public String getClientID(){
+		return getOpzione("clientID");
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -372,6 +378,7 @@ public class Settings {
 			switch(item){
 				case "ask_on_close":
 				case "autostart":
+				case "clientID":
 				case "download_auto":
 				case "download_path":
 				case "download_sottotitoli":

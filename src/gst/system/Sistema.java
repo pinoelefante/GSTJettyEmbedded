@@ -19,10 +19,14 @@ public class Sistema {
 	}
 	private Sistema(){
 		setts = Settings.getInstance();
+		if(setts.getClientID().isEmpty() || !setts.getClientID().startsWith("gst")){
+			assignClientID();
+			setts.salvaSettings();
+		}
 	}
 	
 	public boolean isUpdateAvailable(){
-		Download downloader=new Download("http://gestioneserietv.altervista.org/checkVersion.php?version="+setts.getVersioneSoftware()+"&id_client=null", setts.getUserDir()+"version");
+		Download downloader=new Download("http://gestioneserietv.altervista.org/checkVersion.php?version="+setts.getVersioneSoftware()+"&id_client="+setts.getClientID(), setts.getUserDir()+"version");
 		downloader.avviaDownload();
 		try {
 			downloader.getDownloadThread().join();
@@ -41,5 +45,26 @@ public class Sistema {
 		catch (InterruptedException e) {}
 		
 		return false;
+	}
+	public void assignClientID(){
+		try {
+			Download.downloadFromUrl("http://gestioneserietv.altervista.org/assignClientID.php", setts.getUserDir()+"clientID");
+			FileReader f=new FileReader(setts.getUserDir()+"clientID");
+			Scanner file=new Scanner(f);
+			String id ="";
+			if(file.hasNext()){
+				id=file.next();
+				setts.setClientID(id);
+			}
+			file.close();
+			f.close();
+			OperazioniFile.deleteFile(setts.getUserDir()+"clientID");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void aggiorna() {
+		//TODO
 	}
 }

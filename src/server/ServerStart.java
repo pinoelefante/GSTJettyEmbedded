@@ -9,6 +9,7 @@ import gst.programma.Settings;
 import gst.programma.importer.Importer;
 import gst.serieTV.GestioneSerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
+import gst.system.Sistema;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -21,6 +22,7 @@ public class ServerStart {
 	private static InterfacciaGrafica ui;
 	private static GestioneSerieTV gst;
 	private static GestoreSottotitoli subManager;
+	private static Sistema sistema;
 	
 	public static void main(String[] args) {
 		
@@ -32,6 +34,14 @@ public class ServerStart {
     		}
 		}
 		catch(Exception e){}
+		
+		final Settings settings = Settings.getInstance();
+		
+		sistema = Sistema.getInstance();
+		if(sistema.isUpdateAvailable()){
+			sistema.aggiorna();
+			System.exit(0);
+		}
 		
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
 		contexts.setHandlers(new Handler[] { new AppContextBuilder().buildWebAppContext() });
@@ -45,8 +55,6 @@ public class ServerStart {
 			e1.printStackTrace();
 			return;
 		}
-		
-		final Settings settings = Settings.getInstance();
 		
 		ui = InterfacciaGrafica.getInstance();
 		
