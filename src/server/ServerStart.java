@@ -5,7 +5,6 @@ import java.io.File;
 import gst.database.Database;
 import gst.gui.InterfacciaGrafica;
 import gst.programma.OperazioniFile;
-import gst.programma.Prerequisiti;
 import gst.programma.Settings;
 import gst.programma.importer.Importer;
 import gst.serieTV.GestioneSerieTV;
@@ -27,7 +26,6 @@ public class ServerStart {
 	
 	public static void main(String[] args) {
 		final Settings settings = Settings.getInstance();
-		Prerequisiti.getInstance().verificaDipendenze();
 		try {
     		if(HttpOperations.GET_withBoolean("http://localhost:8585/OperazioniSistemaServlet?action=isOpen")){
     			System.out.println("Un'altra istanza è in esecuzione");
