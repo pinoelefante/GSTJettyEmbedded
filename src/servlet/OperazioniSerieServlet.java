@@ -95,6 +95,12 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseSerie(serie);
 				break;
 			}
+			case "ignora": {
+				int id = Integer.parseInt(checkParameter("id", resp, req, false));
+				boolean r = manager.ignoraEpisodio(id);
+				xml = ResponseSender.createResponseBoolean(r);
+				break;
+			}
 			case "openFolder": {
 				int id = Integer.parseInt(checkParameter("id", resp, req, false));
 				SerieTV serie = ProviderSerieTV.getSerieByID(id);

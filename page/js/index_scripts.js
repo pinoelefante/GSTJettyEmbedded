@@ -235,8 +235,44 @@ function download() {
 }
 
 function ignora() {
-	//TODO
-	 location.reload(); 
+	operazioneInCorso("Ignoro episodi");
+	$("#accordion").find("input[type=checkbox]").each(function(){
+		if($(this).is(":checked")){
+			var idEp = $(this).val();
+			ignoraS(idEp);
+		}
+	}); 
+	operazioneInCorso("");
+}
+function ignoraS(id){
+	if($("#chkEp_"+id).attr("stato_visualizzazione")!=0){
+		return;
+	}
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=ignora&id=" + id,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				$("#btnDown_"+id).replaceWith(generaBottone(4, id));
+				if($("#chkEp_"+id).is(":checked")){
+					$("#chkEp_"+id).removeAttr('checked');
+				}
+				$("#chkEp_"+id).attr("stato_visualizzazione","4");
+				
+				$("#divEP_"+id).removeClass();
+				$("#divEP_"+id).addClass("episodio episodioIgnorato");
+			}
+			else
+				showModal("","Episodio non ignorato");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore durante il download");
+		}
+	});
 }
 function aggiornaSerie(bottone) {
 	$(bottone).prop("disabled", "true");

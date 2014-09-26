@@ -24,24 +24,19 @@ public class EZTV extends ProviderSerieTV {
 
 	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
-		cleanUpTemp();
 		baseUrls = new ArrayList<String>();
-		
 		baseUrls.add("https://eztv.it");
+		
 		/*
 		baseUrls.add("http://gestioneserietv.altervista.org/proxy.php?url=https://eztv.it");
 		baseUrls.add("http://tvshowsmanager.hostei.com/?url=https://eztv.it");
-		*/
-		caricaListaProxy();
-		/*
+		
 		baseUrls.add("http://sitenable.com/surf.php?u=https://eztv.it");
 		baseUrls.add("http://freeproxy.io/surf.php?u=https://eztv.it");
 		baseUrls.add("http://siteget.net/surf.php?u=https://eztv.it");
 		baseUrls.add("http://filesdownloader.com/surf.php?u=https://eztv.it");
 		baseUrls.add("http://freeanimesonline.com/surf.php?u=https://eztv.it");
 		*/
-		baseUrl = getOnlineUrl();
-		System.out.println("Base URL in uso: " + baseUrl);
 		settings=Settings.getInstance();
 	}
 
@@ -249,5 +244,13 @@ public class EZTV extends ProviderSerieTV {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void init() {
+		cleanUpTemp();
+		caricaListaProxy();
+		baseUrl = getOnlineUrl();
+		System.out.println("Base URL in uso: " + baseUrl);
 	}
 }

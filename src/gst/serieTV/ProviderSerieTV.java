@@ -290,4 +290,5 @@ public abstract class ProviderSerieTV {
 	public abstract void aggiornaElencoSerie();
 	public abstract int getProviderID();
 	public abstract void caricaEpisodiOnline(SerieTV serie);
+	public abstract void init();
 }

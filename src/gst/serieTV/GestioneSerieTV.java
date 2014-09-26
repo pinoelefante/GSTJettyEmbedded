@@ -32,6 +32,10 @@ public class GestioneSerieTV implements Notifier {
 		return instance;
 	}
 	public void init(Notificable ui){
+		for(ProviderSerieTV p : getProviders()){
+			p.init();
+		}
+		
 		subscribe(ui);
 		
 		//Aggiorna l'elenco delle serie
@@ -279,5 +283,12 @@ public class GestioneSerieTV implements Notifier {
 			
 		}
 		return results;
+	}
+	public boolean ignoraEpisodio(int idEp){
+		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
+		if(ep.getStatoVisualizzazione()==Episodio.SCARICARE){
+			return ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.IGNORATO);
+		}
+		return false;
 	}
 }
