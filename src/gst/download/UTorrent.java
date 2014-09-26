@@ -121,7 +121,8 @@ public class UTorrent implements BitTorrentClient{
 		}
 		return false;
 	}
-	public boolean downloadWebUI(Torrent t, String path){
+	private static long nextTorrentTime = 0L;
+	public synchronized boolean downloadWebUI(Torrent t, String path){
 		if (!isRunning()){
 			avviaClient();
 			int retry = 0;
@@ -142,10 +143,19 @@ public class UTorrent implements BitTorrentClient{
 			auth=true;
 			auth(null, null);
 		}
+		while(System.currentTimeMillis()<=nextTorrentTime){
+			try {
+				Thread.sleep(100L);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		if(setDirectoryDownload(path)){
     		String cmd="action=add-url&s="+t.getUrl();
     		System.out.println("http://localhost:"+port);
     		String r = api.get(cmd);
+    		nextTorrentTime=System.currentTimeMillis()+500;
     		return r!=null;
 		}
 		return false;
