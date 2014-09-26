@@ -132,40 +132,10 @@ public class EZTV extends ProviderSerieTV {
 		}
 		OperazioniFile.deleteFile(settings.getUserDir() + "file.html");
 	}
-	private boolean isTempPlaceholder(String nome){
-		switch (nome.toLowerCase()) {
-			case "t1":
-			case "t2":
-			case "t3":
-			case "t4":
-			case "t5":
-			case "t6":
-			case "t7":
-			case "t8":
-			case "t9":
-			case "temp1":
-			case "temp2":
-			case "temp3":
-			case "temp4":
-			case "temp5":
-			case "temp6":
-			case "temp7":
-			case "temp8":
-			case "temp9":
-			case "temporary_placeholder":
-			case "temporary_placeholder_2":
-			case "temp 01":
-			case "temp 02":
-			case "temp 03":
-			case "temp 04":
-			case "temp_01":
-			case "temp_02":
-			case "temp_03":
-			case "temp_04":
-			case "temp01":
-			case "temp02":
-			case "temp03":
-			case "temp04":
+	private String[] temp_patterns = {"^temp[_]{0,1}[\\d]*$", "^t[\\d]*$", "/^temporary_placeholder_[0-9]$/", "test", "z_blank"};
+	public boolean isTempPlaceholder(String nome){
+		for(int i=0;i<temp_patterns.length;i++){
+			if(nome.replaceAll(temp_patterns[i], "").isEmpty())
 				return true;
 		}
 		return false;
@@ -248,36 +218,13 @@ public class EZTV extends ProviderSerieTV {
 	}
 
 	private void cleanUpTemp() {
-		String[] query = { "DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T1\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T2\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T3\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T4\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T5\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T6\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T7\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T8\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"T9\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp1\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp2\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp3\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp4\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp5\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp6\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp7\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp8\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp9\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temporary_Placeholder_2\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp01\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp02\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp03\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp04\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 01\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 02\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 03\"", 
-				"DELETE FROM " + Database.TABLE_SERIETV + " WHERE nome=\"Temp 04\"" };
-		for (int j = 0; j < query.length; j++)
-			Database.updateQuery(query[j]);
+		ArrayList<SerieTV> list = GestioneSerieTV.getInstance().getSerieFromProvider(getProviderID());
+		for(int i=0;i<list.size();i++){
+			if(isTempPlaceholder(list.get(i).getNomeSerie())){
+				String query = "DELETE FROM "+Database.TABLE_SERIETV+" WHERE id="+list.get(i).getIDDb();
+				Database.updateQuery(query);
+			}
+		}
 	}
 	public void caricaListaProxy(){
 		String urlListProxy = "http://pinoelefante.altervista.org/software/GSTJetty/proxy.txt";
