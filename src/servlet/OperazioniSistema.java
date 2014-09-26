@@ -1,6 +1,7 @@
 package servlet;
 
 import gst.gui.InterfacciaGrafica;
+import gst.system.Sistema;
 
 import java.io.IOException;
 
@@ -26,24 +27,39 @@ public class OperazioniSistema extends HttpServlet {
 		boolean close = false;
 		Document xml = null;
 		switch(action){
-			case "isOpen":
+			case "isOpen": {
 				xml = ResponseSender.createResponseBoolean(true);
 				break;
-			case "show":
+			}
+			case "show": {
 				InterfacciaGrafica.getInstance().apriInterfaccia();
 				xml = ResponseSender.createResponseBoolean(true);
 				break;
-			case "showOpzioni":
+			}
+			case "showOpzioni": {
 				InterfacciaGrafica.getInstance().mostraFinestraOpzioni();
 				xml = ResponseSender.createResponseBoolean(true);
 				break;
-			case "isAskOnClose":
+			}
+			case "isAskOnClose": {
 				xml = ResponseSender.createResponseBoolean(true);
 				break;
-			case "closeGST":
+			}
+			case "closeGST": {
 				xml = ResponseSender.createResponseBoolean(true);
 				close = true;
 				break;
+			}
+			case "verificaAggiornamenti": {
+				boolean b = Sistema.getInstance().isUpdateAvailable();
+				xml = ResponseSender.createResponseBoolean(b);
+				break;
+			}
+			case "scaricaAggiornamento": {
+				xml = ResponseSender.createResponseBoolean(true);
+				close = true;
+				break;
+			}
 		}
 		ResponseSender.sendResponse(resp, xml);
 		if(close){

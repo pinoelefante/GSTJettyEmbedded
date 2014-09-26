@@ -23,7 +23,7 @@ private Server server;
 	
 	public void stop() throws Exception {
 		server.stop();
-		server.join();
+		server.destroy();
 	}
 	
 	public boolean isStarted() {

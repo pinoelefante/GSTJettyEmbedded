@@ -95,6 +95,7 @@ public class ServerStart {
 		},"Stop Jetty Hook")); 
 	}
 	public static void close(){
+		System.out.println("Closing GSTJ");
 		if(jettyServer.isStarted()) {
 			try {
 				jettyServer.stop();
@@ -105,6 +106,7 @@ public class ServerStart {
 		}
 		Database.Disconnect();
 		gst.close();
+		subManager.close();
 		ui.removeTray();
 		Runtime.getRuntime().halt(0);
 	}

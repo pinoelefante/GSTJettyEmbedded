@@ -276,4 +276,8 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return list;
 	}
+	public void close() {
+		timer.cancel();
+		timer.purge();
+	}
 }

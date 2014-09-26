@@ -197,7 +197,7 @@ public class GestioneSerieTV implements Notifier {
 		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
 		if(serie==null)
 			return null;
-		Torrent t=ProviderSerieTV.searchTorrent(serie.getPreferenze(), ep.getLinks());
+		Torrent t=ProviderSerieTV.searchTorrent(serie.getPreferenze(), ep.getLinks()).get(0);
 		return t;
 	}
 	

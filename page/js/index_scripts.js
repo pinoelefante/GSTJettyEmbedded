@@ -717,7 +717,7 @@ function showInfoTVDB(idTVDB){
 				var aperto=false;
 				for(i=0;i<images.length;i++){
 					if(aperto==false){
-						listPage+="<li class=''><a href='#GalPag"+pagina+"' role='tab' data-toggle='tab'>"+pagina+"</a></li>";
+						listPage+="<li class='"+(pagina==1?"active":"")+"'><a href='#GalPag"+pagina+"' role='tab' data-toggle='tab'>"+pagina+"</a></li>";
 						curDiv+="<div class='tab-pane fade' id='GalPag"+pagina+"'>";
 						aperto=true;
 					}
@@ -750,7 +750,7 @@ function showInfoTVDB(idTVDB){
 				body+="<p><center><img src='"+banner+"'></center></p>";
 				body+= "<div class='bs-example bs-example-tabs'>"+
 			    "<ul id='myTab' class='nav nav-tabs' role='tablist'>"+
-			      "<li class=''><a href='#Info' role='tab' data-toggle='tab'>Informazioni</a></li>"+
+			      "<li class='active'><a href='#Info' role='tab' data-toggle='tab'>Informazioni</a></li>"+
 			      "<li class=''><a href='#Attori' role='tab' data-toggle='tab'>Attori</a></li>"+
 			      "<li class=''><a href='#Gallery' role='tab' data-toggle='tab'>Gallery</a></li>"+
 			    "</ul>"+

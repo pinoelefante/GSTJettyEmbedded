@@ -20,8 +20,54 @@ function goToOpzioni(){
 		}
 	});
 }
+function aggiorna() {
+	bootbox.confirm("Vuoi scaricare l'ultimo aggiornamento?",function(res){
+		if(res){
+    		$.ajax({
+    			type : "POST",
+    			url : "./OperazioniSistemaServlet",
+    			data : "action=scaricaAggiornamento",
+    			dataType : "xml",
+    		   	success : function(msg) {
+    		   		var r = parseBooleanXML(msg);
+    		   		if (r) {
+    		   			$("body").empty();
+    					document.getElementsByTagName("body")[0].innerHTML="<h1 class='closeMessage'>Aggiornamento in corso!</h1>";
+    					showModal("Aggiornamento","Attendere che il software completi l'aggiornamento");
+    		   		}
+    		   		else {
+    		   			showModal("Cancellazione serie", "Potrebbero essere presenti ancora alcuni file");
+    		   		}
+    		   		operazioneInCorso("");
+    		   	},
+    		   	error : function(msg) {
+    		   		operazioneInCorso("");
+    		   		showModal("","Si è verificato un errore durante la richiesta");
+    		   	}
+    		});
+		}
+	});
+}
 function cercaUpdate(){
-	
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSistemaServlet",
+		data : "action=verificaAggiornamenti",
+		dataType : "xml",
+		success : function(msg) {
+			var b = parseBooleanXML(msg);
+			if(b){
+				aggiorna();
+			}
+			else {
+				showModal("Aggiornamenti","Stai usando l'ultima versione");
+			}
+		},
+		error : function(msg){
+			showModal("","Si è verificato un errore");
+			operazioneInCorso("");
+		}
+	});
 }
 function chiudiGST(){
 	$.ajax({
@@ -67,4 +113,11 @@ function closeGST(){
 			operazioneInCorso("");
 		}
 	});
+}
+function parseBooleanXML(xml) {
+	var valore = $(xml).find("booleanResponse").text();
+	if (valore == 'true')
+		return true;
+	else
+		return false;
 }

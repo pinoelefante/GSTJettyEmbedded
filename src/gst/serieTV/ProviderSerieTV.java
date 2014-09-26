@@ -250,34 +250,57 @@ public abstract class ProviderSerieTV {
 		Episodio ep = getEpisodio(idEp);
 		if(ep!=null){
 			SerieTV serie = getSerieByID(ep.getSerie());
-			Torrent torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
-			if(torrent == null){
+			ArrayList<Torrent> torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
+			if(torrent == null || torrent.size()==0){
 				return false;
 			}
-			if(Download.downloadTorrent(serie, torrent)){
-				if(ep.getStatoVisualizzazione()!=Episodio.SCARICATO && ep.getStatoVisualizzazione()!=Episodio.VISTO)
-					changeStatusEpisodio(idEp, Episodio.SCARICATO);
-				return true;
+			boolean download = false;
+			for(int i=0;i<torrent.size();i++){
+    			if(Download.downloadTorrent(serie, torrent.get(i))){
+    				download = true;
+    				if(ep.getStatoVisualizzazione()!=Episodio.SCARICATO && ep.getStatoVisualizzazione()!=Episodio.VISTO)
+    					changeStatusEpisodio(idEp, Episodio.SCARICATO);
+    			}
 			}
+			return download;
 		}
 		return false;
 	}
-	public static Torrent searchTorrent(Preferenze p, ArrayList<Torrent> list){
-		if(p.isPreferisciHD()){
+	public static ArrayList<Torrent> searchTorrent(Preferenze p, ArrayList<Torrent> list){
+		ArrayList<Torrent> download = new ArrayList<Torrent>(2);
+		if(p.isScaricaTutto()){
+			Torrent hd = null, sd = null;
+			for(int i=0;i<list.size() && hd==null && sd==null;i++){
+				if(list.get(i).getStats().is720p() && hd==null){
+					hd = list.get(i);
+					download.add(hd);
+				}
+				else if(sd==null){
+					sd = list.get(i);
+					download.add(sd);
+				}
+			}
+		}
+		else if(p.isPreferisciHD()){
 			for(int i=0;i<list.size();i++){
-				if(list.get(i).getStats().is720p())
-					return list.get(i);
+				if(list.get(i).getStats().is720p()){
+					download.add(list.get(i));
+					return download;
+				}
 			}
 		}
 		else {
 			for(int i=0;i<list.size();i++){
 				if(!list.get(i).getStats().is720p()){
-					return list.get(i);
+					download.add(list.get(i));
+					return download;
 				}
 			}
 		}
-		if(list.size()>0)
-			return list.get(0);
+		if(list.size()>0){
+			download.add(list.get(0));
+			return download;
+		}
 		return null;
 	}
 	public static boolean associaSerieTVDB(int idSerie, int idTVDB){
