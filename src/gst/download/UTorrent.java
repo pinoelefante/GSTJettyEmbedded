@@ -96,8 +96,16 @@ public class UTorrent implements BitTorrentClient{
 	public String getPathInstallazione(){
 		return pathEseguibile;
 	}
-	
-	public boolean downloadCLI(Torrent t, String path){
+	private static long nextTorrentCLI = 0L;
+	public synchronized boolean downloadCLI(Torrent t, String path){
+		while(System.currentTimeMillis()<=nextTorrentCLI){
+			try {
+				Thread.sleep(100L);
+			}
+			catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		if(Os.isWindows()){
 			String[] cmd={
 					getPathInstallazione(),
@@ -109,6 +117,7 @@ public class UTorrent implements BitTorrentClient{
 			
 			try {
 				Process p = Runtime.getRuntime().exec(cmd);
+				nextTorrentCLI = System.currentTimeMillis()+250;
 				if(p==null){
 					return false;
 				}
