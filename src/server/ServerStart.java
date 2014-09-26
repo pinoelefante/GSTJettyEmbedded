@@ -35,14 +35,6 @@ public class ServerStart {
 		}
 		catch(Exception e){}
 		
-		final Settings settings = Settings.getInstance();
-		
-		sistema = Sistema.getInstance();
-		if(sistema.isUpdateAvailable()){
-			sistema.aggiorna();
-			System.exit(0);
-		}
-		
 		ContextHandlerCollection contexts = new ContextHandlerCollection();
 		contexts.setHandlers(new Handler[] { new AppContextBuilder().buildWebAppContext() });
 
@@ -54,6 +46,14 @@ public class ServerStart {
 		catch (Exception e1) {
 			e1.printStackTrace();
 			return;
+		}
+		
+		final Settings settings = Settings.getInstance();
+		
+		sistema = Sistema.getInstance();
+		if(sistema.isUpdateAvailable()){
+			sistema.aggiorna();
+			System.exit(0);
 		}
 		
 		ui = InterfacciaGrafica.getInstance();
