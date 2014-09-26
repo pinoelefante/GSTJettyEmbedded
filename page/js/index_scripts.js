@@ -366,12 +366,39 @@ function removeSerie(id) {
     		   		var r = parseBooleanXML(msg);
     		   		if (r) {
     		   			$("#serie" + id).remove();
+    		   			deleteFolder(id);
     		   		}
     		   		operazioneInCorso("");
     		   	},
     		   	error : function(msg) {
     		   		operazioneInCorso("");
     		   		showModal("","Si è verificato un errore durante l'aggiornamento");
+    		   	}
+    		});
+		}
+	});
+}
+function deleteFolder(id){
+	bootbox.confirm("Vuoi cancellare la cartella contenente gli episodi?",function(res){
+		if(res){
+    		$.ajax({
+    			type : "POST",
+    			url : "./OperazioniSerieServlet",
+    			data : "action=deleteFolder&idSerie=" + id,
+    			dataType : "xml",
+    		   	success : function(msg) {
+    		   		var r = parseBooleanXML(msg);
+    		   		if (r) {
+    		   			showModal("Cancellazione serie", "Serie cancellata con successo!");
+    		   		}
+    		   		else {
+    		   			showModal("Cancellazione serie", "Potrebbero essere presenti ancora alcuni file");
+    		   		}
+    		   		operazioneInCorso("");
+    		   	},
+    		   	error : function(msg) {
+    		   		operazioneInCorso("");
+    		   		showModal("","Si è verificato un errore durante la richiesta");
     		   	}
     		});
 		}
@@ -797,6 +824,7 @@ function play(id) {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
 				$("#divEP_"+id).addClass("episodioVisto");
 				$("#chkEp_"+id).attr("stato_visualizzazione","2");
+				$("#tdEpVedere"+id).remove();
 			}
 			else {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
@@ -864,7 +892,7 @@ function getEpisodiDaVedere() {
 					
 					var tr = document.createElement("tr");
 					$(tr).addClass("EpisodioDaVedere");
-					tr.innerHTML="<td class='titoloVedere'>"+nome+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td>";
+					tr.innerHTML="<td class='titoloVedere' id='tdEpVedere"+id+"'>"+nome+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td>";
 					$(tr).appendTo("#listEpisodiDaVedere");
 				});
 			}

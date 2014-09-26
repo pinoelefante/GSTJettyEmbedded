@@ -1,7 +1,5 @@
 package gst.programma;
 
-import gst.serieTV.Torrent;
-
 import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,9 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class OperazioniFile {
 	public static boolean DeleteDirectory(File dir) {

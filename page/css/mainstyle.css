@@ -16,6 +16,8 @@ div#container {
 	margin-right: 20px;
 	height: 90%;
 	min-width: 950px;
+	border: 1px solid gray;
+	border-radius: 10px;
 }
 
 div#containerLeft {
@@ -24,8 +26,10 @@ div#containerLeft {
 	right: 70%;
 	height: 100%;
 	width: 30%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
 	min-width: 280px;
 	min-height: 500px;
 }
@@ -74,8 +78,10 @@ div#containerCenter {
 	right: 30%;
 	height: 100%;
 	width: 40%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
 	min-width: 320px;
 	min-height: 500px;
 }
@@ -173,8 +179,10 @@ div#containerRight {
 	left: 70%;
 	height: 100%;
 	width: 30%;
+	/*
 	border: 1px solid gray;
 	border-radius: 10px;
+	*/
 	min-width: 280px;
 	min-height: 500px;
 }

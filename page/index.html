@@ -44,6 +44,15 @@
                 <li><a onclick="cercaUpdate()">Cerca aggiornamenti</a></li>
               </ul>
             </li>
+            <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Supporto <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+              	<li><a href="#">Segnala bug</a></li>
+              	<li><a href="#">Richiedi funzionalità</a></li>
+              	<li class="divider"></li>
+                <li><a href="mailto:gestioneserietv@gmail.com">Contatta lo sviluppatore</a></li>
+              </ul>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
           	<li><a href="#" onclick="chiudiGST()">Chiudi</a></li>
@@ -59,7 +68,9 @@
 				<fieldset>
 					<legend>Serie Nuove</legend>
 				</fieldset>
-				<div id='serieNuoveDivContainer'></div>
+				<div id='serieNuoveDivContainer'>
+					<span style='text-align:center'><img src="img/loading.gif"></span>
+				</div>
 			</div>
 			<div id="altervista">
 				<!-- 
@@ -126,7 +137,9 @@
 				<fieldset>
 					<legend><a href="javascript:void(0);" onclick="getEpisodiDaVedere()">Episodi da vedere</a></legend>
 				</fieldset>
-				<table id="listEpisodiDaVedere"></table>
+				<table id="listEpisodiDaVedere">
+					<tr><td style='text-align:center'><img src="img/loading.gif"></td></tr>
+				</table>
 			</div>
 		</div>
 	</div>

@@ -6,6 +6,7 @@ import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.player.FileFinder;
 import gst.player.VideoPlayer;
+import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.services.SearchListener;
 import gst.services.TaskRicercaEpisodi;
@@ -48,7 +49,7 @@ public class GestioneSerieTV implements Notifier {
 		
 		//Avvia la ricerca dei nuovi episodi
 		t_search = new TaskRicercaEpisodi();
-		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
+		//timer.scheduleAtFixedRate(t_search, 0, 28800000L);
 		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
 			
@@ -290,5 +291,10 @@ public class GestioneSerieTV implements Notifier {
 			return ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.IGNORATO);
 		}
 		return false;
+	}
+	public boolean deleteFolderSerie(int idSerie){
+		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
+		String path = settings.getDirectoryDownload()+serie.getFolderSerie();
+		return OperazioniFile.DeleteDirectory(new File(path));
 	}
 }
