@@ -4,7 +4,7 @@ function showModal(titolo, messaggio) {
 	$('#ModalMessaggio').modal('show');
 }
 function goToDonazione(){
-	location.href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pino%2eelefante%40hotmail%2eit&lc=IT&item_name=Gestione%20Serie%20TV&item_number=gst&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted";
+	window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=pino%2eelefante%40hotmail%2eit&lc=IT&item_name=Gestione%20Serie%20TV&item_number=gst&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted");
 }
 function goToOpzioni(){
 	$.ajax({
