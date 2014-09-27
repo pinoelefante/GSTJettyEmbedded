@@ -25,7 +25,10 @@ public class ServerStart {
 	private static Sistema sistema;
 	
 	public static void main(String[] args) {
-		final Settings settings = Settings.getInstance();
+		if(args.length==0 || args[0].compareTo("startFromLauncher")!=0){
+			return;
+		}
+		
 		try {
     		if(HttpOperations.GET_withBoolean("http://localhost:8585/OperazioniSistemaServlet?action=isOpen")){
     			System.out.println("Un'altra istanza è in esecuzione");
@@ -47,6 +50,8 @@ public class ServerStart {
 			e1.printStackTrace();
 			return;
 		}
+		
+		final Settings settings = Settings.getInstance();
 		
 		sistema = Sistema.getInstance();
 		if(sistema.isUpdateAvailable()){
