@@ -4,9 +4,14 @@ import gst.download.Download;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+
+import server.ServerStart;
+import util.MD5Hash;
+import util.os.Os;
 
 public class Sistema {
 	private static Sistema instance;
@@ -23,6 +28,7 @@ public class Sistema {
 			assignClientID();
 			setts.salvaSettings();
 		}
+		aggiornaLauncher();
 	}
 	
 	public boolean isUpdateAvailable(){
@@ -64,7 +70,74 @@ public class Sistema {
 			e.printStackTrace();
 		}
 	}
+	public void aggiornaLauncher(){
+		if(Os.isWindows()){
+			String pathLauncher = setts.getCurrentDir()+File.separator+"gstLauncher.exe";
+			String md5 = MD5Hash.hashFile(pathLauncher);
+			if(!OperazioniFile.fileExists(pathLauncher) || md5==null || !verificaHashLauncher(md5)){
+				try {
+					Download.downloadFromUrl("http://gestioneserietv.altervista.org/gstLauncher.exe", pathLauncher+".new");
+					OperazioniFile.copyfile(pathLauncher+".new", pathLauncher);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+					OperazioniFile.deleteFile(pathLauncher+".new");
+				}
+			}
+		}
+		else {
+			String pathLauncher = setts.getCurrentDir()+File.separator+"gstLauncher.jar";
+			String md5 = MD5Hash.hashFile(pathLauncher);
+			if(!OperazioniFile.fileExists(pathLauncher) || md5==null || !verificaHashLauncher(md5)){
+				try {
+					Download.downloadFromUrl("http://gestioneserietv.altervista.org/gstLauncher.jar", pathLauncher+".new");
+					OperazioniFile.copyfile(pathLauncher+".new", pathLauncher);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+					OperazioniFile.deleteFile(pathLauncher+".new");
+				}
+			}
+		}
+	}
+	private boolean verificaHashLauncher(String md5) {
+		try {
+			Download.downloadFromUrl("http://gestioneserietv.altervista.org/verificaHashLauncher.php", setts.getUserDir()+"hashLauncher");
+			FileReader f=new FileReader(setts.getUserDir()+"hashLauncher");
+			Scanner file=new Scanner(f);
+			boolean hashOK = true;
+			if(file.hasNextBoolean()){
+				hashOK=file.nextBoolean();
+			}
+			file.close();
+			f.close();
+			OperazioniFile.deleteFile(setts.getUserDir()+"hashLauncher");
+			return hashOK;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	public void aggiorna() {
-		//TODO
+		try {
+			avviaLauncher();
+			ServerStart.close();
+			System.exit(0);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void avviaLauncher() throws IOException {
+		aggiornaLauncher();
+		if(Os.isWindows()){
+			String[] cmd = {setts.getCurrentDir()+File.separator+"gstLauncher.exe", "5"};
+			Runtime.getRuntime().exec(cmd);
+		}
+		else {
+			String[] cmd = {"java","-jar", setts.getCurrentDir()+File.separator+"gstLauncher.jar", "5"};
+			Runtime.getRuntime().exec(cmd);
+		}
 	}
 }

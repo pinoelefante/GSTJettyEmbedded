@@ -99,7 +99,8 @@ public class Settings {
 	@SuppressWarnings("unused")
 	public void createAutoStart() {
 		if(Os.isWindows()){
-			Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV", getCurrentDir()+getEXEName());
+			//TODO rilevazione launcher
+			Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", "GestioneSerieTV", getCurrentDir()+"gstLauncher.exe"/*getEXEName()*/);
 		}
 		else if(Os.isLinux()){
 			String path_exec=System.getProperty("java.home")+File.separator+"bin"+File.separator+"java -jar "+getCurrentDir()+getEXEName();
