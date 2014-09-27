@@ -444,6 +444,7 @@ function getEpisodi(id) {
 		data : "action=getEpisodiBySerie&serie=" + id,
 		dataType : "xml",
 		success : function(msg) {
+			$("#accordion" + id).empty();
 			var daScaricare = 0;
 			var daVedere = 0;
 			var visualizzati = 0;
