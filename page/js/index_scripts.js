@@ -697,7 +697,7 @@ function showInfoTVDB(idTVDB){
 						"<p><b>Inizio: </b>"+primo_air+"</p>" +
 						"<p><b>Giorno: </b>"+airDay+"</p>" +
 						"<p><b>Ora: </b>"+airHour+"</p>" +
-						"<p><b>Durata: </b>"+durataEpisodi+"</p>" +
+						"<p><b>Durata: </b>"+durataEpisodi+" minuti</p>" +
 						"<p><b>Stato: </b>"+stato+"</p>" +
 						"<p><b>Descrizione: </b>"+descrizione+"</p>";
     			
