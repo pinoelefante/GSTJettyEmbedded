@@ -102,7 +102,7 @@ public class Sistema {
 	}
 	private boolean verificaHashLauncher(String md5) {
 		try {
-			Download.downloadFromUrl("http://gestioneserietv.altervista.org/verificaHashLauncher.php", setts.getUserDir()+"hashLauncher");
+			Download.downloadFromUrl("http://gestioneserietv.altervista.org/verificaHashLauncher.php?hash="+md5+"&id_client="+setts.getClientID(), setts.getUserDir()+"hashLauncher");
 			FileReader f=new FileReader(setts.getUserDir()+"hashLauncher");
 			Scanner file=new Scanner(f);
 			boolean hashOK = true;
