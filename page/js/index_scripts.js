@@ -893,7 +893,7 @@ function getEpisodiDaVedere() {
 					
 					var tr = document.createElement("tr");
 					$(tr).addClass("EpisodioDaVedere");
-					$tr.attr("id", "tdEpVedere"+id);
+					$(tr).attr("id", "tdEpVedere"+id);
 					tr.innerHTML="<td class='titoloVedere'>"+nome+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td>";
 					$(tr).appendTo("#listEpisodiDaVedere");
 				});
