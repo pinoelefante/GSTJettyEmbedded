@@ -94,6 +94,8 @@ public class Importer implements Notifier{
 				while(file.hasNextLine()){
 					String line = file.nextLine().trim();
 					String[] kv = line.split("=");
+					if(kv.length!=2)
+						continue;
 					switch(kv[0]){
 						case "download_path":
 							Settings.getInstance().setDirectoryDownload(kv[1]);
