@@ -1,11 +1,13 @@
 package gst.programma.importer;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import gst.database.Database;
 import gst.interfacce.Notificable;
@@ -80,6 +82,54 @@ public class Importer implements Notifier{
 				dbCon.close();
 			}
 			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		importaSettings();
+	}
+	public void importaSettings(){
+		if(OperazioniFile.fileExists(Settings.getInstance().getUserDir()+File.separator+"settings.dat")){
+			try {
+				Scanner file = new Scanner(new File(Settings.getInstance().getUserDir()+File.separator+"settings.dat"));
+				while(file.hasNextLine()){
+					String line = file.nextLine().trim();
+					String[] kv = line.split("=");
+					switch(kv[0]){
+						case "download_path":
+							Settings.getInstance().setDirectoryDownload(kv[1]);
+							break;
+						case "utorrent":
+							Settings.getInstance().setUTorrentPath(kv[1]);
+							break;
+						case "itasa_user":
+							Settings.getInstance().setItasaUsername(kv[1]);
+							break;
+						case "itasa_pass":
+							Settings.getInstance().setItasaPassword(kv[1]);
+							break;
+						case "start_hidden":
+							Settings.getInstance().setStartHidden(Boolean.parseBoolean(kv[1]));
+							break;
+						case "ask_on_close":
+							Settings.getInstance().setAskOnClose(Boolean.parseBoolean(kv[1]));
+							break;
+						case "autostart":
+							Settings.getInstance().setAutostart(Boolean.parseBoolean(kv[1]));
+							break;
+						case "download_auto":
+							Settings.getInstance().setDownloadAutomatico(Boolean.parseBoolean(kv[1]));
+							break;
+						case "download_sottotitoli":
+							Settings.getInstance().setRicercaSottotitoli(Boolean.parseBoolean(kv[1]), false);
+							break;
+						case "regola_download":
+							Settings.getInstance().setRegolaDownloadDefault(Integer.parseInt(kv[1]));
+							break;
+					}
+				}
+				file.close();
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
