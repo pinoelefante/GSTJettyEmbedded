@@ -1,7 +1,6 @@
 package gst.database;
 
 import gst.programma.ManagerException;
-import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.tda.db.KVItem;
 import gst.tda.db.KVResult;
@@ -50,12 +49,9 @@ public class Database {
 			conf.enforceForeignKeys(false);
 			conf.setSynchronous(SynchronousMode.OFF);
 			
-			if(!OperazioniFile.fileExists(NOMEDB)){
-				con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
-				creaDB();
-			}
-			else
-				con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
+			con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
+			creaDB();
+			
 			checkIntegrita();
 			return con;
 		} 
