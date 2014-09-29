@@ -935,18 +935,19 @@ function showModalAssociaTVDB(titolo, corpo) {
 }
 function showSelezione() {
 	var trovati = 0;
-	var html = "";
+	var html = "<table>";
 	$(".seriePreferita").each(function(){
 		var nomeSerie = $(this).find(".nomeSerie b").text();
 		$(this).find(".panel-body .panel-group").find(".panel").each(function(){
 			var stagione = $(this).find(".panel-title a").text();
 			$(this).find("input[type=checkbox]:checked").each(function(){
 				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
-				html+="<p><b>"+nomeSerie+"</b> - "+stagione+" "+episodio+"</p>";
+				html+="<tr><td class='selectionTD'><b>"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
 				trovati++;
 			});
 		});
 	});
+	html += "</table>";
 	if(trovati > 0)
 		showModalInfo("Selezione", html);
 	else

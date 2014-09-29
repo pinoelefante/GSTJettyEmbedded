@@ -336,3 +336,8 @@ td.bottoneVedere {
 .donationIMG {
 	cursor: pointer;
 }
+.selectionTD {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 10px;
+}
