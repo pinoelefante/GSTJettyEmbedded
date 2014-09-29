@@ -933,3 +933,20 @@ function showModalAssociaTVDB(titolo, corpo) {
 	$("#associaTVDBtitle").text(titolo);
 	$("#associaTVDBBody").html(corpo);
 }
+function showSelezione() {
+	var trovati = 0;
+	var html = "";
+	$(".seriePreferita").each(function(){
+		var nomeSerie = $(this).find(".nomeSerie b").text();
+		$(this).find(".panel-body .panel-group").find(".panel").each(function(){
+			var stagione = $(this).find(".panel-title a").text();
+			$(this).find("input[type=checkbox]:checked").each(function(){
+				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
+				html+="<p><b>"+nomeSerie+"</b> - "+stagione+" "+episodio+"</p>";
+				trovati++;
+			});
+		});
+	});
+		
+	showModalInfo("Selezione", html);
+}

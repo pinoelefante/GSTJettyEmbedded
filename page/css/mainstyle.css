@@ -165,13 +165,12 @@ div#buttonCenter {
 }
 
 div#divContainerButtons {
-	position: absolute;
 	top: 30px;
 	bottom: 10px;
-	left: 35%;
 	height: 55px;
-	margin-left: auto;
-	margin-right: auto;
+	min-width: 320px;
+	width: 345px;
+	margin: 0 auto;
 }
 
 div#containerRight {
