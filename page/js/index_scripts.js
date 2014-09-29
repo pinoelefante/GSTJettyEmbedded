@@ -308,14 +308,19 @@ function selezionaTutto(selected) {
 		else
 			$(this).removeAttr('checked');
 	});
+	showButtonResults();
 }
 function selezionaPerStato(stato){
+	var trovati = 0;
 	$("#accordion").find("input[type=checkbox]").each(function(){
-		if($(this).attr("stato_visualizzazione")==stato)
+		if($(this).attr("stato_visualizzazione")==stato){
 			$(this).prop('checked', true);
+			trovati++;
+		}
 		else
 			$(this).removeAttr('checked');
 	});
+	showButtonResults();
 }
 function operazioneInCorso(messaggio) {
 	if (messaggio.length > 0)
@@ -477,7 +482,7 @@ function getEpisodi(id) {
 				}
 				
 				var html="<div class='episodio"+getClassStatus(stato)+"' id='divEP_"+idE+"'>"+
-					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
+					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"' onchange='showButtonResults()'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
 					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
@@ -952,4 +957,14 @@ function showSelezione() {
 		showModalInfo("Selezione", html);
 	else
 		showModalInfo("Selezione", "Nessun episodio selezionato");
+}
+function showButtonResults(){
+	if($("#accordion").find("input[type=checkbox]:checked").length>0){
+		$("#btnShowSelect").removeClass("hidden");
+		$("#btnShowSelect").addClass("visible");
+	}
+	else {
+		$("#btnShowSelect").removeClass("visible");
+		$("#btnShowSelect").addClass("hidden");
+	}
 }
