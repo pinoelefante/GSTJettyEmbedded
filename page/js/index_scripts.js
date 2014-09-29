@@ -947,6 +947,8 @@ function showSelezione() {
 			});
 		});
 	});
-		
-	showModalInfo("Selezione", html);
+	if(trovati > 0)
+		showModalInfo("Selezione", html);
+	else
+		showModalInfo("Selezione", "Nessun episodio selezionato");
 }
