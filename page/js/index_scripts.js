@@ -232,6 +232,7 @@ function download() {
 			downloadS(idEp);
 		}
 	}); 
+	showButtonResults();
 }
 
 function ignora() {
@@ -242,6 +243,7 @@ function ignora() {
 			ignoraS(idEp);
 		}
 	}); 
+	showButtonResults();
 	operazioneInCorso("");
 }
 function ignoraS(id){
@@ -267,6 +269,7 @@ function ignoraS(id){
 			}
 			else
 				showModal("","Episodio non ignorato");
+			showButtonResults();
 		},
 		error : function(msg) {
 			operazioneInCorso("");
@@ -811,6 +814,7 @@ function downloadS(id){
 			}
 			else
 				showModal("","Episodio non scaricato");
+			showButtonResults()
 		},
 		error : function(msg) {
 			operazioneInCorso("");
