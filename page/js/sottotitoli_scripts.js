@@ -343,3 +343,23 @@ function parseBooleanXML(xml) {
 	else
 		return false;
 }
+function play(id){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=play&episodio=" + id,
+		dataType : "xml",
+		success : function(msg) {
+			var r = parseBooleanXML(msg);
+			if(r){
+				
+			}
+			else {
+				showModal("","File non trovato");
+			}
+		},
+		error : function(msg) {
+			
+		}
+	});
+}
