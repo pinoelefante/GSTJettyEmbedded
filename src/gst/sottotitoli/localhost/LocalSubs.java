@@ -4,7 +4,6 @@ import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.player.FileFinder;
 import gst.serieTV.Episodio;
-import gst.serieTV.PreferenzeSottotitoli;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
