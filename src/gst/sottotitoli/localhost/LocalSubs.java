@@ -32,6 +32,7 @@ public class LocalSubs implements ProviderSottotitoli{
 		ArrayList<File> subs = FileFinder.getInstance().cercaFileSottotitoli(serie, ep);
 		if(subs.size()==0)
 			return false;
+		
 		//Controlla che il sottotitolo non sia associato ad un'altra lingua
 		String[] langs=serie.getPreferenzeSottotitoli().getPreferenze();
 		for(int i=0;i<subs.size();){
@@ -41,7 +42,7 @@ public class LocalSubs implements ProviderSottotitoli{
     			String l = langs[i];
     			if(l.compareTo(lang)==0)
     				continue;
-    			if(f.getName().toLowerCase().endsWith((lang+".srt").toLowerCase())){
+    			if(f.getName().toLowerCase().endsWith((l+".srt").toLowerCase())){
     				skip = true;
     				break;
     			}
