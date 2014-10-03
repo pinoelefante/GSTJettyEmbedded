@@ -4,6 +4,7 @@ import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.player.FileFinder;
 import gst.serieTV.Episodio;
+import gst.serieTV.PreferenzeSottotitoli;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
@@ -31,6 +32,30 @@ public class LocalSubs implements ProviderSottotitoli{
 		ArrayList<File> subs = FileFinder.getInstance().cercaFileSottotitoli(serie, ep);
 		if(subs.size()==0)
 			return false;
+		//Controlla che il sottotitolo non sia associato ad un'altra lingua
+		String[] langs=serie.getPreferenzeSottotitoli().getPreferenze();
+		for(int i=0;i<subs.size();){
+			File f = subs.get(i);
+			boolean skip = false;
+			for(int j=0;j<langs.length;j++){
+    			String l = langs[i];
+    			if(l.compareTo(lang)==0)
+    				continue;
+    			if(f.getName().toLowerCase().endsWith((lang+".srt").toLowerCase())){
+    				skip = true;
+    				break;
+    			}
+			}
+			if(skip){
+				subs.remove(i);
+			}
+			else
+				i++;
+		}
+		if(subs.size()==0)
+			return false;
+		//Fine controllo
+		
 		ArrayList<File> videos = FileFinder.getInstance().cercaFileVideo(serie, ep);
 		boolean renamed=false;
 		for(int i=0;i<videos.size();i++){

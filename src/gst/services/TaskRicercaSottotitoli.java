@@ -18,5 +18,4 @@ public class TaskRicercaSottotitoli extends TimerTask {
 		episodi.clear();
 		episodi=null;
 	}
-
 }
