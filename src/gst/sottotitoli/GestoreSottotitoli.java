@@ -18,9 +18,11 @@ import gst.sottotitoli.subsfactory.Subsfactory;
 import gst.sottotitoli.subspedia.Subspedia;
 import gst.tda.db.KVResult;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -131,6 +133,7 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return false;
 	}
+	
 	public boolean scaricaSottotitolo(int idSub){
 		if(idSub<=0)
 			return false;
@@ -151,6 +154,20 @@ public class GestoreSottotitoli implements Notifier{
 				ok=true;
 		}
 		return ok;
+	}
+	public boolean scaricaSottotitolo(int idSub, String lang){
+		if(idSub<=0)
+			return false;
+		Episodio ep = ProviderSerieTV.getEpisodio(idSub);
+		if(ep==null)
+			return false;
+		return scaricaSottotitolo(ep, lang);
+	}
+	public boolean scaricaSottotitolo(Episodio e, String lang){
+		SerieTV s = ProviderSerieTV.getSerieByID(e.getSerie());
+		if(s==null)
+			return false;
+		return scaricaSottotitolo(s, e, lang, s.getPreferenzeSottotitoli().getPreferenze().length==1);
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV s, Episodio e, String lang, boolean uniqueLang){
@@ -236,6 +253,18 @@ public class GestoreSottotitoli implements Notifier{
 			eps.add(e);
 		}
 		return eps;
+	}
+	public ArrayList<Entry<Integer, String>> getSottotitoliDaScaricareLangs(){
+		ArrayList<Entry<Integer, String>> subDown = new ArrayList<Map.Entry<Integer,String>>();
+		String query = "SELECT * FROM "+Database.TABLE_SUBDOWN;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		for(int i=0;i<res.size();i++){
+			int id = (int) res.get(i).getValueByKey("episodio");
+			String lang = (String) res.get(i).getValueByKey("lingua");
+			Entry<Integer, String> e = new AbstractMap.SimpleEntry<Integer,String>(id, lang);
+			subDown.add(e);
+		}
+		return subDown;
 	}
 	public Map<SerieTV, ArrayList<Episodio>> sottotitoliDaScaricare() {
 		Map<SerieTV, ArrayList<Episodio>> map = new HashMap<SerieTV, ArrayList<Episodio>>();
