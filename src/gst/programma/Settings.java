@@ -377,7 +377,22 @@ public class Settings {
 		return getOpzione("current_version");
 	}
 	public String getLingua(){
-		return getOpzione("lingua");
+		String lingua = getOpzione("lingua");
+		if(lingua==null || lingua.isEmpty()){
+			lingua = System.getProperty("user.language");
+			switch(lingua){
+				case "it":
+					break;
+				case "en":
+					break;
+				default:
+					lingua="en";
+					break;
+			}
+			setLingua(lingua);
+			salvaSettings();
+		}
+		return lingua;
 	}
 	public void setLingua(String lang){
 		aggiungiOpzione("lingua", lang);

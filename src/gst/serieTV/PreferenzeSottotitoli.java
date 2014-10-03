@@ -7,7 +7,7 @@ public class PreferenzeSottotitoli {
 		preferenze = pref;
 	}
 	public String[] getPreferenze(){
-		return preferenze.split("|");
+		return preferenze.split("\\|");
 	}
 	public void addPreferenza(String lang){
 		if(!hasLanguage(lang)){

@@ -167,11 +167,13 @@ function caricaElencoSerieCompleto(){
 				var id = $(this).find("id").text();
 				var provider = $(this).find("provider").text();
 				var provider_name = $(this).find("provider_name").text();
+				var no_select = $(this).find("no_select").text();
 				var serie = document.createElement("option");
 				serie.value = id;
 				serie.provider = provider;
 				serie.providerNome=provider_name;
 				serie.nomeSerie = nome;
+				serie.noselect = no_select;
 				serie.innerHTML = nome+"<span style='float:right'> ("+provider_name+")</span>";//"<b>"+nome+"</b> - "+provider_name;
 				$("#selectSerie").append(serie);
 			});
@@ -316,7 +318,7 @@ function selezionaTutto(selected) {
 function selezionaPerStato(stato){
 	var trovati = 0;
 	$("#accordion").find("input[type=checkbox]").each(function(){
-		if($(this).attr("stato_visualizzazione")==stato){
+		if($(this).attr("stato_visualizzazione")==stato && $(this).attr("noselect")=='false'){
 			$(this).prop('checked', true);
 			trovati++;
 		}
@@ -347,13 +349,12 @@ function loadSeriePreferite() {
 				var id = $(this).find("id").text();
 				var provider = $(this).find("provider").text();
 				var provider_name = $(this).find("provider_name").text();
+				var noselect = $(this).find("no_select").text();
 				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider);
 				$("#accordion").append(elem);
-				arrayID[i]=id;
-				i++;
+				getEpisodi(id, noselect);
 			});
-			for(var j=0;j<i;j++)
-				getEpisodi(arrayID[j]);
+				
 			operazioneInCorso("");
 		},
 		error : function(msg) {
@@ -444,7 +445,9 @@ function getClassStatus(stato){
 			return " episodioIgnorato";
 	}
 }
-function getEpisodi(id) {
+function getEpisodi(id, noselect) {
+	if(noselect===undefined)
+		noselect=false;
 	operazioneInCorso("Carico l'elenco degli episodi da scaricare");
 	$.ajax({
 		type : "POST",
@@ -485,7 +488,7 @@ function getEpisodi(id) {
 				}
 				
 				var html="<div class='episodio"+getClassStatus(stato)+"' id='divEP_"+idE+"'>"+
-					"<input type='checkbox' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"' onchange='showButtonResults()'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
+					"<input type='checkbox' noselect='"+noselect+"' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"' onchange='showButtonResults()'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
 					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
