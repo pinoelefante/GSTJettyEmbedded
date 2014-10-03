@@ -71,7 +71,9 @@ public class ItalianSubs implements ProviderSottotitoli{
 		return loggato;
 	}
 	
-	public boolean scaricaSottotitolo(SerieTV serie, Episodio episodio) {
+	public boolean scaricaSottotitolo(SerieTV serie, Episodio episodio, String lang) {
+		if(!hasLanguage(lang))
+			return false;
 		if(serie.getIDItasa()<=0)
 			return false;
 		
@@ -131,7 +133,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 				String pathFile = subFiles.get(i);
 				ArchiviZip.estrai_tutto(pathFile, dirDown);
 			}
-			GestoreSottotitoli.setSottotitoloDownload(episodio.getId(), false);
+			GestoreSottotitoli.setSottotitoloDownload(episodio.getId(), false, ITALIANO);
 			return true;
 		}
 		return false;
@@ -330,6 +332,15 @@ public class ItalianSubs implements ProviderSottotitoli{
 	public boolean disassocia(int idSerie) {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=0 WHERE id="+idSerie;
 		return Database.updateQuery(query);
+	}
+
+	@Override
+	public boolean hasLanguage(String lang) {
+		switch(lang){
+			case ITALIANO:
+				return true;
+		}
+		return false;
 	}
 }
 

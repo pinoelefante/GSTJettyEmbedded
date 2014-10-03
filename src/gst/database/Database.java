@@ -33,6 +33,7 @@ public class Database {
 	public static final String TABLE_TVDB_EPISODI = "tvdb_ep";
 	public static final String TABLE_TORRENT = "torrent";
 	public static final String TABLE_PREFERITI = "preferiti";
+	public static final String TABLE_SUBDOWN = "list_subdown";
 	
 	private final static String NOMEDB=Settings.getInstance().getUserDir()+"database3.sqlite";
 
@@ -133,7 +134,9 @@ public class Database {
 					"id_subspedia INTEGER DEFAULT 0,"+
 					"id_opensubtitles INTEGER DEFAULT 0,"+
 					"id_tvdb INTEGER DEFAULT 0,"+
-					"preferenze_download INTEGER DEFAULT 0,"+
+					"preferenze_download INTEGER DEFAULT 0," +
+					"preferenze_sottotitoli TEXT,"+
+					"escludi_seleziona_tutto INTEGER DEFAULT 0," +
 					"FOREIGN KEY(provider) REFERENCES provider(id),"+
 					"FOREIGN KEY(id_itasa) REFERENCES itasa(id),"+
 					"FOREIGN KEY(id_subsfactory) REFERENCES subsfactory(id),"+
@@ -167,6 +170,15 @@ public class Database {
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "episodio INTEGER NOT NULL,"
 					+ "provider INTEGER NOT NULL,"
+					+ "lingua TEXT,"
+					+ "FOREIGN KEY(episodio) REFERENCES episodi(id)"
+					+ ""
+					+ ")");
+			
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBDOWN+" (" +
+					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					+ "episodio INTEGER NOT NULL,"
+					+ "lingua TEXT NOT NULL,"
 					+ "FOREIGN KEY(episodio) REFERENCES episodi(id)"
 					+ ""
 					+ ")");

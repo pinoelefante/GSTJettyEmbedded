@@ -47,6 +47,8 @@ public abstract class ProviderSerieTV {
 		int id_tvdb = (int) res.getValueByKey("id_tvdb");
 		int id_provider = (int) res.getValueByKey("provider");
 		int preferenze_d = (int) res.getValueByKey("preferenze_download");
+		String pref_sub = (String) res.getValueByKey("preferenze_sottotitoli");
+		boolean escludiSelezionaTutto = ((int) res.getValueByKey("escludi_seleziona_tutto")==0?false:true);
 		SerieTV st = new SerieTV(id_provider, nome, url);
 		st.setIDDb(id_db);
 		st.setConclusa(conclusa);
@@ -58,6 +60,8 @@ public abstract class ProviderSerieTV {
 		st.setIDOpenSubtitles(id_opensub);
 		st.setStopSearch(stop_search);
 		st.setPreferenze(new Preferenze(preferenze_d));
+		st.setPreferenzeSottotitoli(new PreferenzeSottotitoli(pref_sub));
+		st.setEscludiSelezionaTutto(escludiSelezionaTutto);
 		return st;
 	}
 	public static SerieTV getSerieByURL(String url){
@@ -116,7 +120,7 @@ public abstract class ProviderSerieTV {
 		return serie;
 	}
 	private void addSerieToDB(SerieTV s){
-		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa) VALUES (\""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+getProviderID()+","+(s.isConclusa()?1:0)+")";
+		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa, preferenze_download, preferenze_sottotitoli) VALUES (\""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+getProviderID()+","+(s.isConclusa()?1:0)+","+s.getPreferenze().toValue()+",\""+s.getPreferenzeSottotitoli().getPreferenzeU()+"\")";
 		Database.updateQuery(query);
 	}
 	public boolean isUpgrading(){

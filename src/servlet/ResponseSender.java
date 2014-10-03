@@ -23,7 +23,7 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import util.Object3Value;
+import util.Object4Value;
 
 public class ResponseSender {
 	public static void sendResponse(HttpServletResponse response, Document doc){
@@ -94,6 +94,7 @@ public class ResponseSender {
 			Element id_subspedia = new Element("id_subspedia");
 			Element id_subsfactory = new Element("id_subsfactory");
 			Element id_tvdb = new Element("id_tvdb");
+			Element no_select=new Element("no_select");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
@@ -104,6 +105,7 @@ public class ResponseSender {
 			id_subsfactory.addContent(""+serie.get(i).getIDDBSubsfactory());
 			id_subspedia.addContent(serie.get(i).getIDSubspedia()+"");
 			id_tvdb.addContent(serie.get(i).getIDTvdb()+"");
+			no_select.addContent(serie.get(i).isEscludiSelezione()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
@@ -112,6 +114,7 @@ public class ResponseSender {
 			serie_tag.addContent(id_subsfactory);
 			serie_tag.addContent(id_subspedia);
 			serie_tag.addContent(id_tvdb);
+			serie_tag.addContent(no_select);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);
@@ -359,13 +362,13 @@ public class ResponseSender {
 		
 		return new Document(root);
 	}
-	public static Document createResponseLogSub(ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list) {
+	public static Document createResponseLogSub(ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
 		ok.addContent(true+"");
 		root.addContent(ok);
 		Element subs = new Element("subs");
-		for(Object3Value<ProviderSottotitoli, SerieTV, Episodio> s : list){
+		for(Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> s : list){
 			Element sub = new Element("sub");
 			Element nomeSerie = new Element("nomeSerie");
 			nomeSerie.addContent(s.getV().getNomeSerie());
@@ -377,11 +380,14 @@ public class ResponseSender {
 			episodio.addContent(s.getT().getEpisodio()+"");
 			Element provider = new Element("provider");
 			provider.addContent(s.getK().getProviderName());
+			Element lingua = new Element("lingua");
+			lingua.addContent(s.getZ());
 			sub.addContent(nomeSerie);
 			sub.addContent(id_episodio);
 			sub.addContent(stagione);
 			sub.addContent(episodio);
 			sub.addContent(provider);
+			sub.addContent(lingua);
 			subs.addContent(sub);
 		}
 		root.addContent(subs);

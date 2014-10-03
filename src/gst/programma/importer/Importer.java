@@ -77,7 +77,7 @@ public class Importer implements Notifier{
 					ProviderSerieTV.changeStatusEpisodio(entry.getKey(), entry.getValue());
 				}
 				for(Entry<Integer, Boolean> subDEntry: subDownload.entrySet()){
-					GestoreSottotitoli.setSottotitoloDownload(subDEntry.getKey(), subDEntry.getValue());
+					GestoreSottotitoli.setSottotitoloDownload(subDEntry.getKey().intValue(), subDEntry.getValue().booleanValue(),"it");
 				}
 				dbCon.close();
 			}

@@ -23,8 +23,11 @@ public class LocalSubs implements ProviderSottotitoli{
 	}
 	private LocalSubs(){}
 	
-	@Override
-	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep) {
+	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang){
+		return scaricaSottotitolo(serie, ep, lang, false);
+	}
+	
+	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang, boolean unique) {
 		ArrayList<File> subs = FileFinder.getInstance().cercaFileSottotitoli(serie, ep);
 		if(subs.size()==0)
 			return false;
@@ -39,7 +42,7 @@ public class LocalSubs implements ProviderSottotitoli{
 				CaratteristicheFile subStats=Naming.parse(sub.getName(), null);
 				if(videoStat.is720p()==subStats.is720p()){	
 					do{
-						String newFile = video.getParent()+File.separator+video.getName().substring(0, video.getName().lastIndexOf("."))+(subCount==0?"":"."+subCount)+".srt";
+						String newFile = video.getParent()+File.separator+video.getName().substring(0, video.getName().lastIndexOf("."))+(subCount==0?"":"."+subCount)+(unique?"":"."+lang)+".srt";
 						File f = new File(newFile);
 						if(f.exists()){
 							subCount++;
@@ -68,4 +71,9 @@ public class LocalSubs implements ProviderSottotitoli{
 	public boolean associa(int idSerie, int idSub) {return false;}
 	@Override
 	public boolean disassocia(int idSerie) {return false;}
+	@Override
+	public boolean hasLanguage(String lang) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

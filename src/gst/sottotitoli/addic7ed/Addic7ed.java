@@ -23,14 +23,16 @@ public class Addic7ed implements ProviderSottotitoli {
 	
 	public Addic7ed() {
 		lingue_disponibili = new HashMap<>();
-		lingue_disponibili.put("en", 1);
-		lingue_disponibili.put("it", 7);
-		lingue_disponibili.put("fr", 8);
-		lingue_disponibili.put("pr", 9); //portoghese
+		lingue_disponibili.put(INGLESE, 1);
+		lingue_disponibili.put(ITALIANO, 7);
+		lingue_disponibili.put(FRANCESE, 8);
+		lingue_disponibili.put(PORTOGHESE, 10);
+		lingue_disponibili.put(TEDESCO, 11);
+		lingue_disponibili.put(SPAGNOLO, 4);
 	}
 
 	@Override
-	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep) {
+	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -98,6 +100,20 @@ public class Addic7ed implements ProviderSottotitoli {
 	@Override
 	public boolean disassocia(int idSerie) {
 		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean hasLanguage(String lang) {
+		switch(lang){
+			case INGLESE:
+			case ITALIANO:
+			case FRANCESE:
+			case PORTOGHESE:
+			case SPAGNOLO:
+			case TEDESCO:
+				return true;
+		}
 		return false;
 	}
 

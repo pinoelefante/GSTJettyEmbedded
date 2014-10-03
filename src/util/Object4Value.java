@@ -1,14 +1,16 @@
 package util;
 
-public class Object3Value<K, V, T> {
+public class Object4Value<K, V, T, Z> {
 	private K k; 
 	private V v;
 	private T t;
+	private Z z;
 	
-	public Object3Value(K q,V w,T e) {
+	public Object4Value(K q,V w,T e, Z r) {
 		k=q;
 		v=w;
 		t=e;
+		z=r;
 	}
 	public K getK(){
 		return k;
@@ -18,5 +20,8 @@ public class Object3Value<K, V, T> {
 	}
 	public T getT(){
 		return t;
+	}
+	public Z getZ(){
+		return z;
 	}
 }

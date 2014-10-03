@@ -101,7 +101,8 @@ public class EZTV extends ProviderSerieTV {
 					
 					SerieTV toInsert = new SerieTV(getProviderID(), nomeserie, url);
 					toInsert.setConclusa(conclusa);
-					
+					toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
+					toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
 					if(aggiungiSerieADatabase(toInsert)){
 						caricate++;
 					}

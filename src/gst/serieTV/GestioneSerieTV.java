@@ -185,7 +185,7 @@ public class GestioneSerieTV implements Notifier {
 		boolean status = ProviderSerieTV.downloadEpisodio(idEp);
 		if(status){
 			if(settings.isRicercaSottotitoli()){
-				GestoreSottotitoli.setSottotitoloDownload(idEp, true);
+				GestoreSottotitoli.setSottotitoloDownload(idEp, true, "");
 			}
 		}
 		return status;
@@ -235,7 +235,7 @@ public class GestioneSerieTV implements Notifier {
 			try {
 				if(settings.isRicercaSottotitoli() && FileFinder.getInstance().cercaFileSottotitoli(serie, ep, files.get(0).getName()).size()==0){
 					inviaNotifica("Attendere la ricerca dei sottotitoli...");
-					boolean f=GestoreSottotitoli.getInstance().scaricaSottotitolo(serie, ep);
+					boolean f=GestoreSottotitoli.getInstance().scaricaSottotitolo(ep);
 					if(!f)
 						inviaNotifica("Sottotitoli non trovati");
 				}
@@ -296,5 +296,9 @@ public class GestioneSerieTV implements Notifier {
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
 		String path = settings.getDirectoryDownload()+serie.getFolderSerie();
 		return OperazioniFile.DeleteDirectory(new File(path));
+	}
+	public boolean setSerieNonSelezionabile(int idSerie, boolean s){
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET escludi_seleziona_tutto="+(s?1:0)+" WHERE id="+idSerie;
+		return Database.updateQuery(query);
 	}
 }

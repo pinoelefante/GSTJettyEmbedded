@@ -62,7 +62,9 @@ public class Subspedia implements ProviderSottotitoli {
 		cache = new HashMap<Integer, ArrayList<SottotitoloSubspedia>>();
 	}
 	
-	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
+	public boolean scaricaSottotitolo(SerieTV s, Episodio e, String lang) {
+		if(!hasLanguage(lang))
+			return false;
 		if(s.getIDSubspedia()<=0)
 			return false;
 		
@@ -106,7 +108,7 @@ public class Subspedia implements ProviderSottotitoli {
 				}
 			}
 			e.setSubDownload(!down);
-			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down);
+			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down, ITALIANO);
 			return down;
 			
 		}
@@ -327,5 +329,13 @@ public class Subspedia implements ProviderSottotitoli {
 	@Override
 	public int getProviderID() {
 		return GestoreSottotitoli.SUBSPEDIA;
+	}
+	@Override
+	public boolean hasLanguage(String lang) {
+		switch(lang){
+			case ITALIANO:
+				return true;
+		}
+		return false;
 	}
 }

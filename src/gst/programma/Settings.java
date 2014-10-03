@@ -365,7 +365,7 @@ public class Settings {
 	}
 	public String getTVDBPreferredLang(){
 		String op=getOpzione("tvdb_lang");
-		return op.isEmpty()?"en":op;
+		return op.isEmpty()?getLingua():op;
 	}
 	public void setClientID(String c){
 		aggiungiOpzione("clientID", c);
@@ -375,6 +375,12 @@ public class Settings {
 	}
 	public String getCurrentFileVersion(){
 		return getOpzione("current_version");
+	}
+	public String getLingua(){
+		return getOpzione("lingua");
+	}
+	public void setLingua(String lang){
+		aggiungiOpzione("lingua", lang);
 	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
@@ -400,6 +406,7 @@ public class Settings {
 				case "utorrent_port":
 				case "qbittorrent_path":
 				case "tvdb_lang":
+				case "lingua":
 					break;
 				default:
 					opzioni.remove(item);

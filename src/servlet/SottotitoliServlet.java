@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
-import util.Object3Value;
+import util.Object4Value;
 
 public class SottotitoliServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
@@ -53,7 +53,7 @@ public class SottotitoliServlet extends HttpServlet{
 			}
 			case "removeSubByID": {
 				int idEpisodio = Integer.parseInt(checkParameter("id", resp, req, false));
-				GestoreSottotitoli.setSottotitoloDownload(idEpisodio, false);
+				GestoreSottotitoli.rimuoviSub(idEpisodio);
 				xml = ResponseSender.createResponseBoolean(true);
 				break;
 			}
@@ -75,7 +75,7 @@ public class SottotitoliServlet extends HttpServlet{
 				break;
 			}
 			case "getLogSub": {
-				ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list = GestoreSottotitoli.getInstance().getLast50LogSub();
+				ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list = GestoreSottotitoli.getInstance().getLast50LogSub();
 				xml = ResponseSender.createResponseLogSub(list);
 				break;
 			}

@@ -8,8 +8,9 @@ public class SerieTV {
 	private int provider;
 	private String url_serie;
 	private int id_db, id_itasa=0, id_tvdb=0, id_subspedia=0, id_subsfactory=0;
-	private boolean conclusa, stop_search;
+	private boolean conclusa, stop_search, no_select;
 	private Preferenze preferenze_download;
+	private PreferenzeSottotitoli pref_subs;
 	
 	public SerieTV(int provider, String nomeserie, String url) {
 		this.provider=provider;
@@ -145,5 +146,18 @@ public class SerieTV {
 
 	public void setProvider(int id_provider) {
 		provider = id_provider;
+	}
+	public void setPreferenzeSottotitoli(PreferenzeSottotitoli f){
+		pref_subs=f;
+	}
+	public PreferenzeSottotitoli getPreferenzeSottotitoli(){
+		return pref_subs;
+	}
+
+	public void setEscludiSelezionaTutto(boolean escludiSelezionaTutto) {
+		no_select=escludiSelezionaTutto;	
+	}
+	public boolean isEscludiSelezione(){
+		return no_select;
 	}
 }

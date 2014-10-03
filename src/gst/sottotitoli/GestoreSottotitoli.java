@@ -6,6 +6,7 @@ import gst.interfacce.Notifier;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
+import gst.serieTV.PreferenzeSottotitoli;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.services.TaskAggiornaElenchi;
@@ -23,7 +24,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import util.Object3Value;
+import util.Object4Value;
 
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
@@ -32,7 +33,7 @@ public class GestoreSottotitoli implements Notifier{
 	private ProviderSottotitoli itasa;
 	private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
-	private ProviderSottotitoli localsubs;
+	private LocalSubs localsubs;
 	private Settings settings;
 	private Timer timer;
 	private TimerTask aggiornaElenchi, associaSerie, ricercaSottotitoli;
@@ -142,30 +143,37 @@ public class GestoreSottotitoli implements Notifier{
 		SerieTV s = ProviderSerieTV.getSerieByID(e.getSerie());
 		if(s==null)
 			return false;
-		return scaricaSottotitolo(s, e);
+		PreferenzeSottotitoli p_sub = s.getPreferenzeSottotitoli();
+		String[] langs = p_sub.getPreferenze();
+		boolean ok= false;
+		for(int i=0;i<langs.length;i++){
+			if(scaricaSottotitolo(s, e, langs[i], langs.length==1))
+				ok=true;
+		}
+		return ok;
 	}
 	
-	public boolean scaricaSottotitolo(SerieTV s, Episodio e){
+	public boolean scaricaSottotitolo(SerieTV s, Episodio e, String lang, boolean uniqueLang){
 		boolean scaricato = true;
 		boolean online = true;
 		String episodio="S"+(e.getStagione()<10?"0"+e.getStagione():e.getStagione())+"E"+(e.getEpisodio()<10?"0"+e.getEpisodio():e.getEpisodio());
 		
-		if(localsubs.scaricaSottotitolo(s, e)){
+		if(localsubs.scaricaSottotitolo(s, e, lang, uniqueLang)){
 			online=false;
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
-			inserisciLog(e, localsubs);
+			inserisciLog(e, localsubs, lang);
 		}
-		else if(itasa.scaricaSottotitolo(s, e)){
+		else if(itasa.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
-			inserisciLog(e, itasa);
+			inserisciLog(e, itasa, lang);
 		}
-		else if(subsfactory.scaricaSottotitolo(s, e)){
+		else if(subsfactory.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
-			inserisciLog(e, subsfactory);
+			inserisciLog(e, subsfactory, lang);
 		}
-		else if(subspedia.scaricaSottotitolo(s, e)){
+		else if(subspedia.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
-			inserisciLog(e, subspedia);
+			inserisciLog(e, subspedia, lang);
 		}
 		else 
 			scaricato = false;
@@ -175,12 +183,12 @@ public class GestoreSottotitoli implements Notifier{
 			Database.updateQuery(query);
 		}
 		if(scaricato && online){
-			localsubs.scaricaSottotitolo(s, e); //rename
+			localsubs.scaricaSottotitolo(s, e, lang, uniqueLang); //rename
 		}
 		return scaricato;
 	}
-	private void inserisciLog(Episodio e, ProviderSottotitoli p){
-		String query = "INSERT INTO "+Database.TABLE_LOGSUB+" (episodio, provider) VALUES ("+e.getId()+","+p.getProviderID()+")";
+	private void inserisciLog(Episodio e, ProviderSottotitoli p, String lang){
+		String query = "INSERT INTO "+Database.TABLE_LOGSUB+" (episodio, provider, lingua) VALUES ("+e.getId()+","+p.getProviderID()+",\""+lang+"\")";
 		Database.updateQuery(query);
 	}
 	public ArrayList<SerieSub> getElencoSerie(int provider){
@@ -256,22 +264,44 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return map;
 	}
-	public static void setSottotitoloDownload(int idEpisodio, boolean stato){
+	public static void rimuoviSub(int id){
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+id;
+		Database.updateQuery(query);
+		
+		String query2="DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio="+id;
+		Database.updateQuery(query2);
+	}
+	public static void setSottotitoloDownload(int idEpisodio, boolean stato, String lang){
 		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo="+(stato?1:0)+" WHERE id="+idEpisodio;
 		Database.updateQuery(query);
+		
+		if(stato == true) {
+			Episodio ep = ProviderSerieTV.getEpisodio(idEpisodio);
+			SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+			String[] langs = serie.getPreferenzeSottotitoli().getPreferenze();
+			for(int i=0;i<langs.length;i++){
+				String query1 = "INSERT INTO "+Database.TABLE_SUBDOWN + " (episodio, lingua) VALUES ("+idEpisodio+",\""+langs[i]+"\")";
+				Database.updateQuery(query1);
+			}
+		}
+		else {
+			String query1 = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio="+idEpisodio+" AND lingua=\""+lang+"\"";
+			Database.updateQuery(query1);
+		}
 	}
-	public ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> getLast50LogSub(){
+	public ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> getLast50LogSub(){
 		String query = "SELECT * FROM logsub ORDER BY id DESC LIMIT 50";
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		ArrayList<Object3Value<ProviderSottotitoli, SerieTV, Episodio>> list = new ArrayList<Object3Value<ProviderSottotitoli,SerieTV,Episodio>>();
+		ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list = new ArrayList<Object4Value<ProviderSottotitoli,SerieTV,Episodio, String>>();
 		for(int i=res.size()-1;i>=0;i--){
 			KVResult<String,Object> r = res.get(i);
 			int idEpisodio = (int) r.getValueByKey("episodio");
 			int provider = (int) r.getValueByKey("provider");
+			String lingua = (String) r.getValueByKey("lingua");
 			Episodio ep = ProviderSerieTV.getEpisodio(idEpisodio);
 			SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
 			ProviderSottotitoli prov = getProvider(provider);
-			Object3Value<ProviderSottotitoli, SerieTV, Episodio> val = new Object3Value<ProviderSottotitoli, SerieTV, Episodio>(prov, serie, ep);
+			Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> val = new Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>(prov, serie, ep, lingua);
 			list.add(val);
 		}
 		return list;
@@ -279,5 +309,13 @@ public class GestoreSottotitoli implements Notifier{
 	public void close() {
 		timer.cancel();
 		timer.purge();
+	}
+	public boolean aggiungiLinguaASerie(int idSerie, String lang){
+		SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
+		PreferenzeSottotitoli p = s.getPreferenzeSottotitoli();
+		p.addPreferenza(lang);
+		String langs = p.getPreferenzeU();
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+langs+"\" WHERE id="+idSerie;
+		return Database.updateQuery(query);
 	}
 }

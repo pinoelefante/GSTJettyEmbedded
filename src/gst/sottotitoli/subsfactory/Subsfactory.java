@@ -65,7 +65,9 @@ public class Subsfactory implements ProviderSottotitoli {
 	}
 	
 	@Override
-	public boolean scaricaSottotitolo(SerieTV s, Episodio e) {
+	public boolean scaricaSottotitolo(SerieTV s, Episodio e, String lang) {
+		if(!hasLanguage(lang))
+			return false;
 		if(s==null || s.getIDDBSubsfactory()<=0)
 			return false;
 		SerieSubConDirectory ssubs = new SerieSubConDirectory(s.getIDDBSubsfactory());
@@ -107,7 +109,7 @@ public class Subsfactory implements ProviderSottotitoli {
 				}
 			}
 			e.setSubDownload(!down);
-			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down);
+			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down, ITALIANO);
 			return down;
 		}
 		return false;
@@ -357,5 +359,13 @@ public class Subsfactory implements ProviderSottotitoli {
 	public boolean disassocia(int idSerie) {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=0 WHERE id="+idSerie;
 		return Database.updateQuery(query);
+	}
+	@Override
+	public boolean hasLanguage(String lang) {
+		switch(lang){
+			case ITALIANO:
+				return true;
+		}
+		return false;
 	}
 }

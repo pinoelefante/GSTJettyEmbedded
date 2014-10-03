@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import javax.swing.border.LineBorder;
 
 import java.awt.Color;
+import javax.swing.JComboBox;
 
 public class FrameOpzioni extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -61,6 +62,7 @@ public class FrameOpzioni extends JFrame {
 	private JTextField utorrentUser;
 	private JPasswordField utorrentPassword;
 	private JTextField utorrentPorta;
+	private JComboBox<Lingua> lingua;
 	
 	public FrameOpzioni(){
 		super("Gestione Serie TV - Opzioni");
@@ -89,7 +91,7 @@ public class FrameOpzioni extends JFrame {
 		panel.add(btnChiudi);
 		
 		JPanel panel_itasa = new JPanel();
-		panel_itasa.setBounds(10, 240, 615, 89);
+		panel_itasa.setBounds(10, 265, 615, 89);
 		panel_15.add(panel_itasa);
 		panel_itasa.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel_itasa.setLayout(new GridLayout(0, 2, 0, 0));
@@ -131,7 +133,7 @@ public class FrameOpzioni extends JFrame {
 		panel_4.add(labelItasaLoginStatus);
 		
 		JPanel panel_7 = new JPanel();
-		panel_7.setBounds(10, 11, 615, 125);
+		panel_7.setBounds(10, 70, 615, 114);
 		panel_15.add(panel_7);
 		panel_7.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Generale", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel_7.setLayout(new GridLayout(3, 1, 0, 0));
@@ -155,7 +157,7 @@ public class FrameOpzioni extends JFrame {
 		panel_10.add(chckbxAskOnClose);
 		
 		JPanel panel_11 = new JPanel();
-		panel_11.setBounds(10, 140, 615, 89);
+		panel_11.setBounds(10, 185, 615, 79);
 		panel_15.add(panel_11);
 		panel_11.setBorder(new TitledBorder(null, "Serie TV", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel_11.setLayout(new GridLayout(2, 1, 0, 0));
@@ -176,7 +178,7 @@ public class FrameOpzioni extends JFrame {
 		FlowLayout flowLayout_2 = (FlowLayout) panel_20.getLayout();
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		panel_20.setBorder(new TitledBorder(null, "Directory Download", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_20.setBounds(10, 340, 615, 55);
+		panel_20.setBounds(10, 355, 615, 55);
 		panel_15.add(panel_20);
 		
 		dirDownload = new JTextField();
@@ -185,6 +187,21 @@ public class FrameOpzioni extends JFrame {
 		
 		btnSfogliaDirDownload = new JButton("Sfoglia");
 		panel_20.add(btnSfogliaDirDownload);
+		
+		JPanel panel_5 = new JPanel();
+		panel_5.setBorder(new TitledBorder(null, "Lingua", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_5.setBounds(10, 10, 613, 58);
+		panel_15.add(panel_5);
+		
+		lingua = new JComboBox<Lingua>();
+		lingua.addItem(new Lingua("Deutsch", "de"));
+		lingua.addItem(new Lingua("English", "en"));
+		lingua.addItem(new Lingua("Español", "es"));
+		lingua.addItem(new Lingua("Français", "fr"));
+		lingua.addItem(new Lingua("Italiano", "it"));
+		lingua.addItem(new Lingua("Português", "pr"));
+		lingua.setSelectedIndex(4);
+		panel_5.add(lingua);
 		
 		JPanel panel_16 = new JPanel();
 		tabbedPane.addTab("Client", null, panel_16, null);
@@ -293,6 +310,7 @@ public class FrameOpzioni extends JFrame {
 				String dirDown = dirDownload.getText().trim();
 				String usernameItasa=itasaUsername.getText();
 				String passItasa=new String(itasaPassword.getPassword());
+				String lang = ((Lingua)lingua.getSelectedItem()).getValue();
 					
 				s.setAskOnClose(askClose);
 				s.setRicercaSottotitoli(subDown,true);
@@ -302,6 +320,7 @@ public class FrameOpzioni extends JFrame {
 				s.setDirectoryDownload(dirDown);
 				s.setItasaUsername(usernameItasa);
 				s.setItasaPassword(passItasa);
+				s.setLingua(lang);
 				s.salvaSettings();
 				init();
 			}
