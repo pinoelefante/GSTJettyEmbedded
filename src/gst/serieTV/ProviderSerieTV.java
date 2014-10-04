@@ -45,6 +45,7 @@ public abstract class ProviderSerieTV {
 		int id_subsp = (int) res.getValueByKey("id_subspedia");
 		int id_opensub = (int) res.getValueByKey("id_opensubtitles");
 		int id_tvdb = (int) res.getValueByKey("id_tvdb");
+		int id_addic7ed = (int) res.getValueByKey("id_addic7ed");
 		int id_provider = (int) res.getValueByKey("provider");
 		int preferenze_d = (int) res.getValueByKey("preferenze_download");
 		String pref_sub = (String) res.getValueByKey("preferenze_sottotitoli");
@@ -62,6 +63,7 @@ public abstract class ProviderSerieTV {
 		st.setPreferenze(new Preferenze(preferenze_d));
 		st.setPreferenzeSottotitoli(new PreferenzeSottotitoli(pref_sub));
 		st.setEscludiSelezionaTutto(escludiSelezionaTutto);
+		st.setIDAddic7ed(id_addic7ed);
 		return st;
 	}
 	public static SerieTV getSerieByURL(String url){

@@ -12,6 +12,7 @@ import gst.serieTV.SerieTV;
 import gst.services.TaskAggiornaElenchi;
 import gst.services.TaskAssociaSerie;
 import gst.services.TaskRicercaSottotitoli;
+import gst.sottotitoli.addic7ed.Addic7ed;
 import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.subsfactory.Subsfactory;
@@ -31,10 +32,11 @@ import util.Object4Value;
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
 
-	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3; 
+	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3, PODNAPISI=4, OPENSUBTITLES=5, ADDIC7ED=6; 
 	private ProviderSottotitoli itasa;
 	private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
+	private ProviderSottotitoli addic7ed;
 	private LocalSubs localsubs;
 	private Settings settings;
 	private Timer timer;
@@ -50,6 +52,7 @@ public class GestoreSottotitoli implements Notifier{
 		subsfactory=Subsfactory.getInstance();
 		subspedia=Subspedia.getInstance();
 		localsubs=LocalSubs.getInstance();
+		addic7ed = Addic7ed.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
 		timer = new Timer();
@@ -90,6 +93,9 @@ public class GestoreSottotitoli implements Notifier{
 			case SUBSPEDIA:
 				subspedia.aggiornaElencoSerieOnline();
 				break;
+			case ADDIC7ED:
+				addic7ed.aggiornaElencoSerieOnline();
+				break;
 		}
 	}
 	public void associaSerie(SerieTV s){
@@ -104,6 +110,9 @@ public class GestoreSottotitoli implements Notifier{
 		if(s.getIDSubspedia()<=0){
 			subspedia.associaSerie(s);
 		}
+		if(s.getIDAddic7ed()<=0){
+			addic7ed.associaSerie(s);
+		}
 	}
 	public boolean associaSerie(int idSerie, int idProvider, int idSerieSub){
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
@@ -116,6 +125,8 @@ public class GestoreSottotitoli implements Notifier{
 				return subsfactory.associa(idSerie, idSerieSub);
 			case SUBSPEDIA:
 				return subspedia.associa(idSerie, idSerieSub);
+			case ADDIC7ED:
+				return addic7ed.associa(idSerie, idSerieSub);
 		}
 		return false;
 	}
@@ -130,6 +141,8 @@ public class GestoreSottotitoli implements Notifier{
 				return subsfactory.disassocia(idSerie);
 			case SUBSPEDIA:
 				return subspedia.disassocia(idSerie);
+			case ADDIC7ED:
+				return addic7ed.disassocia(idSerie);
 		}
 		return false;
 	}
@@ -192,6 +205,10 @@ public class GestoreSottotitoli implements Notifier{
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
 			inserisciLog(e, subspedia, lang);
 		}
+		else if(addic7ed.scaricaSottotitolo(s, e, lang)){
+			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+addic7ed.getProviderName());
+			inserisciLog(e, addic7ed, lang);
+		}
 		else 
 			scaricato = false;
 		
@@ -215,7 +232,9 @@ public class GestoreSottotitoli implements Notifier{
 			case SUBSFACTORY:
 				return subsfactory.getElencoSerie();
 			case SUBSPEDIA:
-				System.out.println("Subspedia - getElencoSerie() - Funzione non supportata");
+				return subspedia.getElencoSerie();
+			case ADDIC7ED:
+				return addic7ed.getElencoSerie();
 		}
 		return null;
 	}
@@ -229,6 +248,8 @@ public class GestoreSottotitoli implements Notifier{
 				return subsfactory;
 			case SUBSPEDIA:
 				return subspedia;
+			case ADDIC7ED:
+				return addic7ed;
 		}
 		return null;
 	}
@@ -286,8 +307,10 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	public Map<ProviderSottotitoli, ArrayList<SerieSub>> getProviders(){
 		Map<ProviderSottotitoli, ArrayList<SerieSub>> map = new HashMap<ProviderSottotitoli, ArrayList<SerieSub>>();
-		for(int i=1;i<=3;i++){
+		for(int i=1;i<=6;i++){
 			ProviderSottotitoli p = GestoreSottotitoli.getInstance().getProvider(i);
+			if(p==null)
+				continue;
 			ArrayList<SerieSub> s = p.getElencoSerie();
 			map.put(p, s);
 		}

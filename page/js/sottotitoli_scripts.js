@@ -48,6 +48,7 @@ function loadSeriePreferite() {
 				var itasa = $(this).find("id_itasa").text();
 				var subsfactory = $(this).find("id_subsfactory").text();
 				var subspedia = $(this).find("id_subspedia").text();
+				var addic7ed = $(this).find("id_addic7ed").text();
 				
 				var option = document.createElement("option");
 				option.value=id;
@@ -56,6 +57,7 @@ function loadSeriePreferite() {
 				option.itasa=itasa;
 				option.subsfactory=subsfactory;
 				option.subspedia=subspedia;
+				option.addic7ed=addic7ed;
 				
 				$(option).appendTo("#seriePreferite");
 			});
@@ -95,7 +97,7 @@ function loadProviders(){
 						select=$("#selectOpensubtitles");
 						break;
 					case "6":
-						select=$("#selectIAddic7ed");
+						select=$("#selectAddic7ed");
 						break;
 					default:
 						alert("DEFAULT CASE!!!!");
@@ -148,6 +150,14 @@ function onchangePreferita(val){
 		$("#selectSubspedia option.noValue").prop('selected', true);
 	$("#selectSubspedia").trigger("chosen:updated");
 	$("#selectSubspedia").trigger("change");
+	
+	var addic7ed=parseInt($(serie).prop("addic7ed"));
+	if(addic7ed>0)
+		$('#selectAddic7ed option[value="' + addic7ed + '"]').prop('selected', true);
+	else 
+		$("#selectAddic7ed option.noValue").prop('selected', true);
+	$("#selectAddic7ed").trigger("chosen:updated");
+	$("#selectAddic7ed").trigger("change");
 }
 
 function setSerieAssociata(idProvider,idSerieSub){
@@ -162,8 +172,12 @@ function setSerieAssociata(idProvider,idSerieSub){
 			$("#seriePreferite option:selected").prop("subspedia", idSerieSub);
 			break;
 		case 4:
+			break;
 		case 5:
+			break;
 		case 6:
+			$("#seriePreferite option:selected").prop("addic7ed", idSerieSub);
+			break;
 	}
 }
 function getSerieSelezionataByProvider(idProvider){

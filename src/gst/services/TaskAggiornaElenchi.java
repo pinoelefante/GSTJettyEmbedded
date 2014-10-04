@@ -12,6 +12,7 @@ public class TaskAggiornaElenchi extends TimerTask {
 		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.ITASA);
 		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.SUBSFACTORY);
 		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.SUBSPEDIA);
+		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.ADDIC7ED);
 	}
 
 }

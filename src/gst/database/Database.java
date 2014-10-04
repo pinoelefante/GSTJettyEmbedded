@@ -34,6 +34,7 @@ public class Database {
 	public static final String TABLE_TORRENT = "torrent";
 	public static final String TABLE_PREFERITI = "preferiti";
 	public static final String TABLE_SUBDOWN = "list_subdown";
+	public static final String TABLE_ADDIC7ED = "addic7ed";
 	
 	private final static String NOMEDB=Settings.getInstance().getUserDir()+"database3.sqlite";
 
@@ -110,6 +111,10 @@ public class Database {
 					"id INTEGER PRIMARY KEY,"+ 
 					"nome TEXT NOT NULL)");
 			
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_ADDIC7ED+" (" +
+					"id INTEGER PRIMARY KEY,"+ 
+					"nome TEXT NOT NULL)");
+			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSFACTORY +" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "directory TEXT NOT NULL,"
@@ -133,6 +138,7 @@ public class Database {
 					"id_subsfactory INTEGER DEFAULT 0,"+
 					"id_subspedia INTEGER DEFAULT 0,"+
 					"id_opensubtitles INTEGER DEFAULT 0,"+
+					"id_addic7ed INTEGER DEFAULT 0," +
 					"id_tvdb INTEGER DEFAULT 0,"+
 					"preferenze_download INTEGER DEFAULT 0," +
 					"preferenze_sottotitoli TEXT,"+
@@ -140,7 +146,8 @@ public class Database {
 					"FOREIGN KEY(provider) REFERENCES provider(id),"+
 					"FOREIGN KEY(id_itasa) REFERENCES itasa(id),"+
 					"FOREIGN KEY(id_subsfactory) REFERENCES subsfactory(id),"+
-					"FOREIGN KEY(id_subspedia) REFERENCES subspedia(id)"
+					"FOREIGN KEY(id_subspedia) REFERENCES subspedia(id),"+ 
+					"FOREIGN KEY(id_addic7ed) REFERENCES addic7ed(id)"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_PREFERITI+" (" +

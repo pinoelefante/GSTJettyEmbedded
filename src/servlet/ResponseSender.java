@@ -94,6 +94,7 @@ public class ResponseSender {
 			Element id_subspedia = new Element("id_subspedia");
 			Element id_subsfactory = new Element("id_subsfactory");
 			Element id_tvdb = new Element("id_tvdb");
+			Element id_addic7ed= new Element("id_addic7ed");
 			Element no_select=new Element("no_select");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
@@ -105,6 +106,7 @@ public class ResponseSender {
 			id_subsfactory.addContent(""+serie.get(i).getIDDBSubsfactory());
 			id_subspedia.addContent(serie.get(i).getIDSubspedia()+"");
 			id_tvdb.addContent(serie.get(i).getIDTvdb()+"");
+			id_addic7ed.addContent(serie.get(i).getIDAddic7ed()+"");
 			no_select.addContent(serie.get(i).isEscludiSelezione()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
@@ -114,6 +116,7 @@ public class ResponseSender {
 			serie_tag.addContent(id_subsfactory);
 			serie_tag.addContent(id_subspedia);
 			serie_tag.addContent(id_tvdb);
+			serie_tag.addContent(id_addic7ed);
 			serie_tag.addContent(no_select);
 			elenco.addContent(serie_tag);
 		}
