@@ -1,0 +1,7 @@
+aggiornamento 2:
+ALTER TABLE serietv ADD COLUMN preferenze_sottotitoli TEXT
+UPDATE serietv SET preferenze_sottotitoli="it"
+ALTER TABLE serietv ADD COLUMN id_addic7ed INTEGER DEFAULT 0 REFERENCES addic7ed(id)
+ALTER TABLE serietv ADD COLUMN escludi_seleziona_tutto INTEGER DEFAULT 0
+ALTER TABLE logsub ADD COLUMN lingua TEXT
+INSERT INTO list_subdown(episodio, lingua) SELECT id, "it" FROM episodi WHERE sottotitolo=1

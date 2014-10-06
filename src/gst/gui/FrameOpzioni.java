@@ -200,7 +200,18 @@ public class FrameOpzioni extends JFrame {
 		lingua.addItem(new Lingua("Français", "fr"));
 		lingua.addItem(new Lingua("Italiano", "it"));
 		lingua.addItem(new Lingua("Português", "pr"));
-		lingua.setSelectedIndex(4);
+		String lang = s.getLingua();
+		boolean found = false;
+		for(int i=0;i<lingua.getItemCount();i++){
+			Lingua l = lingua.getItemAt(i);
+			if(l.getValue().compareToIgnoreCase(lang)==0){
+				lingua.setSelectedIndex(i);
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			lingua.setSelectedIndex(1);
 		panel_5.add(lingua);
 		
 		JPanel panel_16 = new JPanel();

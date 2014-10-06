@@ -1,0 +1,13 @@
+div#container {
+	position: relative;
+	margin-top: 70px;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 90%;
+	min-width: 950px;
+	border: 1px solid gray;
+	border-radius: 10px;
+}
+#selectSerie {
+	width:350px;
+}

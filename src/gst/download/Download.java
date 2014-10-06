@@ -12,6 +12,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class Download {
 	private long d_corrente, d_finale;
@@ -264,5 +266,34 @@ public class Download {
 	}
 	public static boolean isRaggiungibile(String url){
 		return isHttpRaggiungibile(url);
+	}
+	public static void downloadCustomHeaders(String url, String dest, ArrayList<Entry<String, String>> headers) throws IOException {
+		
+			HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+			for(int i=0;headers!=null && i<headers.size();i++){
+				Entry<String, String> p = headers.get(i);
+				con.setRequestProperty(p.getKey(), p.getValue());
+			}
+			con.setRequestProperty("User-Agent", "gstJ/"+Settings.getInstance().getVersioneSoftware());
+			InputStream is = con.getInputStream();
+			
+			if(dest.contains(File.separator)){
+				String path=dest.substring(0, dest.lastIndexOf(File.separator));
+				File f=new File(path);
+				f.mkdirs();
+			}
+			
+			FileOutputStream fos = new FileOutputStream(dest);
+
+			byte[] buffer = new byte[32768]; //32KB
+			int len;
+			while ((len = is.read(buffer)) > 0) {
+				fos.write(buffer, 0, len);
+			}
+			buffer=null;
+			fos.close();
+			is.close();
+		
+
 	}
 }
