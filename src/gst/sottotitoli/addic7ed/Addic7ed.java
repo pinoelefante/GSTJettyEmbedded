@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,9 +31,16 @@ public class Addic7ed implements ProviderSottotitoli {
 	private static Addic7ed instance;
 	private final static String URL_SHOWLIST = "http://www.addic7ed.com/ajax_getShows.php";
 	private final static String URL_GET_EPISODES = "http://www.addic7ed.com/ajax_loadShow.php?show=<IDSHOW>&season=<SEASON>&langs=<LANG>&hd=<HD>&hi=0";
+	private static final int LIMITE_DOWNLOAD = 0;
 	private Map<String, String> lingue_disponibili;
+	private int downloads;
+	private TimerTask task_reset_addic7ed_downloads;
+	private Timer timer ;
 	
 	private Addic7ed() {
+		downloads = 0;
+		timer = new Timer();
+		task_reset_addic7ed_downloads=new ResetCapLimitTask();
 		lingue_disponibili = new HashMap<>();
 		lingue_disponibili.put(INGLESE, "|1|");
 		lingue_disponibili.put(ITALIANO, "|7|");
@@ -73,6 +82,8 @@ public class Addic7ed implements ProviderSottotitoli {
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang) {
 		if(!hasLanguage(lang))
 			return false;
+		if(downloads>=15)
+			return false;
 		if(serie.getIDAddic7ed()<=0)
 			return false;
 		String langS = getLangString(lang);
@@ -95,6 +106,11 @@ public class Addic7ed implements ProviderSottotitoli {
 						headers.add(new AbstractMap.SimpleEntry<String, String>("Referer",getAPIUrl(serie.getIDAddic7ed(), ep.getStagione(), langS, stat.is720p())));
 						Download.downloadCustomHeaders(urls.get(j), path, headers);
 						downloadOK = true;
+						downloads++;
+						if(downloads >=LIMITE_DOWNLOAD){
+							timer.schedule(task_reset_addic7ed_downloads, 86400000, 1);
+							break;
+						}
 					}
 					catch (IOException e) {
 						e.printStackTrace();
@@ -286,5 +302,11 @@ public class Addic7ed implements ProviderSottotitoli {
 				return map_lang_addicted.get(TEDESCO);
 		}
 		return null;
+	}
+	class ResetCapLimitTask extends TimerTask {
+		public void run() {
+			downloads = 0;
+		}
+		
 	}
 }
