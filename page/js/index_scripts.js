@@ -954,7 +954,8 @@ function showSelezione() {
 			var stagione = $(this).find(".panel-title a").text();
 			$(this).find("input[type=checkbox]:checked").each(function(){
 				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
-				html+="<tr><td class='selectionTD'><b>"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
+				var id = $(this).val();
+				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' checked/><b>"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
 				trovati++;
 			});
 		});
@@ -974,4 +975,10 @@ function showButtonResults(){
 		$("#btnShowSelect").removeClass("visible");
 		$("#btnShowSelect").addClass("hidden");
 	}
+}
+function res_ChangeSelection(id){
+	//res_ChangeSelection
+	//chkEp_
+	var check = $("#res_ChangeSelection"+id).is(":checked");
+	$("#chkEp_"+id).prop('checked', check);
 }

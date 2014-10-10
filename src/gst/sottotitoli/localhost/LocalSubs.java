@@ -38,7 +38,7 @@ public class LocalSubs implements ProviderSottotitoli{
 			File f = subs.get(i);
 			boolean skip = false;
 			for(int j=0;j<langs.length;j++){
-    			String l = langs[i];
+    			String l = langs[j];
     			if(l.compareTo(lang)==0)
     				continue;
     			if(f.getName().toLowerCase().endsWith((l+".srt").toLowerCase())){
