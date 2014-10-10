@@ -301,4 +301,8 @@ public class GestioneSerieTV implements Notifier {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET escludi_seleziona_tutto="+(s?1:0)+" WHERE id="+idSerie;
 		return Database.updateQuery(query);
 	}
+	public boolean setLingueSub(int idSerie, String lingue){
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+lingue+"\" WHERE id="+idSerie;
+		return Database.updateQuery(query);
+	}
 }

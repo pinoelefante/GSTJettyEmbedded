@@ -955,7 +955,7 @@ function showSelezione() {
 			$(this).find("input[type=checkbox]:checked").each(function(){
 				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
 				var id = $(this).val();
-				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' checked/><b>"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
+				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' checked/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
 				trovati++;
 			});
 		});
@@ -977,8 +977,6 @@ function showButtonResults(){
 	}
 }
 function res_ChangeSelection(id){
-	//res_ChangeSelection
-	//chkEp_
 	var check = $("#res_ChangeSelection"+id).is(":checked");
 	$("#chkEp_"+id).prop('checked', check);
 }

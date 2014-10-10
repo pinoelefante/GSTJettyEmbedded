@@ -5,9 +5,31 @@ div#container {
 	margin-right: 20px;
 	height: 90%;
 	min-width: 950px;
+	min-height: 600px;
 	border: 1px solid gray;
 	border-radius: 10px;
 }
-#selectSerie {
-	width:350px;
+div#topContainer {
+	width: 750px;
+	height: 100px;
+	min-width: 728px;
+	min-height: 90px;
+	margin: 0 auto;
+}
+div#divCenter {
+	position:absolute;
+	height: calc(100% - 100px);
+	width: 60%;
+	left:20%;
+	right:20%;
+	min-width: 500px;
+	border: 1px solid black;
+	overflow: auto;
+}
+div.buttonsAccordion {
+	display: inline;
+	float: right;
+}
+div[id$='chosen']{
+	width: 350px !important;
 }

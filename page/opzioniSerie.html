@@ -27,7 +27,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
-            <li><a href="#">Home</a></li>
+            <li><a href="index.html">Home</a></li>
             <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Avanzate <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -62,20 +62,36 @@
     </div>
     
     <div id="container">
-    	<table border=1>
-    	<tr><td>
-    	<select id="selectSerie" data-placeholder="Seleziona lingua" multiple class="chosen-select">
-    		<option value="de">Tedesco</option>
-    		<option value="fr">Francesce</option>
-    		<option value="pr">Portoghese</option>
-    		<option value="it">Italiano</option>
-    		<option value="en">Inglese</option>
-    		<option value="es">Spagnolo</option>
-		</select>
-		</table>
+    	<div id="topContainer">
+    		<!-- ADS qui -->
+    	</div>
+    	<div id= divCenter>
+	    	<div class="panel-group" id="accordion"></div>
+    	</div>
+    	
     </div>
     
-    
-    
+    <div class="modal fade" id="ModalMessaggio" tabindex="-1" role="dialog"
+		aria-labelledby="ModalMessaggioLabel" aria-hidden="true"
+		style="vertical-align: middle">
+		<div class="modal-dialog" style="padding-top: 5%;">
+			<div class="modal-content panel">
+				<div class="modal-header panel-heading">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4 class="modal-title" id="ModalMessaggioLabel"></h4>
+				</div>
+				<div class="modal-body">
+					<p id="TestoModal"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
 </body>
 </html>

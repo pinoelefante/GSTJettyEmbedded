@@ -107,6 +107,17 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
+			case "modificaPreferenzeSerie": {
+				int id = Integer.parseInt(checkParameter("id", resp, req, false));
+				String lingue = checkParameter("lingue_sub", resp, req, false);
+				boolean escludi = Boolean.parseBoolean(checkParameter("escludi", resp, req, false));
+				if(lingue.compareTo("null")==0)
+					lingue = Settings.getInstance().getLingua();
+				boolean b1=manager.setSerieNonSelezionabile(id, escludi);
+				boolean b2=manager.setLingueSub(id, lingue);
+				xml = ResponseSender.createResponseBoolean(b1 && b2);
+				break;
+			}
 			case "openFolder": {
 				int id = Integer.parseInt(checkParameter("id", resp, req, false));
 				SerieTV serie = ProviderSerieTV.getSerieByID(id);
