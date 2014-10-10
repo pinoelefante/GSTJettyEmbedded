@@ -32,7 +32,6 @@
             <li class="dropdown active">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Avanzate <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-              	<li><a href="regoleDownload.html">Regole download</a></li>
                 <li class="active"><a href="#">Sottotitoli</a></li>
                 <li><a href="episodi.html">Stato episodi</a></li>
                 <li class="divider"></li>
@@ -44,8 +43,8 @@
             <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Supporto <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-              	<li><a href="http://gestioneserietv.altervista.org/segnala.html" target="_blank">Segnala bug</a></li>
-              	<li><a href="http://gestioneserietv.altervista.org/richiedi.html" target="_blank">Richiedi funzionalità</a></li>
+              	<li><a href="javascript:void(0)" onclick="goToSegnalaBug()">Segnala bug</a></li>
+              	<li><a href="javascript:void(0)" onclick="goToRichiediFunzionalita()">Richiedi funzionalità</a></li>
               	<li class="divider"></li>
                 <li><a href="mailto:gestioneserietv@gmail.com">Contatta lo sviluppatore</a></li>
                 <li class="divider"></li>
@@ -123,8 +122,8 @@
 					<option class="noValue"></option>
 				</select>
 				<div class="divBottoniProvider">
-					<button class="btn btn-primary">Associa</button>
-					<button class="btn btn-warning">Disassocia</button>
+					<button class="btn btn-primary" onclick='associa(5);'>Associa</button>
+					<button class="btn btn-warning" onclick='disassocia(5);'>Disassocia</button>
 				</div>
 			</div>
 			
@@ -151,8 +150,8 @@
 					<option class="noValue"></option>
 				</select>
 				<div class="divBottoniProvider">
-					<button class="btn btn-primary">Associa</button>
-					<button class="btn btn-warning">Disassocia</button>
+					<button class="btn btn-primary" onclick='associa(6);'>Associa</button>
+					<button class="btn btn-warning" onclick='disassocia(6);'>Disassocia</button>
 				</div>
 			</div>
 			 
@@ -164,8 +163,8 @@
 					<option class="noValue"></option>
 				</select>
 				<div class="divBottoniProvider">
-					<button class="btn btn-primary">Associa</button>
-					<button class="btn btn-warning">Disassocia</button>
+					<button class="btn btn-primary" onclick='associa(4);'>Associa</button>
+					<button class="btn btn-warning" onclick='disassocia(4);'>Disassocia</button>
 				</div>
 			</div>
 			 

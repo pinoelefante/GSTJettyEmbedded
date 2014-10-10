@@ -189,8 +189,11 @@ function getSerieSelezionataByProvider(idProvider){
 		case 3:
 			return $("#selectSubspedia").val();
 		case 4:
+			return $("#selectPodnapisi").val();
 		case 5:
+			return $("#selectOpensubtitles").val();
 		case 6:
+			return $("#selectAddic7ed").val();
 	}
 }
 function selectEmptyItem(idProvider){
@@ -206,8 +209,14 @@ function selectEmptyItem(idProvider){
 				$("#selectSubspedia option.noValue").prop("selected", true);
 				break;
 			case 4:
+				$("#selectPodnapisi option.noValue").prop("selected", true);
+				break;
 			case 5:
+				$("#selectOpensubtitles option.noValue").prop("selected", true);
+				break;
 			case 6:
+				$("#selectAddic7ed option.noValue").prop("selected", true);
+				break;
 		}
 	}
 }

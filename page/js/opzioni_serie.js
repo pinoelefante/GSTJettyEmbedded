@@ -68,7 +68,11 @@ function creaSerieElementoPagina(nome, id, provider, noselect, langs, preferenze
                     	    		"<option value='es' "+(isLinguaSelected(langs, "es")?"selected":"")+">Spagnolo</option>"+
                     			"</select>"+
 								"</div>" +
-								"<p>Preferenze download qui</p>"+
+								"<p><br>"+
+								"<input type='checkbox' value='4' onclick='abilitaPreferenze("+id+")' id='selAll_"+id+"'/> Scarica tutto " +
+								"<input type='checkbox' value='2' id='selHD_"+id+"'/> Preferisci HD " +
+								"<input type='checkbox' value='1' id='selPre_"+id+"'/> Scarica Pre-Air " +
+								"</p>"+
 							"</div>" +
 						"</div>" +
 					"</div>" +

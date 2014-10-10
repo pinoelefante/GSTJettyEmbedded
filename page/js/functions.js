@@ -121,3 +121,9 @@ function parseBooleanXML(xml) {
 	else
 		return false;
 }
+function goToSegnalaBug(){
+	
+}
+function goToRichiediFunzionalita(){
+	
+}
