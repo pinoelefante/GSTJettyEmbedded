@@ -164,7 +164,12 @@ public class GestioneSerieTV implements Notifier {
 		return preferiti;
 	}
 	public boolean rimuoviSeriePreferita(int id, boolean removeEpisodi){
-		return ProviderSerieTV.removeSerieDaPreferiti(id, removeEpisodi);
+		boolean ok=ProviderSerieTV.removeSerieDaPreferiti(id, removeEpisodi);
+		if(ok){
+			String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie="+id+")";
+			Database.updateQuery(q);
+		}
+		return ok;
 	}
 	public void aggiornaEpisodiSerie(int idSerie, int idProvider){
 		ProviderSerieTV p = checkProvider(idProvider);
