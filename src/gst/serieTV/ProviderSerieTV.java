@@ -98,7 +98,7 @@ public abstract class ProviderSerieTV {
 		String update_serie = "UPDATE serietv SET stop_search=0 WHERE id="+serie;
 		Database.updateQuery(update_serie);
 		if(resetEpisodi){
-			String resetEp="UPDATE episodi SET stato_visualizzazione=0 WHERE serie="+serie;
+			String resetEp="UPDATE episodi SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+serie;
 			Database.updateQuery(resetEp);
 		}
 		
