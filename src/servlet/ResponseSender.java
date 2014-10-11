@@ -97,6 +97,7 @@ public class ResponseSender {
 			Element id_addic7ed= new Element("id_addic7ed");
 			Element pref_subs = new Element("pref_subs");
 			Element no_select=new Element("no_select");
+			Element pref_down = new Element("pref_down");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
@@ -110,6 +111,7 @@ public class ResponseSender {
 			id_addic7ed.addContent(serie.get(i).getIDAddic7ed()+"");
 			pref_subs.addContent(serie.get(i).getPreferenzeSottotitoli().getPreferenzeU());
 			no_select.addContent(serie.get(i).isEscludiSelezione()+"");
+			pref_down.addContent(serie.get(i).getPreferenze().toValue()+"");
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
@@ -121,6 +123,7 @@ public class ResponseSender {
 			serie_tag.addContent(id_addic7ed);
 			serie_tag.addContent(pref_subs);
 			serie_tag.addContent(no_select);
+			serie_tag.addContent(pref_down);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);
@@ -374,7 +377,8 @@ public class ResponseSender {
 		ok.addContent(true+"");
 		root.addContent(ok);
 		Element subs = new Element("subs");
-		for(Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> s : list){
+		for(int i=list.size()-1;i>=0;i--){
+			Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> s = list.get(i);
 			Element sub = new Element("sub");
 			Element nomeSerie = new Element("nomeSerie");
 			nomeSerie.addContent(s.getV().getNomeSerie());

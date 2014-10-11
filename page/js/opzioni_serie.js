@@ -29,7 +29,8 @@ function loadSeriePreferite() {
 				var provider_name = $(this).find("provider_name").text();
 				var noselect = $(this).find("no_select").text();
 				var pref_subs = $(this).find("pref_subs").text();
-				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider, noselect, pref_subs, 0);
+				var pref_down = parseInt($(this).find("pref_down").text());
+				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider, noselect, pref_subs, pref_down);
 				$("#accordion").append(elem);
 				$("#langs_"+id).trigger("chosen:updated");
 			});
@@ -69,9 +70,9 @@ function creaSerieElementoPagina(nome, id, provider, noselect, langs, preferenze
                     			"</select>"+
 								"</div>" +
 								"<p><br>"+
-								"<input type='checkbox' value='4' onclick='abilitaPreferenze("+id+")' id='selAll_"+id+"'/> Scarica tutto " +
-								"<input type='checkbox' value='2' id='selHD_"+id+"'/> Preferisci HD " +
-								"<input type='checkbox' value='1' id='selPre_"+id+"'/> Scarica Pre-Air " +
+								"<input type='checkbox' value='4' onclick='abilitaPreferenze("+id+")' id='selAll_"+id+"' "+(isScaricaTutto(preferenzeDown)?"checked":"")+" /> Scarica tutto " +
+								"<input type='checkbox' value='2' id='selHD_"+id+"' "+(isHD(preferenzeDown)?"checked":"")+" /> Preferisci HD " +
+								"<input type='checkbox' value='1' id='selPre_"+id+"' "+(isPreair(preferenzeDown)?"checked":"")+" /> Scarica Pre-Air " +
 								"</p>"+
 							"</div>" +
 						"</div>" +
@@ -89,6 +90,7 @@ function isLinguaSelected(lingue, lingua){
 }
 function salvaImpostazioni(id){
 	var escludi = $("#escludi_"+id).is(":checked");
+	var pref_down = calcolaPreferenze(id);
 	var lingue = $("#langs_"+id).val(); //array
 	var lingue_s = "";
 	for(var i=0;i<lingue.length;i++){
@@ -102,7 +104,7 @@ function salvaImpostazioni(id){
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniSerieServlet",
-		data : "action=modificaPreferenzeSerie&id="+id+"&escludi="+escludi+"&lingue_sub="+lingue_s,
+		data : "action=modificaPreferenzeSerie&id="+id+"&escludi="+escludi+"&lingue_sub="+lingue_s+"&pref_down="+pref_down,
 		dataType : "xml",
 		success : function(msg) {
 			var r = parseBooleanXML(msg);
@@ -115,4 +117,38 @@ function salvaImpostazioni(id){
 			showModal("","Si è verificato un errore durante l'aggiornamento");
 		}
 	});
+}
+function isHD(val){
+	val = val >> 1;
+	var value = val&1;
+	if(value==1)
+		return true;
+	return false;
+}
+function isScaricaTutto(val){
+	val = val >> 1;
+	val = val >> 1;
+	var value = val&1;
+	if(value==1)
+		return true;
+	return false;
+}
+function isPreair(val){
+	var value = val&1;
+	if(value==1)
+		return true;
+	return false;
+}
+function calcolaPreferenze(id){
+	var preferenze = 0;
+	if($("#selAll_"+id).is(":checked")){
+		preferenze+=parseInt($("#selAll_"+id).val());
+	}
+	if($("#selHD_"+id).is(":checked")){
+		preferenze+=parseInt($("#selHD_"+id).val());
+	}
+	if($("#selPre_"+id).is(":checked")){
+		preferenze+=parseInt($("#selPre_"+id).val());
+	}
+	return preferenze;
 }

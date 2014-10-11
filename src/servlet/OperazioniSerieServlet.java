@@ -110,12 +110,14 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "modificaPreferenzeSerie": {
 				int id = Integer.parseInt(checkParameter("id", resp, req, false));
 				String lingue = checkParameter("lingue_sub", resp, req, false);
+				int pref_down = Integer.parseInt(checkParameter("pref_down", resp, req, false));
 				boolean escludi = Boolean.parseBoolean(checkParameter("escludi", resp, req, false));
 				if(lingue.compareTo("null")==0)
 					lingue = Settings.getInstance().getLingua();
 				boolean b1=manager.setSerieNonSelezionabile(id, escludi);
 				boolean b2=manager.setLingueSub(id, lingue);
-				xml = ResponseSender.createResponseBoolean(b1 && b2);
+				boolean b3=manager.setPreferenzeDownload(id, pref_down);
+				xml = ResponseSender.createResponseBoolean(b1 && b2 && b3);
 				break;
 			}
 			case "openFolder": {

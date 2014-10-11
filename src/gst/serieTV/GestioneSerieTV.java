@@ -305,4 +305,8 @@ public class GestioneSerieTV implements Notifier {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+lingue+"\" WHERE id="+idSerie;
 		return Database.updateQuery(query);
 	}
+	public boolean setPreferenzeDownload(int id, int pref_down) {
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_download="+pref_down+" WHERE id="+id;
+		return Database.updateQuery(query);
+	}
 }
