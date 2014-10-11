@@ -16,8 +16,6 @@ div#container {
 	margin-right: 20px;
 	height: 90%;
 	min-width: 1000px;
-	/*border: 1px solid gray;
-	border-radius: 10px;*/
 }
 
 div#containerLeft {
@@ -26,10 +24,6 @@ div#containerLeft {
 	right: 70%;
 	height: 100%;
 	width: 30%;
-	/*
-	border: 1px solid gray;
-	border-radius: 10px;
-	*/
 	min-width: 300px;
 	min-height: 600px;
 }
@@ -80,10 +74,6 @@ div#containerCenter {
 	right: 30%;
 	height: 100%;
 	width: 40%;
-	/*
-	border: 1px solid gray;
-	border-radius: 10px;
-	*/
 	min-width: 320px;
 	min-height: 600px;
 }
@@ -113,11 +103,6 @@ div#selectSerieDiv {
 	width: calc(100% - 10px);
 }
 div#divMessaggioOperazione {
-	/*
-	position:absolute;
-	margin-top:3px;
-	margin-bottom: 3px;
-	*/
 	font-size: 14px;
 	font-family: sans-serif;
 }
@@ -185,10 +170,6 @@ div#containerRight {
 	left: 70%;
 	height: 100%;
 	width: 30%;
-	/*
-	border: 1px solid gray;
-	border-radius: 10px;
-	*/
 	min-width: 280px;
 	min-height: 600px;
 }
