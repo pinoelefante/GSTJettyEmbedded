@@ -403,4 +403,17 @@ public class ResponseSender {
 		root.addContent(subs);
 		return new Document(root);
 	}
+	public static Document createInfoClient(String id, int versione) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element id_client=new Element("id");
+		id_client.addContent(id);
+		root.addContent(id_client);
+		Element v_client = new Element("versione");
+		v_client.addContent(""+versione);
+		root.addContent(v_client);
+		return new Document(root);
+	}
 }

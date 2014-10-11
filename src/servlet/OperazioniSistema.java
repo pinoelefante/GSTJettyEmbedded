@@ -1,6 +1,7 @@
 package servlet;
 
 import gst.gui.InterfacciaGrafica;
+import gst.programma.Settings;
 import gst.system.Sistema;
 
 import java.io.IOException;
@@ -58,6 +59,12 @@ public class OperazioniSistema extends HttpServlet {
 			case "scaricaAggiornamento": {
 				xml = ResponseSender.createResponseBoolean(true);
 				close = true;
+				break;
+			}
+			case "getInfoClient": {
+				String id = Settings.getInstance().getClientID();
+				int versione = Settings.getInstance().getVersioneSoftware();
+				xml = ResponseSender.createInfoClient(id, versione);
 				break;
 			}
 		}

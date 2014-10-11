@@ -1,3 +1,6 @@
+$(document).ready(function(){
+	initLinks();
+});
 function showModal(titolo, messaggio) {
 	$("#ModalMessaggioLabel").text(titolo);
 	$("#TestoModal").text(messaggio.replace("è", "\350"));
@@ -16,7 +19,6 @@ function goToOpzioni(){
 		},
 		error : function(msg){
 			showModal("","Si è verificato un errore");
-			operazioneInCorso("");
 		}
 	});
 }
@@ -38,10 +40,8 @@ function aggiorna() {
     		   		else {
     		   			showModal("Cancellazione serie", "Potrebbero essere presenti ancora alcuni file");
     		   		}
-    		   		operazioneInCorso("");
     		   	},
     		   	error : function(msg) {
-    		   		operazioneInCorso("");
     		   		showModal("","Si è verificato un errore durante la richiesta");
     		   	}
     		});
@@ -65,7 +65,6 @@ function cercaUpdate(){
 		},
 		error : function(msg){
 			showModal("","Si è verificato un errore");
-			operazioneInCorso("");
 		}
 	});
 }
@@ -89,7 +88,6 @@ function chiudiGST(){
 		},
 		error : function(msg){
 			showModal("","Si è verificato un errore");
-			operazioneInCorso("");
 		}
 	});
 }
@@ -110,7 +108,6 @@ function closeGST(){
 		},
 		error : function(msg){
 			showModal("","Si è verificato un errore");
-			operazioneInCorso("");
 		}
 	});
 }
@@ -121,9 +118,25 @@ function parseBooleanXML(xml) {
 	else
 		return false;
 }
-function goToSegnalaBug(){
-	
-}
-function goToRichiediFunzionalita(){
-	
+function initLinks(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSistemaServlet",
+		data : "action=getInfoClient",
+		dataType : "xml",
+		async : "false", 
+		success : function(msg) {
+			if(parseBooleanXML(msg)){
+				var idClient = $(msg).find("id").text();
+				var versione = $(msg).find("versione").text();
+				var urlr = "http://gestioneserietv.altervista.org/richiedi.php?idClient="+idClient+"&versioneSoftware="+versione;
+				var urlb = "http://gestioneserietv.altervista.org/segnala.php?idClient="+idClient+"&versioneSoftware="+versione;
+				$("#richiediFunzionalitaLink").attr("href", urlr);
+				$("#segnalaBugLink").attr("href", urlb);
+			}
+		},
+		error : function(msg){
+			showModal("","Si è verificato un errore");
+		}
+	});
 }
