@@ -302,7 +302,24 @@ public class GestioneSerieTV implements Notifier {
 		return Database.updateQuery(query);
 	}
 	public boolean setLingueSub(int idSerie, String lingue){
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+lingue+"\" WHERE id="+idSerie;
+		SerieTV serie=ProviderSerieTV.getSerieByID(idSerie);
+		PreferenzeSottotitoli ps=serie.getPreferenzeSottotitoli();
+		ArrayList<String> lingueNuove = ps.getNewLangs(lingue);
+		ArrayList<String> rimosse = ps.getRemovedLangs(lingue);
+		
+		if(rimosse.size()>0){
+			for(int i=0;i<rimosse.size();i++){
+				String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie="+idSerie+" AND list.lingua=\""+rimosse.get(i)+"\")";
+				Database.updateQuery(q);
+			}
+		}
+		if(lingueNuove.size()>0){
+			for(int i=0;i<lingueNuove.size();i++){
+				String q = "INSERT INTO list_subdown(episodio, lingua) SELECT id, \""+lingueNuove.get(i)+"\" FROM "+Database.TABLE_EPISODI+" WHERE serie="+idSerie+" AND sottotitolo=1";
+				Database.updateQuery(q);
+			}
+		}
+ 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+lingue+"\" WHERE id="+idSerie;
 		return Database.updateQuery(query);
 	}
 	public boolean setPreferenzeDownload(int id, int pref_down) {

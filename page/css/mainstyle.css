@@ -15,9 +15,9 @@ div#container {
 	margin-left: 20px;
 	margin-right: 20px;
 	height: 90%;
-	min-width: 950px;
-	border: 1px solid gray;
-	border-radius: 10px;
+	min-width: 1000px;
+	/*border: 1px solid gray;
+	border-radius: 10px;*/
 }
 
 div#containerLeft {
@@ -30,8 +30,8 @@ div#containerLeft {
 	border: 1px solid gray;
 	border-radius: 10px;
 	*/
-	min-width: 280px;
-	min-height: 500px;
+	min-width: 300px;
+	min-height: 600px;
 }
 
 div#serieNuove {
@@ -57,12 +57,13 @@ div#altervista {
 	position: absolute;
 	top: 60%;
 	bottom: 10%;
-	left: 5%;
-	right: 5%;
+	left: 2%;
+	right: 2%;
 	width: 90%;
 	height: 32%;
-	border: 1px solid gray;
-	border-radius: 10px;
+	min-width: 250px;
+	min-height: 250px;
+	border: 1px solid black;
 }
 
 iframe#altervistaFrame {
@@ -83,7 +84,7 @@ div#containerCenter {
 	border-radius: 10px;
 	*/
 	min-width: 320px;
-	min-height: 500px;
+	min-height: 600px;
 }
 
 div#addSerie {
@@ -93,9 +94,11 @@ div#addSerie {
 	left: 0px;
 	right: 0px;
 	height: 150px;
-	border: 1px solid gray;
-	border-radius: 10px;
-	max-height: 150px;
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 	min-width: 320px;
 }
 
@@ -109,9 +112,11 @@ div#selectSerieDiv {
 	width: calc(100% - 10px);
 }
 div#divMessaggioOperazione {
+	/*
 	position:absolute;
 	margin-top:3px;
 	margin-bottom: 3px;
+	*/
 	font-size: 14px;
 	font-family: sans-serif;
 }
@@ -140,7 +145,8 @@ div#listSerie {
 	top: 150px;
 	bottom: 80px;
 	border: 1px solid gray;
-	border-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
 	min-height: 150px;
 }
 
@@ -183,7 +189,7 @@ div#containerRight {
 	border-radius: 10px;
 	*/
 	min-width: 280px;
-	min-height: 500px;
+	min-height: 600px;
 }
 
 div#altro {
@@ -346,4 +352,7 @@ td.bottoneVedere {
 }
 .visible {
 	display: inherit;
+}
+.takespace {
+	visibility: hidden;
 }
