@@ -1,5 +1,6 @@
 package gst.download;
 
+import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
@@ -164,6 +165,10 @@ public class Download {
 					String path=path_destinazione.substring(0, path_destinazione.lastIndexOf(File.separator));
 					File f=new File(path);
 					f.mkdirs();
+					if(!OperazioniFile.dirExists(path)){
+						clean();
+						return;
+					}
 				}
 				
 				fos = new FileOutputStream(path_destinazione);
@@ -226,8 +231,10 @@ public class Download {
 		download.avviaDownload();
 		try {
 			download.getDownloadThread().join();
+			if(!download.isComplete())
+				throw new IOException("Download non completato");
 		}
-		catch (InterruptedException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new IOException("Il download non � stato completato");
 		}

@@ -140,7 +140,7 @@ public abstract class ProviderSerieTV {
 	public static int isEpisodioPresente(int id_serie, int stagione, int episodio){
 		String query = "SELECT * FROM episodi WHERE serie="+id_serie+" AND stagione="+stagione+" AND episodio="+episodio;
 		ArrayList<KVResult<String, Object>> res =Database.selectQuery(query);
-		if(res.size()==0)
+		if(/*res!=null &&*/ res.size()==0)
 			return 0;
 		else {
 			return (int) res.get(0).getValueByKey("id");

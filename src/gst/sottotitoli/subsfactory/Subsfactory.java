@@ -108,8 +108,10 @@ public class Subsfactory implements ProviderSottotitoli {
 					e1.printStackTrace();
 				}
 			}
-			e.setSubDownload(!down);
-			GestoreSottotitoli.setSottotitoloDownload(e.getId(), !down, ITALIANO);
+			if(down){
+				e.setSubDownload(!down);
+				GestoreSottotitoli.setSottotitoloDownload(e.getId(), false, ITALIANO);
+			}
 			return down;
 		}
 		return false;

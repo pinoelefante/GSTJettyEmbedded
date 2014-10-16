@@ -52,6 +52,7 @@ public class Database {
 			conf.setSynchronous(SynchronousMode.OFF);
 			
 			con = DriverManager.getConnection("jdbc:sqlite:"+NOMEDB, conf.toProperties());
+			con.setAutoCommit(true);
 			creaDB();
 			
 			checkIntegrita();
@@ -326,9 +327,10 @@ public class Database {
 		return -1;
 	}
 	public static ArrayList<KVResult<String,Object>> selectQuery(String query){
-		System.out.println(query);
+		//System.out.println(query);
 		ArrayList<KVResult<String, Object>> result=new ArrayList<KVResult<String, Object>>();
 		try {
+			
 			Statement stat=con.createStatement();
 			ResultSet rs=stat.executeQuery(query);
 			ResultSetMetaData meta=rs.getMetaData();
@@ -345,10 +347,11 @@ public class Database {
 			stat.close();
 			return result;
 		}
-		catch(SQLException e){
+		catch(Exception e){
+			System.out.println(query);
 			System.out.println(e.getMessage());
 			ManagerException.registraEccezione(e);
-			return null;
+			return result;
 		}
 	}
 	public static boolean updateQuery(String query){

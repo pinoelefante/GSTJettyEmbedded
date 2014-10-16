@@ -87,4 +87,15 @@ public class OperazioniFile {
 		else
 			return false;
 	}
+	public static boolean dirExists(String path){
+		File f=new File(path);
+		if(f.exists()){
+			if(f.isDirectory())
+				return true;
+			else
+				return false;
+		}
+		else
+			return false;
+	}
 }
