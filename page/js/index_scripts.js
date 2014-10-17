@@ -317,13 +317,21 @@ function selezionaPerStato(stato){
 	});
 	showButtonResults();
 }
+function selezionaTutto(selected) {
+	$("#accordion").find("input[type=checkbox]").each(function(){
+    	if(selected)
+    		$(this).prop('checked', true);
+    	else
+    		$(this).removeAttr('checked');
+	});
+	showButtonResults();
+}
 function operazioneInCorso(messaggio) {
 	if (messaggio.length > 0)
 		divMessaggioOperazione.innerHTML = "<img src='img/loading.gif' height='16' width='16'/>&nbsp;" + messaggio;
 	else
 		divMessaggioOperazione.innerHTML = "";
 }
-var episodiDaScaricare = 0;
 function loadSeriePreferite() {
 	operazioneInCorso("Invio richiesta mie serie preferite");
 	$.ajax({
@@ -335,7 +343,6 @@ function loadSeriePreferite() {
 			var arrayID=new Array();
 			var i=0;
 			operazioneInCorso("Caricando le serie preferite");
-			episodiDaScaricare = 0;
 			$(msg).find("serie").each(function() {
 				var nome = $(this).find("name").text();
 				var id = $(this).find("id").text();
@@ -369,6 +376,7 @@ function removeSerie(id) {
     		   			$("#serie" + id).remove();
     		   			deleteFolder(id);
     		   			$("#serie_vedere_"+id).remove();
+    		   			showButtonResults();
     		   		}
     		   		operazioneInCorso("");
     		   	},
@@ -465,7 +473,6 @@ function getEpisodi(id, noselect) {
 				switch(stato){
 				case 0:
 					daScaricare++;
-					episodiDaScaricare++;
 					break;
 				case 1:
 					daVedere++;
@@ -972,10 +979,11 @@ function showSelezione() {
 		var nomeSerie = $(this).find(".nomeSerie b").text();
 		$(this).find(".panel-body .panel-group").find(".panel").each(function(){
 			var stagione = $(this).find(".panel-title a").text();
-			$(this).find("input[type=checkbox]:checked").each(function(){
+			$(this).find("input[stato_visualizzazione=0]").each(function(){
 				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
 				var id = $(this).val();
-				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' checked/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
+				var checked = ($(this).is(":checked"))?"checked":"";
+				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' "+checked+"/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
 				trovati++;
 			});
 		});
@@ -987,13 +995,16 @@ function showSelezione() {
 		showModalInfo("Selezione", "Nessun episodio selezionato");
 }
 function showButtonResults(){
-	if($("#accordion").find("input[type=checkbox]:checked").length>0){
+	var toDownload = $("#accordion").find("input[stato_visualizzazione=0]").length;
+	if(toDownload>0){
 		$("#btnShowSelect").removeClass("hidden");
 		$("#btnShowSelect").addClass("visible");
+		$("#btnShowSelect").text(toDownload+" nuovi");
 	}
 	else {
 		$("#btnShowSelect").removeClass("visible");
 		$("#btnShowSelect").addClass("hidden");
+		$("#btnShowSelect").text("0 nuovi");
 	}
 }
 function res_ChangeSelection(id){
