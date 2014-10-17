@@ -1008,6 +1008,6 @@ function showButtonResults(){
 	}
 }
 function res_ChangeSelection(id){
-	var check = $("#res_ChangeSelection"+id).is(":checked");
+	var check = $("#resCheck"+id).is(":checked");
 	$("#chkEp_"+id).prop('checked', check);
 }

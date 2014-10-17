@@ -95,7 +95,7 @@ public abstract class ProviderSerieTV {
 		}
 	}
 	public static boolean removeSerieDaPreferiti(int serie, boolean resetEpisodi){
-		String update_serie = "UPDATE serietv SET stop_search=0 WHERE id="+serie;
+		String update_serie = "UPDATE serietv SET stop_search=0, escludi_seleziona_tutto=0 WHERE id="+serie;
 		Database.updateQuery(update_serie);
 		if(resetEpisodi){
 			String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+serie;
