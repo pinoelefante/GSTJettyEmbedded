@@ -844,7 +844,7 @@ function play(id) {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
 				$("#divEP_"+id).addClass("episodioVisto");
 				$("#chkEp_"+id).attr("stato_visualizzazione","2");
-				if($("#tdEpVedere"+id).parent().length==1){
+				if($("#tdEpVedere"+id).parent().find("tr").length==1){
 					$("#tdEpVedere"+id).parents("div[id^='serie_vedere_']").remove();
 				}
 				else
