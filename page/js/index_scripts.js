@@ -903,7 +903,7 @@ function getEpisodiDaVedere() {
 		success : function(msg) {
 			var r = parseBooleanXML(msg);
 			if(r){
-				$("#listEpisodiDaVedere").empty();
+				$("#accordionVedere").empty();
 				$(msg).find("serie").each(function(){
 					var id = $(this).attr("id");
 					var nome = $(this).attr("nome");
