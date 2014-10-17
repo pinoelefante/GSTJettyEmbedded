@@ -837,7 +837,11 @@ function play(id) {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
 				$("#divEP_"+id).addClass("episodioVisto");
 				$("#chkEp_"+id).attr("stato_visualizzazione","2");
-				$("#tdEpVedere"+id).remove();
+				if($("#tdEpVedere"+id).parent().length==1){
+					$("#tdEpVedere"+id).parents("div[id^='serie_vedere_']").remove();
+				}
+				else
+					$("#tdEpVedere"+id).remove();
 			}
 			else {
 				$("#divEP_"+id).removeClass("episodioDaVedere");
@@ -899,6 +903,27 @@ function getEpisodiDaVedere() {
 			var r = parseBooleanXML(msg);
 			if(r){
 				$("#listEpisodiDaVedere").empty();
+				$(msg).find("serie").each(function(){
+					var id = $(this).attr("id");
+					var nome = $(this).attr("nome");
+					var element = "<div class='panel panel-default seriePreferita' id='serie_vedere_" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordionVedere' href='#collapse_vedere" + id + "'>" + nome + "</a>" + "</h4>" + "</div>" + "<div id='collapse_vedere" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion_vedere_" + id + "'></div></div>" + "</div>" + "</div>";
+					$(element).appendTo("#accordionVedere");
+					var tabellaEpisodi = "<table id='table_vedere_"+id+"' main-container='serie_vedere_"+id+"'></table>";
+					$(tabellaEpisodi).appendTo("#accordion_vedere_"+id);
+					$(this).find("episodio").each(function(){
+						var titolo = $(this).find("titolo").text();
+						var idEp = $(this).find("id").text();
+						
+						var tr = document.createElement("tr");
+						$(tr).addClass("EpisodioDaVedere");
+						$(tr).attr("id", "tdEpVedere"+idEp);
+						tr.innerHTML="<td class='titoloVedere'>"+titolo+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+idEp+")'><span class='glyphicon glyphicon-play' /></button></td>";
+						$(tr).appendTo("#table_vedere_"+id);
+					});
+					
+					//accordion_vedere_+id
+				});
+				/*
 				$(msg).find("episodio").each(function(){
 					var nome = $(this).find("titolo").text();
 					var id = $(this).find("id").text();
@@ -909,6 +934,7 @@ function getEpisodiDaVedere() {
 					tr.innerHTML="<td class='titoloVedere'>"+nome+"</td><td class='bottoneVedere'><button class='btn btn-primary' onclick='play("+id+")'><span class='glyphicon glyphicon-play' /></button></td>";
 					$(tr).appendTo("#listEpisodiDaVedere");
 				});
+				*/
 			}
 			else {
 				showModal("","Si è verificato un errore");

@@ -49,7 +49,7 @@ public class GestioneSerieTV implements Notifier {
 		
 		//Avvia la ricerca dei nuovi episodi
 		t_search = new TaskRicercaEpisodi();
-		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
+		//timer.scheduleAtFixedRate(t_search, 0, 28800000L);
 		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
 			
@@ -285,8 +285,8 @@ public class GestioneSerieTV implements Notifier {
 				eps.add(ep);
 			}
 			Entry<SerieTV, ArrayList<Episodio>> entry = new AbstractMap.SimpleEntry<SerieTV, ArrayList<Episodio>>(st, eps);
-			results.add(entry);
-			
+			if(eps.size()>0)
+				results.add(entry);
 		}
 		return results;
 	}

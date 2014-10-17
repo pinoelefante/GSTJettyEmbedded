@@ -245,6 +245,9 @@ public class ResponseSender {
 		for(Entry<SerieTV, ArrayList<Episodio>> entry : map){
 			SerieTV st = entry.getKey();
 			ArrayList<Episodio> eps = entry.getValue();
+			Element serie = new Element("serie");
+			serie.setAttribute("id", st.getIDDb()+"");
+			serie.setAttribute("nome", st.getNomeSerie());
 			for(int i=0;i<eps.size();i++){
 				Episodio ep = eps.get(i);
 				Element episodio = new Element("episodio");
@@ -254,8 +257,9 @@ public class ResponseSender {
 				id.addContent(""+ep.getId());
 				episodio.addContent(titolo);
 				episodio.addContent(id);
-				root.addContent(episodio);
+				serie.addContent(episodio);
 			}
+			root.addContent(serie);
 		}
 		return new Document(root);
 	}
