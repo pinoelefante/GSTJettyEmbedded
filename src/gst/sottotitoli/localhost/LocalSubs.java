@@ -75,7 +75,6 @@ public class LocalSubs implements ProviderSottotitoli{
 						else{
 							sub.renameTo(new File(newFile));
 							renamed=true;
-							GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
 							break;
 						}
 					}
@@ -83,6 +82,8 @@ public class LocalSubs implements ProviderSottotitoli{
 				}
 			}
 		}
+		if(renamed)
+			GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
 		return renamed;
 	}
 	public ArrayList<SerieSub> getElencoSerie() {return null;}
