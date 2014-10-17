@@ -75,6 +75,7 @@ public class LocalSubs implements ProviderSottotitoli{
 						else{
 							sub.renameTo(new File(newFile));
 							renamed=true;
+							GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
 							break;
 						}
 					}
