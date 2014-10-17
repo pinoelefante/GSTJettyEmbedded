@@ -300,7 +300,10 @@ public class GestioneSerieTV implements Notifier {
 	public boolean deleteFolderSerie(int idSerie){
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
 		String path = settings.getDirectoryDownload()+serie.getFolderSerie();
-		return OperazioniFile.DeleteDirectory(new File(path));
+		boolean op = OperazioniFile.DeleteDirectory(new File(path));
+		String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+serie;
+		Database.updateQuery(resetEp);
+		return op;
 	}
 	public boolean setSerieNonSelezionabile(int idSerie, boolean s){
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET escludi_seleziona_tutto="+(s?1:0)+" WHERE id="+idSerie;

@@ -142,7 +142,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "remove": {
 				int idSerie=Integer.parseInt(checkParameter("id", resp, req, false));
 				String rimuoviEpisodi = checkParameter("removeEp", resp, req, true);
-				boolean rem = rimuoviEpisodi==null||rimuoviEpisodi.compareTo("false")==0?false:true;
+				boolean rem = (rimuoviEpisodi==null||rimuoviEpisodi.compareTo("false")==0)?false:true;
 				boolean r = manager.rimuoviSeriePreferita(idSerie, rem);
 				xml = ResponseSender.createResponseBoolean(r);
 				break;

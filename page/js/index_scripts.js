@@ -305,16 +305,6 @@ function aggiornaSerie(bottone) {
 		}
 	});
 }
-
-function selezionaTutto(selected) {
-	$("#accordion").find("input[type=checkbox]").each(function(){
-		if(selected)
-			$(this).prop('checked', true);
-		else
-			$(this).removeAttr('checked');
-	});
-	showButtonResults();
-}
 function selezionaPerStato(stato){
 	var trovati = 0;
 	$("#accordion").find("input[type=checkbox]").each(function(){
@@ -333,6 +323,7 @@ function operazioneInCorso(messaggio) {
 	else
 		divMessaggioOperazione.innerHTML = "";
 }
+var episodiDaScaricare = 0;
 function loadSeriePreferite() {
 	operazioneInCorso("Invio richiesta mie serie preferite");
 	$.ajax({
@@ -344,6 +335,7 @@ function loadSeriePreferite() {
 			var arrayID=new Array();
 			var i=0;
 			operazioneInCorso("Caricando le serie preferite");
+			episodiDaScaricare = 0;
 			$(msg).find("serie").each(function() {
 				var nome = $(this).find("name").text();
 				var id = $(this).find("id").text();
@@ -473,6 +465,7 @@ function getEpisodi(id, noselect) {
 				switch(stato){
 				case 0:
 					daScaricare++;
+					episodiDaScaricare++;
 					break;
 				case 1:
 					daVedere++;
@@ -515,7 +508,7 @@ function getEpisodi(id, noselect) {
 			else {
 				$("#episodiScaricare" + id)	.text("(" + daScaricare + " da scaricare. Vedere: "+daVedere+")");
 			}
-			selezionaTutto();
+			showButtonResults();
 			operazioneInCorso("");
 		},
 		error : function(msg) {
