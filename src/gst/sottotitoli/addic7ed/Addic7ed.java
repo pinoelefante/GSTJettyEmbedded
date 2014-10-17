@@ -99,7 +99,7 @@ public class Addic7ed implements ProviderSottotitoli {
 				continue;
 			else {
 				for(int j=0;j<urls.size();j++){
-					String path = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator))+serie.getNomeSerie()+"_"+ep.getStagione()+"x"+ep.getEpisodio()+".srt";
+					String path = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator)+1)+serie.getNomeSerie()+"_"+ep.getStagione()+"x"+ep.getEpisodio()+".srt";
 					try {
 						ArrayList<Entry<String, String>> headers = new ArrayList<Map.Entry<String,String>>();
 						headers.add(new AbstractMap.SimpleEntry<String, String>("Host","www.addic7ed.com"));
