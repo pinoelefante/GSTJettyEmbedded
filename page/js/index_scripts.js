@@ -376,6 +376,7 @@ function removeSerie(id) {
     		   		if (r) {
     		   			$("#serie" + id).remove();
     		   			deleteFolder(id);
+    		   			$("#serie_vedere_"+id).remove();
     		   		}
     		   		operazioneInCorso("");
     		   	},

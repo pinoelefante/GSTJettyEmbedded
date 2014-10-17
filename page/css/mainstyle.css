@@ -182,7 +182,10 @@ div#altro {
 	left: 5%;
 	width: 90%;
 	height: 90%;
-	overflow: auto;
+}
+div#containerVedere {
+	overflow:auto;
+	height:90%;
 }
 
 div.episodio {
