@@ -266,11 +266,10 @@ td.bottoneVedere {
 	width: 80%;
 	height: 60%;
 }
-.modal-wide-info .modal-body-info {
-  overflow: auto;
-}
 .modal-body-info{
 	padding: 10px;
+	overflow: auto;
+	height:70%;
 }
 #tallModal { 
 	position: absolute;
