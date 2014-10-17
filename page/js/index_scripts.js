@@ -312,9 +312,15 @@ function selezionaPerStato(stato){
 			$(this).prop('checked', true);
 			trovati++;
 		}
+		else if($(this).attr("stato_visualizzazione")==stato && $(this).attr("noselect")=='true'){
+			trovati++;
+		}
 		else
 			$(this).removeAttr('checked');
 	});
+	if(trovati==0){
+		showModal("","Non ci sono episodi da scaricare");
+	}
 	showButtonResults();
 }
 function selezionaTutto(selected) {
