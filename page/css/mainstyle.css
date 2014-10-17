@@ -36,7 +36,10 @@ div#serieNuove {
 	right: 5%;
 	width: 90%;
 	height: 50%;
-	overflow: auto;
+}
+div#serieNuoveDivContainer {
+	height: 90%;
+	overflow:auto;
 }
 
 .panel-serieNuova {
