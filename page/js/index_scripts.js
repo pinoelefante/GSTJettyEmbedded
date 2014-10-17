@@ -974,7 +974,9 @@ function showModalAssociaTVDB(titolo, corpo) {
 }
 function showSelezione() {
 	var trovati = 0;
+	var trovatiN = 0;
 	var html = "<table>";
+	var noSelect = "";
 	$(".seriePreferita").each(function(){
 		var nomeSerie = $(this).find(".nomeSerie b").text();
 		$(this).find(".panel-body .panel-group").find(".panel").each(function(){
@@ -983,13 +985,23 @@ function showSelezione() {
 				var episodio = $(this)[0].nextSibling.nodeValue + $(this).next().text();
 				var id = $(this).val();
 				var checked = ($(this).is(":checked"))?"checked":"";
-				html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' "+checked+"/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
-				trovati++;
+				var noselectAttr = $(this).attr("noselect");
+				if(noselectAttr=='true'){
+					noSelect+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' "+checked+"/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
+					trovatiN++;
+				}
+				else {
+					html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' id='resCheck"+id+"' "+checked+"/><b>&nbsp;"+nomeSerie+"</b></td><td class='selectionTD'>"+stagione+"</td><td class='selectionTD'>"+episodio+"</td></tr>";
+					trovati++;
+				}
 			});
 		});
 	});
+	if(noSelect.length>0)
+		html+="<tr><td><b>Episodi da non selezionare automaticamente</b></td></tr>";
+	html += noSelect;
 	html += "</table>";
-	if(trovati > 0)
+	if((trovati+trovatiN) > 0)
 		showModalInfo("Selezione", html);
 	else
 		showModalInfo("Selezione", "Nessun episodio selezionato");
