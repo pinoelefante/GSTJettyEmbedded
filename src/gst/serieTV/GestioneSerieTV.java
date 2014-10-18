@@ -335,4 +335,8 @@ public class GestioneSerieTV implements Notifier {
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_download="+pref_down+" WHERE id="+id;
 		return Database.updateQuery(query);
 	}
+	public boolean associaEpisodioTVDB(int idEpisodio, int idTVDB){
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET id_tvdb="+idTVDB+" WHERE id="+idEpisodio;
+		return Database.updateQuery(query);
+	}
 }

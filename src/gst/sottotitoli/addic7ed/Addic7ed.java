@@ -126,7 +126,7 @@ public class Addic7ed implements ProviderSottotitoli {
 	}
 	private ArrayList<String> cercaSottotitoli(int idShow, int stagione, int episodio, String lang, boolean hd, ArrayList<String> langs){
 		String apiCall = getAPIUrl(idShow, stagione, lang, hd);
-		System.out.println(apiCall);
+		//System.out.println(apiCall);
 		try {
 			Document doc = Jsoup.connect(apiCall).get();
 			Elements righe = doc.select("tr.epeven");

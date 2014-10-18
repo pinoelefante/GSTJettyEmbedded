@@ -199,7 +199,8 @@ public class Database {
 					+ "stato_visualizzazione INTEGER DEFAULT 0,"+
 					  "sottotitolo INTEGER DEFAULT 0,"+
 					  "id_tvdb INTEGER DEFAULT 0,"
-					+ "FOREIGN KEY(serie) REFERENCES serietv(id)"
+					+ "FOREIGN KEY(serie) REFERENCES serietv(id),"
+					+ "FOREIGN KEY(id_tvdb) REFERENCES tvdb_ep(id)"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_TORRENT+" (" +

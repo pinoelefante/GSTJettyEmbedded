@@ -1,6 +1,7 @@
 package servlet;
 
 import gst.infoManager.thetvdb.ActorTVDB;
+import gst.infoManager.thetvdb.EpisodioTVDB;
 import gst.infoManager.thetvdb.SerieTVDB;
 import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.serieTV.Episodio;
@@ -419,5 +420,10 @@ public class ResponseSender {
 		v_client.addContent(""+versione);
 		root.addContent(v_client);
 		return new Document(root);
+	}
+	public static Document createResponseTVDBEpisodio(EpisodioTVDB ep) {
+		// TODO Auto-generated method stub
+		//return null;
+		return createResponseBoolean(true);
 	}
 }

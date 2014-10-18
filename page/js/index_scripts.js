@@ -498,7 +498,7 @@ function getEpisodi(id, noselect) {
 					"<input type='checkbox' noselect='"+noselect+"' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"' onchange='showButtonResults()'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
-					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
+					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+id+","+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
 					"<button class='btn btn-danger' title='Cancella episodio' onclick='cancellaEpisodio("+idE+")'><span class='glyphicon glyphicon-trash'/></button>&nbsp;" +
 					"" +
 					"" +
@@ -584,9 +584,13 @@ function associaBottone(){
 	var idSerie = $("#associaSerieIDSerie").val();
 	associaSerieTVDB(idSerie, val);
 	$("#associaTVDBModal").modal('hide');
-	showInfoTVDB(val);
+	var idEpisodio = $("#mustViewInfoEpisode").val();
+	if(idEpisodio!=null || idEpisodio.length>0 || idEpisodio!=undefined)
+		showInfoEpisodioTVDB(idEpisodio);
+	else
+		showInfoTVDB(val);
 }
-function showAssociaSerie(idSerie){
+function showAssociaSerie(idSerie, idEp){
 	showModalAssociaTVDB("Attendi...", "<center><img src='img/loading.gif' /></center>");
 	$.ajax({
 		type : "POST",
@@ -607,7 +611,10 @@ function showAssociaSerie(idSerie){
 					associaSerieTVDB(idSerie, idTVDB);
 					$("#associaTVDBModal").modal('hide');
 					//showModal("Associa", "La serie è stata associata automaticamente a "+nomeSerie);
-					showInfoTVDB(idTVDB);
+					if(idEp==undefined)
+						showInfoTVDB(idTVDB);
+					else
+						showInfoEpisodioTVDB(idEp);
 				}
 				else {
 					var bodyAssocia = "<br>";
@@ -617,6 +624,8 @@ function showAssociaSerie(idSerie){
 						var anno = $(this).find("anno_inizio").text();
 						var input="<p class='pAssociatore'><input type='radio' name='associaSerie' value='"+id+"'>"+nome+" ("+anno+")</input><button class='btn btn-warning btnViewAssocia' onclick='showInfoTVDB("+id+")'>Visualizza</button></p><br>";
 						bodyAssocia+=input;
+						if(idEp!=undefined)
+							bodyAssocia+="<input type='hidden' value='"+idEp+"' id='mustViewInfoEpisode' />";
 					});
 					$("#associaSerieIDSerie").val(idSerie);
 					showModalAssociaTVDB("Associa serie", bodyAssocia);
@@ -653,8 +662,53 @@ function associaSerieTVDB(idSerie, idTVDB){
 		}
 	});
 }
-function infoEpisodio(idEp){
-	showModalInfo();
+function infoEpisodio(idSerie, idEp){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=getIdTVDB&idSerie="+idSerie,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var idTVDB=parseInt($(msg).find("Integer").text());
+				if(idTVDB>0){
+					showInfoEpisodioTVDB(idEp);
+				}
+				else {
+					showAssociaSerie(idSerie, idEp);
+				}
+			}
+			else
+				showModal("","Si è verificato un errore");
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
+}
+function showInfoEpisodioTVDB(idEp){
+	showModalInfo("Attendi...", "<center><img src='img/loading.gif' /></center>");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniInfoServlet",
+		data : "action=getInfoEpisodio&id="+idEp,
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				showModalInfo("Info Episodio", (new XMLSerializer()).serializeToString(msg));
+			}
+			else {
+				showModal("","Errore");
+			}
+		},
+		error : function(msg) {
+			operazioneInCorso("");
+			showModal("","Si è verificato un errore");
+		}
+	});
 }
 function showInfoTVDB(idTVDB, force){
 	showModalInfo("Attendi...", "<center><img src='img/loading.gif' /></center>");

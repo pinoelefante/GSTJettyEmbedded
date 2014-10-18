@@ -259,15 +259,23 @@ public class TheTVDB {
 			list.add(serie);
 		}
 	}
-	private final static long PERIODO_AGGIORNAMENTO_SERIE = 2592000L; //30 giorni
+	private final static int PERIODO_AGGIORNAMENTO_SERIE = 2592000; //30 giorni
 	public SerieTVDBFull getSerie(int idSerie, boolean forceUpdate) {
+		System.out.println(idSerie + " "+forceUpdate);
 		SerieTVDBFull serieDB = caricaSerie(idSerie);
-		if(!forceUpdate && serieDB!=null){
-			if(serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000){
+		if(serieDB!=null){
+			System.out.println(serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE);
+			System.out.println(System.currentTimeMillis()/1000);
+			if((serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE) > (System.currentTimeMillis()/1000)){
+				System.out.println("Periodo aggiornamento inferiore");
 				return serieDB;
 			}
+			else
+				System.out.println("Periodo aggiornamento superato");
 		}
-		
+		else 
+			System.out.println("Serie non trovata nel database");
+		System.out.println("Carico la serie online");
 		Mirror xmlMirror = getXMLMirror();
 		if (xmlMirror == null)
 			return null;
@@ -497,7 +505,7 @@ public class TheTVDB {
 			return null;
 		else {
 			SerieTVDBFull serie = parseSerie(res.get(0));
-			if(serie.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000){
+			if(serie.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE > System.currentTimeMillis()/1000){
 				getAttori(serie);
 				getImmagini(serie);
 			}
@@ -508,6 +516,7 @@ public class TheTVDB {
 		int id = (int) r.getValueByKey("id");
 		String nome = (String) r.getValueByKey("nomeSerie");
 		String generi = (String) r.getValueByKey("generi");
+		float rating = Float.parseFloat(r.getValueByKey("rating")+"");
 		String network = (String) r.getValueByKey("network");
 		String inizio = (String) r.getValueByKey("inizio");
 		String giorno_settimana = (String) r.getValueByKey("giorno_settimana");
@@ -527,6 +536,7 @@ public class TheTVDB {
 		serie.setStatoSerie(stato);
 		serie.setUltimoAggiornamento(ultimoAggiornamento);
 		serie.setGeneri(generi);
+		serie.setRating(rating+"");
 		
 		return serie;
 	}
@@ -543,7 +553,7 @@ public class TheTVDB {
 	public EpisodioTVDB getEpisodio(int idSerie, int st, int ep){
 		EpisodioTVDB eDB = caricaEpisodio(idSerie, st, ep);
 		if(eDB!=null){
-			if(eDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000)
+			if(eDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE > System.currentTimeMillis()/1000)
 				return eDB;
 		}
 		Mirror xmlMirror = getXMLMirror();
@@ -664,7 +674,7 @@ public class TheTVDB {
 		String regista = (String) r.getValueByKey("regista");
 		String sceneggiatori = (String) r.getValueByKey("sceneggiatori");
 		String lang = (String) r.getValueByKey("lang");
-		float rating = (float) r.getValueByKey("rating");
+		float rating = Float.parseFloat(r.getValueByKey("rating")+"");
 		int ultimoAggiornamento = (int) r.getValueByKey("ultimoAggiornamento");
 		EpisodioTVDB e = new EpisodioTVDB(idSerie, stagione, episodio);
 		e.setIdEpisodio(idEp);
@@ -687,11 +697,5 @@ public class TheTVDB {
 				"rating="+e.getRating()+",ultimoAggiornamento="+(System.currentTimeMillis()/1000)+
 				" WHERE id="+e.getIdEpisodio();
 		Database.updateQuery(query);
-	}
-	public static void main(String[] args){
-		Database.Connect();
-		TheTVDB tv = getInstance();
-		EpisodioTVDB ep = tv.getEpisodio(248741, 1, 1);
-		ep.print();
 	}
 }

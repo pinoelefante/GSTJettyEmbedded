@@ -22,7 +22,7 @@ public class FileFinder {
 	public ArrayList<File> cercaFileVideo(SerieTV serie, Episodio ep){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
 		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
-		System.out.println(pathBase);
+		//System.out.println(pathBase);
 		File dir = new File(pathBase);
 		cercaFile(dir, fileTrovati, ep, estensioniVideoValide);
 		return fileTrovati;

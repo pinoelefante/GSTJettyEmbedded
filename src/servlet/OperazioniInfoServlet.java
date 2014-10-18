@@ -1,8 +1,11 @@
 package servlet;
 
+import gst.infoManager.thetvdb.EpisodioTVDB;
 import gst.infoManager.thetvdb.SerieTVDB;
 import gst.infoManager.thetvdb.SerieTVDBFull;
 import gst.infoManager.thetvdb.TheTVDB;
+import gst.serieTV.Episodio;
+import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 
@@ -29,21 +32,11 @@ public class OperazioniInfoServlet extends HttpServlet {
 		String action = checkParameter("action", resp, req, false);
 		Document xml = null;
 		switch(action){
-			case "getInfoSerie": {
-				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
-				String f = checkParameter("force", resp, req, true);
-				boolean force = Boolean.parseBoolean(f==null?"false":f);
-				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie, force);
-				xml = (serie!=null?ResponseSender.createResponseInfoSerie(serie):ResponseSender.createResponseBoolean(false));
-				break;
-			}
-			case "getIdTVDB": {
+			case "associa": {
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
-				SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
-				if(s==null)
-					xml = ResponseSender.createResponseBoolean(false);
-				else
-					xml = ResponseSender.createResponseInteger(s.getIDTvdb());
+				int idTvdb = Integer.parseInt(checkParameter("id_tvdb", resp, req, false));
+				boolean r=ProviderSerieTV.associaSerieTVDB(idSerie, idTvdb);
+				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "cercaSerieAssociabili": {
@@ -58,11 +51,32 @@ public class OperazioniInfoServlet extends HttpServlet {
 				}
 				break;
 			}
-			case "associa": {
+			case "getIdTVDB": {
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
-				int idTvdb = Integer.parseInt(checkParameter("id_tvdb", resp, req, false));
-				boolean r=ProviderSerieTV.associaSerieTVDB(idSerie, idTvdb);
-				xml = ResponseSender.createResponseBoolean(r);
+				SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
+				if(s==null)
+					xml = ResponseSender.createResponseBoolean(false);
+				else
+					xml = ResponseSender.createResponseInteger(s.getIDTvdb());
+				break;
+			}
+			case "getInfoEpisodio": {
+				int idEpisodio = Integer.parseInt(checkParameter("id", resp, req, false));
+				Episodio episodio = ProviderSerieTV.getEpisodio(idEpisodio);
+				SerieTV serie = ProviderSerieTV.getSerieByID(episodio.getSerie());
+				EpisodioTVDB ep = TheTVDB.getInstance().getEpisodio(serie.getIDTvdb(), episodio.getStagione(), episodio.getEpisodio());
+				if(episodio.getIdTvDB()<=0){
+					GestioneSerieTV.getInstance().associaEpisodioTVDB(idEpisodio, ep.getIdEpisodio());
+				}
+				xml = ResponseSender.createResponseTVDBEpisodio(ep);
+				break;
+			}
+			case "getInfoSerie": {
+				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
+				String f = checkParameter("force", resp, req, true);
+				boolean force = Boolean.parseBoolean(f==null?"false":f);
+				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie, force);
+				xml = (serie!=null?ResponseSender.createResponseInfoSerie(serie):ResponseSender.createResponseBoolean(false));
 				break;
 			}
 		}
