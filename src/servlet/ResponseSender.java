@@ -446,7 +446,8 @@ public class ResponseSender {
 		Element attori = new Element("attori");
 		String att = "";
 		for(int i=0;i<s.getAttori().size();i++){
-			att+=s.getAttori().get(i).getNome()+" (<b>"+s.getAttori().get(i).getRuolo()+"</b>)";
+			ActorTVDB a = s.getAttori().get(i);
+			att+=a.getNome()+(!a.getRuolo().isEmpty()?" (<b>"+a.getRuolo()+"</b>)":"");
 			if(i<s.getAttori().size()-1)
 				att+=", ";
 		}
