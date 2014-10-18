@@ -399,7 +399,7 @@ public class Database {
 		}
 	}
 	public static boolean updateQuery(String query){
-		System.out.println(query);
+		//System.out.println(query);
 		int ins_ok=0;
 		try {
 			Statement stat=con.createStatement();
