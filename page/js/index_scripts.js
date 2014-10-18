@@ -698,7 +698,31 @@ function showInfoEpisodioTVDB(idEp){
 		success : function(msg) {
 			var resp = parseBooleanXML(msg);
 			if(resp){
-				showModalInfo("Info Episodio", (new XMLSerializer()).serializeToString(msg));
+				var episodio = $(msg).find("EpisodioTVDB");
+				var nomeSerie = $(msg).find("nomeSerie").text();
+				var st = parseInt($(episodio).find("stagione").text());
+				var ep = parseInt($(episodio).find("episodio").text());
+				var titolo  = $(episodio).find("titolo").text();
+				var descr  = $(episodio).find("descrizione").text();
+				var img  = $(episodio).find("immagine").text();
+				var gs  = $(episodio).find("guestStars").text();
+				var air  = $(episodio).find("data_air").text();
+				var regista = $(episodio).find("regista").text();
+				var sceneggiatori = $(episodio).find("sceneggiatori").text();
+				var rating = $(episodio).find("rating").text();
+				var body ="";
+				body+="<p><center>"+creaImmagineGallery(img)+"</center></p><br>";
+				body+="<p><b>Titolo: </b>"+titolo+"</p>";
+				body+="<p><b>Trama: </b>"+descr+"</p>";
+				body+="<p><b>Media voti: </b>"+rating+"</p>";
+				body+="<p><b>Regista: </b>"+regista+"</p>";
+				body+="<p><b>Sceneggiatori: </b>"+sceneggiatori+"</p>";
+				body+="<p><b>Guest stars: </b>"+gs+"</p>";
+				body+="<p><b>Messa in onda: </b>"+air+"</p>";
+				
+				var title = nomeSerie + " - S"+(st<10?"0"+st:st)+"E"+(ep<10?"0"+ep:ep)+" - "+titolo;
+				
+				showModalInfo(title, body);
 			}
 			else {
 				showModal("","Errore");

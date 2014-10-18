@@ -68,7 +68,7 @@ public class OperazioniInfoServlet extends HttpServlet {
 				if(episodio.getIdTvDB()<=0){
 					GestioneSerieTV.getInstance().associaEpisodioTVDB(idEpisodio, ep.getIdEpisodio());
 				}
-				xml = ResponseSender.createResponseTVDBEpisodio(ep);
+				xml = ResponseSender.createResponseTVDBEpisodio(serie, ep);
 				break;
 			}
 			case "getInfoSerie": {

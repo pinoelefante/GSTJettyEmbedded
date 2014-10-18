@@ -421,7 +421,7 @@ public class ResponseSender {
 		root.addContent(v_client);
 		return new Document(root);
 	}
-	public static Document createResponseTVDBEpisodio(EpisodioTVDB ep) {
+	public static Document createResponseTVDBEpisodio(SerieTV s,EpisodioTVDB ep) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
 		ok.addContent(true+"");
@@ -431,6 +431,8 @@ public class ResponseSender {
 		idSerie.addContent(ep.getIdSerie()+"");
 		Element idEpisodio = new Element("idEpisodio");
 		idEpisodio.addContent(ep.getIdEpisodio()+"");
+		Element nomeSerie = new Element("nomeSerie");
+		nomeSerie.addContent(s.getNomeSerie());
 		Element stagione = new Element("stagione");
 		stagione.addContent(ep.getStagione()+"");
 		Element episodio = new Element("episodio");
@@ -454,6 +456,7 @@ public class ResponseSender {
 		
 		e.addContent(idSerie);
 		e.addContent(idEpisodio);
+		e.addContent(nomeSerie);
 		e.addContent(stagione);
 		e.addContent(episodio);
 		e.addContent(titolo);

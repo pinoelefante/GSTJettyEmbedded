@@ -494,7 +494,7 @@ public class TheTVDB {
 				" VALUES ("+serie.getId()+",\""+serie.getNomeSerie()+"\","+serie.getRating()+","+
 				"\""+serie.getGeneriString()+"\",\""+serie.getNetwork()+"\",\""+serie.getDataInizioITA()+"\","+
 				"\""+serie.getGiornoSettimana()+"\",\""+serie.getOraTrasmissione()+"\","+serie.getDurataEpisodi()+","+
-				"\""+serie.getStatoSerie()+"\",\""+serie.getDescrizione()+"\",\""+(serie.getLang().isEmpty()?defaultLang:serie.getLang())+"\","+
+				"\""+serie.getStatoSerie()+"\",\""+serie.getDescrizione().replace("\"", "\\\"")+"\",\""+(serie.getLang().isEmpty()?defaultLang:serie.getLang())+"\","+
 				"\""+serie.getUrlBanner()+"\","+(System.currentTimeMillis()/1000)+")";
 		Database.updateQuery(query);
 	}
@@ -523,7 +523,7 @@ public class TheTVDB {
 		String ora_trasmissione = (String) r.getValueByKey("ora_trasmissione");
 		int durata_episodio = (int) r.getValueByKey("durata_episodi");
 		String stato = (String) r.getValueByKey("stato");
-		String descrizione = (String) r.getValueByKey("descrizione");
+		String descrizione = ((String) r.getValueByKey("descrizione")).replace("\\\"", "\"");
 		String descrizione_lang = (String) r.getValueByKey("descrizione_lang");
 		String bannerURL = (String) r.getValueByKey("banner");
 		Integer ultimoAggiornamento = (Integer) r.getValueByKey("ultimo_aggiornamento");
@@ -545,7 +545,7 @@ public class TheTVDB {
 				"rating="+serie.getRating()+", generi=\""+serie.getGeneriString()+"\", network=\""+serie.getNetwork()+"\","+
 				"inizio=\""+serie.getDataInizio()+"\", giorno_settimana=\""+serie.getGiornoSettimana()+"\","+
 				"ora_trasmissione=\""+serie.getOraTrasmissione()+"\", durata_episodi="+serie.getDurataEpisodi()+","+
-				"stato=\""+serie.getStatoSerie()+"\", descrizione=\""+serie.getDescrizione()+"\", descrizione_lang=\""+serie.getLang()+"\","+
+				"stato=\""+serie.getStatoSerie()+"\", descrizione=\""+serie.getDescrizione().replace("\"", "\\\"")+"\", descrizione_lang=\""+serie.getLang()+"\","+
 				"banner=\""+serie.getUrlBanner()+"\", ultimo_aggiornamento="+(System.currentTimeMillis()/1000)+
 				" WHERE id="+serie.getId();
 		Database.updateQuery(query);
@@ -642,11 +642,12 @@ public class TheTVDB {
 	private void salvaEpisodio(EpisodioTVDB e){
 		String query = "INSERT INTO "+Database.TABLE_TVDB_EPISODI+
 				" (id,idSerie,stagione,episodio,titolo,immagine,descrizione,guestStars,data_air,regista,sceneggiatori,lang,rating,ultimoAggiornamento) "+
-				"VALUES ("+e.getIdEpisodio()+","+e.getIdSerie()+","+e.getStagione()+","+e.getEpisodio()+",\""+e.getTitolo()+"\",\""+e.getImageURL()+"\","+
-				"\""+e.getDescrizione()+"\",\""+e.getGuestStarsS()+"\",\""+e.getDataAir()+"\",\""+e.getRegistaS()+"\",\""+e.getSceneggiatoriS()+"\","+
+				"VALUES ("+e.getIdEpisodio()+","+e.getIdSerie()+","+e.getStagione()+","+e.getEpisodio()+",\""+e.getTitolo().replace("\"", "\\\"")+"\",\""+e.getImageURL()+"\","+
+				"\""+e.getDescrizione().replace("\"", "\\\"")+"\",\""+e.getGuestStarsS()+"\",\""+e.getDataAir()+"\",\""+e.getRegistaS()+"\",\""+e.getSceneggiatoriS()+"\","+
 				"\""+e.getLang()+"\","+e.getRating()+","+(System.currentTimeMillis()/1000)+")";
 		Database.updateQuery(query);
 	}
+	@SuppressWarnings("unused")
 	private EpisodioTVDB caricaEpisodio(int idEpisodio){
 		String query = "SELECT * FROM "+Database.TABLE_TVDB_EPISODI+" WHERE id="+idEpisodio;
 		ArrayList<KVResult<String, Object>> r = Database.selectQuery(query);
@@ -666,9 +667,9 @@ public class TheTVDB {
 		int idSerie = (int) r.getValueByKey("idSerie");
 		int stagione = (int) r.getValueByKey("stagione");
 		int episodio = (int) r.getValueByKey("episodio");
-		String titolo = (String) r.getValueByKey("titolo");
+		String titolo = ((String) r.getValueByKey("titolo")).replace("\\\"", "\"");
 		String immagine = (String) r.getValueByKey("immagine");
-		String descrizione = (String) r.getValueByKey("descrizione");
+		String descrizione = ((String) r.getValueByKey("descrizione")).replace("\\\"", "\"");
 		String guestStars = (String) r.getValueByKey("guestStars");
 		String data_air = (String) r.getValueByKey("data_air");
 		String regista = (String) r.getValueByKey("regista");
@@ -691,7 +692,7 @@ public class TheTVDB {
 		return e;
 	}
 	private void aggiornaEpisodio(EpisodioTVDB e){
-		String query = "UPDATE "+Database.TABLE_TVDB_EPISODI+" SET titolo=\""+e.getTitolo()+"\", descrizione=\""+e.getDescrizione()+"\","+
+		String query = "UPDATE "+Database.TABLE_TVDB_EPISODI+" SET titolo=\""+e.getTitolo().replace("\"", "\\\"")+"\", descrizione=\""+e.getDescrizione().replace("\"", "\\\"")+"\","+
 				"immagine=\""+e.getImageURL()+"\",guestStars=\""+e.getGuestStarsS()+"\",data_air=\""+e.getDataAir()+"\","+
 				"regista=\""+e.getRegistaS()+"\",sceneggiatori=\""+e.getSceneggiatoriS()+"\",lang=\""+e.getLang()+"\","+
 				"rating="+e.getRating()+",ultimoAggiornamento="+(System.currentTimeMillis()/1000)+
