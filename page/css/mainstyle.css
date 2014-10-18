@@ -302,6 +302,7 @@ td.bottoneVedere {
 	right: 15%;
 	min-height: 20%;
 	max-height: 50%;
+	overflow:auto;
 }
 .btnViewAssocia {
 	position:absolute;

@@ -812,7 +812,7 @@ function downloadS(id){
 			if(resp){
 				var idEpisodio = parseInt($(msg).find("episodio").text());
 				$("#btnDown_"+id).replaceWith(generaBottone(1, id));
-				if($("#chkSelezionaDown").is(":checked") && $("#chkEp_"+id).is(":checked")){
+				if($("#chkEp_"+id).is(":checked")){
 					$("#chkEp_"+id).removeAttr('checked');
 				}
 				$("#chkEp_"+id).attr("stato_visualizzazione","1");
