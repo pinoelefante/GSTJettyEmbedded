@@ -1,5 +1,7 @@
 package gst.infoManager.thetvdb;
 
+import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
@@ -256,8 +258,15 @@ public class TheTVDB {
 			list.add(serie);
 		}
 	}
-
-	public SerieTVDBFull getSerie(int idSerie) {
+	private final static long PERIODO_AGGIORNAMENTO_SERIE = 2592000L; //30 giorni
+	public SerieTVDBFull getSerie(int idSerie, boolean forceUpdate) {
+		SerieTVDBFull serieDB = caricaSerie(idSerie);
+		if(!forceUpdate && serieDB!=null){
+			if(serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000){
+				return serieDB;
+			}
+		}
+		
 		Mirror xmlMirror = getXMLMirror();
 		if (xmlMirror == null)
 			return null;
@@ -278,9 +287,12 @@ public class TheTVDB {
 		}
 		catch (SAXException | IOException e) {
 			e.printStackTrace();
-			return null;
+			if(forceUpdate && serieDB!=null)
+				return serieDB;
+			else
+				return null;
 		}
-
+		
 		NodeList elementi = doc.getElementsByTagName("Series");
 		if (elementi.getLength() != 1)
 			return null;
@@ -306,7 +318,7 @@ public class TheTVDB {
 					case "SeriesName":
 						nome_serie = attr.getTextContent();
 						break;
-					case "language":
+					case "Language":
 						lang = attr.getTextContent();
 						break;
 					case "Actors":
@@ -347,6 +359,10 @@ public class TheTVDB {
 		newSerie.setAttoriString(attori);
 		getAttori(newSerie);
 		getImmagini(newSerie);
+		if(serieDB!=null)
+			aggiornaSerie(newSerie);
+		else
+			salvaSerie(newSerie);
 		return newSerie;
 	}
 	
@@ -460,6 +476,58 @@ public class TheTVDB {
 				s.aggiungiBanner(getBannerURL(image));
 			}
 		}
+	}
+	private void salvaSerie(SerieTVDBFull serie){
+		String query = "INSERT INTO "+Database.TABLE_TVDB_SERIE + 
+				"(id,nomeSerie,rating,generi,network,inizio,giorno_settimana,ora_trasmissione,durata_episodi,stato,descrizione,descrizione_lang,banner,ultimo_aggiornamento)"+
+				" VALUES ("+serie.getId()+",\""+serie.getNomeSerie()+"\","+serie.getRating()+","+
+				"\""+serie.getGeneriString()+"\",\""+serie.getNetwork()+"\",\""+serie.getDataInizioITA()+"\","+
+				"\""+serie.getGiornoSettimana()+"\",\""+serie.getOraTrasmissione()+"\","+serie.getDurataEpisodi()+","+
+				"\""+serie.getStatoSerie()+"\",\""+serie.getDescrizione()+"\",\""+(serie.getLang().isEmpty()?defaultLang:serie.getLang())+"\","+
+				"\""+serie.getUrlBanner()+"\","+(System.currentTimeMillis()/1000)+")";
+		Database.updateQuery(query);
+	}
+	private SerieTVDBFull caricaSerie(int id){
+		String query = "SELECT * FROM "+Database.TABLE_TVDB_SERIE+" WHERE id="+id;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res==null || res.size()==0 || res.size()>1)
+			return null;
+		else {
+			SerieTVDBFull serie = parseSerie(res.get(0));
+			if(serie.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000){
+				getAttori(serie);
+				getImmagini(serie);
+			}
+			return serie;
+		}
+	}
+	private SerieTVDBFull parseSerie(KVResult<String, Object> r){
+		int id = (int) r.getValueByKey("id");
+		String nome = (String) r.getValueByKey("nomeSerie");
+		String generi = (String) r.getValueByKey("generi");
+		String network = (String) r.getValueByKey("network");
+		String inizio = (String) r.getValueByKey("inizio");
+		String giorno_settimana = (String) r.getValueByKey("giorno_settimana");
+		String ora_trasmissione = (String) r.getValueByKey("ora_trasmissione");
+		int durata_episodio = (int) r.getValueByKey("durata_episodi");
+		String stato = (String) r.getValueByKey("stato");
+		String descrizione = (String) r.getValueByKey("descrizione");
+		String descrizione_lang = (String) r.getValueByKey("descrizione_lang");
+		String bannerURL = (String) r.getValueByKey("banner");
+		Integer ultimoAggiornamento = (Integer) r.getValueByKey("ultimo_aggiornamento");
+		
+		SerieTVDBFull serie = new SerieTVDBFull(id, nome, descrizione, bannerURL, inizio, descrizione_lang.isEmpty()?defaultLang:descrizione_lang);
+		serie.setNetwork(network);
+		serie.setGiornoSettimana(giorno_settimana);
+		serie.setOraTrasmissione(ora_trasmissione);
+		serie.setDurataEpisodi(durata_episodio);
+		serie.setStatoSerie(stato);
+		serie.setUltimoAggiornamento(ultimoAggiornamento);
+		serie.setGeneri(generi);
+		
+		return serie;
+	}
+	private void aggiornaSerie(SerieTVDBFull serie){
 		
 	}
 }

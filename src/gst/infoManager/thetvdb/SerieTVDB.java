@@ -103,6 +103,15 @@ public class SerieTVDB {
 	public ArrayList<String> getGeneri(){
 		return generi;
 	}
+	public String getGeneriString(){
+		String g = "";
+		for(int i=0;i<generi.size();i++){
+			g+=generi.get(i);
+			if(i<generi.size()-1)
+				g+="|";
+		}
+		return g;
+	}
 	public String getLang() {
 		return lang;
 	}

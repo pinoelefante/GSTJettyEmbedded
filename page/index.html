@@ -167,7 +167,8 @@
       			
       			</div>
       			<div class="modal-footer">
-        			<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+      				<button class="btn btn-primary hidden" onclick='aggiornaTVDB()' id="modalTVDBUpdate">Aggiorna</button>
+        			<button class="btn btn-default" data-dismiss="modal" onclick="$('#modalTVDBUpdate').addClass('hidden');">Chiudi</button>
       			</div>
     		</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->

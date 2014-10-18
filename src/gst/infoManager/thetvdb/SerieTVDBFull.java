@@ -11,6 +11,7 @@ public class SerieTVDBFull extends SerieTVDB {
 	private ArrayList<String> banners;
 	private ArrayList<ActorTVDB> attori;
 	private String attoriString;
+	private Integer ultimoAggiornamento;
 	
 	public SerieTVDBFull(int id, String nomeserie, String descrizione, String banner, String inizio, String lang) {
 		super(id, nomeserie, descrizione, banner, inizio, lang);
@@ -89,5 +90,11 @@ public class SerieTVDBFull extends SerieTVDB {
 	}
 	public void setAttoriString(String attoriString) {
 		this.attoriString = attoriString;
+	}
+	public Integer getUltimoAggiornamento() {
+		return ultimoAggiornamento;
+	}
+	public void setUltimoAggiornamento(Integer ultimoAggiornamento) {
+		this.ultimoAggiornamento = ultimoAggiornamento;
 	}
 }

@@ -31,8 +31,10 @@ public class OperazioniInfoServlet extends HttpServlet {
 		switch(action){
 			case "getInfoSerie": {
 				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
-				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie);
-				xml = ResponseSender.createResponseInfoSerie(serie);
+				String f = checkParameter("force", resp, req, true);
+				boolean force = Boolean.parseBoolean(f==null?"false":f);
+				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie, force);
+				xml = (serie!=null?ResponseSender.createResponseInfoSerie(serie):ResponseSender.createResponseBoolean(false));
 				break;
 			}
 			case "getIdTVDB": {

@@ -128,6 +128,23 @@ public class Database {
 					+ "nome TEXT NOT NULL"
 					+ ")");
 			
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_TVDB_SERIE+" (" +
+					"id INTEGER PRIMARY KEY," +
+					"nomeSerie TEXT," +
+					"rating FLOAT," +
+					"generi TEXT,"+
+					"network TEXT,"+
+					"inizio TEXT,"+
+					"giorno_settimana TEXT, "+
+					"ora_trasmissione TEXT,"+
+					"durata_episodi INTEGER,"+
+					"stato TEXT,"+
+					"descrizione TEXT,"+
+					"descrizione_lang TEXT,"+
+					"ultimo_aggiornamento INTEGER,"+
+					"banner TEXT"+
+					")");
+			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SERIETV+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 					"url TEXT NOT NULL," +
@@ -148,7 +165,8 @@ public class Database {
 					"FOREIGN KEY(id_itasa) REFERENCES itasa(id),"+
 					"FOREIGN KEY(id_subsfactory) REFERENCES subsfactory(id),"+
 					"FOREIGN KEY(id_subspedia) REFERENCES subspedia(id),"+ 
-					"FOREIGN KEY(id_addic7ed) REFERENCES addic7ed(id)"
+					"FOREIGN KEY(id_addic7ed) REFERENCES addic7ed(id),"+
+					"FOREIGN KEY(id_tvdb) REFERENCES tvdb_serie(id)"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_PREFERITI+" (" +

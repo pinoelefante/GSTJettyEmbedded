@@ -656,14 +656,17 @@ function associaSerieTVDB(idSerie, idTVDB){
 function infoEpisodio(idEp){
 	showModalInfo();
 }
-function showInfoTVDB(idTVDB){
+function showInfoTVDB(idTVDB, force){
 	showModalInfo("Attendi...", "<center><img src='img/loading.gif' /></center>");
+	if(force==undefined)
+		force=false;
 	$.ajax({
 		type : "POST",
 		url : "./OperazioniInfoServlet",
-		data : "action=getInfoSerie&id="+idTVDB,
+		data : "action=getInfoSerie&id="+idTVDB+"&force="+force,
 		dataType : "xml",
 		success : function(msg) {
+			$('#modalTVDBUpdate').removeClass('hidden');
 			var resp = parseBooleanXML(msg);
 			if(resp){
 				var body = "";
@@ -717,7 +720,8 @@ function showInfoTVDB(idTVDB){
 						"<p><b>Ora: </b>"+airHour+"</p>" +
 						"<p><b>Durata: </b>"+durataEpisodi+" minuti</p>" +
 						"<p><b>Stato: </b>"+stato+"</p>" +
-						"<p><b>Descrizione: </b>"+descrizione+"</p>";
+						"<p><b>Descrizione: </b>"+descrizione+"</p>"+
+						"<input type='hidden' value='"+id+"' id='modalTVDBSerieID'/>";
     			
 				var item_count = 0;
 				var images = new Array();
@@ -1028,4 +1032,8 @@ function showButtonResults(){
 function res_ChangeSelection(id){
 	var check = $("#resCheck"+id).is(":checked");
 	$("#chkEp_"+id).prop('checked', check);
+}
+function aggiornaTVDB(){
+	var idSerie = $("#modalTVDBSerieID").val();
+	showInfoTVDB(idSerie, true);
 }

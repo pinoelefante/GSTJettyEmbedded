@@ -50,7 +50,7 @@ public class GestioneSerieTV implements Notifier {
 		
 		//Avvia la ricerca dei nuovi episodi
 		t_search = new TaskRicercaEpisodi();
-		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
+		//timer.scheduleAtFixedRate(t_search, 0, 28800000L);
 		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
 			
