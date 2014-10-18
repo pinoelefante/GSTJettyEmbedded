@@ -528,6 +528,13 @@ public class TheTVDB {
 		return serie;
 	}
 	private void aggiornaSerie(SerieTVDBFull serie){
-		
+		String query = "UPDATE "+Database.TABLE_TVDB_SERIE +" SET "+ 
+				"rating="+serie.getRating()+", generi=\""+serie.getGeneriString()+"\", network=\""+serie.getNetwork()+"\","+
+				"inizio=\""+serie.getDataInizio()+"\", giorno_settimana=\""+serie.getGiornoSettimana()+"\","+
+				"ora_trasmissione=\""+serie.getOraTrasmissione()+"\", durata_episodi="+serie.getDurataEpisodi()+","+
+				"stato=\""+serie.getStatoSerie()+"\", descrizione=\""+serie.getDescrizione()+"\", descrizione_lang=\""+serie.getLang()+"\","+
+				"banner=\""+serie.getUrlBanner()+"\", ultimo_aggiornamento="+(System.currentTimeMillis()/1000)+
+				" WHERE id="+serie.getId();
+		Database.updateQuery(query);
 	}
 }
