@@ -425,6 +425,7 @@ public class ResponseSender {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
 		ok.addContent(true+"");
+		root.addContent(ok);
 		Element e = new Element("EpisodioTVDB");
 		Element idSerie = new Element("idSerie");
 		idSerie.addContent(ep.getIdSerie()+"");
