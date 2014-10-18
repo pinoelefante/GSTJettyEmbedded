@@ -36,6 +36,7 @@ public class TheTVDB {
 	private static String				   API_GET_SERIE_INFO	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/<language>.xml";
 	private static String				   API_GET_ATTORI_SERIE	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/actors.xml";
 	private static String				   API_GET_IMAGES	 = "<mirrorpath>/api/" + APIKEY + "/series/<idserie>/banners.xml";
+	private static String				   API_GET_INFO_EPISODIO = "<mirrorpath>/api/"+APIKEY+"/series/<idserie>/default/<season>/<episode>/<language>.xml";
 	private String						   defaultLang			= "en";
 	private final String FANART="fanart", POSTER="poster";
 
@@ -421,6 +422,8 @@ public class TheTVDB {
 	public String getBannerURL(String path) {
 		Mirror mirror = getBannerMirror();
 		if (mirror != null) {
+			if(path==null || path.isEmpty())
+				return "";
 			String url_API = API_IMAGE.replace("<mirror_path>", mirror.getUrl()).replace("<path_image>", path);
 			return url_API;
 		}
@@ -536,5 +539,159 @@ public class TheTVDB {
 				"banner=\""+serie.getUrlBanner()+"\", ultimo_aggiornamento="+(System.currentTimeMillis()/1000)+
 				" WHERE id="+serie.getId();
 		Database.updateQuery(query);
+	}
+	public EpisodioTVDB getEpisodio(int idSerie, int st, int ep){
+		EpisodioTVDB eDB = caricaEpisodio(idSerie, st, ep);
+		if(eDB!=null){
+			if(eDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE < System.currentTimeMillis()/1000)
+				return eDB;
+		}
+		Mirror xmlMirror = getXMLMirror();
+		if (xmlMirror == null)
+			return null;
+		
+		String apiCall=API_GET_INFO_EPISODIO.replace("<mirrorpath>", xmlMirror.getUrl())
+				.replace("<idserie>", idSerie+"")
+				.replace("<season>", ""+st)
+				.replace("<episode>", ""+ep)
+				.replace("<language>", defaultLang);
+		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder domparser;
+		try {
+			domparser = dbfactory.newDocumentBuilder();
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		}
+		Document doc;
+		try {
+			doc = domparser.parse(apiCall);
+		}
+		catch (SAXException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		NodeList elementi = doc.getElementsByTagName("Episode");
+		if (elementi.getLength() != 1)
+			return null;
+
+		Node episodio = elementi.item(0);
+		NodeList attributi = episodio.getChildNodes();
+		EpisodioTVDB episodioTVDB = new EpisodioTVDB(idSerie, st, ep);
+		episodioTVDB.setLang(defaultLang);
+		for (int j = 0; j < attributi.getLength(); j++) {
+			Node attributo = attributi.item(j);
+			if (attributo instanceof Element) {
+				Element attr = (Element) attributo;
+				switch (attr.getTagName()) {
+					case "id":
+						episodioTVDB.setIdEpisodio(Integer.parseInt(attr.getTextContent()));
+						break;
+					case "EpisodeName":
+						episodioTVDB.setTitolo(attr.getTextContent());
+						break;
+					case "FirstAired":
+						episodioTVDB.setDataAir(attr.getTextContent());
+						break;
+					case "GuestStars":
+						episodioTVDB.setGuestStars(attr.getTextContent());
+						break;
+					case "Director":
+						episodioTVDB.setRegista(attr.getTextContent());
+						break;
+					case "Writer":
+						episodioTVDB.setSceneggiatori(attr.getTextContent());
+						break;
+					case "Overview":
+						episodioTVDB.setDescrizione(attr.getTextContent());
+						break;
+					case "filename":
+						episodioTVDB.setImageURL(getBannerURL(attr.getTextContent()));
+						break;
+					case "Rating":
+						try {
+							episodioTVDB.setRating(Float.parseFloat(attr.getTextContent()));
+						}
+						catch(Exception e){
+							episodioTVDB.setRating(0f);
+						}
+						break;
+					case "IMDB_ID":
+						break;
+				}
+			}
+		}
+		if(eDB!=null)
+			aggiornaEpisodio(episodioTVDB);
+		else
+			salvaEpisodio(episodioTVDB);
+		return episodioTVDB;
+	}
+	private void salvaEpisodio(EpisodioTVDB e){
+		String query = "INSERT INTO "+Database.TABLE_TVDB_EPISODI+
+				" (id,idSerie,stagione,episodio,titolo,immagine,descrizione,guestStars,data_air,regista,sceneggiatori,lang,rating,ultimoAggiornamento) "+
+				"VALUES ("+e.getIdEpisodio()+","+e.getIdSerie()+","+e.getStagione()+","+e.getEpisodio()+",\""+e.getTitolo()+"\",\""+e.getImageURL()+"\","+
+				"\""+e.getDescrizione()+"\",\""+e.getGuestStarsS()+"\",\""+e.getDataAir()+"\",\""+e.getRegistaS()+"\",\""+e.getSceneggiatoriS()+"\","+
+				"\""+e.getLang()+"\","+e.getRating()+","+(System.currentTimeMillis()/1000)+")";
+		Database.updateQuery(query);
+	}
+	private EpisodioTVDB caricaEpisodio(int idEpisodio){
+		String query = "SELECT * FROM "+Database.TABLE_TVDB_EPISODI+" WHERE id="+idEpisodio;
+		ArrayList<KVResult<String, Object>> r = Database.selectQuery(query);
+		if(r==null || r.size()!=1)
+			return null;
+		return parseEpisodio(r.get(0));
+	}
+	private EpisodioTVDB caricaEpisodio(int idSerie, int s, int e){
+		String query = "SELECT * FROM "+Database.TABLE_TVDB_EPISODI+" WHERE idSerie="+idSerie+" AND stagione="+s+" AND episodio="+e;
+		ArrayList<KVResult<String, Object>> r = Database.selectQuery(query);
+		if(r==null || r.size()!=1)
+			return null;
+		return parseEpisodio(r.get(0));
+	}
+	private EpisodioTVDB parseEpisodio(KVResult<String, Object> r){
+		int idEp = (int) r.getValueByKey("id");
+		int idSerie = (int) r.getValueByKey("idSerie");
+		int stagione = (int) r.getValueByKey("stagione");
+		int episodio = (int) r.getValueByKey("episodio");
+		String titolo = (String) r.getValueByKey("titolo");
+		String immagine = (String) r.getValueByKey("immagine");
+		String descrizione = (String) r.getValueByKey("descrizione");
+		String guestStars = (String) r.getValueByKey("guestStars");
+		String data_air = (String) r.getValueByKey("data_air");
+		String regista = (String) r.getValueByKey("regista");
+		String sceneggiatori = (String) r.getValueByKey("sceneggiatori");
+		String lang = (String) r.getValueByKey("lang");
+		float rating = (float) r.getValueByKey("rating");
+		int ultimoAggiornamento = (int) r.getValueByKey("ultimoAggiornamento");
+		EpisodioTVDB e = new EpisodioTVDB(idSerie, stagione, episodio);
+		e.setIdEpisodio(idEp);
+		e.setTitolo(titolo);
+		e.setImageURL(immagine);
+		e.setDescrizione(descrizione);
+		e.setGuestStars(guestStars);
+		e.setDataAir(data_air);
+		e.setRegista(regista);
+		e.setSceneggiatori(sceneggiatori);
+		e.setLang(lang);
+		e.setRating(rating);
+		e.setUltimoAggiornamento(ultimoAggiornamento);
+		return e;
+	}
+	private void aggiornaEpisodio(EpisodioTVDB e){
+		String query = "UPDATE "+Database.TABLE_TVDB_EPISODI+" SET titolo=\""+e.getTitolo()+"\", descrizione=\""+e.getDescrizione()+"\","+
+				"immagine=\""+e.getImageURL()+"\",guestStars=\""+e.getGuestStarsS()+"\",data_air=\""+e.getDataAir()+"\","+
+				"regista=\""+e.getRegistaS()+"\",sceneggiatori=\""+e.getSceneggiatoriS()+"\",lang=\""+e.getLang()+"\","+
+				"rating="+e.getRating()+",ultimoAggiornamento="+(System.currentTimeMillis()/1000)+
+				" WHERE id="+e.getIdEpisodio();
+		Database.updateQuery(query);
+	}
+	public static void main(String[] args){
+		Database.Connect();
+		TheTVDB tv = getInstance();
+		EpisodioTVDB ep = tv.getEpisodio(248741, 1, 1);
+		ep.print();
 	}
 }

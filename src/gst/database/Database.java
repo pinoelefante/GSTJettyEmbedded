@@ -145,6 +145,24 @@ public class Database {
 					"banner TEXT"+
 					")");
 			
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_TVDB_EPISODI+" (" +
+					"id INTEGER PRIMARY KEY," +
+					"idSerie INTEGER," +
+					"episodio INTEGER," +
+					"stagione INTEGER," +
+					"titolo TEXT," +
+					"immagine TEXT," +
+					"descrizione TEXT," +
+					"guestStars TEXT," +
+					"data_air TEXT," +
+					"regista TEXT," +
+					"sceneggiatori TEXT," +
+					"lang TEXT," +
+					"rating FLOAT," +
+					"ultimoAggiornamento INTEGER," +
+					"FOREIGN KEY(idSerie) REFERENCES tvdb_serie(id)"+
+					")");
+			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SERIETV+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 					"url TEXT NOT NULL," +
