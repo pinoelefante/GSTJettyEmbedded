@@ -2,7 +2,6 @@ package gst.sottotitoli.localhost;
 
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
-import gst.player.FileFinder;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
@@ -11,6 +10,8 @@ import gst.sottotitoli.SerieSub;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import util.os.FileFinder;
 
 public class LocalSubs implements ProviderSottotitoli{
 	private static LocalSubs instance;

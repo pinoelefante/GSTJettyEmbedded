@@ -1,12 +1,12 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.programma.ManagerException;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
-import gst.tda.db.KVResult;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

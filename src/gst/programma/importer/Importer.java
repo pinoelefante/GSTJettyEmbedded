@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import util.os.FileFinder;
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
-import gst.player.FileFinder;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
@@ -22,7 +23,6 @@ import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.Torrent;
 import gst.sottotitoli.GestoreSottotitoli;
-import gst.tda.db.KVResult;
 
 public class Importer implements Notifier{
 	private Connection dbCon;

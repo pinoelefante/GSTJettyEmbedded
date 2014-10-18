@@ -1,8 +1,8 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.download.Download;
-import gst.tda.db.KVResult;
 
 import java.util.ArrayList;
 

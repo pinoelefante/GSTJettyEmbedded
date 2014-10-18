@@ -1,9 +1,9 @@
 package gst.sottotitoli.italiansubs;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
-import gst.player.FileFinder;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
@@ -13,7 +13,6 @@ import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 import gst.sottotitoli.rss.RSSItemItalianSubs;
-import gst.tda.db.KVResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import util.os.FileFinder;
 import util.zip.ArchiviZip;
 
 public class ItalianSubs implements ProviderSottotitoli{

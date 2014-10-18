@@ -1,4 +1,4 @@
-package gst.tda.db;
+package gst.database.tda;
 
 import java.util.ArrayList;
 

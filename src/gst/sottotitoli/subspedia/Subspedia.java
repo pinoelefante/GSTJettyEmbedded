@@ -1,10 +1,10 @@
 package gst.sottotitoli.subspedia;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
-import gst.player.FileFinder;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
@@ -16,7 +16,6 @@ import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
 import gst.sottotitoli.SerieSubConDirectory;
 import gst.sottotitoli.rss.SubspediaRSSItem;
-import gst.tda.db.KVResult;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import util.os.FileFinder;
 import util.zip.ArchiviZip;
 
 public class Subspedia implements ProviderSottotitoli {

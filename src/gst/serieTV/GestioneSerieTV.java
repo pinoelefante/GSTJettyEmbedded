@@ -1,23 +1,24 @@
 package gst.serieTV;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.gui.InterfacciaGrafica;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
-import gst.player.FileFinder;
 import gst.player.VideoPlayer;
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 import gst.services.SearchListener;
 import gst.services.TaskRicercaEpisodi;
 import gst.sottotitoli.GestoreSottotitoli;
-import gst.tda.db.KVResult;
 
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Timer;
+
+import util.os.FileFinder;
 
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;

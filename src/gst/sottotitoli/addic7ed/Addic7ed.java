@@ -15,17 +15,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import util.os.FileFinder;
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
-import gst.player.FileFinder;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
-import gst.tda.db.KVResult;
 
 public class Addic7ed implements ProviderSottotitoli {
 	private static Addic7ed instance;

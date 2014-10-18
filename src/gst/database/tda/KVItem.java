@@ -1,4 +1,4 @@
-package gst.tda.db;
+package gst.database.tda;
 
 public class KVItem<K, V> {
 	private K key;

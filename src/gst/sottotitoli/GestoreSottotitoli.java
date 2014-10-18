@@ -1,6 +1,7 @@
 package gst.sottotitoli;
 
 import gst.database.Database;
+import gst.database.tda.KVResult;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.programma.Settings;
@@ -17,7 +18,6 @@ import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.subsfactory.Subsfactory;
 import gst.sottotitoli.subspedia.Subspedia;
-import gst.tda.db.KVResult;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;

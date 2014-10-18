@@ -1,4 +1,4 @@
-package gst.player;
+package util.os;
 
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
@@ -21,7 +21,7 @@ public class FileFinder {
 	}
 	public ArrayList<File> cercaFileVideo(SerieTV serie, Episodio ep){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
-		String pathBase=Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
 		System.out.println(pathBase);
 		File dir = new File(pathBase);
 		cercaFile(dir, fileTrovati, ep, estensioniVideoValide);
@@ -29,14 +29,14 @@ public class FileFinder {
 	}
 	public ArrayList<File> cercaFileSottotitoli(SerieTV serie, Episodio ep){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
-		String pathBase=Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
 		File dir = new File(pathBase);
 		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
 		return fileTrovati;
 	}
 	public ArrayList<File> cercaFileSottotitoli(SerieTV serie, Episodio ep, String videoName){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
-		String pathBase=Settings.getInstance().getDirectoryDownload()+File.separator+serie.getFolderSerie();
+		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
 		File dir = new File(pathBase);
 		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
 		videoName=videoName.substring(0, videoName.lastIndexOf("."));

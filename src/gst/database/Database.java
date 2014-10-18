@@ -1,9 +1,9 @@
 package gst.database;
 
+import gst.database.tda.KVItem;
+import gst.database.tda.KVResult;
 import gst.programma.ManagerException;
 import gst.programma.Settings;
-import gst.tda.db.KVItem;
-import gst.tda.db.KVResult;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,7 +1,7 @@
 package gst.sottotitoli;
 
 import gst.database.Database;
-import gst.tda.db.KVResult;
+import gst.database.tda.KVResult;
 
 import java.util.ArrayList;
 
