@@ -86,6 +86,8 @@ public class EpisodioTVDB {
 		String[] gss=getGuestStars();
 		String gs = "";
 		for(int i=0;i<gss.length;i++){
+			if(gss[i].isEmpty())
+				continue;
 			gs+=gss[i];
 			if(i<gss.length-1)
 				gs+=", ";
@@ -141,6 +143,8 @@ public class EpisodioTVDB {
 		String[] rs = getRegista();
 		String r = "";
 		for(int i=0;i<rs.length;i++){
+			if(rs[i].isEmpty())
+				continue;
 			r+=rs[i];
 			if(i<rs.length-1)
 				r+=", ";
@@ -161,6 +165,8 @@ public class EpisodioTVDB {
 		String[] rs = getSceneggiatori();
 		String r = "";
 		for(int i=0;i<rs.length;i++){
+			if(rs[i].isEmpty())
+				continue;
 			r+=rs[i];
 			if(i<rs.length-1)
 				r+=", ";

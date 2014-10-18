@@ -260,9 +260,9 @@ public class TheTVDB {
 		}
 	}
 	private final static int PERIODO_AGGIORNAMENTO_SERIE = 2592000; //30 giorni
-	public SerieTVDBFull getSerie(int idSerie, boolean forceUpdate) {
+	public SerieTVDBFull getSerie(int idSerie, boolean forceUpdate, boolean skipImage) {
 		System.out.println(idSerie + " "+forceUpdate);
-		SerieTVDBFull serieDB = caricaSerie(idSerie);
+		SerieTVDBFull serieDB = caricaSerie(idSerie, skipImage);
 		if(serieDB!=null){
 			System.out.println(serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE);
 			System.out.println(System.currentTimeMillis()/1000);
@@ -367,7 +367,9 @@ public class TheTVDB {
 		newSerie.setStatoSerie(status);
 		newSerie.setAttoriString(attori);
 		getAttori(newSerie);
-		getImmagini(newSerie);
+		if(!skipImage){
+    		getImmagini(newSerie);
+		}
 		if(serieDB!=null)
 			aggiornaSerie(newSerie);
 		else
@@ -498,15 +500,15 @@ public class TheTVDB {
 				"\""+serie.getUrlBanner()+"\","+(System.currentTimeMillis()/1000)+")";
 		Database.updateQuery(query);
 	}
-	private SerieTVDBFull caricaSerie(int id){
+	private SerieTVDBFull caricaSerie(int id, boolean skipImage){
 		String query = "SELECT * FROM "+Database.TABLE_TVDB_SERIE+" WHERE id="+id;
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		if(res==null || res.size()==0 || res.size()>1)
 			return null;
 		else {
 			SerieTVDBFull serie = parseSerie(res.get(0));
-			if(serie.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE > System.currentTimeMillis()/1000){
-				getAttori(serie);
+			getAttori(serie);
+			if(!skipImage){
 				getImmagini(serie);
 			}
 			return serie;

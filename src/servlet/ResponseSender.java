@@ -421,7 +421,7 @@ public class ResponseSender {
 		root.addContent(v_client);
 		return new Document(root);
 	}
-	public static Document createResponseTVDBEpisodio(SerieTV s,EpisodioTVDB ep) {
+	public static Document createResponseTVDBEpisodio(SerieTVDBFull s,EpisodioTVDB ep) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
 		ok.addContent(true+"");
@@ -443,6 +443,14 @@ public class ResponseSender {
 		descr.addContent(ep.getDescrizione());
 		Element img = new Element("immagine");
 		img.addContent(ep.getImageURL());
+		Element attori = new Element("attori");
+		String att = "";
+		for(int i=0;i<s.getAttori().size();i++){
+			att+=s.getAttori().get(i).getNome()+" (<b>"+s.getAttori().get(i).getRuolo()+"</b>)";
+			if(i<s.getAttori().size()-1)
+				att+=", ";
+		}
+		attori.addContent(att);
 		Element guestStars = new Element("guestStars");
 		guestStars.addContent(ep.getGuestStarsFormatted());
 		Element data_air = new Element("data_air");
@@ -462,6 +470,7 @@ public class ResponseSender {
 		e.addContent(titolo);
 		e.addContent(descr);
 		e.addContent(img);
+		e.addContent(attori);
 		e.addContent(guestStars);
 		e.addContent(data_air);
 		e.addContent(regista);

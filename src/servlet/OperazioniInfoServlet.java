@@ -68,14 +68,15 @@ public class OperazioniInfoServlet extends HttpServlet {
 				if(episodio.getIdTvDB()<=0){
 					GestioneSerieTV.getInstance().associaEpisodioTVDB(idEpisodio, ep.getIdEpisodio());
 				}
-				xml = ResponseSender.createResponseTVDBEpisodio(serie, ep);
+				SerieTVDBFull serietvdb = TheTVDB.getInstance().getSerie(serie.getIDTvdb(), false, true);
+				xml = ResponseSender.createResponseTVDBEpisodio(serietvdb, ep);
 				break;
 			}
 			case "getInfoSerie": {
 				int idSerie = Integer.parseInt(checkParameter("id", resp, req, false));
 				String f = checkParameter("force", resp, req, true);
 				boolean force = Boolean.parseBoolean(f==null?"false":f);
-				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie, force);
+				SerieTVDBFull serie = TheTVDB.getInstance().getSerie(idSerie, force, false);
 				xml = (serie!=null?ResponseSender.createResponseInfoSerie(serie):ResponseSender.createResponseBoolean(false));
 				break;
 			}

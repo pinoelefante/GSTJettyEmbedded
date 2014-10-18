@@ -705,6 +705,7 @@ function showInfoEpisodioTVDB(idEp){
 				var titolo  = $(episodio).find("titolo").text();
 				var descr  = $(episodio).find("descrizione").text();
 				var img  = $(episodio).find("immagine").text();
+				var attori  = $(episodio).find("attori").text()
 				var gs  = $(episodio).find("guestStars").text();
 				var air  = $(episodio).find("data_air").text();
 				var regista = $(episodio).find("regista").text();
@@ -717,12 +718,17 @@ function showInfoEpisodioTVDB(idEp){
 				body+="<p><b>Media voti: </b>"+rating+"</p>";
 				body+="<p><b>Regista: </b>"+regista+"</p>";
 				body+="<p><b>Sceneggiatori: </b>"+sceneggiatori+"</p>";
+				body+="<p><b>Attori: </b>"+attori+"</p>";
 				body+="<p><b>Guest stars: </b>"+gs+"</p>";
 				body+="<p><b>Messa in onda: </b>"+air+"</p>";
 				
 				var title = nomeSerie + " - S"+(st<10?"0"+st:st)+"E"+(ep<10?"0"+ep:ep)+" - "+titolo;
 				
 				showModalInfo(title, body);
+				$("img").error(function () { 
+				    $(this).attr("src", "img/no_image.gif");
+				    $(this).parent().attr("href", "img/no_image.gif").attr("data-lightbox", "image-error");
+				});
 			}
 			else {
 				showModal("","Errore");
