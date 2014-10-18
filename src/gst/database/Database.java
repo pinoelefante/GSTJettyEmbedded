@@ -39,8 +39,6 @@ public class Database {
 	
 	private final static String NOMEDB=Settings.getInstance().getUserDir()+"database3.sqlite";
 
-	private static boolean freshNew=false;
-
 	public static Connection Connect() {
 		if(con!=null)
 			return con;
@@ -82,9 +80,7 @@ public class Database {
 		return con;
 		
 	}
-	public static boolean isFreshNew(){
-		return freshNew;
-	}
+	
 	public static void Disconnect(){
 		try {
 			if(con!=null){
