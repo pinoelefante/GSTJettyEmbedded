@@ -261,17 +261,11 @@ public class TheTVDB {
 	}
 	private final static int PERIODO_AGGIORNAMENTO_SERIE = 2592000; //30 giorni
 	public SerieTVDBFull getSerie(int idSerie, boolean forceUpdate, boolean skipImage) {
-		System.out.println(idSerie + " "+forceUpdate);
 		SerieTVDBFull serieDB = caricaSerie(idSerie, skipImage);
 		if(serieDB!=null){
-			System.out.println(serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE);
-			System.out.println(System.currentTimeMillis()/1000);
 			if((serieDB.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE) > (System.currentTimeMillis()/1000)){
-				System.out.println("Periodo aggiornamento inferiore");
 				return serieDB;
 			}
-			else
-				System.out.println("Periodo aggiornamento superato");
 		}
 		else 
 			System.out.println("Serie non trovata nel database");
@@ -378,6 +372,7 @@ public class TheTVDB {
 	}
 	
 	public void getAttori(SerieTVDBFull serie){
+		System.out.println("Carico gli attori da TVDB");
 		Mirror xmlMirror = getXMLMirror();
 		if(xmlMirror==null)
 			return;
@@ -427,8 +422,34 @@ public class TheTVDB {
 			act.setUrlImage(getBannerURL(image));
 			serie.aggiungiAttore(act);
 		}
+		salvaAttori(serie);
 	}
-
+	private void salvaAttori(SerieTVDBFull serie){
+		System.out.println("Salvo gli attori nel DB");
+		String queryD = "DELETE FROM "+Database.TABLE_TVDB_ATTORI+" WHERE idSerie="+serie.getId();
+		Database.updateQuery(queryD);
+		
+		for(ActorTVDB a:serie.getAttori()){
+			String q = "INSERT INTO "+Database.TABLE_TVDB_ATTORI+" (idSerie,attore,ruolo,image) VALUES ("+
+					serie.getId()+",\""+a.getNome()+"\",\""+a.getRuolo()+"\",\""+a.getUrlImage()+"\")";
+			Database.updateQuery(q);
+		}
+	}
+	private void loadAttori(SerieTVDBFull serie){
+		System.out.println("Carico gli attori da DB");
+		String query = "SELECT * FROM "+Database.TABLE_TVDB_ATTORI+" WHERE idSerie="+serie.getId();
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		for(int i=0;i<res.size();i++)
+			serie.aggiungiAttore(parseAttore(res.get(i)));
+	}
+	private ActorTVDB parseAttore(KVResult<String, Object> r){
+		String nome = (String) r.getValueByKey("attore");
+		String ruolo = (String) r.getValueByKey("ruolo");
+		String img = (String) r.getValueByKey("image");
+		ActorTVDB a = new ActorTVDB(nome, ruolo);
+		a.setUrlImage(img);
+		return a;
+	}
 	public String getBannerURL(String path) {
 		Mirror mirror = getBannerMirror();
 		if (mirror != null) {
@@ -507,7 +528,10 @@ public class TheTVDB {
 			return null;
 		else {
 			SerieTVDBFull serie = parseSerie(res.get(0));
-			getAttori(serie);
+			if(System.currentTimeMillis()/1000 < serie.getUltimoAggiornamento()+PERIODO_AGGIORNAMENTO_SERIE)
+				loadAttori(serie);
+			else
+				getAttori(serie);
 			if(!skipImage){
 				getImmagini(serie);
 			}

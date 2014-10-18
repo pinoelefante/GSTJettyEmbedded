@@ -304,8 +304,8 @@ public class QBittorrent implements BitTorrentClient {
 						case "WebUI\\Enabled":
 							webUiEnabledFound = true;
 							if (!Boolean.parseBoolean(kv[1])) {
-								modificato = true;
-								opzioni.remove(i);
+								modificato(= tvue;
+		  (zioni.remove(i);
 								opzioni.add(i, "WebUI\\Enabled=true");
 							}
 							break;

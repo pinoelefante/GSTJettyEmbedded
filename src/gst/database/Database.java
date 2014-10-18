@@ -31,6 +31,7 @@ public class Database {
 	public static final String TABLE_SUBSPEDIA = "subspedia";
 	public static final String TABLE_TVDB_SERIE = "tvdb_serie";
 	public static final String TABLE_TVDB_EPISODI = "tvdb_ep";
+	public static final String TABLE_TVDB_ATTORI = "tvdb_attori";
 	public static final String TABLE_TORRENT = "torrent";
 	public static final String TABLE_PREFERITI = "preferiti";
 	public static final String TABLE_SUBDOWN = "list_subdown";
@@ -163,6 +164,14 @@ public class Database {
 					"FOREIGN KEY(idSerie) REFERENCES tvdb_serie(id)"+
 					")");
 			
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_TVDB_ATTORI+" (" +
+					"idSerie INTEGER," +
+					"attore TEXT," +
+					"ruolo TEXT," +
+					"image TEXT," +
+					"FOREIGN KEY(idSerie) REFERENCES tvdb_serie(id)"+
+					")");
+			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SERIETV+" (" +
 					"id INTEGER PRIMARY KEY AUTOINCREMENT, "+
 					"url TEXT NOT NULL," +
@@ -238,8 +247,10 @@ public class Database {
 		}
 	}
 	private static void init(){
-		updateQuery("INSERT INTO provider (id, nome) VALUES (1,'eztv.it')");
-		updateQuery("INSERT INTO provider (id, nome) VALUES (2,'Karmorra')");
+		if(selectQuery("SELECT * FROM provider WHERE id=1").size()==0)
+			updateQuery("INSERT INTO provider (id, nome) VALUES (1,'eztv.it')");
+		if(selectQuery("SELECT * FROM provider WHERE id=2").size()==0)
+			updateQuery("INSERT INTO provider (id, nome) VALUES (2,'Karmorra')");
 	}
 	private static void checkIntegrita(){}
 	
