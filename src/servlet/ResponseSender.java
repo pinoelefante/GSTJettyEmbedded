@@ -422,8 +422,48 @@ public class ResponseSender {
 		return new Document(root);
 	}
 	public static Document createResponseTVDBEpisodio(EpisodioTVDB ep) {
-		// TODO Auto-generated method stub
-		//return null;
-		return createResponseBoolean(true);
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		Element e = new Element("EpisodioTVDB");
+		Element idSerie = new Element("idSerie");
+		idSerie.addContent(ep.getIdSerie()+"");
+		Element idEpisodio = new Element("idEpisodio");
+		idEpisodio.addContent(ep.getIdEpisodio()+"");
+		Element stagione = new Element("stagione");
+		stagione.addContent(ep.getStagione()+"");
+		Element episodio = new Element("episodio");
+		episodio.addContent(ep.getEpisodio()+"");
+		Element titolo = new Element("titolo");
+		titolo.addContent(ep.getTitolo());
+		Element descr = new Element("descrizione");
+		descr.addContent(ep.getDescrizione());
+		Element img = new Element("immagine");
+		img.addContent(ep.getImageURL());
+		Element guestStars = new Element("guestStars");
+		guestStars.addContent(ep.getGuestStarsFormatted());
+		Element data_air = new Element("data_air");
+		data_air.addContent(ep.getDataAirIta());
+		Element regista = new Element("regista");
+		regista.addContent(ep.getRegistaFormatted());
+		Element sceneggiatori = new Element("sceneggiatori");
+		sceneggiatori.addContent(ep.getSceneggiatoriFormatted());
+		Element rating = new Element("rating");
+		rating.addContent(ep.getRating()+"");
+		
+		e.addContent(idSerie);
+		e.addContent(idEpisodio);
+		e.addContent(stagione);
+		e.addContent(episodio);
+		e.addContent(titolo);
+		e.addContent(descr);
+		e.addContent(img);
+		e.addContent(guestStars);
+		e.addContent(data_air);
+		e.addContent(regista);
+		e.addContent(sceneggiatori);
+		e.addContent(rating);
+		root.addContent(e);
+		return new Document(root);
 	}
 }

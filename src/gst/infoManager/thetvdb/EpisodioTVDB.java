@@ -82,6 +82,16 @@ public class EpisodioTVDB {
 	public String getGuestStarsS(){
 		return guestStars==null?"":guestStars;
 	}
+	public String getGuestStarsFormatted(){
+		String[] gss=getGuestStars();
+		String gs = "";
+		for(int i=0;i<gss.length;i++){
+			gs+=gss[i];
+			if(i<gss.length-1)
+				gs+=", ";
+		}
+		return gs;
+	}
 	public void setGuestStars(String guestStars) {
 		this.guestStars = guestStars;
 	}
@@ -127,6 +137,16 @@ public class EpisodioTVDB {
 	public String getRegistaS(){
 		return regista==null?"":regista;
 	}
+	public String getRegistaFormatted(){
+		String[] rs = getRegista();
+		String r = "";
+		for(int i=0;i<rs.length;i++){
+			r+=rs[i];
+			if(i<rs.length-1)
+				r+=", ";
+		}
+		return r;
+	}
 	public void setRegista(String regista) {
 		this.regista = regista;
 	}
@@ -136,6 +156,16 @@ public class EpisodioTVDB {
 			return ret;
 		}
 		return sceneggiatori.split("\\|");
+	}
+	public String getSceneggiatoriFormatted(){
+		String[] rs = getSceneggiatori();
+		String r = "";
+		for(int i=0;i<rs.length;i++){
+			r+=rs[i];
+			if(i<rs.length-1)
+				r+=", ";
+		}
+		return r;
 	}
 	public String getSceneggiatoriS(){
 		return sceneggiatori==null?"":sceneggiatori;
