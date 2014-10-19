@@ -191,7 +191,7 @@ public class GestoreSottotitoli implements Notifier{
 		if(localsubs.scaricaSottotitolo(s, e, lang, uniqueLang)){
 			online=false;
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
-			inserisciLog(e, localsubs, lang);
+			//inserisciLog(e, localsubs, lang);
 		}
 		else if(itasa.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());

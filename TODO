@@ -1,7 +1,12 @@
-aggiornamento 2:
-ALTER TABLE serietv ADD COLUMN preferenze_sottotitoli TEXT
-UPDATE serietv SET preferenze_sottotitoli="it"
-ALTER TABLE serietv ADD COLUMN id_addic7ed INTEGER DEFAULT 0 REFERENCES addic7ed(id)
-ALTER TABLE serietv ADD COLUMN escludi_seleziona_tutto INTEGER DEFAULT 0
-ALTER TABLE logsub ADD COLUMN lingua TEXT
-INSERT INTO list_subdown(episodio, lingua) SELECT id, "it" FROM episodi WHERE sottotitolo=1
+Cose da fare
+
+1) path download secondario
+2) localizzazione
+3) community
+4) mygst (salvataggio online dei dati delle proprie serie)
+5) karmorra
+6) download tools esterni (vlc, utorrent, qbittorrent)
+7) integrazione client torrent
+8) podnapisi.si, opensubtitles
+9) player video integrato
+10) streaming video
