@@ -15,7 +15,8 @@ public class AppContextBuilder {
 		webAppContext.setDescriptor(webAppContext + "/WEB-INF/web.xml");
 		webAppContext.setResourceBase("./page");
 		webAppContext.setContextPath("/");
-		
+		webAppContext.setInitParameter("useFileMappedBuffer", "false"); //per non bloccare i file durante lo sviluppo
+		webAppContext.setInitParameter("cacheControl","max-age=0,public");
 		webAppContext.addServlet(OperazioniSerieServlet.class, "/OperazioniSerieServlet");
 		webAppContext.addServlet(OperazioniSistema.class, "/OperazioniSistemaServlet");
 		webAppContext.addServlet(SottotitoliServlet.class, "/OperazioniSottotitoliServlet");
