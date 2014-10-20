@@ -1092,7 +1092,8 @@ function showSelezione() {
 		});
 	});
 	if(noSelect.length>0)
-		html+="<tr><td><b>Episodi da non selezionare automaticamente</b></td></tr>";
+		html+="<tr><td><span class='takespace'>_</span></tr></td>"+
+			  "<tr><td><b>Episodi da non selezionare automaticamente</b></td></tr>";
 	html += noSelect;
 	html += "</table>";
 	if((trovati+trovatiN) > 0)
