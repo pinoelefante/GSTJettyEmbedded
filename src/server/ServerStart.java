@@ -107,7 +107,7 @@ public class ServerStart {
 	}
 	public static void close(){
 		System.out.println("Closing GSTJ");
-		if(jettyServer.isStarted()) {
+		if(jettyServer!=null && jettyServer.isStarted()) {
 			try {
 				jettyServer.stop();
 			} 
@@ -116,9 +116,12 @@ public class ServerStart {
 			}
 		}
 		Database.Disconnect();
-		gst.close();
-		subManager.close();
-		ui.removeTray();
+		if(gst!=null)
+			gst.close();
+		if(subManager!=null)
+			subManager.close();
+		if(ui!=null)
+			ui.removeTray();
 		Runtime.getRuntime().halt(0);
 	}
 }
