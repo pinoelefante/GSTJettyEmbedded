@@ -2,6 +2,8 @@ package gst.serieTV;
 
 import gst.database.Database;
 import gst.database.tda.KVResult;
+import gst.naming.CaratteristicheFile;
+import gst.programma.Settings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,9 +14,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Karmorra extends ProviderSerieTV {
-
-	public Karmorra(int id) {
+	private Settings settings;
+	public Karmorra() {
 		super(PROVIDER_KARMORRA);
+		settings = Settings.getInstance();
 	}
 
 	@Override
@@ -32,19 +35,24 @@ public class Karmorra extends ProviderSerieTV {
 		try {
 			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse").get();
 			Elements form = doc.select("select#browse_show option");
-			
+			int caricate = 0;
 			for(int i=0;i<form.size();i++){
 				Element opt = form.get(i);
 				String val = opt.val();
 				String nome = opt.text();
 				if(!val.isEmpty() && !nome.isEmpty()){
 					SerieTV serie = new SerieTV(getProviderID(), nome, val);
+					serie.setConclusa(false);
+					serie.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
+					serie.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
 					if(aggiungiSerieADatabase(serie, PROVIDER_KARMORRA)){
 						serie = getSerieByURL(serie.getUrl(), PROVIDER_KARMORRA);
 						associaEztv(serie);
+						caricate++;
 					}
 				}
 			}
+			System.out.println("Karmorra: "+caricate+" serie nuove");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -102,12 +110,17 @@ public class Karmorra extends ProviderSerieTV {
 	@Override
 	public void caricaEpisodiOnline(SerieTV serie) {
 		try {
-			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse&show=562"/*+serie.getUrl()*/).get();
+			int idSerie = serie.getIDDb();
+			SerieTV k_serie = serie.getIDKarmorra()==0?serie:ProviderSerieTV.getSerieByID(serie.getIDKarmorra());
+			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse&show="+k_serie.getUrl()).get();
 			Elements magnets = doc.select("a");
 			for(int i=0;i<magnets.size();i++){
 				String url = magnets.get(i).attr("href");
-				if(url.startsWith("magnet:"))
-					System.out.println(url);
+				if(url.startsWith("magnet:")){
+					CaratteristicheFile stat = Torrent.parse(url);
+					int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(idSerie, stat.getStagione(), stat.getEpisodio());
+					ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), url);
+				}
 			}
 		}
 		catch (IOException e) {
@@ -120,9 +133,5 @@ public class Karmorra extends ProviderSerieTV {
 	public void init() {
 		// TODO Auto-generated method stub
 		
-	}
-	public static void main(String[] args){
-		Karmorra k = new Karmorra(PROVIDER_KARMORRA);
-		k.caricaEpisodiOnline(null);
 	}
 }

@@ -23,6 +23,8 @@ import util.os.FileFinder;
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
+	private EZTV eztv;
+	private Karmorra karmorra;
 	private TaskRicercaEpisodi t_search;
 	private Settings settings;
 	private Timer timer;
@@ -84,7 +86,10 @@ public class GestioneSerieTV implements Notifier {
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
 		notificable=new ArrayList<Notificable>();
-		providers.add(new EZTV());
+		eztv = new EZTV();
+		providers.add(eztv);
+		karmorra = new Karmorra();
+		providers.add(karmorra);
 		settings = Settings.getInstance();
 		timer = new Timer();
 	}
@@ -115,9 +120,12 @@ public class GestioneSerieTV implements Notifier {
 		return Merger.mergeListsSerieTV(serie);
 	}
 	public ProviderSerieTV checkProvider(int id){
-		for(int i=0;i<providers.size();i++)
-			if(providers.get(i).getProviderID()==id)
-				return providers.get(i);
+		switch(id){
+			case 1:
+				return eztv;
+			case 2:
+				return karmorra;
+		}
 		return null;
 	}
 	
@@ -175,8 +183,12 @@ public class GestioneSerieTV implements Notifier {
 	public void aggiornaEpisodiSerie(int idSerie, int idProvider){
 		ProviderSerieTV p = checkProvider(idProvider);
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
-		inviaNotifica("Aggiorno gli episodi di: "+serie.getNomeSerie());
+		inviaNotifica(p.getProviderName()+": Aggiorno gli episodi di: "+serie.getNomeSerie());
 		p.caricaEpisodiOnline(serie);
+		if(p==eztv && serie.getIDKarmorra()>0){
+			karmorra.caricaEpisodiOnline(serie);
+			inviaNotifica("KARMORRA: Aggiorno gli episodi di: "+serie.getNomeSerie());
+		}
 	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
 		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiDaScaricare(idSerie);
