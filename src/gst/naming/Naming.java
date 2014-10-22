@@ -56,6 +56,8 @@ public class Naming {
 			stat.setRepack(true);
 		if(toParse.toUpperCase().contains("DVDRIP"))
 			stat.setDVDRip(true);
+		if(toParse.toLowerCase().contains("preair"))
+			stat.setPreair(true);
 		
 		/*Rimuove l'anno dalla stringa*/
 		Pattern p_anno=patterns.get("PATTERN_ANNO");

@@ -2,7 +2,7 @@ package gst.naming;
 
 public class CaratteristicheFile {
 	private int stagione, episodio;
-	private boolean hd720, repack, proper, dvdrip;
+	private boolean hd720, repack, proper, dvdrip, preair;
 	
 	public CaratteristicheFile() {}
 	
@@ -96,5 +96,13 @@ public class CaratteristicheFile {
 		CaratteristicheFile f=new CaratteristicheFile();
 		f.setStatsFromValue(7);
 		System.out.println("\n\n"+f);
+	}
+
+	public boolean isPreair() {
+		return preair;
+	}
+
+	public void setPreair(boolean preair) {
+		this.preair = preair;
 	}
 }

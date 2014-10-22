@@ -1,3 +1,7 @@
+Query Update#4:
+ALTER TABLE serietv ADD COLUMN id_karmorra INTEGER DEFAULT 0 REFERENCES serietv(id)
+
+
 Cose da fare
 
 1) path download secondario

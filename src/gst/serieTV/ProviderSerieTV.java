@@ -50,6 +50,7 @@ public abstract class ProviderSerieTV {
 		int preferenze_d = (int) res.getValueByKey("preferenze_download");
 		String pref_sub = (String) res.getValueByKey("preferenze_sottotitoli");
 		boolean escludiSelezionaTutto = ((int) res.getValueByKey("escludi_seleziona_tutto")==0?false:true);
+		int id_karmorra = (int) res.getValueByKey("id_karmorra");
 		SerieTV st = new SerieTV(id_provider, nome, url);
 		st.setIDDb(id_db);
 		st.setConclusa(conclusa);
@@ -64,10 +65,11 @@ public abstract class ProviderSerieTV {
 		st.setPreferenzeSottotitoli(new PreferenzeSottotitoli(pref_sub));
 		st.setEscludiSelezionaTutto(escludiSelezionaTutto);
 		st.setIDAddic7ed(id_addic7ed);
+		st.setIDKarmorra(id_karmorra);
 		return st;
 	}
-	public static SerieTV getSerieByURL(String url){
-		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE url='"+url+"'";
+	public static SerieTV getSerieByURL(String url, int provider){
+		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE url='"+url+"' AND provider="+provider;
 		ArrayList<KVResult<String,Object>> res = Database.selectQuery(query);
 		if(res.size()==0)
 			return null;
@@ -106,12 +108,12 @@ public abstract class ProviderSerieTV {
 		
 		return Database.updateQuery(query);
 	}
-	public boolean aggiungiSerieADatabase(SerieTV s){
-		if(getSerieByURL(s.getUrl())!=null)
+	public boolean aggiungiSerieADatabase(SerieTV s, int provider){
+		if(getSerieByURL(s.getUrl(), provider)!=null)
 			return false;
 		else {
 			addSerieToDB(s);
-			SerieTV s1=getSerieByURL(s.getUrl());
+			SerieTV s1=getSerieByURL(s.getUrl(), 1);
 			nuove_serie.add(s1);
 			return true;
 		}
@@ -289,7 +291,8 @@ public abstract class ProviderSerieTV {
 		}
 		else if(p.isPreferisciHD()){
 			for(int i=0;i<list.size();i++){
-				if(list.get(i).getStats().is720p()){
+				Torrent t = list.get(i);
+				if(t.getStats().is720p() && t.getStats().isPreair()==p.isDownloadPreair()){
 					download.add(list.get(i));
 					return download;
 				}
@@ -297,7 +300,8 @@ public abstract class ProviderSerieTV {
 		}
 		else {
 			for(int i=0;i<list.size();i++){
-				if(!list.get(i).getStats().is720p()){
+				Torrent t = list.get(i); 
+				if(!t.getStats().is720p() && t.getStats().isPreair()==p.isDownloadPreair()){
 					download.add(list.get(i));
 					return download;
 				}

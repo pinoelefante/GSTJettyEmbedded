@@ -7,7 +7,7 @@ public class SerieTV {
 	private String titolo;
 	private int provider;
 	private String url_serie;
-	private int id_db, id_itasa=0, id_tvdb=0, id_subspedia=0, id_subsfactory=0,id_addic7ed=0;
+	private int id_db, id_itasa=0, id_tvdb=0, id_subspedia=0, id_subsfactory=0,id_addic7ed=0, id_karmorra;
 	private boolean conclusa, stop_search, no_select;
 	private Preferenze preferenze_download;
 	private PreferenzeSottotitoli pref_subs;
@@ -165,5 +165,13 @@ public class SerieTV {
 	}
 	public int getIDAddic7ed() {
 		return id_addic7ed;
+	}
+
+	public int getIDKarmorra() {
+		return id_karmorra;
+	}
+
+	public void setIDKarmorra(int id_karmorra) {
+		this.id_karmorra = id_karmorra;
 	}
 }

@@ -1,7 +1,6 @@
 package gst.serieTV;
 
 import gst.database.Database;
-import gst.database.tda.KVResult;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.programma.ManagerException;
@@ -103,7 +102,7 @@ public class EZTV extends ProviderSerieTV {
 					toInsert.setConclusa(conclusa);
 					toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
 					toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
-					if(aggiungiSerieADatabase(toInsert)){
+					if(aggiungiSerieADatabase(toInsert, 1)){
 						caricate++;
 					}
 				}
@@ -135,25 +134,6 @@ public class EZTV extends ProviderSerieTV {
 				return true;
 		}
 		return false;
-	}
-
-	protected void salvaSerieInDB(SerieTV s) {
-		if (s.getIDDb() == 0) {
-			String query = "INSERT INTO " + Database.TABLE_SERIETV + " (nome, url, conclusa, stop_search, provider, id_itasa, id_subsfactory, id_subspedia, id_tvdb, preferenze_download) VALUES (" + "\"" + s.getNomeSerie() + "\", " + "\"" + s.getUrl() + "\"," + (s.isConclusa() ? 1 : 0) + "," + (s.isStopSearch() ? 1 : 0) + "," + getProviderID() + "," + s.getIDItasa() + "," + s.getIDDBSubsfactory() + "," + s.getIDSubspedia() + "," + s.getIDTvdb() + "," + s.getPreferenze().toValue() + ")";
-			Database.updateQuery(query);
-
-			String query_id = "SELECT id FROM " + Database.TABLE_SERIETV + " WHERE url=\"" + s.getUrl() + "\"";
-			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query_id);
-			if (res.size() == 1) {
-				KVResult<String, Object> row = res.get(0);
-				int id_db = (int) row.getValueByKey("id");
-				s.setIDDb(id_db);
-			}
-		}
-		else {
-			String query = "UPDATE " + Database.TABLE_SERIETV + " SET " + "nome=" + "\"" + s.getNomeSerie() + "\"" + ", url=" + "\"" + s.getUrl() + "\"" + ", conclusa=" + (s.isConclusa() ? 1 : 0) + ", stop_search=" + (s.isStopSearch() ? 1 : 0) + ", id_itasa=" + s.getIDItasa() + ", id_subsfactory=" + s.getIDDBSubsfactory() + ", id_subspedia=" + s.getIDSubspedia() + ", id_tvdb=" + s.getIDTvdb() + ", preferenze_download=" + s.getPreferenze().toValue() + " WHERE id=" + s.getIDDb();
-			Database.updateQuery(query);
-		}
 	}
 
 	@Override

@@ -181,6 +181,7 @@ public class Database {
 					"id_opensubtitles INTEGER DEFAULT 0,"+
 					"id_addic7ed INTEGER DEFAULT 0," +
 					"id_tvdb INTEGER DEFAULT 0,"+
+					"id_karmorra INTEGER DEFAULT 0," +
 					"preferenze_download INTEGER DEFAULT 0," +
 					"preferenze_sottotitoli TEXT,"+
 					"escludi_seleziona_tutto INTEGER DEFAULT 0," +
@@ -189,7 +190,8 @@ public class Database {
 					"FOREIGN KEY(id_subsfactory) REFERENCES subsfactory(id),"+
 					"FOREIGN KEY(id_subspedia) REFERENCES subspedia(id),"+ 
 					"FOREIGN KEY(id_addic7ed) REFERENCES addic7ed(id),"+
-					"FOREIGN KEY(id_tvdb) REFERENCES tvdb_serie(id)"
+					"FOREIGN KEY(id_tvdb) REFERENCES tvdb_serie(id),"+
+					"FOREIGN KEY(id_karmorra) REFERENCES serietv(id)"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_PREFERITI+" (" +
