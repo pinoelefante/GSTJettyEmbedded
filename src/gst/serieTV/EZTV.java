@@ -59,6 +59,9 @@ public class EZTV extends ProviderSerieTV {
 
 	@Override
 	public void aggiornaElencoSerie() {
+		if(!isRaggiungibile())
+			return;
+		
 		update_in_corso=true;
 		System.out.println("EZTV.it - Aggiornando elenco serie tv");
 		String base_url = getBaseURL();
@@ -143,6 +146,9 @@ public class EZTV extends ProviderSerieTV {
 
 	@Override
 	public void caricaEpisodiOnline(SerieTV serie) {
+		if(!isRaggiungibile())
+			return;
+		
 		if (serie.isStopSearch())
 			return;
 		System.out.println("Aggiornando i link di: " + serie.getNomeSerie());
@@ -180,10 +186,6 @@ public class EZTV extends ProviderSerieTV {
 		}
 
 		catch (InterruptedException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		catch (FileNotFoundException e) {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
 		}
@@ -233,5 +235,22 @@ public class EZTV extends ProviderSerieTV {
 		caricaListaProxy();
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
+	}
+	private long lastVerificaRaggiungibile;
+	private boolean raggiungibile;
+	private boolean isRaggiungibile(){
+		if(System.currentTimeMillis() > lastVerificaRaggiungibile+30000){
+			for(int i=0;i<baseUrls.size();i++){
+				if(Download.isRaggiungibile(baseUrls.get(i))){
+					raggiungibile = true;
+					baseUrl = baseUrls.get(i);
+					break;
+				}
+				else
+					raggiungibile = false;
+			}
+			lastVerificaRaggiungibile = System.currentTimeMillis();
+		}
+		return raggiungibile;
 	}
 }
