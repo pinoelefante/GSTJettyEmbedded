@@ -60,7 +60,7 @@ public class Karmorra extends ProviderSerieTV {
 	}
 	
 	private void associaEztv(SerieTV s){
-		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND nome=\""+s.getNomeSerie()+"\"";
+		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND lower(nome)=\""+s.getNomeSerie().toLowerCase()+"\"";
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		if(res.size()==1){
 			KVResult<String, Object> resEztv = res.get(0);
