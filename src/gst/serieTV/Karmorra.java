@@ -22,7 +22,7 @@ public class Karmorra extends ProviderSerieTV {
 
 	@Override
 	public String getProviderName() {
-		return "Karmorra";
+		return "showRss.info";
 	}
 
 	@Override
@@ -47,8 +47,11 @@ public class Karmorra extends ProviderSerieTV {
 					serie.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
 					if(aggiungiSerieADatabase(serie, PROVIDER_KARMORRA)){
 						serie = getSerieByURL(serie.getUrl(), PROVIDER_KARMORRA);
-						associaEztv(serie);
-						caricate++;
+						if(associaEztv(serie)){
+							nuove_serie.remove(serie);
+						}
+						else
+							caricate++;
 					}
 				}
 			}
@@ -59,15 +62,16 @@ public class Karmorra extends ProviderSerieTV {
 		}
 	}
 	
-	private void associaEztv(SerieTV s){
+	private boolean associaEztv(SerieTV s){
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND lower(nome)=\""+s.getNomeSerie().toLowerCase()+"\"";
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		if(res.size()==1){
 			KVResult<String, Object> resEztv = res.get(0);
 			int ideztv = (int) resEztv.getValueByKey("id");
 			String query_associa = "UPDATE "+Database.TABLE_SERIETV+" SET id_karmorra="+s.getIDDb()+" WHERE id="+ideztv;
-			Database.updateQuery(query_associa);
+			return Database.updateQuery(query_associa);
 		}
+		return false;
 	}
 	
 	@Override

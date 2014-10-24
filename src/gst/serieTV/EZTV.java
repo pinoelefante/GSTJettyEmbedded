@@ -16,6 +16,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 public class EZTV extends ProviderSerieTV {
 	private ArrayList<String> baseUrls;
 	private String			baseUrl;
@@ -24,6 +27,7 @@ public class EZTV extends ProviderSerieTV {
 	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
 		baseUrls = new ArrayList<String>();
+		baseUrls.add("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it");
 		baseUrls.add("https://eztv.it");
 		
 		/*
@@ -43,8 +47,10 @@ public class EZTV extends ProviderSerieTV {
 		for (int i = 0; i < baseUrls.size(); i++) {
 			String url_b = baseUrls.get(i);
 			System.out.println("Verificando: " + url_b);
-			if (Download.isRaggiungibile(url_b))
+			if (Download.isRaggiungibile(url_b)){
+				lastVerificaRaggiungibile = System.currentTimeMillis();
 				return url_b;
+			}
 		}
 		return baseUrls.get(0);
 	}
@@ -62,6 +68,11 @@ public class EZTV extends ProviderSerieTV {
 		if(!isRaggiungibile())
 			return;
 		
+		if(getBaseURL().compareTo("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it")==0){
+			proxyShowlist(getBaseURL()+"/showlist/");
+			return;
+		}
+		//VIENE ESEGUITO SOLO SE NON VIENE UTILIZZATO IL PROXY
 		update_in_corso=true;
 		System.out.println("EZTV.it - Aggiornando elenco serie tv");
 		String base_url = getBaseURL();
@@ -105,7 +116,7 @@ public class EZTV extends ProviderSerieTV {
 					toInsert.setConclusa(conclusa);
 					toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
 					toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
-					if(aggiungiSerieADatabase(toInsert, 1)){
+					if(aggiungiSerieADatabase(toInsert, PROVIDER_EZTV)){
 						caricate++;
 					}
 				}
@@ -152,7 +163,12 @@ public class EZTV extends ProviderSerieTV {
 		if (serie.isStopSearch())
 			return;
 		System.out.println("Aggiornando i link di: " + serie.getNomeSerie());
-
+		
+		if(getBaseURL().compareTo("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it")==0){
+			proxyEpisodiSerie(getBaseURL()+"/shows/" + serie.getUrl() + "/", serie.getIDDb());
+			return;
+		}
+		//VIENE ESEGUITO SOLO SE NON VIENE UTILIZZATO IL PROXY
 		try {
 			String base_url = getBaseURL();
 			base_url += "/shows/" + serie.getUrl() + "/";
@@ -205,7 +221,7 @@ public class EZTV extends ProviderSerieTV {
 		}
 	}
 	public void caricaListaProxy(){
-		String urlListProxy = "http://pinoelefante.altervista.org/software/GSTJetty/proxy.txt";
+		String urlListProxy = "http://gestioneserietv.altervista.org/proxyList.txt";
 		URLConnection urlConn;
 		try {
 			urlConn = new URL(urlListProxy).openConnection();
@@ -239,7 +255,7 @@ public class EZTV extends ProviderSerieTV {
 	private long lastVerificaRaggiungibile;
 	private boolean raggiungibile;
 	private boolean isRaggiungibile(){
-		if(System.currentTimeMillis() > lastVerificaRaggiungibile+30000){
+		if(System.currentTimeMillis() > lastVerificaRaggiungibile+120000){ //controllo dopo due minuti
 			for(int i=0;i<baseUrls.size();i++){
 				if(Download.isRaggiungibile(baseUrls.get(i))){
 					raggiungibile = true;
@@ -252,5 +268,80 @@ public class EZTV extends ProviderSerieTV {
 			lastVerificaRaggiungibile = System.currentTimeMillis();
 		}
 		return raggiungibile;
+	}
+	private void proxyShowlist(String url){
+		int nuove = 0;
+		try {
+			Document d = Jsoup.connect(url).get();
+			//System.out.println(d.text());
+			ArrayList<String> series=proxyShowListParsed(d.text());
+			for(int i=0;i<series.size();i=i+2){
+				String nome = series.get(i);
+				if(i+1>=series.size())
+					break;
+				String u = series.get(i+1);
+				u = u.replace("/shows/", "");
+				u = u.substring(0, u.indexOf("/"));
+				if(!nome.isEmpty() && !u.isEmpty()){
+					SerieTV toInsert = new SerieTV(PROVIDER_EZTV, nome, u);
+					toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
+					toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
+					if(aggiungiSerieADatabase(toInsert, PROVIDER_EZTV)){
+						nuove++;
+					}
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Sono state trovate "+nuove+" nuove serie tv");
+	}
+	private ArrayList<String> proxyShowListParsed(String text) {
+		ArrayList<String> s = new ArrayList<String>();
+		Scanner scanner = new Scanner(text);
+		String nome="", url="";
+		while(scanner.hasNext()){
+			String tmp = scanner.next();
+			if(tmp.startsWith("/")){
+				url=tmp;
+				if(!nome.trim().isEmpty() && !url.isEmpty()){
+    				s.add(nome.trim());
+    				s.add(url);
+				}
+				nome="";
+				url="";
+			}
+			else {
+				nome+=" "+tmp;
+			}
+		}
+		scanner.close();
+		return s;
+	}
+	private void proxyEpisodiSerie(String url, int idSerie){
+		try {
+			Document d = Jsoup.connect(url).get();
+			String[] magnets = proxyParseMagnets(d.text());
+			for(int i=0;i<magnets.length;i++){
+				if(!magnets[i].isEmpty()){
+					System.out.println(magnets[i]);
+					CaratteristicheFile stat = Torrent.parse(magnets[i]);
+	    			int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(idSerie, stat.getStagione(), stat.getEpisodio());
+	    			ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), magnets[i]);
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	private String[] proxyParseMagnets(String text){
+		String[] magnet = text.split("magnet:");
+		for(int i=0;i<magnet.length;i++){
+			if(!magnet[i].isEmpty())
+				magnet[i]="magnet:"+magnet[i];
+		}
+		return magnet;
 	}
 }
