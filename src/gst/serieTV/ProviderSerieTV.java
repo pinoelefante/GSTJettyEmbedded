@@ -3,6 +3,7 @@ package gst.serieTV;
 import gst.database.Database;
 import gst.database.tda.KVResult;
 import gst.download.Download;
+import gst.programma.Settings;
 
 import java.util.ArrayList;
 
@@ -93,7 +94,10 @@ public abstract class ProviderSerieTV {
 		}
 		else {
 			String query = "INSERT INTO "+Database.TABLE_PREFERITI+" (id_serie) VALUES ("+serie.getIDDb()+")";
-			return Database.updateQuery(query);
+			String query2 = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli="+Settings.getInstance().getLingua()+" WHERE id="+serie.getIDDb();
+			boolean pref = Database.updateQuery(query);
+			Database.updateQuery(query2);
+			return pref;
 		}
 	}
 	public static boolean removeSerieDaPreferiti(int serie, boolean resetEpisodi){
@@ -135,7 +139,7 @@ public abstract class ProviderSerieTV {
 			case PROVIDER_EZTV:
 				return "eztv.it";
 			case PROVIDER_KARMORRA:
-				return "Karmorra";
+				return "showRss.info";
 		}
 		return "unknown";
 	}

@@ -129,13 +129,6 @@ public class GestioneSerieTV implements Notifier {
 		return null;
 	}
 	
-	public ArrayList<SerieTV> getSerieNuoveByProvider(int id){
-		ProviderSerieTV p = checkProvider(id);
-		if(p==null)
-			return null;
-		return p.getElencoSerieNuove();
-	}
-	
 	public ArrayList<SerieTV> getSerieNuove(){
 		ArrayList<ArrayList<SerieTV>> serie=new ArrayList<ArrayList<SerieTV>>();
 		for(int i=0;i<providers.size();i++){
