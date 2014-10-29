@@ -26,6 +26,8 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 
 	public void run() {
 		if(System.currentTimeMillis() < setts.getUltimoAggiornamentoSerie()+UPDATE_LIMIT){
+			if(listener!=null)
+				listener.searchFirstEnd();;
 			return;
 		}
 		if (listener != null)
@@ -78,5 +80,8 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 
 	public void removeSearchListener() {
 		listener = null;
+	}
+	public static void main(String[] args){
+		System.out.println(System.currentTimeMillis());
 	}
 }
