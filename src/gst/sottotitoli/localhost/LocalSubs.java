@@ -11,7 +11,7 @@ import gst.sottotitoli.SerieSub;
 import java.io.File;
 import java.util.ArrayList;
 
-import util.os.FileFinder;
+import util.os.DirectoryManager;
 
 public class LocalSubs implements ProviderSottotitoli{
 	private static LocalSubs instance;
@@ -29,7 +29,7 @@ public class LocalSubs implements ProviderSottotitoli{
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang, boolean unique) {
-		ArrayList<File> subs = FileFinder.getInstance().cercaFileSottotitoli(serie, ep);
+		ArrayList<File> subs = DirectoryManager.getInstance().cercaFileSottotitoli(serie, ep);
 		if(subs.size()==0)
 			return false;
 		
@@ -57,7 +57,7 @@ public class LocalSubs implements ProviderSottotitoli{
 			return false;
 		//Fine controllo
 		
-		ArrayList<File> videos = FileFinder.getInstance().cercaFileVideo(serie, ep);
+		ArrayList<File> videos = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
 		boolean renamed=false;
 		for(int i=0;i<videos.size();i++){
 			File video = videos.get(i);
@@ -101,7 +101,6 @@ public class LocalSubs implements ProviderSottotitoli{
 	public boolean disassocia(int idSerie) {return false;}
 	@Override
 	public boolean hasLanguage(String lang) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

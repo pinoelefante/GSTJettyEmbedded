@@ -54,7 +54,8 @@ public class ArchiviZip {
 			inArchive.extract(in, false, new MySevenZipCallBack(inArchive, dir_dest, ""));
 		}
 		catch (Exception e) {
-			System.err.println("Error occurs: " + e);
+			System.err.println(archivio+" Error occurs: " + e);
+			e.printStackTrace();
 		}
 		finally {
 			if (inArchive != null) {

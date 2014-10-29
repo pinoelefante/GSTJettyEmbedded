@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Timer;
 
-import util.os.FileFinder;
+import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
 
 public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
@@ -193,7 +194,15 @@ public class GestioneSerieTV implements Notifier {
 	}
 	
 	public boolean downloadEpisodio(int idEp) {
-		boolean status = ProviderSerieTV.downloadEpisodio(idEp);
+		boolean status = false;
+		try {
+			status = ProviderSerieTV.downloadEpisodio(idEp);
+		}
+		catch (DirectoryNotAvailableException e) {
+			e.printStackTrace();
+			inviaNotifica("Errore durante il download: controlla che i dischi siano collegati e che lo spazio sia sufficiente");
+			return false;
+		}
 		if(status){
 			if(settings.isRicercaSottotitoli()){
 				GestoreSottotitoli.setSottotitoloDownload(idEp, true, "");
@@ -221,8 +230,8 @@ public class GestioneSerieTV implements Notifier {
 			return false;
 		int deleted = 0;
 		ArrayList<File> files=new ArrayList<File>();
-		files.addAll(FileFinder.getInstance().cercaFileVideo(serie, ep));
-		files.addAll(FileFinder.getInstance().cercaFileVideo(serie, ep));
+		files.addAll(DirectoryManager.getInstance().cercaFileVideo(serie, ep));
+		files.addAll(DirectoryManager.getInstance().cercaFileVideo(serie, ep));
 		int fileTrovati = files.size();
 		for(int i=0;i<files.size();i++){
 			if(files.get(i).delete())
@@ -236,7 +245,7 @@ public class GestioneSerieTV implements Notifier {
 	public boolean playVideo(int idEp){
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
 		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
-		ArrayList<File> files= FileFinder.getInstance().cercaFileVideo(serie, ep);
+		ArrayList<File> files= DirectoryManager.getInstance().cercaFileVideo(serie, ep);
 		if(files.size()==0){
 			ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.RIMOSSO);
 			return false;
@@ -244,7 +253,7 @@ public class GestioneSerieTV implements Notifier {
 		else {
 			VideoPlayer videoPlayer;
 			try {
-				if(settings.isRicercaSottotitoli() && FileFinder.getInstance().cercaFileSottotitoli(serie, ep, files.get(0).getName()).size()==0){
+				if(settings.isRicercaSottotitoli() && DirectoryManager.getInstance().cercaFileSottotitoli(serie, ep, files.get(0).getName()).size()==0){
 					inviaNotifica("Attendere la ricerca dei sottotitoli...");
 					boolean f=GestoreSottotitoli.getInstance().scaricaSottotitolo(ep);
 					if(!f)

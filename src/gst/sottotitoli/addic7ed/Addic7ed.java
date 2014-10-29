@@ -1,5 +1,16 @@
 package gst.sottotitoli.addic7ed;
 
+import gst.database.Database;
+import gst.database.tda.KVResult;
+import gst.download.Download;
+import gst.naming.CaratteristicheFile;
+import gst.naming.Naming;
+import gst.serieTV.Episodio;
+import gst.serieTV.SerieTV;
+import gst.sottotitoli.GestoreSottotitoli;
+import gst.sottotitoli.ProviderSottotitoli;
+import gst.sottotitoli.SerieSub;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -15,17 +26,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import util.os.FileFinder;
-import gst.database.Database;
-import gst.database.tda.KVResult;
-import gst.download.Download;
-import gst.naming.CaratteristicheFile;
-import gst.naming.Naming;
-import gst.serieTV.Episodio;
-import gst.serieTV.SerieTV;
-import gst.sottotitoli.GestoreSottotitoli;
-import gst.sottotitoli.ProviderSottotitoli;
-import gst.sottotitoli.SerieSub;
+import util.os.DirectoryManager;
 
 public class Addic7ed implements ProviderSottotitoli {
 	private static Addic7ed instance;
@@ -89,7 +90,7 @@ public class Addic7ed implements ProviderSottotitoli {
 		String langS = getLangString(lang);
 		if(langS==null)
 			return false;
-		ArrayList<File> videos = FileFinder.getInstance().cercaFileVideo(serie, ep);
+		ArrayList<File> videos = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
 		boolean downloadOK = false;
 		for(int i=0;i<videos.size();i++){
 			File f = videos.get(i);

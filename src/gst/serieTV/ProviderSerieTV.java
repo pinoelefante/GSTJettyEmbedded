@@ -7,6 +7,8 @@ import gst.programma.Settings;
 
 import java.util.ArrayList;
 
+import util.os.DirectoryNotAvailableException;
+
 public abstract class ProviderSerieTV {
 	protected final static int PROVIDER_EZTV=1;
 	protected final static int PROVIDER_KARMORRA=2;
@@ -258,7 +260,7 @@ public abstract class ProviderSerieTV {
 			return ep;
 		}
 	}
-	public static boolean downloadEpisodio(int idEp){
+	public static boolean downloadEpisodio(int idEp) throws DirectoryNotAvailableException{
 		Episodio ep = getEpisodio(idEp);
 		if(ep!=null){
 			SerieTV serie = getSerieByID(ep.getSerie());
@@ -268,11 +270,17 @@ public abstract class ProviderSerieTV {
 			}
 			boolean download = false;
 			for(int i=0;i<torrent.size();i++){
-    			if(Download.downloadTorrent(serie, torrent.get(i))){
-    				download = true;
-    				if(ep.getStatoVisualizzazione()!=Episodio.SCARICATO && ep.getStatoVisualizzazione()!=Episodio.VISTO)
-    					changeStatusEpisodio(idEp, Episodio.SCARICATO);
-    			}
+    			try {
+					if(Download.downloadTorrent(serie, torrent.get(i))){
+						download = true;
+						if(ep.getStatoVisualizzazione()!=Episodio.SCARICATO && ep.getStatoVisualizzazione()!=Episodio.VISTO)
+							changeStatusEpisodio(idEp, Episodio.SCARICATO);
+					}
+				}
+				catch (DirectoryNotAvailableException e) {
+					e.printStackTrace();
+					throw e;
+				}
 			}
 			return download;
 		}

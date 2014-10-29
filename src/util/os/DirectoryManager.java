@@ -9,36 +9,74 @@ import gst.serieTV.SerieTV;
 import java.io.File;
 import java.util.ArrayList;
 
-public class FileFinder {
-	private static FileFinder sing;
+public class DirectoryManager {
+	private static DirectoryManager instance;
+	private Settings settings;
+	
+	public static DirectoryManager getInstance(){
+		if(instance==null)
+			instance=new DirectoryManager();
+		return instance;
+	}
+	private DirectoryManager(){
+		settings = Settings.getInstance();
+	}
+	public boolean isMainDirAvailable(){
+		String path = settings.getDirectoryDownload();
+		File dir = new File(path);
+		return (dir.exists() && getMegabytes(dir.getFreeSpace())>=settings.getMinFreeSpace());
+	}
+	public boolean isAlternativeDirAvailable(){
+		String path = settings.getDirectoryDownload2();
+		File dir = new File(path);
+		return (dir.exists() && getMegabytes(dir.getFreeSpace())>=settings.getMinFreeSpace());
+	}
+	
 	private final static String[] estensioniVideoValide = {".avi",".mp4",".mkv"};
 	private final static String[] estensioniSottotitoliValide = {".srt",".ass"};
 	
-	public static FileFinder getInstance(){
-		if(sing==null)
-			sing=new FileFinder();
-		return sing;
-	}
 	public ArrayList<File> cercaFileVideo(SerieTV serie, Episodio ep){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
 		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
-		//System.out.println(pathBase);
-		File dir = new File(pathBase);
-		cercaFile(dir, fileTrovati, ep, estensioniVideoValide);
+		String altDir=Settings.getInstance().getDirectoryDownload2()+serie.getFolderSerie();
+		
+		if(isMainDirAvailable()){
+    		File dir = new File(pathBase);
+    		cercaFile(dir, fileTrovati, ep, estensioniVideoValide);
+		}
+		if(isAlternativeDirAvailable()){
+			File dir = new File(altDir);
+    		cercaFile(dir, fileTrovati, ep, estensioniVideoValide);
+		}
 		return fileTrovati;
 	}
 	public ArrayList<File> cercaFileSottotitoli(SerieTV serie, Episodio ep){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
 		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
-		File dir = new File(pathBase);
-		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		String altDir=Settings.getInstance().getDirectoryDownload2()+serie.getFolderSerie();
+		
+		if(isMainDirAvailable()){
+    		File dir = new File(pathBase);
+    		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		}
+		if(isAlternativeDirAvailable()){
+			File dir = new File(altDir);
+    		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		}
 		return fileTrovati;
 	}
 	public ArrayList<File> cercaFileSottotitoli(SerieTV serie, Episodio ep, String videoName){
 		ArrayList<File> fileTrovati = new ArrayList<File>();
 		String pathBase=Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
-		File dir = new File(pathBase);
-		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		String altDir=Settings.getInstance().getDirectoryDownload2()+serie.getFolderSerie();
+		if(isMainDirAvailable()){
+    		File dir = new File(pathBase);
+    		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		}
+		if(isAlternativeDirAvailable()){
+    		File dir = new File(altDir);
+    		cercaFile(dir, fileTrovati, ep, estensioniSottotitoliValide);
+		}
 		videoName=videoName.substring(0, videoName.lastIndexOf("."));
 		for(int i=0;i<fileTrovati.size();){
 			if(fileTrovati.get(i).getName().toLowerCase().startsWith(videoName.toLowerCase()))
@@ -82,5 +120,19 @@ public class FileFinder {
 				Naming.PATTERN_nofn
 		};
 		return Naming.parse(file, patt);
+	}
+	public String getAvailableDirectory() throws DirectoryNotAvailableException{
+		if(isMainDirAvailable())
+			return settings.getDirectoryDownload();
+		if(isAlternativeDirAvailable())
+			return settings.getDirectoryDownload2();
+		throw new DirectoryNotAvailableException("directory non trovata o spazio non sufficiente");
+	}
+	public static void main(String[] args){
+		File f = new File("C:\\SerieTV");
+		System.out.println("Spazione libero: " +getMegabytes(f.getFreeSpace()));
+	}
+	private static int getMegabytes(long bytes){
+		return (int) (bytes/(1048576));
 	}
 }

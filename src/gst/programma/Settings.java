@@ -179,6 +179,15 @@ public class Settings {
 	public String getDirectoryDownload() {
 		return getOpzione("download_path")+(getOpzione("download_path").endsWith(File.separator)?"":File.separator);
 	}
+	public String getDirectoryDownload2() {
+		String dirDownAlt = getOpzione("download_path_2");
+		if(dirDownAlt==null || dirDownAlt.isEmpty()){
+			dirDownAlt = getUserDir()+"Download"+File.separator;
+			setDirectoryDownload2(dirDownAlt);
+			salvaSettings();
+		}
+		return dirDownAlt+(dirDownAlt.endsWith(File.separator)?"":File.separator);
+	}
 	public String getEXEName(){
 		String exe=System.getProperty("sun.java.command");
 		return exe;
@@ -285,6 +294,14 @@ public class Settings {
 			directoryDownload+=File.separator;
 		opzioni.put("download_path", directoryDownload);
 	}
+	public void setDirectoryDownload2(String directoryDownload){
+		File f=new File(directoryDownload);
+		if(!f.exists())
+			f.mkdirs();
+		if(!directoryDownload.endsWith(File.separator))
+			directoryDownload+=File.separator;
+		opzioni.put("download_path_2", directoryDownload);
+	}
 	public void setDownloadAutomatico(boolean downloadAutomatico) {
 		aggiungiOpzione("download_auto", downloadAutomatico+"");
 		//TODO avvio download automatico
@@ -376,6 +393,25 @@ public class Settings {
 	public String getCurrentFileVersion(){
 		return getOpzione("current_version");
 	}
+	public void setMinFreeSpace(int free){
+		aggiungiOpzione("min_free_space", free+"");
+	}
+	public int getMinFreeSpace(){
+		String o = getOpzione("min_free_space");
+		if(o==null){
+			setMinFreeSpace(512);
+			salvaSettings();
+			return 512;
+		}
+		else {
+			try {
+				return Integer.parseInt(o);
+			}
+			catch(Exception e){
+				return 256;
+			}
+		}
+	}
 	public String getLingua(){
 		String lingua = getOpzione("lingua");
 		if(lingua==null || lingua.isEmpty()){
@@ -408,11 +444,13 @@ public class Settings {
 				case "current_version":
 				case "download_auto":
 				case "download_path":
+				case "download_path_2":
 				case "download_sottotitoli":
 				case "first_start":
 				case "itasa_user":
 				case "itasa_pass":
 				case "last_version":
+				case "min_free_space":
 				case "regola_download":
 				case "start_hidden":
 				case "utorrent_path":

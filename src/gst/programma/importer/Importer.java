@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import util.os.FileFinder;
+import util.os.DirectoryManager;
 import gst.database.Database;
 import gst.database.tda.KVResult;
 import gst.interfacce.Notificable;
@@ -142,7 +142,7 @@ public class Importer implements Notifier{
 		for(SerieTV s : prefs){
 			ArrayList<Episodio> eps = ProviderSerieTV.getEpisodiSerie(s.getIDDb());
 			for(Episodio e:eps){
-				boolean found=FileFinder.getInstance().cercaFileVideo(s, e).size()>0;
+				boolean found=DirectoryManager.getInstance().cercaFileVideo(s, e).size()>0;
 				if(found){
 					if(e.getStatoVisualizzazione()==Episodio.SCARICARE){
 						ProviderSerieTV.changeStatusEpisodio(e.getId(), Episodio.SCARICATO);

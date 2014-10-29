@@ -4,11 +4,11 @@ ALTER TABLE serietv ADD COLUMN id_karmorra INTEGER DEFAULT 0 REFERENCES serietv(
 
 Cose da fare
 
-1) path download secondario
+FATTO) path download secondario
 2) localizzazione
 3) community
 4) mygst (salvataggio online dei dati delle proprie serie)
-5) karmorra
+FATTO) karmorra
 6) download tools esterni (vlc, utorrent, qbittorrent)
 7) integrazione client torrent
 8) podnapisi.si, opensubtitles

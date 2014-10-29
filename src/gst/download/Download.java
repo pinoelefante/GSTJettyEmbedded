@@ -16,6 +16,9 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
+
 public class Download {
 	private long d_corrente, d_finale;
 	private String url_download, path_destinazione;
@@ -212,8 +215,10 @@ public class Download {
 			}
 		}
 	}
-	public static boolean downloadTorrent(SerieTV serie, Torrent torrent){
-		String directory = Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie();
+	public static boolean downloadTorrent(SerieTV serie, Torrent torrent) throws DirectoryNotAvailableException{
+		String baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+		
+		String directory = baseDir+serie.getFolderSerie();
 		BitTorrentClient client;
 		try {
 			client = Settings.getInstance().getClientTorrent();

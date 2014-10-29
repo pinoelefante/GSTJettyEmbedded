@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import util.os.FileFinder;
+import util.os.DirectoryManager;
 import util.zip.ArchiviZip;
 
 public class ItalianSubs implements ProviderSottotitoli{
@@ -81,7 +81,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 			logga();
 		
 		Torrent link = GestioneSerieTV.getInstance().getLinkDownload(episodio.getId());
-		ArrayList<File> videoFiles=FileFinder.getInstance().cercaFileVideo(serie, episodio);
+		ArrayList<File> videoFiles=DirectoryManager.getInstance().cercaFileVideo(serie, episodio);
 		ArrayList<Integer> ids = new ArrayList<Integer>(2);
 		if(videoFiles.size()>0){
 			for(int i=0;i<videoFiles.size();i++){
