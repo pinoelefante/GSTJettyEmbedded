@@ -16,6 +16,7 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 	private boolean				searching;
 	private int					count_search = 0;
 	private Settings setts;
+	private final static long UPDATE_LIMIT = 7200000;
 
 	public TaskRicercaEpisodi() {
 		manager = GestioneSerieTV.getInstance();
@@ -24,7 +25,7 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 	}
 
 	public void run() {
-		if(System.currentTimeMillis() < setts.getUltimoAggiornamentoSerie()+28800000L){
+		if(System.currentTimeMillis() < setts.getUltimoAggiornamentoSerie()+UPDATE_LIMIT){
 			return;
 		}
 		if (listener != null)
