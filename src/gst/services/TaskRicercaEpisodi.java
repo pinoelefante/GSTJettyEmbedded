@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
+import gst.programma.Settings;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
 
@@ -14,13 +15,18 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 	private SearchListener		 listener;
 	private boolean				searching;
 	private int					count_search = 0;
+	private Settings setts;
 
 	public TaskRicercaEpisodi() {
 		manager = GestioneSerieTV.getInstance();
 		notificable = new ArrayList<Notificable>();
+		setts = Settings.getInstance();
 	}
 
 	public void run() {
+		if(System.currentTimeMillis() < setts.getUltimoAggiornamentoSerie()+28800000L){
+			return;
+		}
 		if (listener != null)
 			listener.searchStart();
 
@@ -39,6 +45,8 @@ public class TaskRicercaEpisodi extends TimerTask implements Notifier {
 			listener.searchEnd();
 		}
 		inviaNotifica("Sono presenti " + count_episodiNuovi + " episodi da scaricare");
+		setts.setUltimoAggiornamentoSerie(System.currentTimeMillis());
+		setts.salvaSettings();
 	}
 
 	public boolean isSearching() {

@@ -433,6 +433,16 @@ public class Settings {
 	public void setLingua(String lang){
 		aggiungiOpzione("lingua", lang);
 	}
+	public long getUltimoAggiornamentoSerie(){
+		String opt = getOpzione("ultimo_aggiornamento_serie");
+		if(opt == null)
+			opt = "0";
+		Long u = Long.parseLong(opt);
+		return u;
+	}
+	public void setUltimoAggiornamentoSerie(long l){
+		aggiungiOpzione("ultimo_aggiornamento_serie", l+"");
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -453,6 +463,7 @@ public class Settings {
 				case "min_free_space":
 				case "regola_download":
 				case "start_hidden":
+				case "ultimo_aggiornamento_serie":
 				case "utorrent_path":
 				case "utorrent_username":
 				case "utorrent_password":

@@ -140,4 +140,8 @@ public class Sistema {
 			Runtime.getRuntime().exec(cmd);
 		}
 	}
+	public void getCommandsUpdate() {
+		// TODO Auto-generated method stub
+		
+	}
 }

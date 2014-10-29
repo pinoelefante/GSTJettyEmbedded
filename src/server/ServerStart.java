@@ -1,6 +1,8 @@
 package server;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import gst.database.Database;
 import gst.gui.InterfacciaGrafica;
@@ -25,8 +27,18 @@ public class ServerStart {
 	private static Sistema sistema;
 	
 	public static void main(String[] args) {
-		if(args.length==0 || args[0].compareTo("startFromLauncher")!=0){
-			return;
+		if(args.length==1){
+			Map<String, Boolean> opts = parseCMD(args[0]);
+			if(!opts.get("startFromLauncher"))
+				System.exit(-1);
+			Boolean updates = opts.get("getUpdates");
+			if(updates!=null && updates==true){
+				Sistema.getInstance().getCommandsUpdate();
+				// TODO
+			}
+		}
+		else {
+			System.exit(1);
 		}
 		
 		try {
@@ -123,5 +135,21 @@ public class ServerStart {
 		if(ui!=null)
 			ui.removeTray();
 		Runtime.getRuntime().halt(0);
+	}
+	private static Map<String, Boolean> parseCMD(String text){
+		HashMap<String, Boolean> opts = new HashMap<String,Boolean>();
+		String[] o = text.split("&");
+		for(int i=0;i<o.length;i++){
+			String[] kv = o[i].split("=");
+			switch(kv[0]){
+				case "startFromLauncher":
+					opts.put(kv[0], true);
+					break;
+				case "getUpdates":
+					opts.put(kv[0], Boolean.parseBoolean(kv[1]));
+					break;
+			}
+		}
+		return opts;
 	}
 }
