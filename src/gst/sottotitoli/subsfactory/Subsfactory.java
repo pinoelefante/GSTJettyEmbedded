@@ -71,6 +71,7 @@ public class Subsfactory implements ProviderSottotitoli {
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
 		ArrayList<File> videoFiles = DirectoryManager.getInstance().cercaFileVideo(s, e);
 		ArrayList<String> urls = new ArrayList<String>();
+		String baseDir;
 		if(videoFiles.size()>0){
 			for(int i=0;i<videoFiles.size();i++){
 				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
@@ -80,6 +81,7 @@ public class Subsfactory implements ProviderSottotitoli {
 				if(url!=null)
 					urls.add(url);
 			}
+			baseDir = videoFiles.get(0).getAbsolutePath().substring(0, videoFiles.get(0).getAbsolutePath().lastIndexOf(File.separator));
 		}
 		else {
 			if(t==null)
@@ -89,11 +91,6 @@ public class Subsfactory implements ProviderSottotitoli {
 				url = cercaFeed(ssubs.getDirectory(), t);
 			if(url!=null)
 				urls.add(url);
-		}
-		
-		if(urls.size()>0){
-			boolean down = false;
-			String baseDir;
 			try {
 				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
 			}
@@ -101,6 +98,10 @@ public class Subsfactory implements ProviderSottotitoli {
 				e2.printStackTrace();
 				return false;
 			}
+		}
+		
+		if(urls.size()>0){
+			boolean down = false;
 			for(int i=0;i<urls.size();i++){
 				String url = urls.get(i).replace(" ", "%20");
 				try {

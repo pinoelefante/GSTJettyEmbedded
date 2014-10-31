@@ -84,6 +84,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 		Torrent link = GestioneSerieTV.getInstance().getLinkDownload(episodio.getId());
 		ArrayList<File> videoFiles=DirectoryManager.getInstance().cercaFileVideo(serie, episodio);
 		ArrayList<Integer> ids = new ArrayList<Integer>(2);
+		String baseDir = null;
 		if(videoFiles.size()>0){
 			for(int i=0;i<videoFiles.size();i++){
 				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
@@ -91,6 +92,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 				if(id>0)
 					ids.add(id);
 			}
+			baseDir = videoFiles.get(0).getAbsolutePath().substring(0, videoFiles.get(0).getAbsolutePath().lastIndexOf(File.separator));
 		}
 		else {	
 			if(link==null)
@@ -98,17 +100,16 @@ public class ItalianSubs implements ProviderSottotitoli{
 			int id = api.cercaSottotitolo(serie, link.getStats());
 			if(id>0)
 				ids.add(id);
+			try {
+				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+			}
+			catch (DirectoryNotAvailableException e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 		
 		ArrayList<String> subFiles=new ArrayList<String>(ids.size()+1);
-		String baseDir;
-		try {
-			baseDir = DirectoryManager.getInstance().getAvailableDirectory();
-		}
-		catch (DirectoryNotAvailableException e1) {
-			e1.printStackTrace();
-			return false;
-		}
 		String dirDown = baseDir+serie.getFolderSerie();
 		if(ids.size()>0){
 			for(int i=0;i<ids.size();i++){

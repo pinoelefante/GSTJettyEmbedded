@@ -70,7 +70,7 @@ public class Subspedia implements ProviderSottotitoli {
 		Torrent t = GestioneSerieTV.getInstance().getLinkDownload(e.getId());
 		ArrayList<File> videoFiles = DirectoryManager.getInstance().cercaFileVideo(s, e);
 		ArrayList<String> urls = new ArrayList<String>();
-		
+		String baseDir = null;
 		if(videoFiles.size()>0){
 			for(int i=0;i<videoFiles.size();i++){
 				CaratteristicheFile stat = Naming.parse(videoFiles.get(i).getName(), null);
@@ -80,6 +80,7 @@ public class Subspedia implements ProviderSottotitoli {
 				if(url!=null)
 					urls.add(url);
 			}
+			baseDir = videoFiles.get(0).getAbsolutePath().substring(0, videoFiles.get(0).getAbsolutePath().lastIndexOf(File.separator));
 		}
 		else {
 			if(t==null)
@@ -89,18 +90,18 @@ public class Subspedia implements ProviderSottotitoli {
 				link=cercaSottotitoloLink(s, t);
 			if(link!=null)
 				urls.add(link);
+			try {
+				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+			}
+			catch (DirectoryNotAvailableException e1) {
+				e1.printStackTrace();
+				return false;
+			}
 		}
 	
 		if(urls.size()>0) {
 			boolean down = false;
-			String baseDir = null;
-			try {
-				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
-			}
-			catch (DirectoryNotAvailableException e2) {
-				e2.printStackTrace();
-				return false;
-			}
+			
 			for(int i=0;i<urls.size();i++){
 				String link = urls.get(i).replace(" ", "%20");
 				String zip=baseDir+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
