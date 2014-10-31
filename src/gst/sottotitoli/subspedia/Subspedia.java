@@ -107,7 +107,7 @@ public class Subspedia implements ProviderSottotitoli {
 				String zip=baseDir+File.separator+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 				try {
 					Download.downloadFromUrl(link, zip);
-					ArchiviZip.estrai_tutto(zip, baseDir+s.getFolderSerie());
+					ArchiviZip.estrai_tutto(zip, baseDir+File.separator+s.getFolderSerie());
 					down = true;
 				}
 				catch (IOException e1) {
