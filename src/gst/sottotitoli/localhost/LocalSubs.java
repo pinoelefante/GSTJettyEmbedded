@@ -29,6 +29,7 @@ public class LocalSubs implements ProviderSottotitoli{
 	}
 	
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang, boolean unique) {
+		//TODO verificare baseDir con quella del file e nel caso spostare il sottotitolo
 		ArrayList<File> subs = DirectoryManager.getInstance().cercaFileSottotitoli(serie, ep);
 		if(subs.size()==0)
 			return false;

@@ -6,7 +6,6 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -36,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
 import util.zip.ArchiviZip;
 
 public class Subsfactory implements ProviderSottotitoli {
@@ -48,8 +48,6 @@ public class Subsfactory implements ProviderSottotitoli {
 	private final long update_time_rss=900000L;  //15 minuti
 	private ArrayList<RSSItemSubsfactory> feed_rss;
 	
-	private Settings settings;
-	
 	private Map<Integer, ArrayList<SottotitoloSubsfactory>> cache_dir;
 	
 	public static Subsfactory getInstance(){
@@ -61,7 +59,6 @@ public class Subsfactory implements ProviderSottotitoli {
 	private Subsfactory() {
 		feed_rss=new ArrayList<RSSItemSubsfactory>();
 		cache_dir = new HashMap<Integer, ArrayList<SottotitoloSubsfactory>>();
-		settings = Settings.getInstance();
 	}
 	
 	@Override
@@ -96,12 +93,20 @@ public class Subsfactory implements ProviderSottotitoli {
 		
 		if(urls.size()>0){
 			boolean down = false;
+			String baseDir;
+			try {
+				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+			}
+			catch (DirectoryNotAvailableException e2) {
+				e2.printStackTrace();
+				return false;
+			}
 			for(int i=0;i<urls.size();i++){
 				String url = urls.get(i).replace(" ", "%20");
 				try {
-					String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
+					String zip=baseDir+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 					Download.downloadFromUrl(url, zip);
-					ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
+					ArchiviZip.estrai_tutto(zip, baseDir+s.getFolderSerie());
 					down = true;
 				}
 				catch (IOException e1) {

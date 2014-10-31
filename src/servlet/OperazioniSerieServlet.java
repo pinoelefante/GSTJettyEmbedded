@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
+import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
+
 public class OperazioniSerieServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GestioneSerieTV manager;
@@ -123,8 +126,16 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "openFolder": {
 				int id = Integer.parseInt(checkParameter("id", resp, req, false));
 				SerieTV serie = ProviderSerieTV.getSerieByID(id);
-				boolean r = InterfacciaGrafica.getInstance().openFolder(Settings.getInstance().getDirectoryDownload()+serie.getFolderSerie());
-				xml = ResponseSender.createResponseBoolean(r);
+				String baseDir;
+				try {
+					baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+					boolean r = InterfacciaGrafica.getInstance().openFolder(baseDir+serie.getFolderSerie());
+					xml = ResponseSender.createResponseBoolean(r);
+				}
+				catch (DirectoryNotAvailableException e) {
+					e.printStackTrace();
+					xml = ResponseSender.createResponseBoolean(false);
+				}
 				break;
 			}
 			case "play": {

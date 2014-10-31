@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
 import util.zip.ArchiviZip;
 
 public class ItalianSubs implements ProviderSottotitoli{
@@ -100,7 +101,15 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		
 		ArrayList<String> subFiles=new ArrayList<String>(ids.size()+1);
-		String dirDown = settings.getDirectoryDownload()+serie.getFolderSerie();
+		String baseDir;
+		try {
+			baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+		}
+		catch (DirectoryNotAvailableException e1) {
+			e1.printStackTrace();
+			return false;
+		}
+		String dirDown = baseDir+serie.getFolderSerie();
 		if(ids.size()>0){
 			for(int i=0;i<ids.size();i++){
 				try {

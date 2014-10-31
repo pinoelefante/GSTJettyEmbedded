@@ -315,7 +315,9 @@ public class GestioneSerieTV implements Notifier {
 	public boolean deleteFolderSerie(int idSerie){
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
 		String path = settings.getDirectoryDownload()+serie.getFolderSerie();
+		String path2 = settings.getDirectoryDownload2()+serie.getFolderSerie();
 		boolean op = OperazioniFile.DeleteDirectory(new File(path));
+		OperazioniFile.DeleteDirectory(new File(path2));
 		String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+idSerie;
 		Database.updateQuery(resetEp);
 		return op;

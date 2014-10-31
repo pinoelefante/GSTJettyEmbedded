@@ -6,7 +6,6 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -36,6 +35,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import util.os.DirectoryManager;
+import util.os.DirectoryNotAvailableException;
 import util.zip.ArchiviZip;
 
 public class Subspedia implements ProviderSottotitoli {
@@ -46,7 +46,6 @@ public class Subspedia implements ProviderSottotitoli {
 	private long time_update=(1000*60)* 20L/*minuti*/;
 	private long last_update=0L;
 	private static ArrayList<SubspediaRSSItem> rss;
-	private Settings settings;
 	
 	private Map<Integer, ArrayList<SottotitoloSubspedia>> cache;
 	
@@ -58,7 +57,6 @@ public class Subspedia implements ProviderSottotitoli {
 	
 	private Subspedia(){
 		rss=new ArrayList<SubspediaRSSItem>();
-		settings = Settings.getInstance();
 		cache = new HashMap<Integer, ArrayList<SottotitoloSubspedia>>();
 	}
 	
@@ -95,12 +93,20 @@ public class Subspedia implements ProviderSottotitoli {
 	
 		if(urls.size()>0) {
 			boolean down = false;
+			String baseDir = null;
+			try {
+				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+			}
+			catch (DirectoryNotAvailableException e2) {
+				e2.printStackTrace();
+				return false;
+			}
 			for(int i=0;i<urls.size();i++){
 				String link = urls.get(i).replace(" ", "%20");
-				String zip=settings.getDirectoryDownload()+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
+				String zip=baseDir+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 				try {
 					Download.downloadFromUrl(link, zip);
-					ArchiviZip.estrai_tutto(zip, settings.getDirectoryDownload()+s.getFolderSerie());
+					ArchiviZip.estrai_tutto(zip, baseDir+s.getFolderSerie());
 					down = true;
 				}
 				catch (IOException e1) {
