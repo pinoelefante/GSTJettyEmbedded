@@ -110,7 +110,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		
 		ArrayList<String> subFiles=new ArrayList<String>(ids.size()+1);
-		String dirDown = baseDir+serie.getFolderSerie();
+		String dirDown = baseDir+File.separator+serie.getFolderSerie();
 		if(ids.size()>0){
 			for(int i=0;i<ids.size();i++){
 				try {

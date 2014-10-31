@@ -105,7 +105,7 @@ public class Subsfactory implements ProviderSottotitoli {
 			for(int i=0;i<urls.size();i++){
 				String url = urls.get(i).replace(" ", "%20");
 				try {
-					String zip=baseDir+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
+					String zip=baseDir+File.separator+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 					Download.downloadFromUrl(url, zip);
 					ArchiviZip.estrai_tutto(zip, baseDir+s.getFolderSerie());
 					down = true;
