@@ -92,6 +92,7 @@ public class Subspedia implements ProviderSottotitoli {
 				urls.add(link);
 			try {
 				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+				baseDir+=File.separator+s.getFolderSerie();
 			}
 			catch (DirectoryNotAvailableException e1) {
 				e1.printStackTrace();
@@ -104,10 +105,10 @@ public class Subspedia implements ProviderSottotitoli {
 			
 			for(int i=0;i<urls.size();i++){
 				String link = urls.get(i).replace(" ", "%20");
-				String zip=baseDir+File.separator+s.getFolderSerie()+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
+				String zip=baseDir+File.separator+s.getFolderSerie()+"_"+t.getStats().getStagione()+"_"+t.getStats().getEpisodio()+"_"+i+".zip";
 				try {
 					Download.downloadFromUrl(link, zip);
-					ArchiviZip.estrai_tutto(zip, baseDir+File.separator+s.getFolderSerie());
+					ArchiviZip.estrai_tutto(zip, baseDir);
 					down = true;
 				}
 				catch (IOException e1) {

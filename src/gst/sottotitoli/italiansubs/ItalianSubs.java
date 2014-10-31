@@ -102,6 +102,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 				ids.add(id);
 			try {
 				baseDir = DirectoryManager.getInstance().getAvailableDirectory();
+				baseDir+=File.separator+serie.getFolderSerie();
 			}
 			catch (DirectoryNotAvailableException e) {
 				e.printStackTrace();
@@ -110,7 +111,7 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 		
 		ArrayList<String> subFiles=new ArrayList<String>(ids.size()+1);
-		String dirDown = baseDir+File.separator+serie.getFolderSerie();
+		String dirDown = baseDir;
 		if(ids.size()>0){
 			for(int i=0;i<ids.size();i++){
 				try {
