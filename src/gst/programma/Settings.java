@@ -435,7 +435,7 @@ public class Settings {
 	}
 	public long getUltimoAggiornamentoSerie(){
 		String opt = getOpzione("ultimo_aggiornamento_serie");
-		if(opt == null)
+		if(opt == null || opt.isEmpty())
 			opt = "0";
 		Long u = Long.parseLong(opt);
 		return u;
