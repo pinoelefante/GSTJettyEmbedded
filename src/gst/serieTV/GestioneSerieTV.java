@@ -53,16 +53,8 @@ public class GestioneSerieTV implements Notifier {
 		
 		//Avvia la ricerca dei nuovi episodi
 		t_search = new TaskRicercaEpisodi();
-		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
-		t_search.subscribe(ui);
 		t_search.addSearchListener(new SearchListener() {
-			
-			@Override
-			public void searchStart() {
-				
-			}
-			
-			@Override
+			public void searchStart() {}
 			public void searchEnd() {
 				if(settings.isDownloadAutomatico()){
 					inviaNotifica("Avvio il download dei nuovi episodi");
@@ -75,14 +67,14 @@ public class GestioneSerieTV implements Notifier {
 					}
 				}
 			}
-
-			@Override
 			public void searchFirstEnd() {
 				if(!settings.isStartHidden()){
 					InterfacciaGrafica.getInstance().apriInterfaccia();
 				}
 			}
 		});
+		timer.scheduleAtFixedRate(t_search, 0, 28800000L);
+		t_search.subscribe(ui);
 	}
 	private GestioneSerieTV(){
 		providers=new ArrayList<ProviderSerieTV>(1);
