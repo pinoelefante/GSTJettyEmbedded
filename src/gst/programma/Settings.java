@@ -443,6 +443,18 @@ public class Settings {
 	public void setUltimoAggiornamentoSerie(long l){
 		aggiungiOpzione("ultimo_aggiornamento_serie", l+"");
 	}
+	public String getPodnapisiUsername(){
+		return getOpzione("podnapisi_username");
+	}
+	public String getPodnapisiPassword(){
+		return getOpzione("podnapisi_password");
+	}
+	public void setPodnapisiUsername(String u){
+		aggiungiOpzione("podnapisi_username", u);
+	}
+	public void setPodnapisiPassword(String p){
+		aggiungiOpzione("podnapisi_password", p);
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -460,17 +472,19 @@ public class Settings {
 				case "itasa_user":
 				case "itasa_pass":
 				case "last_version":
+				case "lingua":
 				case "min_free_space":
+				case "podnapisi_username":
+				case "podnapisi_password":
 				case "regola_download":
 				case "start_hidden":
+				case "tvdb_lang":
 				case "ultimo_aggiornamento_serie":
 				case "utorrent_path":
 				case "utorrent_username":
 				case "utorrent_password":
 				case "utorrent_port":
 				case "qbittorrent_path":
-				case "tvdb_lang":
-				case "lingua":
 					break;
 				default:
 					opzioni.remove(item);

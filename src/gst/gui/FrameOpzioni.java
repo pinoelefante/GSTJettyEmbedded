@@ -1,5 +1,6 @@
 package gst.gui;
 
+import gst.programma.OperazioniFile;
 import gst.programma.Settings;
 
 import java.awt.BorderLayout;
@@ -16,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
@@ -209,7 +211,7 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_1.setBounds(12, 122, 451, 122);
+		panel_1.setBounds(12, 108, 451, 122);
 		panel_6.add(panel_1);
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
@@ -225,6 +227,9 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_3 = new JPanel();
 		panel_1.add(panel_3);
+		
+		creaAccountItasa = new JButton("Crea account");
+		panel_3.add(creaAccountItasa);
 		
 		JButton button = new JButton("Verifica");
 		panel_3.add(button);
@@ -254,6 +259,41 @@ public class FrameOpzioni extends JFrame {
 		
 		btnChiudi2 = new JButton("Chiudi");
 		panel_29.add(btnChiudi2);
+		
+		JPanel panel_33 = new JPanel();
+		panel_33.setBorder(new TitledBorder(null, "Podnapisi.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_33.setBounds(12, 240, 451, 122);
+		panel_6.add(panel_33);
+		panel_33.setLayout(new GridLayout(2, 2, 0, 0));
+		
+		JPanel panel_35 = new JPanel();
+		panel_33.add(panel_35);
+		
+		JLabel lblUsername = new JLabel("Username");
+		panel_35.add(lblUsername);
+		
+		podnapisi_username = new JTextField();
+		panel_35.add(podnapisi_username);
+		podnapisi_username.setColumns(15);
+		
+		JPanel panel_34 = new JPanel();
+		panel_33.add(panel_34);
+		
+		creaAccountPodnapisi = new JButton("Crea account");
+		panel_34.add(creaAccountPodnapisi);
+		
+		JPanel panel_36 = new JPanel();
+		panel_33.add(panel_36);
+		
+		JLabel lblPassword = new JLabel("Password");
+		panel_36.add(lblPassword);
+		
+		podnapisi_password = new JPasswordField();
+		podnapisi_password.setColumns(15);
+		panel_36.add(podnapisi_password);
+		
+		JPanel panel_37 = new JPanel();
+		panel_33.add(panel_37);
 		
 		JPanel panel_16 = new JPanel();
 		tabbedPane.addTab("Client", null, panel_16, null);
@@ -373,6 +413,29 @@ public class FrameOpzioni extends JFrame {
 		btnChiudi.addActionListener(getActionListenerChiudi());
 		btnChiudi2.addActionListener(getActionListenerChiudi());
 		btnChiudi3.addActionListener(getActionListenerChiudi());
+		
+		creaAccountPodnapisi.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					OperazioniFile.esploraWeb("https://uid.si/signup/");
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(FrameOpzioni.this, "Visita https://uid.si/signup per creare un'account");
+				}
+			}
+		});
+		creaAccountItasa.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					OperazioniFile.esploraWeb("http://www.italiansubs.net/forum/index.php?action=register");
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(FrameOpzioni.this, "Visita http://www.italiansubs.net per creare un'account");
+				}
+			}
+		});
 		
 		btnSfogliaDirDownload.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -501,12 +564,18 @@ public class FrameOpzioni extends JFrame {
 		dirUtorrent.setText(s.getUTorrentPath());
 		itasaUsername.setText(s.getItasaUsername());
 		itasaPassword.setText(s.getItasaPassword());
+		podnapisi_username.setText(s.getPodnapisiUsername());
+		podnapisi_password.setText(s.getPodnapisiPassword());
 		utorrentUser.setText(s.getUTorrentUsername());
 		utorrentPassword.setText(s.getUTorrentPassword());
 		utorrentPorta.setText(s.getUTorrentPort());
 	}
 	private ActionListener al_chiudi;
 	private ActionListener al_salva;
+	private JTextField podnapisi_username;
+	private JPasswordField podnapisi_password;
+	private JButton creaAccountItasa;
+	private JButton creaAccountPodnapisi;
 	
 	private ActionListener getActionListenerChiudi(){
 		if(al_chiudi==null){
@@ -539,6 +608,8 @@ public class FrameOpzioni extends JFrame {
 					}
 					String usernameItasa=itasaUsername.getText();
 					String passItasa=new String(itasaPassword.getPassword());
+					String usernamePodnapisi=podnapisi_username.getText();
+					String passPodnapisi=new String(podnapisi_password.getPassword());
 					String lang = ((Lingua)lingua.getSelectedItem()).getValue();
 						
 					s.setAskOnClose(askClose);
@@ -551,6 +622,8 @@ public class FrameOpzioni extends JFrame {
 					s.setMinFreeSpace(freespace);
 					s.setItasaUsername(usernameItasa);
 					s.setItasaPassword(passItasa);
+					s.setPodnapisiUsername(usernamePodnapisi);
+					s.setPodnapisiPassword(passPodnapisi);
 					s.setLingua(lang);
 					
 					String ut=dirUtorrent.getText().trim();

@@ -20,35 +20,18 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
-import util.pythonLists.PythonMap;
-
 @SuppressWarnings({"rawtypes","unchecked"})
 public class PodnapisiAPI {
-	private final static Integer RESPONSE_OK = 200,
+	private final static Integer RESPONSE_OK = 200/*,
 			RESPONSE_INVALIDCREDENTIALS = 300, RESPONSE_NOAUTHORISATION = 301,
 			RESPONSE_INVALIDSESSION = 302, RESPONSE_MOVIENOTFOUND = 400,
 			RESPONSE_INVALIDFORMAT = 401, RESPONSE_INVALIDLANGUAGE = 402,
-			RESPONSE_INVALIDHASH = 403, RESPONSE_INVALIDARCHIVE = 404;
+			RESPONSE_INVALIDHASH = 403, RESPONSE_INVALIDARCHIVE = 404*/;
 	private final static String  EMPTY	   = "";
-
-	public static void main(String[] args) throws Exception {
-
-		PodnapisiAPI p = new PodnapisiAPI();
-		p.initiate("GestioneSerieTV/1.0");
-		p.authenticate();
-		p.search(new File("H:\\SerieTV\\The Big Bang Theory\\The.Big.Bang.Theory.S08E01.HDTV.x264-LOL.mp4"));
-		/*
-		ArrayList<Entry<String, String>> langs = p.getSupportedLanguages();
-		for(Entry<String, String> e:langs){
-			System.out.println(e.getKey()+" - "+e.getValue());
-		}
-		*/
-		
-	}
 
 	private XmlRpcClient server;
 	private String	   session, nonce;
-	private boolean initialized, authenticated;
+	private boolean initialized, authenticated, anonymouse;
 
 	public PodnapisiAPI() {
 		try {
@@ -67,13 +50,7 @@ public class PodnapisiAPI {
 		Object res = server.execute(method, params);
 		if (res instanceof HashMap)
 			return (HashMap) res;
-		return PythonMap.parseMap(res.toString());
-	}
-	private Map execute(String method, Object[] params) throws XmlRpcException {
-		Object res = server.execute(method, params);
-		if (res instanceof HashMap)
-			return (HashMap) res;
-		return PythonMap.parseMap(res.toString());
+		throw new XmlRpcException("formato dati inaspettato");
 	}
 
 	public boolean initiate(String userAgent) {
@@ -96,7 +73,10 @@ public class PodnapisiAPI {
 	}
 
 	public boolean authenticate() {
-		return authenticate(EMPTY, EMPTY);
+		boolean a = authenticate(EMPTY, EMPTY);
+		if(a)
+			anonymouse = true;
+		return a;
 	}
 
 	public boolean authenticate(String username, String pass) {
@@ -111,8 +91,14 @@ public class PodnapisiAPI {
 
 		try {
 			Map m = execute("authenticate", params);
-			printArray((Object[])m.get("search_langs"));
 			boolean ok = isValid(m);
+			if(!ok){
+				return authenticate();
+			}
+			else {
+				if(username.isEmpty() || pass.isEmpty())
+					anonymouse = true;
+			}
 			authenticated = ok;
 			return ok;
 		}
@@ -121,8 +107,8 @@ public class PodnapisiAPI {
 		}
 		return false;
 	}
-	public ArrayList<Entry<String, String>> getSupportedLanguages(){
-		ArrayList<Entry<String,String>> list = new ArrayList<Map.Entry<String,String>>();
+	public List<Entry<String, Integer>> getSupportedLanguages(){
+		ArrayList<Entry<String,Integer>> list = new ArrayList<Map.Entry<String,Integer>>();
 		if(!isInizialized())
 			return list;
 		
@@ -136,7 +122,7 @@ public class PodnapisiAPI {
 			Object[] langs = (Object[]) res.get("languages");
 			for(int i=0;i<langs.length;i++){
 				Object[] lang = (Object[])langs[i];
-				Entry<String, String> e = new AbstractMap.SimpleEntry(lang[1].toString(), lang[0].toString());
+				Entry<String, Integer> e = new AbstractMap.SimpleEntry(lang[1].toString(), lang[0]);
 				list.add(e);
 			}
 		}
@@ -146,7 +132,7 @@ public class PodnapisiAPI {
 		
 		return list;
 	}
-	public ArrayList<String> search(File file){
+	public ArrayList<String> search(File file, boolean hd){
 		ArrayList<String> ids = new ArrayList<String>();
 		if(!isInizialized())
 			return ids;
@@ -175,23 +161,20 @@ public class PodnapisiAPI {
 					if(results.containsKey("hash") || results.containsKey(file_hash)){
 						Map hash = (Map) results.get(results.containsKey("hash")?"hash":file_hash);
 						if(hash.containsKey("subtitles")){
+							System.out.println(hash.get("tvSeason")+"x"+hash.get("tvEpisode"));
 							Object[] matches = (Object[]) hash.get("subtitles");
 							System.out.println("Sub trovati = "+matches.length);
 							for(int i=0;i<matches.length;i++){
 								Map m = (Map) matches[i];
-								System.out.println(m.get("id")+" "+m.get("lang"));
+								if(hd && m.get("flags").toString().contains("h")){
+									ids.add(m.get("id").toString());
+								}
+								else if(hd==false && !m.get("flags").toString().contains("h")){
+									ids.add(m.get("id").toString());
+								}
 							}
 						}
-						else {
-							System.out.println("subtitles non presente");
-						}
 					}
-					else {
-						System.out.println("hash non presente");
-					}
-				}
-				else {
-					System.out.println("results non presente");
 				}
 			}
 		}
@@ -200,6 +183,67 @@ public class PodnapisiAPI {
 		}
 		
 		return ids;
+	}
+	public boolean setFilters(Integer lang){
+		ArrayList<Integer> p = new ArrayList<Integer>();
+		p.add(lang);
+		return setFilters(p);
+	}
+	public boolean setFilters(List<Integer> langs){
+		if(!isInizialized()){
+			return false;
+		}
+		
+		ArrayList<Object> parameters = new ArrayList<Object>();
+		parameters.add(session);
+		parameters.add(Boolean.TRUE);
+		parameters.add(langs);
+		parameters.add(Boolean.FALSE);
+		
+		try {
+			Map resp = execute("setFilters", parameters);
+			boolean ok = isValid(resp);
+			System.out.println("Applicazione filtro lingue: "+ok);
+			return ok;
+		}
+		catch (XmlRpcException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	public String download(String sub){
+		ArrayList<String> s = new ArrayList<String>();
+		s.add(sub);
+		ArrayList<String> list = download(s);
+		if(list.size()>0)
+			return list.get(0);
+		return "";
+	}
+	public ArrayList<String> download(List<String> subs){
+		ArrayList<String> res = new ArrayList<String>();
+		if(!isInizialized() || anonymouse)
+			return res;
+		
+		ArrayList<Object> parameters = new ArrayList<Object>();
+		parameters.add(session);
+		parameters.add(subs);
+		
+		try {
+			Map m = execute("download", parameters);
+			if(isValid(m)){
+				Object[] list = (Object[]) m.get("names");
+				for(int i=0;i<list.length;i++){
+					Map s = (Map) list[i];
+					res.add("http://www.podnapisi.net/static/podnapisi/"+s.get("filename").toString());
+				}
+			}
+		}
+		catch (XmlRpcException e) {
+			e.printStackTrace();
+		}
+		
+		return res;
 	}
 	private boolean isValid(Map m) {
 		Integer code = (Integer) m.get("status");
@@ -212,20 +256,12 @@ public class PodnapisiAPI {
 		return authenticated;
 	}
 
+	@SuppressWarnings("unused")
 	private void printMap(Map m) {
 		Set<Entry> i = m.entrySet();
 		for (Entry e : i) {
 			System.out.println(e.getKey() + " = " + e.getValue());
 		}
-	}
-	private void printList(List l){
-		for(Object i:l){
-			System.out.println(i.toString());
-		}
-	}
-	private void printArray(Object[] a){
-		for(int i=0;i<a.length;i++)
-			System.out.println(a[i]);
 	}
 
 	private String generaHash(String word, String alg) {
