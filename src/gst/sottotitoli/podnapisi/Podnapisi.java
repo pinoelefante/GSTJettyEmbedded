@@ -13,6 +13,7 @@ import gst.sottotitoli.SerieSub;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,6 +108,7 @@ public class Podnapisi implements ProviderSottotitoli {
 	public boolean hasLanguage(String lang) {
 		init();
 		if(langs == null) {
+			langs = new HashMap<String, Integer>();
 			List<Entry<String, Integer>> ls = api.getSupportedLanguages();
 			for(Entry<String, Integer> e : ls){
 				langs.put(e.getKey(), e.getValue());
