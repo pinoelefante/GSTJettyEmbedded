@@ -77,7 +77,7 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	public void avviaRicercaAutomatica(){
 		if(ricercaSottotitoli==null)
-			timer.scheduleAtFixedRate(ricercaSottotitoli=new TaskRicercaSottotitoli(), 30000, 900000); //15 minuti
+			timer.scheduleAtFixedRate(ricercaSottotitoli=new TaskRicercaSottotitoli(), 30000, 1800000); //30 minuti
 	}
 	public void stopRicercaAutomatica(){
 		if(ricercaSottotitoli!=null){
