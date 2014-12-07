@@ -126,10 +126,10 @@ public class OperazioniSerieServlet extends HttpServlet {
 			case "openFolder": {
 				int id = Integer.parseInt(checkParameter("id", resp, req, false));
 				SerieTV serie = ProviderSerieTV.getSerieByID(id);
-				String baseDir;
+				String directory;
 				try {
-					baseDir = DirectoryManager.getInstance().getAvailableDirectory();
-					boolean r = InterfacciaGrafica.getInstance().openFolder(baseDir+serie.getFolderSerie());
+					directory = DirectoryManager.getInstance().getFolderSerie(serie.getFolderSerie());
+					boolean r = InterfacciaGrafica.getInstance().openFolder(directory);
 					xml = ResponseSender.createResponseBoolean(r);
 				}
 				catch (DirectoryNotAvailableException e) {

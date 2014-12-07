@@ -26,10 +26,20 @@ public class DirectoryManager {
 		File dir = new File(path);
 		return (dir.exists() && getMegabytes(dir.getFreeSpace())>=settings.getMinFreeSpace());
 	}
+	public String getMainDir(){
+		return settings.getDirectoryDownload();
+	}
 	public boolean isAlternativeDirAvailable(){
 		String path = settings.getDirectoryDownload2();
 		File dir = new File(path);
 		return (dir.exists() && getMegabytes(dir.getFreeSpace())>=settings.getMinFreeSpace());
+	}
+	public String getAlternativeDir(){
+		return settings.getDirectoryDownload2();
+	}
+	private boolean dirExists(String d){
+		File f = new File(d);
+		return f.exists() && f.isDirectory();
 	}
 	
 	private final static String[] estensioniVideoValide = {".avi",".mp4",".mkv"};
@@ -134,5 +144,16 @@ public class DirectoryManager {
 	}
 	private static int getMegabytes(long bytes){
 		return (int) (bytes/(1048576));
+	}
+	public String getFolderSerie(String folder) throws DirectoryNotAvailableException{
+		if(isMainDirAvailable()){
+			if(dirExists(getMainDir()+folder))
+				return getMainDir()+folder;
+		}
+		if(isAlternativeDirAvailable()){
+			if(dirExists(getAlternativeDir()+folder))
+				return getAlternativeDir()+folder;
+		}
+		throw new DirectoryNotAvailableException("directory non trovata");
 	}
 }
