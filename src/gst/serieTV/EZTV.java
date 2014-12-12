@@ -68,7 +68,7 @@ public class EZTV extends ProviderSerieTV {
 		if(!isRaggiungibile())
 			return;
 		
-		if(getBaseURL().compareTo("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it")==0){
+		if(getBaseURL().startsWith("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=")){
 			proxyShowlist(getBaseURL()+"/showlist/");
 			return;
 		}
@@ -164,7 +164,7 @@ public class EZTV extends ProviderSerieTV {
 			return;
 		System.out.println("Aggiornando i link di: " + serie.getNomeSerie());
 		
-		if(getBaseURL().compareTo("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it")==0){
+		if(getBaseURL().startsWith("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=")){
 			proxyEpisodiSerie(getBaseURL()+"/shows/" + serie.getUrl() + "/", serie.getIDDb());
 			return;
 		}
