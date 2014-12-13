@@ -6,6 +6,7 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
+import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -152,7 +153,10 @@ public class Subsfactory implements ProviderSottotitoli {
 	private ArrayList<SottotitoloSubsfactory> caricaCartella(SerieSubConDirectory s_subs){
 		ArrayList<SottotitoloSubsfactory> list = new ArrayList<SottotitoloSubsfactory>();
 		try {
-			org.jsoup.nodes.Document doc = Jsoup.connect("http://subsfactory.it/subtitle/index.php?&direction=0&order=nom&directory="+s_subs.getDirectory()).get();
+			org.jsoup.nodes.Document doc = Jsoup.connect("http://subsfactory.it/subtitle/index.php?&direction=0&order=nom&directory="+s_subs.getDirectory())
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			org.jsoup.select.Elements tds=doc.select("td");
 			for(int i=0;i<tds.size();i++){
 				org.jsoup.nodes.Element td = tds.get(i);
@@ -324,7 +328,10 @@ public class Subsfactory implements ProviderSottotitoli {
 	}
 	public synchronized void aggiornaElencoSerieOnline() {
 		try {
-			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE).get();
+			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE)
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			org.jsoup.select.Elements select = page.getElementsByAttributeValue("name", "loc");
 			org.jsoup.select.Elements options = select.select("option");
 			for(int i=0;i<options.size();i++){

@@ -272,7 +272,10 @@ public class EZTV extends ProviderSerieTV {
 	private void proxyShowlist(String url){
 		int nuove = 0;
 		try {
-			Document d = Jsoup.connect(url).get();
+			Document d = Jsoup.connect(url)
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			//System.out.println(d.text());
 			ArrayList<String> series=proxyShowListParsed(d.text());
 			for(int i=0;i<series.size();i=i+2){
@@ -321,7 +324,10 @@ public class EZTV extends ProviderSerieTV {
 	}
 	private void proxyEpisodiSerie(String url, int idSerie){
 		try {
-			Document d = Jsoup.connect(url).get();
+			Document d = Jsoup.connect(url)
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			String[] magnets = proxyParseMagnets(d.text());
 			for(int i=0;i<magnets.length;i++){
 				if(!magnets[i].isEmpty()){

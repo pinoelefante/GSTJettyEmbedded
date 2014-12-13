@@ -6,6 +6,7 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
+import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -182,7 +183,10 @@ public class Subspedia implements ProviderSottotitoli {
 	}
 	public void aggiornaElencoSerieOnline() {
 		try {
-			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE).get();
+			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE)
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			org.jsoup.select.Elements select = page.select("div#wsite-content").select("div.paragraph");
 			org.jsoup.select.Elements series = select.select("a");
 			for(int i=0;i<series.size();i++){
@@ -295,7 +299,10 @@ public class Subspedia implements ProviderSottotitoli {
 	private ArrayList<SottotitoloSubspedia> caricaCartella(SerieSubConDirectory serie){
 		ArrayList<SottotitoloSubspedia> subs = new ArrayList<SottotitoloSubspedia>();
 		try {
-			org.jsoup.nodes.Document doc = Jsoup.connect(BASEURL+serie.getDirectory()).get();
+			org.jsoup.nodes.Document doc = Jsoup.connect(BASEURL+serie.getDirectory())
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			Elements links = doc.select("a");
 			for(int i=0;i<links.size();i++){
 				org.jsoup.nodes.Element a = links.get(i);

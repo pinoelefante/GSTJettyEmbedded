@@ -193,27 +193,27 @@ public class GestoreSottotitoli implements Notifier{
 		
 		if(localsubs.scaricaSottotitolo(s, e, lang, uniqueLang)){
 			online=false;
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
 			//inserisciLog(e, localsubs, lang);
 		}
 		else if(itasa.scaricaSottotitolo(s, e, lang)){
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
 			inserisciLog(e, itasa, lang);
 		}
 		else if(subsfactory.scaricaSottotitolo(s, e, lang)){
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
 			inserisciLog(e, subsfactory, lang);
 		}
 		else if(subspedia.scaricaSottotitolo(s, e, lang)){
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
 			inserisciLog(e, subspedia, lang);
 		}
 		else if(addic7ed.scaricaSottotitolo(s, e, lang)){
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+addic7ed.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " "  + episodio + " - Sottotitolo scaricato - "+addic7ed.getProviderName());
 			inserisciLog(e, addic7ed, lang);
 		}
 		else if(podnapisi.scaricaSottotitolo(s, e, lang)){
-			inviaNotifica(s.getNomeSerie() + episodio + " - Sottotitolo scaricato - "+podnapisi.getProviderName());
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+podnapisi.getProviderName());
 			inserisciLog(e, podnapisi, lang);
 		}
 		else 

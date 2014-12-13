@@ -33,7 +33,10 @@ public class Karmorra extends ProviderSerieTV {
 	@Override
 	public void aggiornaElencoSerie() {
 		try {
-			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse").get();
+			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse")
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+settings.getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			Elements form = doc.select("select#browse_show option");
 			int caricate = 0;
 			for(int i=0;i<form.size();i++){
@@ -116,7 +119,10 @@ public class Karmorra extends ProviderSerieTV {
 		try {
 			int idSerie = serie.getIDDb();
 			SerieTV k_serie = serie.getIDKarmorra()==0?serie:ProviderSerieTV.getSerieByID(serie.getIDKarmorra());
-			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse&show="+k_serie.getUrl()).get();
+			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse&show="+k_serie.getUrl())
+					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.timeout(10000)
+					.get();
 			Elements magnets = doc.select("a");
 			for(int i=0;i<magnets.size();i++){
 				String url = magnets.get(i).attr("href");
