@@ -13,6 +13,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import util.UserAgent;
+
 public class Karmorra extends ProviderSerieTV {
 	private Settings settings;
 	public Karmorra() {
@@ -34,7 +36,7 @@ public class Karmorra extends ProviderSerieTV {
 	public void aggiornaElencoSerie() {
 		try {
 			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse")
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+settings.getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			Elements form = doc.select("select#browse_show option");
@@ -120,7 +122,7 @@ public class Karmorra extends ProviderSerieTV {
 			int idSerie = serie.getIDDb();
 			SerieTV k_serie = serie.getIDKarmorra()==0?serie:ProviderSerieTV.getSerieByID(serie.getIDKarmorra());
 			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse&show="+k_serie.getUrl())
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			Elements magnets = doc.select("a");

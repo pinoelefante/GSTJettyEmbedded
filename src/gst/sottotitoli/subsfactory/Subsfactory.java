@@ -6,7 +6,6 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -19,6 +18,8 @@ import gst.sottotitoli.rss.RSSItemSubsfactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import util.UserAgent;
 import util.os.DirectoryManager;
 import util.os.DirectoryNotAvailableException;
 import util.zip.ArchiviZip;
@@ -154,7 +156,7 @@ public class Subsfactory implements ProviderSottotitoli {
 		ArrayList<SottotitoloSubsfactory> list = new ArrayList<SottotitoloSubsfactory>();
 		try {
 			org.jsoup.nodes.Document doc = Jsoup.connect("http://subsfactory.it/subtitle/index.php?&direction=0&order=nom&directory="+s_subs.getDirectory())
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			org.jsoup.select.Elements tds=doc.select("td");
@@ -224,10 +226,17 @@ public class Subsfactory implements ProviderSottotitoli {
 	private void aggiornaFeedRSS(){
 		RSS_UltimoAggiornamento=new GregorianCalendar();
 		feed_rss.clear();
+		HttpURLConnection connection = null; 
 		try {
+			connection = (HttpURLConnection) (new URL(URL_FEED_RSS).openConnection());
+			connection.setRequestProperty("User-Agent", UserAgent.get());
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setReadTimeout(10000);
+			
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder domparser = dbfactory.newDocumentBuilder();
-			Document doc = domparser.parse(URL_FEED_RSS);
+			Document doc = domparser.parse(connection.getInputStream());
 			
 			NodeList elementi=doc.getElementsByTagName("item");
 			for(int i=0;i<elementi.getLength();i++){
@@ -267,6 +276,10 @@ public class Subsfactory implements ProviderSottotitoli {
 		catch (SAXException e) {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
+		}
+		finally {
+			if(connection!=null)
+				connection.disconnect();
 		}
 	}
 	private boolean verificaTempo(long maxdif, GregorianCalendar last){
@@ -329,7 +342,7 @@ public class Subsfactory implements ProviderSottotitoli {
 	public synchronized void aggiornaElencoSerieOnline() {
 		try {
 			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			org.jsoup.select.Elements select = page.getElementsByAttributeValue("name", "loc");

@@ -8,6 +8,8 @@ import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,6 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import util.UserAgent;
 
 public class TheTVDB {
 	private static TheTVDB				   instance;
@@ -71,10 +75,12 @@ public class TheTVDB {
 	public void caricaMirrors() {
 		if (list_mirrors == null)
 			list_mirrors = new ArrayList<Mirror>(2);
+		HttpURLConnection conn = null;
 		try {
+			conn = getConnection(API_MIRROR_PATH);
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder domparser = dbfactory.newDocumentBuilder();
-			Document doc = domparser.parse(API_MIRROR_PATH);
+			Document doc = domparser.parse(conn.getInputStream());
 
 			NodeList elementi = doc.getElementsByTagName("Mirror");
 			for (int i = 0; i < elementi.getLength(); i++) {
@@ -158,17 +164,17 @@ public class TheTVDB {
 
 	public ArrayList<SerieTVDB> cercaSerie(SerieTV serietv) {
 		ArrayList<SerieTVDB> serie_trovate = new ArrayList<SerieTVDB>(1);
-
+		HttpURLConnection conn = null;
 		try {
 			Mirror mirror = getXMLMirror();
 			if (mirror == null)
 				return null;
 
 			String API_PATH = API_CERCA_SERIE_LINGUA.replace("<seriesname>", serietv.getNomeSerie()).replace("<mirrorpath>", mirror.getUrl()).replace("<language>", defaultLang);
-
+			conn = getConnection(API_PATH);
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder domparser = dbfactory.newDocumentBuilder();
-			Document doc = domparser.parse(API_PATH);
+			Document doc = domparser.parse(conn.getInputStream());
 
 			NodeList elementi = doc.getElementsByTagName("Series");
 			if (elementi.getLength() == 0) {
@@ -274,7 +280,7 @@ public class TheTVDB {
 		if (xmlMirror == null)
 			return null;
 		String apiCall = API_GET_SERIE_INFO.replace("<mirrorpath>", xmlMirror.getUrl()).replace("<idserie>", idSerie + "").replace("<language>", defaultLang);
-
+		HttpURLConnection conn = null;
 		DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder domparser;
 		try {
@@ -286,7 +292,8 @@ public class TheTVDB {
 		}
 		Document doc;
 		try {
-			doc = domparser.parse(apiCall);
+			conn = getConnection(apiCall);
+			doc = domparser.parse(conn.getInputStream());
 		}
 		catch (SAXException | IOException e) {
 			e.printStackTrace();
@@ -388,8 +395,10 @@ public class TheTVDB {
 			return;
 		}
 		Document doc;
+		HttpURLConnection conn = null;
 		try {
-			doc = domparser.parse(apiCall);
+			conn = getConnection(apiCall);
+			doc = domparser.parse(conn.getInputStream());
 		}
 		catch (SAXException | IOException e) {
 			e.printStackTrace();
@@ -476,8 +485,10 @@ public class TheTVDB {
 			return;
 		}
 		Document doc;
+		HttpURLConnection conn = null;
 		try {
-			doc = domparser.parse(apiCall);
+			conn = getConnection(apiCall);
+			doc = domparser.parse(conn.getInputStream());
 		}
 		catch (SAXException | IOException e) {
 			e.printStackTrace();
@@ -601,8 +612,10 @@ public class TheTVDB {
 			return null;
 		}
 		Document doc;
+		HttpURLConnection conn = null;
 		try {
-			doc = domparser.parse(apiCall);
+			conn = getConnection(apiCall);
+			doc = domparser.parse(conn.getInputStream());
 		}
 		catch (SAXException | IOException e) {
 			e.printStackTrace();
@@ -724,5 +737,19 @@ public class TheTVDB {
 				"rating="+e.getRating()+",ultimoAggiornamento="+(System.currentTimeMillis()/1000)+
 				" WHERE id="+e.getIdEpisodio();
 		Database.updateQuery(query);
+	}
+	private HttpURLConnection getConnection(String url) throws IOException {
+		try {
+			URL uri = new URL(url);
+			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
+			connection.setRequestProperty("User-Agent", UserAgent.get());
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			return connection;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 }

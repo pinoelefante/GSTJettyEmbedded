@@ -26,26 +26,26 @@ public class Os {
 	}
 
 	public static boolean isMacOS() {
-		return getSistemaOperativo().contains("Mac");
+		return getSistemaOperativo().toLowerCase().contains("mac");
 	}
 
 	public static boolean isWindows() {
-		return getSistemaOperativo().contains("Windows");
+		return getSistemaOperativo().toLowerCase().contains("windows");
 	}
 
 	public static boolean isLinux() {
-		return getSistemaOperativo().contains("Linux");
+		return getSistemaOperativo().toLowerCase().contains("linux");
 	}
 
 	public static String getOSName() {
 		String name = "";
 
 		if (isWindows())
-			name = "win32";
+			name = "Win32";
 		else if (isLinux())
-			name = "linux";
+			name = "Linux";
 		else if (isMacOS())
-			name = "macos";
+			name = "MacOS";
 
 		return name;
 	}

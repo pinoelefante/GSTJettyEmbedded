@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import util.UserAgent;
 import util.os.DirectoryManager;
 import util.os.DirectoryNotAvailableException;
 
@@ -147,7 +148,6 @@ public class Download {
 		 * Download del file
 		 */
 		public void run(){
-			String userAgent = "GestioneSerieTV/rel."+Settings.getInstance().getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
 			URL url = null;
 			try {
 				url = new URL(url_download);
@@ -157,11 +157,10 @@ public class Download {
 			}
 			try {
 				URLConnection urlConn = url.openConnection();
-				urlConn.setConnectTimeout(300000);
-				urlConn.setReadTimeout(300000);
-				if (userAgent != null) {
-					urlConn.setRequestProperty("User-Agent", userAgent);
-				}
+				urlConn.setConnectTimeout(30000);
+				urlConn.setReadTimeout(30000);
+				urlConn.setRequestProperty("User-Agent", UserAgent.get());
+				
 				is = urlConn.getInputStream();
 				
 				if(path_destinazione.contains(File.separator)){
@@ -253,14 +252,12 @@ public class Download {
 	}
 	private static boolean isHttpRaggiungibile(String url_s){
 		HttpURLConnection urlConn=null;
-		String userAgent = "GestioneSerieTV/rel."+Settings.getInstance().getVersioneSoftware()+" ("+System.getProperty("os.name")+")";
 		try {
 			URL url=new URL(url_s);
 			urlConn=(HttpURLConnection) url.openConnection();
 			urlConn.setConnectTimeout(30000);
 			urlConn.setReadTimeout(30000);
-			if(userAgent!=null)
-				urlConn.setRequestProperty("User-Agent", userAgent);
+			urlConn.setRequestProperty("User-Agent", UserAgent.get());
 			int rc=urlConn.getResponseCode();
 			System.out.println(rc+" - response code - "+url_s);
 			if(rc==200)
@@ -286,7 +283,7 @@ public class Download {
 				Entry<String, String> p = headers.get(i);
 				con.setRequestProperty(p.getKey(), p.getValue());
 			}
-			con.setRequestProperty("User-Agent", "gstJ/"+Settings.getInstance().getVersioneSoftware());
+			con.setRequestProperty("User-Agent", UserAgent.get());
 			InputStream is = con.getInputStream();
 			
 			if(dest.contains(File.separator)){

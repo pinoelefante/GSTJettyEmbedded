@@ -20,6 +20,8 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
+import util.UserAgent;
+
 @SuppressWarnings({"rawtypes","unchecked"})
 public class PodnapisiAPI {
 	private final static Integer RESPONSE_OK = 200/*,
@@ -38,7 +40,7 @@ public class PodnapisiAPI {
 			server = new XmlRpcClient();
 			XmlRpcClientConfigImpl conf = new XmlRpcClientConfigImpl();
 			conf.setServerURL(new URL("http://ssp.podnapisi.net:8000/RPC2/"));
-			conf.setUserAgent("GestioneSerieTVJ/1.0");
+			conf.setUserAgent(UserAgent.get());
 			server.setConfig(conf);
 		}
 		catch (MalformedURLException e) {
@@ -53,9 +55,9 @@ public class PodnapisiAPI {
 		throw new XmlRpcException("formato dati inaspettato");
 	}
 
-	public boolean initiate(String userAgent) {
+	public boolean initiate() {
 		List<Object> p = new ArrayList<Object>();
-		p.add(userAgent);
+		p.add(UserAgent.get());
 		try {
 			Map m = execute("initiate", p);
 			//printMap(m);

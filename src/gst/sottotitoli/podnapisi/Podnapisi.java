@@ -118,7 +118,7 @@ public class Podnapisi implements ProviderSottotitoli {
 	}
 	private void init(){
 		if(!init){
-    		api.initiate("gstJ/rel."+settings.getVersioneSoftware());
+    		api.initiate();
     		api.authenticate(settings.getPodnapisiUsername(), settings.getPodnapisiPassword());
     		init = true;
 		}

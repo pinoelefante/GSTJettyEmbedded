@@ -5,7 +5,6 @@ import gst.database.tda.KVResult;
 import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
@@ -27,6 +26,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import util.UserAgent;
 import util.os.DirectoryManager;
 
 public class Addic7ed implements ProviderSottotitoli {
@@ -131,7 +131,7 @@ public class Addic7ed implements ProviderSottotitoli {
 		//System.out.println(apiCall);
 		try {
 			Document doc = Jsoup.connect(apiCall)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			Elements righe = doc.select("tr.epeven");
@@ -236,7 +236,7 @@ public class Addic7ed implements ProviderSottotitoli {
 	public void aggiornaElencoSerieOnline() {
 		try {
 			Document doc = Jsoup.connect(URL_SHOWLIST)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			Elements opts = doc.select("#qsShow option");

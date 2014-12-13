@@ -1,7 +1,6 @@
 package gst.sottotitoli.italiansubs;
 
 import gst.naming.CaratteristicheFile;
-import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.SerieSub;
 
@@ -27,7 +26,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -45,6 +46,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
@@ -54,6 +56,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import util.UserAgent;
 
 public class ItasaAPI {
 	private String			  AUTHCODE	  = "";
@@ -85,10 +89,14 @@ public class ItasaAPI {
 
 		PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
 		
+		ArrayList<Header> headers = new ArrayList<Header>();
+		headers.add(new BasicHeader(HttpHeaders.USER_AGENT, UserAgent.get()));
+		
 		cookieStore = new BasicCookieStore();
 		httpclient = HttpClients.custom()
 				.setDefaultCookieStore(cookieStore)
 				.setConnectionManager(cm)
+				.setDefaultHeaders(headers)
 				.build();
 	}
 
@@ -160,14 +168,12 @@ public class ItasaAPI {
 				sc = SSLContext.getInstance("SSL");
 			}
 			catch (NoSuchAlgorithmException e2) {
-				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
 			try {
 				sc.init(null, trustAllCerts, new java.security.SecureRandom());
 			}
 			catch (KeyManagementException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
@@ -185,12 +191,7 @@ public class ItasaAPI {
 		try {
 			URL uri = new URL(url);
 			HttpsURLConnection connection = (HttpsURLConnection) uri.openConnection();
-			connection.setRequestProperty("User-Agent", "Gestione Serie TV (Jetty)/rel." + Settings.getInstance().getVersioneSoftware());
-			connection.setHostnameVerifier(new HostnameVerifier() {
-				public boolean verify(String hostname, SSLSession session) {
-					return true;
-				}
-			});
+			connection.setRequestProperty("User-Agent", UserAgent.get());
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
 			return connection;

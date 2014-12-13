@@ -19,6 +19,8 @@ import java.util.Scanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import util.UserAgent;
+
 public class EZTV extends ProviderSerieTV {
 	private ArrayList<String> baseUrls;
 	private String			baseUrl;
@@ -30,16 +32,6 @@ public class EZTV extends ProviderSerieTV {
 		baseUrls.add("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it");
 		baseUrls.add("https://eztv.it");
 		
-		/*
-		baseUrls.add("http://gestioneserietv.altervista.org/proxy.php?url=https://eztv.it");
-		baseUrls.add("http://tvshowsmanager.hostei.com/?url=https://eztv.it");
-		
-		baseUrls.add("http://sitenable.com/surf.php?u=https://eztv.it");
-		baseUrls.add("http://freeproxy.io/surf.php?u=https://eztv.it");
-		baseUrls.add("http://siteget.net/surf.php?u=https://eztv.it");
-		baseUrls.add("http://filesdownloader.com/surf.php?u=https://eztv.it");
-		baseUrls.add("http://freeanimesonline.com/surf.php?u=https://eztv.it");
-		*/
 		settings=Settings.getInstance();
 	}
 
@@ -273,7 +265,7 @@ public class EZTV extends ProviderSerieTV {
 		int nuove = 0;
 		try {
 			Document d = Jsoup.connect(url)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			//System.out.println(d.text());
@@ -325,7 +317,7 @@ public class EZTV extends ProviderSerieTV {
 	private void proxyEpisodiSerie(String url, int idSerie){
 		try {
 			Document d = Jsoup.connect(url)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			String[] magnets = proxyParseMagnets(d.text());

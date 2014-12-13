@@ -6,7 +6,6 @@ import gst.download.Download;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 import gst.programma.ManagerException;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.SerieTV;
@@ -19,6 +18,8 @@ import gst.sottotitoli.rss.SubspediaRSSItem;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import util.UserAgent;
 import util.os.DirectoryManager;
 import util.os.DirectoryNotAvailableException;
 import util.zip.ArchiviZip;
@@ -184,7 +186,7 @@ public class Subspedia implements ProviderSottotitoli {
 	public void aggiornaElencoSerieOnline() {
 		try {
 			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE)
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			org.jsoup.select.Elements select = page.select("div#wsite-content").select("div.paragraph");
@@ -218,13 +220,20 @@ public class Subspedia implements ProviderSottotitoli {
 			return;
 		
 		last_update=System.currentTimeMillis();
+		HttpURLConnection connection = null; 
 		try {
 			rss.clear();
+			
+			connection = (HttpURLConnection) (new URL(URLFeedRSS).openConnection());
+			connection.setRequestProperty("User-Agent", UserAgent.get());
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.setReadTimeout(10000);
 			
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 			dbfactory.setNamespaceAware(true);
 			DocumentBuilder domparser = dbfactory.newDocumentBuilder();
-			Document doc = domparser.parse(URLFeedRSS);
+			Document doc = domparser.parse(connection.getInputStream());
 			
 			NodeList elementi=doc.getElementsByTagName("item");
 			for(int i=0;i<elementi.getLength();i++){
@@ -265,6 +274,10 @@ public class Subspedia implements ProviderSottotitoli {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
 		}
+		finally {
+			if(connection!=null)
+				connection.disconnect();
+		}
 	}
 	
 	public static void main(String[] args){
@@ -300,7 +313,7 @@ public class Subspedia implements ProviderSottotitoli {
 		ArrayList<SottotitoloSubspedia> subs = new ArrayList<SottotitoloSubspedia>();
 		try {
 			org.jsoup.nodes.Document doc = Jsoup.connect(BASEURL+serie.getDirectory())
-					.header("User-Agent", "Gestione Serie TV (Jetty)/rel."+Settings.getInstance().getVersioneSoftware())
+					.header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
 			Elements links = doc.select("a");
