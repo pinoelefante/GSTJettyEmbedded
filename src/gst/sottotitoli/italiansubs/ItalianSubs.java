@@ -63,7 +63,12 @@ public class ItalianSubs implements ProviderSottotitoli{
 	
 	private ItalianSubs(){
 		settings = Settings.getInstance();
-		api = new ItasaAPI();
+		try {
+			api = new ItasaAPI();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		feed_rss = new ArrayList<RSSItemItalianSubs>();
 	}
 	private boolean logga(){
