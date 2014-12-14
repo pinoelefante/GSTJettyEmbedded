@@ -278,7 +278,7 @@ public class Download {
 	}
 	public static void downloadCustomHeaders(String url, String dest, ArrayList<Entry<String, String>> headers) throws IOException {
 		
-			HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+			HttpURLConnection con = (HttpURLConnection) new URL(url.replace(" ", "%20")).openConnection();
 			for(int i=0;headers!=null && i<headers.size();i++){
 				Entry<String, String> p = headers.get(i);
 				con.setRequestProperty(p.getKey(), p.getValue());

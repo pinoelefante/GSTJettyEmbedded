@@ -67,9 +67,13 @@ public class Torrent {
 		return stat;
 	}
 	private static String getNameFromMagnet(String url) {
-		String nome = url.substring(url.indexOf("&dn"), url.indexOf("&tr"));
-		nome = nome.substring(nome.indexOf("=") + 1);
-		return nome;
+		String[] pts = url.split("&");
+		for(int i=0;i<pts.length;i++){
+			String[] kv = pts[i].split("=");
+			if(kv[0].compareToIgnoreCase("dn")==0)
+				return kv[1];
+		}
+		return url;
 	}
 	private static boolean isMagnet(String link){
 		return link.toLowerCase().startsWith("magnet");

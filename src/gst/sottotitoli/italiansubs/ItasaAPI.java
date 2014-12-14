@@ -189,7 +189,7 @@ public class ItasaAPI {
 			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 		}
 		try {
-			URL uri = new URL(url);
+			URL uri = new URL(url.replace(" ", "%20"));
 			HttpsURLConnection connection = (HttpsURLConnection) uri.openConnection();
 			connection.setRequestProperty("User-Agent", UserAgent.get());
 			connection.setDoInput(true);

@@ -740,11 +740,10 @@ public class TheTVDB {
 	}
 	private HttpURLConnection getConnection(String url) throws IOException {
 		try {
-			URL uri = new URL(url);
+			URL uri = new URL(url.replace(" ", "%20"));
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("User-Agent", UserAgent.get());
-			connection.setDoInput(true);
-			connection.setDoOutput(true);
+			connection.setReadTimeout(10000);
 			return connection;
 		}
 		catch (IOException e) {

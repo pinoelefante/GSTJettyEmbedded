@@ -22,6 +22,7 @@ public class Naming {
 		patterns.put(PATTERN_nofn, Pattern.compile(PATTERN_nofn));
 		patterns.put(PATTERN_Part_dotnofn, Pattern.compile(PATTERN_Part_dotnofn));
 		patterns.put("PATTERN_ANNO", Pattern.compile("[0-9]{4}"));
+		patterns.put(PATTERN_DATA, Pattern.compile(PATTERN_DATA));
 		//aggiungere qui i nuovi pattern
 		
 		default_patterns=new String[]{
@@ -29,7 +30,8 @@ public class Naming {
 				PATTERN_Sn,
 				PATTERN_SxE,
 				PATTERN_nofn,
-				PATTERN_Part_dotnofn
+				PATTERN_Part_dotnofn,
+				PATTERN_DATA
 		};
 	}
 	public static final String 
@@ -37,11 +39,12 @@ public class Naming {
 			PATTERN_SxE="[0-9]{1,}[x|.][0-9]{1,}",								//0[.x]0
 			PATTERN_Sn="[Ss][0-9]{1,}",											//s00
 			PATTERN_nofn="[0-9]{1,}of[0-9]{1,}",								//00of00
-			PATTERN_Part_dotnofn="[Pp][Aa][Rr][Tt][\\S][\\d]";					//part[._]0
+			PATTERN_Part_dotnofn="[Pp][Aa][Rr][Tt][\\S][\\d]",  				//part[._]0
+			PATTERN_DATA="2[0-9]{3}[._\\s+][0-9]{1,2}[._\\s+][0-9]{1,2}";		//2xxx[._\s+]xx[._\s+]xx
 			//aggiungere qui i nuovi pattern
 
 	public static void main(String[] args){
-		System.out.println(parse("magnet:?xt=urn:btih:MIVWZORJG6VY6T3ZBENWJIZ2MIDJ6M5S&dn=The.Hour.UK.2011.2x06.HDTV.x264-FoV&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.istole.it:80", null)+"\n");
+		System.out.println(parse("magnet:?xt=urn:btih:9EE909CC295F0F172A6308E441C7A755FE70ED35&dn=WWE+Friday+Night+Smackdown+2014+12+05+720p+HDTV+x264+KYR&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.istole.it:80&tr=http://tracker.istole.it&tr=http://fr33dom.h33t.com:3310/announce", null)+"\n");
 		//System.out.println(parse("Discovery.Ch.River.Monsters.Series.3.10of10.The.Lost.Reels.Part.2.DVDrip.x264.AACmp4-MVGroup", null));
 	}
 	public static CaratteristicheFile parse(String toParse, String[] pattern){
@@ -119,6 +122,19 @@ public class Naming {
 				dati[0]="1";
 				dati[1]=splitted.substring(5);
 				break;
+			case PATTERN_DATA:{
+				dati = new String[2];
+				String[] ns = splitted.split("[._\\s+]");
+				if(ns.length==3){
+					dati[0] = ns[0];
+					dati[1]=ns[1]+ns[2];
+				}
+				else {
+					dati[0] = "0";
+					dati[1] = "0";
+				}
+				break;
+			}
 			/*
 			case 4:
 				//[Ss]eries\\S[0-9]{1,}of[0-9]{1,}
