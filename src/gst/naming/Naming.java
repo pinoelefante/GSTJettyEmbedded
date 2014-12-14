@@ -44,7 +44,7 @@ public class Naming {
 			//aggiungere qui i nuovi pattern
 
 	public static void main(String[] args){
-		System.out.println(parse("magnet:?xt=urn:btih:9EE909CC295F0F172A6308E441C7A755FE70ED35&dn=WWE+Friday+Night+Smackdown+2014+12+05+720p+HDTV+x264+KYR&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.istole.it:80&tr=http://tracker.istole.it&tr=http://fr33dom.h33t.com:3310/announce", null)+"\n");
+		System.out.println(parse("WWE+Friday+Night+Smackdown+2014+12+05+720p+HDTV+x264+KYR", null)+"\n");
 		//System.out.println(parse("Discovery.Ch.River.Monsters.Series.3.10of10.The.Lost.Reels.Part.2.DVDrip.x264.AACmp4-MVGroup", null));
 	}
 	public static CaratteristicheFile parse(String toParse, String[] pattern){
@@ -63,12 +63,13 @@ public class Naming {
 			stat.setPreair(true);
 		
 		/*Rimuove l'anno dalla stringa*/
+		/*
 		Pattern p_anno=patterns.get("PATTERN_ANNO");
 		Matcher m_anno=p_anno.matcher(toParse);
 		if(m_anno.find()){
 			toParse=toParse.replace(m_anno.group(), "");
 		}
-		
+		*/
 		parse(toParse, (pattern==null?default_patterns:pattern), 0, stat);
 		return stat;
 	}
@@ -124,7 +125,7 @@ public class Naming {
 				break;
 			case PATTERN_DATA:{
 				dati = new String[2];
-				String[] ns = splitted.split("[._\\s+]");
+				String[] ns = splitted.replaceAll("[._\\s+]","_").split("_");
 				if(ns.length==3){
 					dati[0] = ns[0];
 					dati[1]=ns[1]+ns[2];

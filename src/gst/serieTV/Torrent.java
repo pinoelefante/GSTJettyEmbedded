@@ -45,7 +45,8 @@ public class Torrent {
 				Naming.PATTERN_SnEn,
 				Naming.PATTERN_SxE,
 				Naming.PATTERN_Part_dotnofn,
-				Naming.PATTERN_nofn
+				Naming.PATTERN_nofn,
+				Naming.PATTERN_DATA
 		};
 		if(isMagnet(url))
 			prop_torrent=Naming.parse(getNameFromMagnet(getUrl()), patt);
@@ -57,7 +58,8 @@ public class Torrent {
 				Naming.PATTERN_SnEn,
 				Naming.PATTERN_SxE,
 				Naming.PATTERN_Part_dotnofn,
-				Naming.PATTERN_nofn
+				Naming.PATTERN_nofn,
+				Naming.PATTERN_DATA
 		};
 		CaratteristicheFile stat = null;
 		if(isMagnet(url))
