@@ -601,6 +601,7 @@ public class FrameOpzioni extends JFrame {
 		});
 	}
 	public void init(){
+		initLingua();
 		chkboxDownloadAuto.setSelected(s.isDownloadAutomatico());
 		chkDownloadSubs.setSelected(s.isRicercaSottotitoli());
 		chckbxAskOnClose.setSelected(s.isAskOnClose());
@@ -613,8 +614,11 @@ public class FrameOpzioni extends JFrame {
 		dirUtorrent.setText(s.getUTorrentPath());
 		itasaUsername.setText(s.getItasaUsername());
 		itasaPassword.setText(s.getItasaPassword());
+		verificaItasaLabel.setText("");
 		podnapisi_username.setText(s.getPodnapisiUsername());
 		podnapisi_password.setText(s.getPodnapisiPassword());
+		opensubtitles_username.setText(s.getOpenSubtitlesUsername());
+		opensubtitles_password.setText(s.getOpenSubtitlesPassword());
 		utorrentUser.setText(s.getUTorrentUsername());
 		utorrentPassword.setText(s.getUTorrentPassword());
 		utorrentPorta.setText(s.getUTorrentPort());
@@ -701,5 +705,14 @@ public class FrameOpzioni extends JFrame {
 			};
 		}
 		return al_salva;
+	}
+	private void initLingua(){
+		String lang = s.getLingua();
+		for(int i=0;i<lingua.getItemCount();i++){
+			if(lingua.getItemAt(i).getValue().compareTo(lang)==0){
+				lingua.setSelectedIndex(i);
+				return;
+			}
+		}
 	}
 }
