@@ -16,6 +16,7 @@ import gst.services.TaskRicercaSottotitoli;
 import gst.sottotitoli.addic7ed.Addic7ed;
 import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
+import gst.sottotitoli.opensubtitles.OpenSubtitles;
 import gst.sottotitoli.podnapisi.Podnapisi;
 import gst.sottotitoli.subsfactory.Subsfactory;
 import gst.sottotitoli.subspedia.Subspedia;
@@ -39,6 +40,7 @@ public class GestoreSottotitoli implements Notifier{
 	private ProviderSottotitoli subspedia;
 	private ProviderSottotitoli addic7ed;
 	private ProviderSottotitoli podnapisi;
+	private ProviderSottotitoli opensubtitles;
 	private LocalSubs localsubs;
 	private Settings settings;
 	private Timer timer;
@@ -56,6 +58,7 @@ public class GestoreSottotitoli implements Notifier{
 		localsubs=LocalSubs.getInstance();
 		addic7ed = Addic7ed.getInstance();
 		podnapisi = Podnapisi.getInstance();
+		opensubtitles = OpenSubtitles.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
 		timer = new Timer();
@@ -215,6 +218,10 @@ public class GestoreSottotitoli implements Notifier{
 		else if(podnapisi.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+podnapisi.getProviderName());
 			inserisciLog(e, podnapisi, lang);
+		}
+		else if(opensubtitles.scaricaSottotitolo(s, e, lang)) {
+			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+opensubtitles.getProviderName());
+			inserisciLog(e, opensubtitles, lang);
 		}
 		else 
 			scaricato = false;

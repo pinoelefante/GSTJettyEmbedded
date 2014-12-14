@@ -455,6 +455,18 @@ public class Settings {
 	public void setPodnapisiPassword(String p){
 		aggiungiOpzione("podnapisi_password", p);
 	}
+	public String getOpenSubtitlesUsername(){
+		return getOpzione("opensubtitles_username");
+	}
+	public String getOpenSubtitlesPassword(){
+		return getOpzione("opensubtitles_password");
+	}
+	public void setOpenSubtitlesUsername(String u){
+		aggiungiOpzione("opensubtitles_username", u);
+	}
+	public void setOpenSubtitlesPassword(String p){
+		aggiungiOpzione("opensubtitles_password", p);
+	}
 	private void validaOpzioni(){
 		Enumeration<Object> listKey= opzioni.keys();
 		while(listKey.hasMoreElements()){
@@ -474,6 +486,8 @@ public class Settings {
 				case "last_version":
 				case "lingua":
 				case "min_free_space":
+				case "opensubtitles_username":
+				case "opensubtitles_password":
 				case "podnapisi_username":
 				case "podnapisi_password":
 				case "regola_download":

@@ -111,7 +111,7 @@ public class Addic7ed implements ProviderSottotitoli {
 						downloads++;
 						GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
 						if(downloads >=LIMITE_DOWNLOAD){
-							timer.schedule(task_reset_addic7ed_downloads, 86400000, 1);
+							timer.schedule(task_reset_addic7ed_downloads, 86400000, 86400000);
 							break;
 						}
 					}
