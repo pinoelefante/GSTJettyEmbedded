@@ -106,9 +106,12 @@ public class OpenSubtitlesAPI {
 		OpenSubtitlesAPI api = new OpenSubtitlesAPI();
 		api.loginAnon();
 		try {
-			String hash = OpenSubtitlesHasher.computeHash(new File("C:\\Multimedia\\SerieTV\\A to Z\\A.to.Z.S01E09.HDTV.x264-LOL[rarbg]\\a.to.z.109.hdtv-lol.mp4"));
+			File file = new File("C:\\Multimedia\\SerieTV\\Gotham\\Gotham.S01E06.720p.HDTV.X264-DIMENSION.mkv");
+			String hash = OpenSubtitlesHasher.computeHash(file);
+			int bytes = (int) file.length();
 			System.out.println("file hash: "+hash);
-			api.checkMovieHash(hash);
+			System.out.println("file size: "+bytes);
+			api.searchSubtitles(hash, bytes, "it");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -123,6 +126,34 @@ public class OpenSubtitlesAPI {
 		try {
 			Map res = execute("CheckMovieHash",p);
 			printMap(res);
+		}
+		catch (XmlRpcException e) {
+			e.printStackTrace();
+		}
+	}
+	public void searchSubtitles(String hash, int filesizeByte, String lang){
+		List<Object> params = new ArrayList<Object>();
+		params.add(token);
+		List<Object> research_params = new ArrayList<Object>();
+		Map<Object,Object> research = new HashMap<Object, Object>();
+		research.put("moviehash", hash);
+		research.put("moviebytesize",filesizeByte);
+		research.put("sublanguageid", "ita");
+		research_params.add(research);
+		params.add(research_params);
+		List<Object> limit = new ArrayList<Object>();
+		limit.add("50");
+		//params.add(limit);
+		
+		try {
+			Map res = execute("SearchSubtitles", params);
+			printMap(res);
+			printMap(research);
+			Object[] data = (Object[]) res.get("data");
+			for(int i=0;i<data.length;i++){
+				printMap((Map) data[i]);
+				System.out.println();
+			}
 		}
 		catch (XmlRpcException e) {
 			e.printStackTrace();
