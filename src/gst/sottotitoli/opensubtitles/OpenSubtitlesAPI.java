@@ -184,7 +184,7 @@ public class OpenSubtitlesAPI {
 		Map res = null;
 		try {
 			res = execute("ServerInfo", p);
-			printMap(res);
+			//printMap(res);
 		}
 		catch (XmlRpcException e) {
 			e.printStackTrace();

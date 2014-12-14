@@ -242,6 +242,8 @@ public class ItalianSubs implements ProviderSottotitoli{
 	}
 	
 	public static boolean VerificaLogin(String username, String password){
+		if(itasa==null)
+			itasa=new ItalianSubs();
 		return itasa.api.verificaLogin(username, password)!=null;
 	}
 	public int cercaSerie(String nome){

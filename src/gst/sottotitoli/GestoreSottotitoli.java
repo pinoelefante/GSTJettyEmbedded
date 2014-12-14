@@ -266,6 +266,8 @@ public class GestoreSottotitoli implements Notifier{
 				return addic7ed;
 			case PODNAPISI:
 				return podnapisi;
+			case OPENSUBTITLES:
+				return opensubtitles;
 		}
 		return null;
 	}

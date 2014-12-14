@@ -2,6 +2,7 @@ package gst.gui;
 
 import gst.programma.OperazioniFile;
 import gst.programma.Settings;
+import gst.sottotitoli.italiansubs.ItalianSubs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -188,10 +189,10 @@ public class FrameOpzioni extends JFrame {
 		panel_6.setLayout(null);
 		
 		JPanel panel_11 = new JPanel();
-		panel_11.setBounds(12, 5, 451, 91);
+		panel_11.setBounds(12, 5, 451, 57);
 		panel_11.setBorder(new TitledBorder(null, "Serie TV", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel_6.add(panel_11);
-		panel_11.setLayout(new GridLayout(2, 1, 0, 0));
+		panel_11.setLayout(new GridLayout(1, 2, 0, 0));
 		
 		JPanel panel_12 = new JPanel();
 		FlowLayout flowLayout_11 = (FlowLayout) panel_12.getLayout();
@@ -211,9 +212,9 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_1.setBounds(12, 108, 451, 122);
+		panel_1.setBounds(12, 60, 451, 90);
 		panel_6.add(panel_1);
-		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
+		panel_1.setLayout(new GridLayout(2, 1, 0, 0));
 		
 		JPanel panel_2 = new JPanel();
 		panel_1.add(panel_2);
@@ -222,33 +223,27 @@ public class FrameOpzioni extends JFrame {
 		panel_2.add(label);
 		
 		itasaUsername = new JTextField();
-		itasaUsername.setColumns(15);
+		itasaUsername.setColumns(12);
 		panel_2.add(itasaUsername);
 		
-		JPanel panel_3 = new JPanel();
-		panel_1.add(panel_3);
-		
-		creaAccountItasa = new JButton("Crea account");
-		panel_3.add(creaAccountItasa);
-		
-		JButton button = new JButton("Verifica");
-		panel_3.add(button);
-		
-		JPanel panel_4 = new JPanel();
-		panel_1.add(panel_4);
-		
 		JLabel label_1 = new JLabel("Password");
-		panel_4.add(label_1);
+		panel_2.add(label_1);
 		
 		itasaPassword = new JPasswordField();
-		itasaPassword.setColumns(15);
-		panel_4.add(itasaPassword);
+		panel_2.add(itasaPassword);
+		itasaPassword.setColumns(12);
 		
 		JPanel panel_14 = new JPanel();
 		panel_1.add(panel_14);
 		
-		JLabel label_2 = new JLabel("");
-		panel_14.add(label_2);
+		creaAccountItasa = new JButton("Crea account");
+		panel_14.add(creaAccountItasa);
+		
+		verificaItasaButton = new JButton("Verifica");
+		panel_14.add(verificaItasaButton);
+		
+		verificaItasaLabel = new JLabel("");
+		panel_14.add(verificaItasaLabel);
 		
 		JPanel panel_29 = new JPanel();
 		panel_29.setBounds(0, 405, 475, 35);
@@ -262,9 +257,9 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_33 = new JPanel();
 		panel_33.setBorder(new TitledBorder(null, "Podnapisi.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_33.setBounds(12, 240, 451, 122);
+		panel_33.setBounds(12, 150, 451, 90);
 		panel_6.add(panel_33);
-		panel_33.setLayout(new GridLayout(2, 2, 0, 0));
+		panel_33.setLayout(new GridLayout(2, 1, 0, 0));
 		
 		JPanel panel_35 = new JPanel();
 		panel_33.add(panel_35);
@@ -274,26 +269,49 @@ public class FrameOpzioni extends JFrame {
 		
 		podnapisi_username = new JTextField();
 		panel_35.add(podnapisi_username);
-		podnapisi_username.setColumns(15);
+		podnapisi_username.setColumns(12);
 		
-		JPanel panel_34 = new JPanel();
-		panel_33.add(panel_34);
+		JLabel lblPassword = new JLabel("Password");
+		panel_35.add(lblPassword);
 		
-		creaAccountPodnapisi = new JButton("Crea account");
-		panel_34.add(creaAccountPodnapisi);
+		podnapisi_password = new JPasswordField();
+		panel_35.add(podnapisi_password);
+		podnapisi_password.setColumns(12);
 		
 		JPanel panel_36 = new JPanel();
 		panel_33.add(panel_36);
 		
-		JLabel lblPassword = new JLabel("Password");
-		panel_36.add(lblPassword);
+		creaAccountPodnapisi = new JButton("Crea account");
+		panel_36.add(creaAccountPodnapisi);
 		
-		podnapisi_password = new JPasswordField();
-		podnapisi_password.setColumns(15);
-		panel_36.add(podnapisi_password);
+		JPanel panel_38 = new JPanel();
+		panel_38.setBorder(new TitledBorder(null, "OpenSubtitles", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panel_38.setBounds(12, 240, 451, 90);
+		panel_6.add(panel_38);
+		panel_38.setLayout(new GridLayout(2, 1, 0, 0));
 		
-		JPanel panel_37 = new JPanel();
-		panel_33.add(panel_37);
+		JPanel panel_39 = new JPanel();
+		panel_38.add(panel_39);
+		
+		JLabel lblUsername_2 = new JLabel("Username");
+		panel_39.add(lblUsername_2);
+		
+		opensubtitles_username = new JTextField();
+		panel_39.add(opensubtitles_username);
+		opensubtitles_username.setColumns(12);
+		
+		JLabel lblPassword_2 = new JLabel("Password");
+		panel_39.add(lblPassword_2);
+		
+		opensubtitles_password = new JPasswordField();
+		opensubtitles_password.setColumns(12);
+		panel_39.add(opensubtitles_password);
+		
+		JPanel panel_40 = new JPanel();
+		panel_38.add(panel_40);
+		
+		btnCreaAccountOpenSubtitles = new JButton("Crea Account");
+		panel_40.add(btnCreaAccountOpenSubtitles);
 		
 		JPanel panel_16 = new JPanel();
 		tabbedPane.addTab("Client", null, panel_16, null);
@@ -433,6 +451,37 @@ public class FrameOpzioni extends JFrame {
 				catch (Exception e1) {
 					e1.printStackTrace();
 					JOptionPane.showMessageDialog(FrameOpzioni.this, "Visita http://www.italiansubs.net per creare un'account");
+				}
+			}
+		});
+		verificaItasaButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String username = itasaUsername.getText().trim();
+				if(username.isEmpty()){
+					verificaItasaLabel.setText("Username vuoto");
+					return;
+				}
+				String pass = new String(itasaPassword.getPassword());
+				if(pass.isEmpty()){
+					verificaItasaLabel.setText("Password vuota");
+					return;
+				}
+				boolean login=ItalianSubs.VerificaLogin(username, pass);
+				String text = login?
+						"<html><font color='green'>Login OK!</font></html>":
+						"<html><font color='red'>Login fallito!</font></html>";
+				verificaItasaLabel.setText(text);
+			}
+		});
+		
+		btnCreaAccountOpenSubtitles.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					OperazioniFile.esploraWeb("http://www.opensubtitles.org/newuser");
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(FrameOpzioni.this, "Visita http://www.opensubtitles.org/newuser per creare un'account");
 				}
 			}
 		});
@@ -576,6 +625,11 @@ public class FrameOpzioni extends JFrame {
 	private JPasswordField podnapisi_password;
 	private JButton creaAccountItasa;
 	private JButton creaAccountPodnapisi;
+	private JTextField opensubtitles_username;
+	private JPasswordField opensubtitles_password;
+	private JButton btnCreaAccountOpenSubtitles;
+	private JButton verificaItasaButton;
+	private JLabel verificaItasaLabel;
 	
 	private ActionListener getActionListenerChiudi(){
 		if(al_chiudi==null){
@@ -611,6 +665,8 @@ public class FrameOpzioni extends JFrame {
 					String usernamePodnapisi=podnapisi_username.getText();
 					String passPodnapisi=new String(podnapisi_password.getPassword());
 					String lang = ((Lingua)lingua.getSelectedItem()).getValue();
+					String usernameOpenSubs = opensubtitles_username.getText();
+					String passOpenSubs = new String(opensubtitles_password.getPassword());
 						
 					s.setAskOnClose(askClose);
 					s.setRicercaSottotitoli(subDown,true);
@@ -624,6 +680,8 @@ public class FrameOpzioni extends JFrame {
 					s.setItasaPassword(passItasa);
 					s.setPodnapisiUsername(usernamePodnapisi);
 					s.setPodnapisiPassword(passPodnapisi);
+					s.setOpenSubtitlesUsername(usernameOpenSubs);
+					s.setOpenSubtitlesPassword(passOpenSubs);
 					s.setLingua(lang);
 					
 					String ut=dirUtorrent.getText().trim();
