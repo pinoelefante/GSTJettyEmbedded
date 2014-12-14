@@ -51,6 +51,9 @@ public class OpenSubtitles implements ProviderSottotitoli {
 	}
 	@Override
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang) {
+		if(!api.canDownload())
+			return false;
+		
 		if(!hasLanguage(lang))
 			return false;
 		
@@ -73,7 +76,10 @@ public class OpenSubtitles implements ProviderSottotitoli {
 					url_download = results.get(filename)!=null?results.get(filename):results.values().iterator().next();
 					String filezip = files.get(i).getParent()+File.separator+serie.getFolderSerie()+"_"+ep.getStagione()+"_"+ep.getEpisodio()+"_"+i+".zip";
 					try {
+						if(!api.canDownload())
+							return down;
 						Download.downloadFromUrl(url_download, filezip);
+						api.increaseDownloadCount();
 						ArchiviZip.estrai_tutto(filezip, files.get(i).getParent());
 						down = true;
 					}
