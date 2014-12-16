@@ -62,14 +62,17 @@ public class Naming {
 		if(toParse.toLowerCase().contains("preair"))
 			stat.setPreair(true);
 		
-		/*Rimuove l'anno dalla stringa*/
-		/*
-		Pattern p_anno=patterns.get("PATTERN_ANNO");
-		Matcher m_anno=p_anno.matcher(toParse);
-		if(m_anno.find()){
-			toParse=toParse.replace(m_anno.group(), "");
+		Pattern p=patterns.get(PATTERN_DATA);
+		Matcher m = p.matcher(toParse);
+		if(!m.find()){
+			/*Rimuove l'anno dalla stringa*/
+    		Pattern p_anno=patterns.get("PATTERN_ANNO");
+    		Matcher m_anno=p_anno.matcher(toParse);
+    		if(m_anno.find()){
+    			toParse=toParse.replace(m_anno.group(), "");
+    		}
 		}
-		*/
+		
 		parse(toParse, (pattern==null?default_patterns:pattern), 0, stat);
 		return stat;
 	}

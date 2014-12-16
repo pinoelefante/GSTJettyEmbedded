@@ -1,6 +1,6 @@
-Query Update#4:
-ALTER TABLE serietv ADD COLUMN id_karmorra INTEGER DEFAULT 0 REFERENCES serietv(id)
-
+Query Update#6:
+DELETE FROM torrent WHERE episodio IN (SELECT ep.id FROM serietv AS se JOIN episodi ep WHERE se.id=ep.serie AND  (se.url="879" OR se.url="840" OR se.url="679") AND provider=2)
+DELETE FROM episodi WHERE serie IN (SELECT id FROM serietv WHERE (url="879" OR url="840" OR url="679") AND provider=2)
 
 Cose da fare
 
@@ -17,3 +17,4 @@ FATTO) karmorra
 11) facebook, twitter post "Sto vedendo nomeserie con Gestione Serie TV"
 FATTO) numerazione puntata da data
 13) per un episodio visualizzare se è disponibile la versione hd
+FATTO) query update 6 = cancellazione torrent WWE
