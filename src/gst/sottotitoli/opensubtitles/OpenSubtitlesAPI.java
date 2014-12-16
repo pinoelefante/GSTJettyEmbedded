@@ -149,6 +149,8 @@ public class OpenSubtitlesAPI {
 			printMap(res);
 			try {
     			Object[] data = (Object[]) res.get("data");
+    			if(data==null)
+    				return sottotitoli;
     			for(int i=0;i<data.length;i++){
     				Map l = (Map) data[i];
     				String filename = l.get("MovieReleaseName").toString();
