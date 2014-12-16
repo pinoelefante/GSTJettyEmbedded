@@ -22,7 +22,7 @@ import com.sun.jna.platform.win32.WinReg;
 
 public class Settings {
 	private static Settings		singleton;
-	private static final int	VersioneSoftware		= 6;
+	private static final int	VersioneSoftware		= 7;
 	
 	private String	current_dir							= "";
 	private String	user_dir							= "";

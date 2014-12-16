@@ -1,22 +1,14 @@
-Query Update#6:
-DELETE FROM torrent WHERE episodio IN (SELECT ep.id FROM serietv AS se JOIN episodi ep WHERE se.id=ep.serie AND  (se.url="879" OR se.url="840" OR se.url="679") AND provider=2)
-DELETE FROM episodi WHERE serie IN (SELECT id FROM serietv WHERE (url="879" OR url="840" OR url="679") AND provider=2)
-QUERY UPDATE#7:
-DELETE FROM episodi WHERE stagione>2000
+Query Update#
 
 Cose da fare
 
-FATTO) path download secondario
 2) localizzazione
 3) community
 4) mygst (salvataggio online dei dati delle proprie serie)
-FATTO) karmorra
 6) download tools esterni (vlc, utorrent, qbittorrent)
 7) integrazione client torrent
 8) podnapisi.si (fatto), opensubtitles
 9) player video integrato
 10) streaming video
 11) facebook, twitter post "Sto vedendo nomeserie con Gestione Serie TV"
-FATTO) numerazione puntata da data
 13) per un episodio visualizzare se è disponibile la versione hd
-FATTO) query update 6 = cancellazione torrent WWE
