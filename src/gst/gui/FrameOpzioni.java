@@ -72,6 +72,7 @@ public class FrameOpzioni extends JFrame {
 		getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBorder(null);
 		tabbedPane.setBounds(0, 0, 480, 480);
 		getContentPane().add(tabbedPane);
 		
@@ -212,7 +213,7 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Italiansubs.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_1.setBounds(12, 60, 451, 90);
+		panel_1.setBounds(12, 70, 451, 90);
 		panel_6.add(panel_1);
 		panel_1.setLayout(new GridLayout(2, 1, 0, 0));
 		
@@ -257,7 +258,7 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_33 = new JPanel();
 		panel_33.setBorder(new TitledBorder(null, "Podnapisi.net", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_33.setBounds(12, 150, 451, 90);
+		panel_33.setBounds(12, 165, 451, 90);
 		panel_6.add(panel_33);
 		panel_33.setLayout(new GridLayout(2, 1, 0, 0));
 		
@@ -286,7 +287,7 @@ public class FrameOpzioni extends JFrame {
 		
 		JPanel panel_38 = new JPanel();
 		panel_38.setBorder(new TitledBorder(null, "OpenSubtitles", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		panel_38.setBounds(12, 240, 451, 90);
+		panel_38.setBounds(12, 265, 451, 90);
 		panel_6.add(panel_38);
 		panel_38.setLayout(new GridLayout(2, 1, 0, 0));
 		
