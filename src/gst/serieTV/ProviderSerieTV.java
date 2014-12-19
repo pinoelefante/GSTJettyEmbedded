@@ -11,7 +11,7 @@ import util.os.DirectoryNotAvailableException;
 
 public abstract class ProviderSerieTV {
 	protected final static int PROVIDER_EZTV=1;
-	protected final static int PROVIDER_KARMORRA=2;
+	protected final static int PROVIDER_SHOWRSS=2;
 	protected boolean update_in_corso;
 	
 	protected ArrayList<SerieTV> nuove_serie;
@@ -140,7 +140,7 @@ public abstract class ProviderSerieTV {
 		switch(id){
 			case PROVIDER_EZTV:
 				return "eztv.it";
-			case PROVIDER_KARMORRA:
+			case PROVIDER_SHOWRSS:
 				return "showRss.info";
 		}
 		return "unknown";

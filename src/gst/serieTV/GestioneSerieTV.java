@@ -25,7 +25,7 @@ public class GestioneSerieTV implements Notifier {
 	private static GestioneSerieTV instance;
 	private ArrayList<ProviderSerieTV> providers;
 	private EZTV eztv;
-	private Karmorra karmorra;
+	private ShowRSS showrss;
 	private TaskRicercaEpisodi t_search;
 	private Settings settings;
 	private Timer timer;
@@ -81,8 +81,8 @@ public class GestioneSerieTV implements Notifier {
 		notificable=new ArrayList<Notificable>();
 		eztv = new EZTV();
 		providers.add(eztv);
-		karmorra = new Karmorra();
-		providers.add(karmorra);
+		showrss = new ShowRSS();
+		providers.add(showrss);
 		settings = Settings.getInstance();
 		timer = new Timer();
 	}
@@ -117,7 +117,7 @@ public class GestioneSerieTV implements Notifier {
 			case 1:
 				return eztv;
 			case 2:
-				return karmorra;
+				return showrss;
 		}
 		return null;
 	}
@@ -172,8 +172,8 @@ public class GestioneSerieTV implements Notifier {
 		inviaNotifica(p.getProviderName()+": Aggiorno gli episodi di: "+serie.getNomeSerie());
 		p.caricaEpisodiOnline(serie);
 		if(p==eztv && serie.getIDKarmorra()>0){
-			karmorra.caricaEpisodiOnline(serie);
-			inviaNotifica("KARMORRA: Aggiorno gli episodi di: "+serie.getNomeSerie());
+			showrss.caricaEpisodiOnline(serie);
+			inviaNotifica(showrss.getProviderName()+": Aggiorno gli episodi di: "+serie.getNomeSerie());
 		}
 	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){

@@ -15,10 +15,10 @@ import org.jsoup.select.Elements;
 
 import util.UserAgent;
 
-public class Karmorra extends ProviderSerieTV {
+public class ShowRSS extends ProviderSerieTV {
 	private Settings settings;
-	public Karmorra() {
-		super(PROVIDER_KARMORRA);
+	public ShowRSS() {
+		super(PROVIDER_SHOWRSS);
 		settings = Settings.getInstance();
 	}
 
@@ -50,8 +50,8 @@ public class Karmorra extends ProviderSerieTV {
 					serie.setConclusa(false);
 					serie.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
 					serie.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
-					if(aggiungiSerieADatabase(serie, PROVIDER_KARMORRA)){
-						serie = getSerieByURL(serie.getUrl(), PROVIDER_KARMORRA);
+					if(aggiungiSerieADatabase(serie, PROVIDER_SHOWRSS)){
+						serie = getSerieByURL(serie.getUrl(), PROVIDER_SHOWRSS);
 						if(associaEztv(serie)){
 							nuove_serie.remove(serie);
 						}
@@ -60,7 +60,7 @@ public class Karmorra extends ProviderSerieTV {
 					}
 				}
 			}
-			System.out.println("Karmorra: "+caricate+" serie nuove");
+			System.out.println("showrss.info: "+caricate+" serie nuove");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class Karmorra extends ProviderSerieTV {
 	@Override
 	protected ArrayList<SerieTV> getElencoSerieDB() {
 		ArrayList<SerieTV> karmorra=new ArrayList<SerieTV>();
-		String select = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_KARMORRA;
+		String select = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_SHOWRSS;
 		ArrayList<KVResult<String, Object>> r = Database.selectQuery(select);
 		for(int i=0;i<r.size();i++){
 			karmorra.add(parseSerie(r.get(i)));
@@ -103,7 +103,7 @@ public class Karmorra extends ProviderSerieTV {
 	
 	public ArrayList<SerieTV> getElencoSerieCompleto(){
 		ArrayList<SerieTV> karmorra=new ArrayList<SerieTV>();
-		String select = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_KARMORRA;
+		String select = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_SHOWRSS;
 		ArrayList<KVResult<String, Object>> r = Database.selectQuery(select);
 		for(int i=0;i<r.size();i++){
 			karmorra.add(parseSerie(r.get(i)));
@@ -113,7 +113,7 @@ public class Karmorra extends ProviderSerieTV {
 
 	@Override
 	public int getProviderID() {
-		return PROVIDER_KARMORRA;
+		return PROVIDER_SHOWRSS;
 	}
 
 	@Override
