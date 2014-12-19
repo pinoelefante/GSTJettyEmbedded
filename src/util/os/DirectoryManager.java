@@ -127,7 +127,9 @@ public class DirectoryManager {
 				Naming.PATTERN_SnEn,
 				Naming.PATTERN_SxE,
 				Naming.PATTERN_Part_dotnofn,
-				Naming.PATTERN_nofn
+				Naming.PATTERN_nofn,
+				Naming.PATTERN_DATA,
+				Naming.PATTERN_EP_ALL_NUM
 		};
 		return Naming.parse(file, patt);
 	}

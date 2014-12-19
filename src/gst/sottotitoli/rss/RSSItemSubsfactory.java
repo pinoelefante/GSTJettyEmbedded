@@ -45,28 +45,6 @@ public class RSSItemSubsfactory {
 			setNormale(true);
 		if(descrizione.contains("720p"))
 			set720p(true);
-		/*
-		String id=getUrl().substring(getUrl().indexOf("directory=")+"directory=".length(), getUrl().indexOf("&filename")).replace("%2F", "/").replace("%20", " ");
-		String url_d=getUrl().replace("action=view", "action=downloadfile");
-		String filename=getUrl().substring(getUrl().indexOf("filename")+"filename=".length());
-		setID(id);
-		setUrlDownload(url_d);
-		String[] r=filename.split("[sS0-9]{3}[eE][0-9]{2}");
-		if(r.length==2){
-			String analyze=filename.substring(r[0].length(), filename.indexOf(r[1]));
-			String[] res=analyze.replace("s", "").replace("S", "").replace("e", " ").replace("E", " ").split(" ");
-			setStagione(Integer.parseInt(res[0]));
-			setEpisodio(Integer.parseInt(res[1]));
-		}
-		else
-			return;
-		if(descrizione.contains("normale") || descrizione.contains("Normale"))
-			setNormale(true);
-		if(descrizione.contains("720p"))
-			set720p(true);
-		if(descrizione.toLowerCase().contains("WEB-DL".toLowerCase()))
-			setNormale(false);
-		*/
 	}
 	public boolean isValid(){
 		return (getStagione()!=0 && getEpisodio()!=0);

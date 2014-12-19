@@ -13,7 +13,7 @@ public class Torrent {
 		setUrl(link);
 		setId(idDB);
 		setIdEpisodio(idEpisodio);
-		parse();
+		prop_torrent=Torrent.parse(getUrl());
 	}
 	
 	public String getUrl() {
@@ -40,26 +40,14 @@ public class Torrent {
 	public void setIdEpisodio(int idEpisodio) {
 		this.idEpisodio = idEpisodio;
 	}
-	public void parse() {
-		String[] patt=new String[]{
-				Naming.PATTERN_SnEn,
-				Naming.PATTERN_SxE,
-				Naming.PATTERN_Part_dotnofn,
-				Naming.PATTERN_nofn,
-				Naming.PATTERN_DATA
-		};
-		if(isMagnet(url))
-			prop_torrent=Naming.parse(getNameFromMagnet(getUrl()), patt);
-		else
-			prop_torrent=Naming.parse(getUrl(), patt);
-	}
 	public static CaratteristicheFile parse(String url) {
 		String[] patt=new String[]{
 				Naming.PATTERN_SnEn,
 				Naming.PATTERN_SxE,
 				Naming.PATTERN_Part_dotnofn,
 				Naming.PATTERN_nofn,
-				Naming.PATTERN_DATA
+				Naming.PATTERN_DATA,
+				Naming.PATTERN_EP_ALL_NUM
 		};
 		CaratteristicheFile stat = null;
 		if(isMagnet(url))

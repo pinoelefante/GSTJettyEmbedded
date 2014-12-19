@@ -79,13 +79,6 @@ public class Naming {
 		parse(toParse, (pattern==null?default_patterns:pattern), 0, stat);
 		return stat;
 	}
-	/*
-	 	-PATTERN_SnEn="[Ss][0-9]{1,}[Ee][0-9]{1,}",							//S00E00  s00e00
-		-PATTERN_SxE="[0-9]{1,}[x|.][0-9]{1,}",								//0[.x]0
-		-PATTERN_Sn="[Ss][0-9]{1,}",										//s00
-		-PATTERN_nofn="[0-9]{1,}of[0-9]{1,}",								//00of00
-		-PATTERN_Part_dotnofn="[Pp][Aa][Rr][Tt][\\S][\\d]";					//part[._]0
-	 */
 	private static void parse(String toParse, String[] pattern, int current_pattern, CaratteristicheFile stats){
 		if(pattern.length==0)
 			return;
@@ -94,10 +87,7 @@ public class Naming {
 		
 		Pattern p=patterns.get(pattern[current_pattern]);
 		Matcher m = p.matcher(toParse);
-		if(m.find()){
-			//System.out.println("Match trovato con pattern: "+p.pattern()+"\nEstratto: "+m.group());
-		}
-		else {
+		if(!m.find()){
 			parse(toParse, pattern, current_pattern+1, stats);
 			return;
 		}
