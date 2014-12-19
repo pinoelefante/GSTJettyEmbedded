@@ -21,9 +21,8 @@ import util.UserAgent;
 
 @SuppressWarnings({"rawtypes","unchecked"})
 public class OpenSubtitlesAPI {
-	private boolean testing = true;
 	private XmlRpcClient server;
-	private final static String TestUserAgent = "OSTestUserAgent";
+	//private final static String TestUserAgent = "OSTestUserAgent";
 	private String userAgent, token;
 	private Settings setts;
 	private int download_count, download_limit;
@@ -32,7 +31,7 @@ public class OpenSubtitlesAPI {
 	public OpenSubtitlesAPI(){
 		setts = Settings.getInstance();
 		timer = new Timer();
-		userAgent = testing?TestUserAgent:UserAgent.getOpenSubtitles();
+		userAgent = UserAgent.getOpenSubtitles();
 		server = new XmlRpcClient();
 		XmlRpcClientConfigImpl conf = new XmlRpcClientConfigImpl();
 		try {

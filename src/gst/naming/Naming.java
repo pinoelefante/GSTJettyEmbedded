@@ -21,8 +21,9 @@ public class Naming {
 		patterns.put(PATTERN_Sn, Pattern.compile(PATTERN_Sn));
 		patterns.put(PATTERN_nofn, Pattern.compile(PATTERN_nofn));
 		patterns.put(PATTERN_Part_dotnofn, Pattern.compile(PATTERN_Part_dotnofn));
-		patterns.put("PATTERN_ANNO", Pattern.compile("[0-9]{4}"));
+		patterns.put("PATTERN_ANNO", Pattern.compile("2[0-9]{3}"));
 		patterns.put(PATTERN_DATA, Pattern.compile(PATTERN_DATA));
+		patterns.put(PATTERN_EP_ALL_NUM, Pattern.compile(PATTERN_EP_ALL_NUM));
 		//aggiungere qui i nuovi pattern
 		
 		default_patterns=new String[]{
@@ -31,7 +32,8 @@ public class Naming {
 				PATTERN_SxE,
 				PATTERN_nofn,
 				PATTERN_Part_dotnofn,
-				PATTERN_DATA
+				PATTERN_DATA,
+				PATTERN_EP_ALL_NUM
 		};
 	}
 	public static final String 
@@ -40,11 +42,12 @@ public class Naming {
 			PATTERN_Sn="[Ss][0-9]{1,}",											//s00
 			PATTERN_nofn="[0-9]{1,}of[0-9]{1,}",								//00of00
 			PATTERN_Part_dotnofn="[Pp][Aa][Rr][Tt][\\S][\\d]",  				//part[._]0
-			PATTERN_DATA="2[0-9]{3}[._\\s+][0-9]{1,2}[._\\s+][0-9]{1,2}";		//2xxx[._\s+]xx[._\s+]xx
+			PATTERN_DATA="2[0-9]{3}[._\\s+][0-9]{1,2}[._\\s+][0-9]{1,2}",		//2xxx[._\s+]xx[._\s+]xx
+			PATTERN_EP_ALL_NUM = "[.]{1}[0-9]{3}[.]{1}";						//S01E01 -> 101
 			//aggiungere qui i nuovi pattern
 
 	public static void main(String[] args){
-		System.out.println(parse("WWE+Friday+Night+Smackdown+2014+12+05+720p+HDTV+x264+KYR", null)+"\n");
+		System.out.println(parse("blackish.110.hdtv-lol", null)+"\n");
 		//System.out.println(parse("Discovery.Ch.River.Monsters.Series.3.10of10.The.Lost.Reels.Part.2.DVDrip.x264.AACmp4-MVGroup", null));
 	}
 	public static CaratteristicheFile parse(String toParse, String[] pattern){
@@ -137,6 +140,13 @@ public class Naming {
 					dati[0] = "0";
 					dati[1] = "0";
 				}
+				break;
+			}
+			case PATTERN_EP_ALL_NUM: {
+				splitted = splitted.replace(".", "");
+				dati = new String[2];
+				dati[0]=splitted.substring(0, splitted.length()/2);
+				dati[1]=splitted.substring(splitted.length()/2);
 				break;
 			}
 			/*
