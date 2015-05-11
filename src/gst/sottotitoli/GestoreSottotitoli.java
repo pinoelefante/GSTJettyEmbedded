@@ -18,7 +18,6 @@ import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.opensubtitles.OpenSubtitles;
 import gst.sottotitoli.podnapisi.Podnapisi;
-import gst.sottotitoli.subsfactory.Subsfactory;
 import gst.sottotitoli.subspedia.Subspedia;
 
 import java.util.AbstractMap;
@@ -36,7 +35,7 @@ public class GestoreSottotitoli implements Notifier{
 
 	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3, PODNAPISI=4, OPENSUBTITLES=5, ADDIC7ED=6; 
 	private ProviderSottotitoli itasa;
-	private ProviderSottotitoli subsfactory;
+	//private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
 	private ProviderSottotitoli addic7ed;
 	private ProviderSottotitoli podnapisi;
@@ -53,7 +52,7 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	private GestoreSottotitoli(){
 		itasa=ItalianSubs.getInstance();
-		subsfactory=Subsfactory.getInstance();
+		//subsfactory=Subsfactory.getInstance();
 		subspedia=Subspedia.getInstance();
 		localsubs=LocalSubs.getInstance();
 		addic7ed = Addic7ed.getInstance();
@@ -93,9 +92,11 @@ public class GestoreSottotitoli implements Notifier{
 			case ITASA:
 				itasa.aggiornaElencoSerieOnline();
 				break;
+				/*
 			case SUBSFACTORY:
 				subsfactory.aggiornaElencoSerieOnline();
 				break;
+				*/
 			case SUBSPEDIA:
 				subspedia.aggiornaElencoSerieOnline();
 				break;
@@ -108,11 +109,11 @@ public class GestoreSottotitoli implements Notifier{
 		if(s.getIDItasa()<=0){
 			itasa.associaSerie(s);
 		}
-			
+		/*	
 		if(s.getIDDBSubsfactory()<=0){
 			subsfactory.associaSerie(s);
 		}
-		
+		*/
 		if(s.getIDSubspedia()<=0){
 			subspedia.associaSerie(s);
 		}
@@ -127,8 +128,11 @@ public class GestoreSottotitoli implements Notifier{
 		switch(idProvider){
 			case ITASA:
 				return itasa.associa(idSerie, idSerieSub);
+			/*
 			case SUBSFACTORY:
 				return subsfactory.associa(idSerie, idSerieSub);
+				break;
+			*/
 			case SUBSPEDIA:
 				return subspedia.associa(idSerie, idSerieSub);
 			case ADDIC7ED:
@@ -143,8 +147,11 @@ public class GestoreSottotitoli implements Notifier{
 		switch(idProvider){
 			case ITASA:
 				return itasa.disassocia(idSerie);
+				/*
 			case SUBSFACTORY:
 				return subsfactory.disassocia(idSerie);
+				break;
+				*/
 			case SUBSPEDIA:
 				return subspedia.disassocia(idSerie);
 			case ADDIC7ED:
@@ -203,10 +210,12 @@ public class GestoreSottotitoli implements Notifier{
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
 			inserisciLog(e, itasa, lang);
 		}
+		/*
 		else if(subsfactory.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
 			inserisciLog(e, subsfactory, lang);
 		}
+		*/
 		else if(subspedia.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
 			inserisciLog(e, subspedia, lang);
@@ -243,8 +252,10 @@ public class GestoreSottotitoli implements Notifier{
 		switch(provider){
 			case ITASA:
 				return itasa.getElencoSerie();
+				/*
 			case SUBSFACTORY:
 				return subsfactory.getElencoSerie();
+				*/
 			case SUBSPEDIA:
 				return subspedia.getElencoSerie();
 			case ADDIC7ED:
@@ -258,8 +269,10 @@ public class GestoreSottotitoli implements Notifier{
 				return localsubs;
 			case ITASA:
 				return itasa;
+				/*
 			case SUBSFACTORY:
 				return subsfactory;
+				*/
 			case SUBSPEDIA:
 				return subspedia;
 			case ADDIC7ED:

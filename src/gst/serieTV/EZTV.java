@@ -25,12 +25,15 @@ public class EZTV extends ProviderSerieTV {
 	private ArrayList<String> baseUrls;
 	private String			baseUrl;
 	private Settings settings;
-
+	/*
+	public static void main(String[] args){
+		EZTV e = new EZTV();
+	}
+	*/
 	public EZTV() {
 		super(ProviderSerieTV.PROVIDER_EZTV);
 		baseUrls = new ArrayList<String>();
-		baseUrls.add("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv.it");
-		baseUrls.add("https://eztv.it");
+		baseUrls.add("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=https://eztv-proxy.net");
 		
 		settings=Settings.getInstance();
 	}
@@ -57,9 +60,6 @@ public class EZTV extends ProviderSerieTV {
 
 	@Override
 	public void aggiornaElencoSerie() {
-		if(!isRaggiungibile())
-			return;
-		
 		if(getBaseURL().startsWith("http://gestioneserietv.altervista.org/proxy_v2/proxy.php?url=")){
 			proxyShowlist(getBaseURL()+"/showlist/");
 			return;
@@ -149,9 +149,6 @@ public class EZTV extends ProviderSerieTV {
 
 	@Override
 	public void caricaEpisodiOnline(SerieTV serie) {
-		if(!isRaggiungibile())
-			return;
-		
 		if (serie.isStopSearch())
 			return;
 		System.out.println("Aggiornando i link di: " + serie.getNomeSerie());
@@ -262,6 +259,7 @@ public class EZTV extends ProviderSerieTV {
 		return raggiungibile;
 	}
 	private void proxyShowlist(String url){
+		System.out.println("aggiorno elenco serie - proxy");
 		int nuove = 0;
 		try {
 			Document d = Jsoup.connect(url)
