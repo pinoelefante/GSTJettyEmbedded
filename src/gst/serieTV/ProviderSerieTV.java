@@ -207,6 +207,15 @@ public abstract class ProviderSerieTV {
 		}
 		return episodi;
 	}
+	public static ArrayList<Episodio> getEpisodiSerieLite(int idSerie){
+		ArrayList<Episodio> episodi = new ArrayList<>();
+		String query = "SELECT * FROM episodi WHERE serie="+idSerie+" ORDER BY stagione,episodio ASC";
+		ArrayList<KVResult<String, Object>> res1=Database.selectQuery(query);
+		for(int i=0;i<res1.size();i++){
+			episodi.add(parseEpisodio(res1.get(i)));
+		}
+		return episodi;
+	}
 	public static Episodio parseEpisodio(KVResult<String, Object> res){
 		int id = (int) res.getValueByKey("id");
 		int serie = (int) res.getValueByKey("serie");

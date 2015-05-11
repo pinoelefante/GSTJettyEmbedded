@@ -15,6 +15,8 @@ import gst.sottotitoli.GestoreSottotitoli;
 import java.io.File;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 
@@ -181,10 +183,17 @@ public class GestioneSerieTV implements Notifier {
 		return episodi;
 	}
 	public ArrayList<Episodio> getEpisodiSerie(int idSerie){
-		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiSerie(idSerie);
+		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiSerieLite(idSerie);
 		return episodi;
 	}
-	
+	public Map<SerieTV,ArrayList<Episodio>> getEpisodiPreferiteAll(){
+		HashMap<SerieTV,ArrayList<Episodio>> list = new HashMap<>();
+		for(SerieTV st : getElencoSeriePreferite()){
+			ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiSerieLite(st.getIDDb());
+			list.put(st, episodi);
+		}
+		return list;
+	}
 	public boolean downloadEpisodio(int idEp) {
 		boolean status = false;
 		try {
