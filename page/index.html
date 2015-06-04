@@ -123,7 +123,7 @@
 					<label>Ignorato</label><span class="legenda episodioIgnorato">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 				</div>
 				<div id="divContainerButtons">
-					<button class="btn-lg btn btn-primary hidden" id="btnShowSelect" onclick="showSelezione()" ></button>
+					<button class="btn-lg btn btn-primary" id="btnShowSelect" onclick="showListDownload()" ></button>
 					<input class="btn-lg btn btn-success" type="button"	value="Download" id="btnDownload" onclick="download()" /> 
 					<input class="btn btn btn-danger" type="button" value="Ignora"	id="btnIgnora" onclick="ignora()" />
 				</div>
@@ -170,7 +170,8 @@
       			<div class="modal-body-info" id="modalInfoBody">
       			
       			</div>
-      			<div class="modal-footer">
+      			<div class="modal-footer" id="modalInfoButtons">
+      				<button class="btn btn-primary hidden" onclick='downloadList()' id="modalDownloadButton">Download</button>
       				<button class="btn btn-primary hidden" onclick='aggiornaTVDB()' id="modalTVDBUpdate">Aggiorna</button>
         			<button class="btn btn-default" data-dismiss="modal" onclick="$('#modalTVDBUpdate').addClass('hidden');">Chiudi</button>
       			</div>

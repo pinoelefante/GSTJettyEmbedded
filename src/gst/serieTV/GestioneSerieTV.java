@@ -178,6 +178,17 @@ public class GestioneSerieTV implements Notifier {
 			inviaNotifica(showrss.getProviderName()+": Aggiorno gli episodi di: "+serie.getNomeSerie());
 		}
 	}
+	public ArrayList<Entry<SerieTV,ArrayList<Episodio>>> getEpisodiDaScaricare(){
+		ArrayList<SerieTV> serie = getElencoSeriePreferite();
+		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> res = new ArrayList<Entry<SerieTV,ArrayList<Episodio>>>();
+		for(SerieTV s : serie){
+			ArrayList<Episodio> episodi = getEpisodiDaScaricareBySerie(s.getIDDb());
+			if(episodi.isEmpty())
+				continue;
+			res.add(new AbstractMap.SimpleEntry<SerieTV,ArrayList<Episodio>>(s, episodi));
+		}
+		return res;
+	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
 		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiDaScaricare(idSerie);
 		return episodi;

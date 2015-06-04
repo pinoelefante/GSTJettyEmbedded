@@ -264,6 +264,34 @@ public class ResponseSender {
 		}
 		return new Document(root);
 	}
+	public static Document createResponseEpisodiScaricare(ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map) {
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		
+		for(Entry<SerieTV, ArrayList<Episodio>> entry : map){
+			SerieTV st = entry.getKey();
+			ArrayList<Episodio> eps = entry.getValue();
+			Element serie = new Element("serie");
+			serie.setAttribute("id", st.getIDDb()+"");
+			serie.setAttribute("nome", st.getNomeSerie());
+			serie.setAttribute("noselect", st.isEscludiSelezione()+"");
+			for(int i=0;i<eps.size();i++){
+				Episodio ep = eps.get(i);
+				Element episodio = new Element("episodio");
+				Element titolo=new Element("titolo");
+				Element id=new Element("id");
+				titolo.addContent(st.getNomeSerie()+" "+ep.getStagione()+"x"+(ep.getEpisodio()<10?"0"+ep.getEpisodio():ep.getEpisodio()));
+				id.addContent(""+ep.getId());
+				episodio.addContent(titolo);
+				episodio.addContent(id);
+				serie.addContent(episodio);
+			}
+			root.addContent(serie);
+		}
+		return new Document(root);
+	}
 	public static Document createResponseInfoSerie(SerieTVDBFull serie) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");

@@ -1,8 +1,13 @@
 $(document).ready(function() {
+	$('#tallModal').on('hidden.bs.modal', function () {
+	    $("#modalDownloadButton").addClass("hidden");
+	    $("#modalTVDBUpdate").addClass("hidden");
+	});
 	loadSeriePreferite();
 	caricaSerieNuove();
 	caricaElencoSerieCompleto();
 	getEpisodiDaVedere();
+	lookForToDownload();
 	bootbox.setDefaults({
 		locale: "it"
 	});
@@ -105,8 +110,8 @@ function addSerieInOrder(elem, nomeSerie) {
 	if (inserita == false)
 		$("#accordion").append(elem);
 }
-function creaSerieElementoPagina(nome, id, provider) {
-	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;"+"<button class='btn btn-warning' title='Apri cartella' onclick='openFolder(" + id + ")'><span class='glyphicon glyphicon-folder-open'></span></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
+function creaSerieElementoPagina(nome, id, provider, noselect) {
+	var element = "<div class='panel panel-default seriePreferita' id='serie" + id + "'>" + "<div class='panel-heading'>" + "<h4 class='panel-title'>" + "<a class='nomeSerie' data-toggle='collapse' data-parent='#accordion' href='#collapse" + id + "' onclick='getEpisodi("+id+","+noselect+")'>" + nome + "</a>" + "</h4>" + "<div class='buttonsAccordion'>" + "<button class='btn btn-warning' title='Aggiorna episodi' onclick='aggiornaEpisodi(" + id + "," + provider + ")'><span class='glyphicon glyphicon-refresh'></span></button>&nbsp;"+ "<button class='btn btn-warning' title='Info sulla serie' onclick='infoSerie("+id+")'><span class='glyphicon glyphicon-info-sign' /></button>&nbsp;"+"<button class='btn btn-warning' title='Apri cartella' onclick='openFolder(" + id + ")'><span class='glyphicon glyphicon-folder-open'></span></button>&nbsp;" + "<button class='btn btn-danger' title='Rimuovi dai preferiti' onclick='removeSerie(" + id + ")'><span class='glyphicon glyphicon-remove'></span></button>" + "</div>" + "<h5 id='episodiScaricare" + id + "'>(0 episodi da scaricare)</h5>" + "</div>" + "<div id='collapse" + id + "' class='panel-collapse collapse'>" + "<div class='panel-body'><div class='panel-group' id='accordion" + id + "'></div></div>" + "</div>" + "</div>";
 	return element;
 }
 function openFolder(id){
@@ -234,7 +239,65 @@ function download() {
 			downloadS(idEp);
 		}
 	}); 
-	showButtonResults();
+	//showButtonResults();
+}
+function lookForToDownload(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getEpisodiDaScaricare",
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var numEpisodi = $(msg).find("episodio").length;
+				$("#btnShowSelect").removeClass("hidden");
+				$("#btnShowSelect").addClass("visible");
+				$("#btnShowSelect").text(numEpisodi+" nuovi");
+			}
+		}
+	});
+}
+function showListDownload(){
+	showModalInfo("Attendi...", "<center><img src='img/loading.gif' /></center>");
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getEpisodiDaScaricare",
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var numEpisodi = $(msg).find("episodio").length;
+				var html = "<div id='downloadList'><table>";
+				var noSelectHTML = "<table>";
+				$(msg).find("serie").each(function(){
+					var noselect = $(this).attr("noselect");
+					$(this).find("episodio").each(function(){
+						var titolo = $(this).find("titolo").text();
+						var id = $(this).find("id").text();
+						if(noselect == "false")
+							html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"' checked /><b>&nbsp;"+titolo+"</b></td></tr>";
+						else
+							noSelectHTML+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"'/><b>&nbsp;"+titolo+"</b></td></tr>";
+					});
+				});
+				html+="</table>";
+				noSelectHTML+="</table></div>";
+				$("#modalDownloadButton").removeClass("hidden");
+				showModalInfo("Download", html+"<br><div><b>Episodi da non selezionare automaticamente</b></div>"+noSelectHTML);
+			}
+		}
+	});
+}
+function downloadList(){
+	$("#downloadList").find("input").each(function(){
+		if($(this).is(":checked")){
+			var id = $(this).val();
+			downloadS(id);
+			$(this).remove();
+		}
+	});
 }
 
 function ignora() {
@@ -245,7 +308,7 @@ function ignora() {
 			ignoraS(idEp);
 		}
 	}); 
-	showButtonResults();
+	//showButtonResults();
 	operazioneInCorso("");
 }
 function ignoraS(id){
@@ -271,7 +334,7 @@ function ignoraS(id){
 			}
 			else
 				showModal("","Episodio non ignorato");
-			showButtonResults();
+			//showButtonResults();
 		},
 		error : function(msg) {
 			operazioneInCorso("");
@@ -321,7 +384,7 @@ function selezionaPerStato(stato){
 	if(trovati==0){
 		showModal("","Non ci sono episodi da scaricare");
 	}
-	showButtonResults();
+	//showButtonResults();
 }
 function selezionaTutto(selected) {
 	$("#accordion").find("input[type=checkbox]").each(function(){
@@ -330,7 +393,7 @@ function selezionaTutto(selected) {
     	else
     		$(this).removeAttr('checked');
 	});
-	showButtonResults();
+	//showButtonResults();
 }
 function operazioneInCorso(messaggio) {
 	if (messaggio.length > 0)
@@ -355,9 +418,9 @@ function loadSeriePreferite() {
 				var provider = $(this).find("provider").text();
 				var provider_name = $(this).find("provider_name").text();
 				var noselect = $(this).find("no_select").text();
-				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider);
+				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider, noselect);
 				$("#accordion").append(elem);
-				getEpisodi(id, noselect);
+				//getEpisodi(id, noselect);
 			});
 				
 			operazioneInCorso("");
@@ -382,7 +445,7 @@ function removeSerie(id) {
     		   			$("#serie" + id).remove();
     		   			deleteFolder(id);
     		   			$("#serie_vedere_"+id).remove();
-    		   			showButtonResults();
+    		   			//showButtonResults();
     		   		}
     		   		operazioneInCorso("");
     		   	},
@@ -495,7 +558,7 @@ function getEpisodi(id, noselect) {
 				}
 				
 				var html="<div class='episodio"+getClassStatus(stato)+"' id='divEP_"+idE+"'>"+
-					"<input type='checkbox' noselect='"+noselect+"' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"' onchange='showButtonResults()'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
+					"<input type='checkbox' noselect='"+noselect+"' value='" + idE + "' id='chkEp_"+idE+"' stato_visualizzazione='"+stato+"'> Episodio <b>" + (episodio == 0 ? "Speciale" : episodio) + "</b></input>" +
 					"<div class='episodioButtons'>" +
 					generaBottone(stato,idE) +"&nbsp;" +
 					"<button class='btn btn-warning' title='Info episodio' onclick='infoEpisodio("+id+","+idE+")'><span class='glyphicon glyphicon-info-sign'/></button>&nbsp;" +
@@ -521,7 +584,7 @@ function getEpisodi(id, noselect) {
 			else {
 				$("#episodiScaricare" + id)	.text("(" + daScaricare + " da scaricare. Vedere: "+daVedere+")");
 			}
-			showButtonResults();
+			//showButtonResults(); /* mostra il tasto di download */
 			operazioneInCorso("");
 		},
 		error : function(msg) {
@@ -912,7 +975,7 @@ function downloadS(id){
 			}
 			else
 				showModal("","Episodio non scaricato");
-			showButtonResults()
+			//showButtonResults()
 		},
 		error : function(msg) {
 			operazioneInCorso("");
