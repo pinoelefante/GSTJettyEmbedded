@@ -321,7 +321,7 @@ public class EZTV extends ProviderSerieTV {
 			String[] magnets = proxyParseMagnets(d.text());
 			for(int i=0;i<magnets.length;i++){
 				if(!magnets[i].isEmpty()){
-					System.out.println(magnets[i]);
+					//System.out.println(magnets[i]);
 					CaratteristicheFile stat = Torrent.parse(magnets[i]);
 	    			int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(idSerie, stat.getStagione(), stat.getEpisodio());
 	    			ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), magnets[i]);

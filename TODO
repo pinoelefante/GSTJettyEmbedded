@@ -1,4 +1,6 @@
 Query Update#
+DROP TABLE subspedia
+UPDATE serietv SET id_subspedia = 0
 
 Cose da fare
 

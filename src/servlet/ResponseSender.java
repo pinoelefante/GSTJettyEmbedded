@@ -508,4 +508,24 @@ public class ResponseSender {
 		root.addContent(e);
 		return new Document(root);
 	}
+	public static Element elementEpisodio(Episodio e){
+		Element episodio = new Element("episodio");
+		
+		Element id = new Element("id");
+		Element stagione = new Element("stagione");
+		Element ep = new Element("num_episodio");
+		Element idTvDb = new Element("id_tvdb");
+		
+		id.addContent(""+e.getId());
+		stagione.addContent(""+e.getStagione());
+		ep.addContent(""+e.getEpisodio());
+		idTvDb.addContent(e.getIdTvDB()+"");
+		
+		episodio.addContent(id);
+		episodio.addContent(stagione);
+		episodio.addContent(ep);
+		episodio.addContent(idTvDb);
+		
+		return episodio;
+	}
 }

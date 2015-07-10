@@ -28,6 +28,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
@@ -281,11 +285,43 @@ public class Subspedia implements ProviderSottotitoli {
 	}
 	
 	public static void main(String[] args){
-		Subspedia subspedia = getInstance();
-		SerieSubConDirectory s = new SerieSubConDirectory("", 0, "/the-100.html");
-		ArrayList<SottotitoloSubspedia> subs = subspedia.caricaCartella(s);
-		for(int i=0;i<subs.size();i++){
-			System.out.println(subs.get(i).getUrlDownload());
+		
+		try {
+			
+			org.jsoup.nodes.Document page = Jsoup.connect("http://www.subspedia.tv/API/getAllSeries.php")
+					.ignoreContentType(true)
+					.header("User-Agent", UserAgent.get())
+					.timeout(30000)
+					.get();
+			/*
+			org.jsoup.select.Elements series = page.select("td.titoloSerie").select("a");
+			for(int i=0;i<series.size();i++){
+				org.jsoup.nodes.Element o=series.get(i);
+				String nome = o.text();
+				String href = o.attr("href");
+				System.out.println(nome +" "+ href);
+			}
+			*/
+			//System.out.println(page.text());
+			JSONParser parser = new JSONParser();
+			try {
+				Object obj = parser.parse(page.text());
+				JSONArray list = (JSONArray)obj;
+				for(int i = 0;i<list.size();i++){
+					JSONObject serie = (JSONObject) list.get(i);
+					//System.out.println(serie.toJSONString());
+					int id = Integer.parseInt(serie.get("id_serie").toString());
+					String nome = serie.get("nome_serie").toString();
+					System.out.println(nome + " "+ id);
+				}
+			}
+			catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	@Override

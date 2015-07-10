@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import util.os.DirectoryNotAvailableException;
 
 public abstract class ProviderSerieTV {
+	protected final static int PROVIDER_FILESYSTEM = 0;
 	protected final static int PROVIDER_EZTV=1;
 	protected final static int PROVIDER_SHOWRSS=2;
 	protected boolean update_in_corso;

@@ -119,9 +119,8 @@ public class Database {
 					+ "nome TEXT NOT NULL"
 					+ ")");
 			
-			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSPEDIA+" (" +
-					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ "url TEXT,"
+			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSPEDIA+" (" 
+					+ "id INTEGER PRIMARY KEY,"
 					+ "nome TEXT NOT NULL"
 					+ ")");
 			

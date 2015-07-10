@@ -39,7 +39,7 @@ public class ArchiviZip {
 		}
 	}
 
-	public static void estrai_tutto(String archivio, String dir_dest) {
+	public static boolean estrai_tutto(String archivio, String dir_dest) {
 		instance();
 		RandomAccessFile randomAccessFile = null;
 		ISevenZipInArchive inArchive = null;
@@ -52,10 +52,12 @@ public class ArchiviZip {
 				in[i] = i;
 			}
 			inArchive.extract(in, false, new MySevenZipCallBack(inArchive, dir_dest, ""));
+			return true;
 		}
 		catch (Exception e) {
 			System.err.println(archivio+" Error occurs: " + e);
 			e.printStackTrace();
+			return false;
 		}
 		finally {
 			if (inArchive != null) {
