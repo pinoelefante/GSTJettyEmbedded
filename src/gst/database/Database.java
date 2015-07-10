@@ -114,14 +114,13 @@ public class Database {
 					"nome TEXT NOT NULL)");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSFACTORY +" (" +
-					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+					  "id INTEGER PRIMARY KEY AUTOINCREMENT,"
 					+ "directory TEXT NOT NULL,"
 					+ "nome TEXT NOT NULL"
 					+ ")");
 			
 			stat.executeUpdate("CREATE TABLE IF NOT EXISTS "+TABLE_SUBSPEDIA+" (" +
-					"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-					+ "url TEXT,"
+					  "id INTEGER PRIMARY KEY,"
 					+ "nome TEXT NOT NULL"
 					+ ")");
 			

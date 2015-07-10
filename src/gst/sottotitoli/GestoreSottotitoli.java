@@ -19,6 +19,7 @@ import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.opensubtitles.OpenSubtitles;
 import gst.sottotitoli.podnapisi.Podnapisi;
 import gst.sottotitoli.subspedia.Subspedia;
+import gst.sottotitoli.subspedia.Subspedia2;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class GestoreSottotitoli implements Notifier{
 	//private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
 	private ProviderSottotitoli addic7ed;
-	private ProviderSottotitoli podnapisi;
+	//private ProviderSottotitoli podnapisi;
 	private ProviderSottotitoli opensubtitles;
 	private LocalSubs localsubs;
 	private Settings settings;
@@ -53,10 +54,10 @@ public class GestoreSottotitoli implements Notifier{
 	private GestoreSottotitoli(){
 		itasa=ItalianSubs.getInstance();
 		//subsfactory=Subsfactory.getInstance();
-		subspedia=Subspedia.getInstance();
+		subspedia=Subspedia2.getInstance();
 		localsubs=LocalSubs.getInstance();
 		addic7ed = Addic7ed.getInstance();
-		podnapisi = Podnapisi.getInstance();
+		//podnapisi = Podnapisi.getInstance();
 		opensubtitles = OpenSubtitles.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
@@ -224,10 +225,12 @@ public class GestoreSottotitoli implements Notifier{
 			inviaNotifica(s.getNomeSerie() + " "  + episodio + " - Sottotitolo scaricato - "+addic7ed.getProviderName());
 			inserisciLog(e, addic7ed, lang);
 		}
+		/*
 		else if(podnapisi.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+podnapisi.getProviderName());
 			inserisciLog(e, podnapisi, lang);
 		}
+		*/
 		else if(opensubtitles.scaricaSottotitolo(s, e, lang)) {
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+opensubtitles.getProviderName());
 			inserisciLog(e, opensubtitles, lang);
@@ -277,8 +280,10 @@ public class GestoreSottotitoli implements Notifier{
 				return subspedia;
 			case ADDIC7ED:
 				return addic7ed;
+				/*
 			case PODNAPISI:
 				return podnapisi;
+				*/
 			case OPENSUBTITLES:
 				return opensubtitles;
 		}
