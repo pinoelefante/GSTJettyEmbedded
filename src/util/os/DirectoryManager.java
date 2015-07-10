@@ -126,6 +126,7 @@ public class DirectoryManager {
 		String[] patt=new String[]{
 				Naming.PATTERN_SnEn,
 				Naming.PATTERN_SxE,
+				Naming.PATTERN_Sx_Ex,
 				Naming.PATTERN_Part_dotnofn,
 				Naming.PATTERN_nofn,
 				Naming.PATTERN_DATA,

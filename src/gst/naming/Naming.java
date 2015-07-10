@@ -24,12 +24,14 @@ public class Naming {
 		patterns.put("PATTERN_ANNO", Pattern.compile("2[0-9]{3}"));
 		patterns.put(PATTERN_DATA, Pattern.compile(PATTERN_DATA));
 		patterns.put(PATTERN_EP_ALL_NUM, Pattern.compile(PATTERN_EP_ALL_NUM));
+		patterns.put(PATTERN_Sx_Ex, Pattern.compile(PATTERN_Sx_Ex));
 		//aggiungere qui i nuovi pattern
 		
 		default_patterns=new String[]{
 				PATTERN_SnEn,
-				PATTERN_Sn,
 				PATTERN_SxE,
+				PATTERN_Sx_Ex,
+				PATTERN_Sn,
 				PATTERN_nofn,
 				PATTERN_Part_dotnofn,
 				PATTERN_DATA,
@@ -43,7 +45,8 @@ public class Naming {
 			PATTERN_nofn="[0-9]{1,}of[0-9]{1,}",								//00of00
 			PATTERN_Part_dotnofn="[Pp][Aa][Rr][Tt][\\S][\\d]",  				//part[._]0
 			PATTERN_DATA="2[0-9]{3}[._\\s+][0-9]{1,2}[._\\s+][0-9]{1,2}",		//2xxx[._\s+]xx[._\s+]xx
-			PATTERN_EP_ALL_NUM = "[.]{1}[0-9]{3}[.]{1}";						//S01E01 -> 101
+			PATTERN_EP_ALL_NUM = "[.]{1}[0-9]{3}[.]{1}",						//S01E01 -> 101
+			PATTERN_Sx_Ex = "[Ss][0-9]{1,2}-[Ee][0-9]{1,2}";					//S1-E25
 			//aggiungere qui i nuovi pattern
 
 	public static void main(String[] args){
@@ -101,6 +104,10 @@ public class Naming {
 				break;
 			case PATTERN_SxE:
 				splitted=splitted.replace(".", "x");
+				dati=splitted.split("x");
+				break;
+			case PATTERN_Sx_Ex:
+				splitted=splitted.replace("-", "x").toLowerCase().replace("s", "").replace("e", "");
 				dati=splitted.split("x");
 				break;
 			case PATTERN_Sn:
