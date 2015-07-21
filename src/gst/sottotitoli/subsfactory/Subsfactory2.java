@@ -54,7 +54,7 @@ public class Subsfactory2 implements ProviderSottotitoli{
 			org.jsoup.nodes.Document page = Jsoup.connect(URL_ELENCO_SERIE).header("User-Agent", UserAgent.get())
 					.timeout(10000)
 					.get();
-			org.jsoup.nodes.Element listContainer = page.getElementById("download-page");
+			org.jsoup.nodes.Element listContainer = page.getElementById("download-page").select("ul.download-monitor-subcategories2").get(0);
 			org.jsoup.select.Elements series = listContainer.select(".tdleft").select("a");
 			
 			for(int i=0;i<series.size();i++){
