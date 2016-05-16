@@ -1,0 +1,346 @@
+@CHARSET "ISO-8859-1";
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    border: 1px solid white;
+}
+label, select {
+	display: inline;
+}
+div#container {
+	position: relative;
+	margin-top: 70px;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 90%;
+	min-width: 1000px;
+}
+
+div#containerLeft {
+	position: absolute;
+	left: 0%;
+	right: 70%;
+	height: 100%;
+	width: 30%;
+	min-width: 300px;
+	min-height: 600px;
+}
+
+div#serieNuove {
+	position: absolute;
+	left: 5%;
+	top: 5%;
+	bottom: 55%;
+	right: 5%;
+	width: 90%;
+	height: 50%;
+}
+div#serieNuoveDivContainer {
+	height: 90%;
+	overflow:auto;
+}
+
+.panel-serieNuova {
+	color: #333;
+	background-color: #f5f5f5;
+	border: 1px solid gray;
+	border-radius: 5px;
+	padding: 20px 15px;
+}
+
+div#altervista {
+	position: absolute;
+	top: 60%;
+	bottom: 10%;
+	left: 2%;
+	right: 2%;
+	width: 90%;
+	height: 32%;
+	min-width: 310px;
+	min-height: 280px;
+}
+
+iframe#altervistaFrame {
+	position: absolute;
+	width: 320px;
+	height: 300px;
+	overflow: hidden;
+	border: none;
+	min-height: 280px;
+}
+
+div#containerCenter {
+	position: absolute;
+	left: 30%;
+	right: 30%;
+	height: 100%;
+	width: 40%;
+	min-width: 320px;
+	min-height: 600px;
+}
+
+div#addSerie {
+	position: absolute;
+	z-index: 20;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	height: 150px;
+	border-top: 1px solid gray;
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	min-width: 320px;
+}
+
+div#selectSerieDiv {
+	position: absolute;
+	top: 10px;
+	bottom: 10px;
+	left: 5px;
+	right: 5px;
+	height: 70px;
+	width: calc(100% - 10px);
+}
+div#divMessaggioOperazione {
+	font-size: 14px;
+	font-family: sans-serif;
+}
+div#operazioniLista {
+	position: absolute;
+	top: 80px;
+	left:5px;
+	right:5px;
+	bottom: 10px;
+	height:50px;
+}
+
+select#selectSerie {
+	width: 50%;
+	display: inline-block;
+}
+.chosen-container {
+	width: 50% !important;
+}
+
+div#listSerie {
+	position: absolute;
+	overflow: auto;
+	left: 0px;
+	right: 0px;
+	top: 150px;
+	bottom: 80px;
+	border: 1px solid gray;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	min-height: 150px;
+}
+
+h4.panel-title {
+	display: inline;
+}
+
+div.buttonsAccordion {
+	display: inline;
+	float: right;
+}
+
+div.panel-heading {
+	height: 60px;;
+}
+
+div#buttonCenter {
+	position: absolute;
+	height: 80px;
+	bottom: 0px;
+	width: 100%;
+}
+
+div#divContainerButtons {
+	top: 30px;
+	bottom: 10px;
+	height: 55px;
+	min-width: 320px;
+	width: 345px;
+	margin: 0 auto;
+}
+
+div#containerRight {
+	position: absolute;
+	left: 70%;
+	height: 100%;
+	width: 30%;
+	min-width: 280px;
+	min-height: 600px;
+}
+
+div#altro {
+	position: absolute;
+	top: 5%;
+	bottom: 5%;
+	right: 5%;
+	left: 5%;
+	width: 90%;
+	height: 90%;
+}
+div#containerVedere {
+	overflow:auto;
+	height:90%;
+}
+
+div.episodio {
+	display:block;
+	position:inherit;
+	height:30px;
+	width: 95%;
+	left: 2%;
+	right: 0%;
+	border-radius: 5px;
+}
+div.episodioButtons {
+	display:inline;
+	float:right;
+}
+.episodioDaVedere {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background-color: #22FF00;
+	
+	/* BORDO DEL TESTO
+		text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	*/
+}
+.episodioIgnorato {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background: repeating-linear-gradient(
+		45deg,
+	  	black,
+	  	black 10px,
+	  	#3D3D3D 10px,
+	  	#3D3D3D 20px
+	);
+	color:white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.episodioRimosso {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	background: repeating-linear-gradient(
+		45deg,
+	  	black,
+	  	black 10px,
+	  	red 10px,
+	  	red 20px
+	);
+	color:white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.legenda {
+	margin-left:10px;
+	margin-right:10px;
+}
+#divLegenda {
+	margin-left: 20px;
+}
+table#listEpisodiDaVedere {
+	width:100%;
+}
+tr.EpisodioDaVedere {
+	background-color: oldlace;
+	height: 50px;
+	min-height: 50px;
+	width: 100%;
+}
+td.titoloVedere {
+	width: 90%;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+td.bottoneVedere {
+	width: 10%;
+}
+
+
+.modal-info .modal-wide-info .modal-dialog-info {
+	width: 80%;
+	height: 60%;
+}
+.modal-body-info{
+	padding: 10px;
+	overflow: auto;
+	height:70%;
+}
+#tallModal { 
+	position: absolute;
+	top: 10%;
+	bottom: 10%;
+	left:10%;
+	right: 10%;
+	min-height: 20%;
+	max-height: 78%;
+}
+.image-thumb {
+	max-width: 196px;
+	max-height: 196px;
+	margin: 5px;
+	border: 2px solid black;
+}
+#infoBannerIMG {
+	position:relative;
+    width:70%;
+    margin: 0 auto;
+}
+#associaTVDBModal { 
+	position: absolute;
+	top: 15%;
+	bottom: 15%;
+	left:15%;
+	right: 15%;
+	min-height: 20%;
+	max-height: 50%;
+	overflow:auto;
+}
+.btnViewAssocia {
+	position:absolute;
+	right:0;
+}
+.pAssociatore {
+	padding-right: 10px;
+	padding-left: 10px;
+}
+.image-thumb2 {
+	max-width: 256px;
+	max-height: 256px;
+	margin: 5px;
+	border: 2px solid black;
+}
+.tdAct{
+	width:50%;
+}
+.tableAct {
+	width:100%;
+}
+.tableAct tr{
+	width:100%;
+}
+.donationIMG {
+	cursor: pointer;
+}
+.selectionTD {
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 10px;
+}
+.hidden {
+	display: none;
+}
+.visible {
+	display: inherit;
+}
+.takespace {
+	visibility: hidden;
+}

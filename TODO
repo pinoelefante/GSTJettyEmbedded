@@ -1,0 +1,16 @@
+Query Update#
+DROP TABLE subspedia
+UPDATE serietv SET id_subspedia = 0
+
+Cose da fare
+
+2) localizzazione
+3) community
+4) mygst (salvataggio online dei dati delle proprie serie)
+6) download tools esterni (vlc, utorrent, qbittorrent)
+7) integrazione client torrent
+9) player video integrato
+10) streaming video
+11) facebook, twitter post "Sto vedendo nomeserie con Gestione Serie TV"
+13) per un episodio visualizzare se è disponibile la versione hd
+14) client web preferito
