@@ -277,7 +277,8 @@ function showListDownload(){
 						var titolo = $(this).find("titolo").text();
 						var id = $(this).find("id").text();
 						if(noselect == "false")
-							html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"' checked /><b>&nbsp;"+titolo+"</b></td></tr>";
+							//html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"' checked /><b>&nbsp;"+titolo+"</b></td></tr>";
+							html+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"'/><b>&nbsp;"+titolo+"</b></td></tr>";
 						else
 							noSelectHTML+="<tr><td class='selectionTD'><input type='checkbox' onchange='res_ChangeSelection("+id+")' value='"+id+"' id='resCheck"+id+"'/><b>&nbsp;"+titolo+"</b></td></tr>";
 					});

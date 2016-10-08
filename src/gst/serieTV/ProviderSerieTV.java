@@ -13,6 +13,7 @@ public abstract class ProviderSerieTV {
 	protected final static int PROVIDER_FILESYSTEM = 0;
 	protected final static int PROVIDER_EZTV=1;
 	public final static int PROVIDER_SHOWRSS=2;
+	public final static int PROVIDER_SHOWRSS2=3;
 	protected boolean update_in_corso;
 	
 	protected ArrayList<SerieTV> nuove_serie;
@@ -55,6 +56,7 @@ public abstract class ProviderSerieTV {
 		String pref_sub = (String) res.getValueByKey("preferenze_sottotitoli");
 		boolean escludiSelezionaTutto = ((int) res.getValueByKey("escludi_seleziona_tutto")==0?false:true);
 		int id_karmorra = (int) res.getValueByKey("id_karmorra");
+		int id_showrss_new = (int) res.getValueByKey("id_showrss_new");
 		SerieTV st = new SerieTV(id_provider, nome, url);
 		st.setIDDb(id_db);
 		st.setConclusa(conclusa);
@@ -70,6 +72,7 @@ public abstract class ProviderSerieTV {
 		st.setEscludiSelezionaTutto(escludiSelezionaTutto);
 		st.setIDAddic7ed(id_addic7ed);
 		st.setIDKarmorra(id_karmorra);
+		st.SetIdShowRss(id_showrss_new);
 		return st;
 	}
 	public static SerieTV getSerieByURL(String url, int provider){
@@ -121,7 +124,9 @@ public abstract class ProviderSerieTV {
 		else {
 			addSerieToDB(s);
 			SerieTV s1=getSerieByURL(s.getUrl(), provider);
-			nuove_serie.add(s1);
+			s.setIDDb(s1.getIDDb());
+			s1=null;
+			nuove_serie.add(s);
 			return true;
 		}
 	}
@@ -142,6 +147,8 @@ public abstract class ProviderSerieTV {
 			case PROVIDER_EZTV:
 				return "eztv.it";
 			case PROVIDER_SHOWRSS:
+				return "showRss.info - old";
+			case PROVIDER_SHOWRSS2:
 				return "showRss.info";
 		}
 		return "unknown";

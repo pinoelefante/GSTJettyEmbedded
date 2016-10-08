@@ -29,11 +29,12 @@ public class ShowRSS extends ProviderSerieTV {
 
 	@Override
 	public String getBaseURL() {
-		return "http://showrss.info";
+		return "http://showrss.info - old";
 	}
 
 	@Override
 	public void aggiornaElencoSerie() {
+		/*
 		try {
 			Document doc = Jsoup.connect(getBaseURL()+"/?cs=browse")
 					.header("User-Agent", UserAgent.get())
@@ -65,9 +66,12 @@ public class ShowRSS extends ProviderSerieTV {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 	}
 	
-	private boolean associaEztv(SerieTV s){
+	private boolean associaEztv(SerieTV s)
+	{
+		/*
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND lower(nome)=\""+s.getNomeSerie().toLowerCase()+"\"";
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		if(res.size()==1){
@@ -76,6 +80,7 @@ public class ShowRSS extends ProviderSerieTV {
 			String query_associa = "UPDATE "+Database.TABLE_SERIETV+" SET id_karmorra="+s.getIDDb()+" WHERE id="+ideztv;
 			return Database.updateQuery(query_associa);
 		}
+		*/
 		return false;
 	}
 	public int associaToEztv(SerieTV s){
