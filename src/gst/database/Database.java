@@ -496,4 +496,23 @@ public class Database {
 			return null;
 		}
 	}
+	public static int getCount(String query)
+	{
+		int count = 0;
+		Statement stat = null;
+		ResultSet rs = null;
+		try{
+			stat=con.createStatement();
+			rs=stat.executeQuery(query);
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+			rs.close();
+			stat.close();
+			return count;
+		}
+		catch(Exception e){
+			return 0;
+		}
+	}
 }

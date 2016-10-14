@@ -195,6 +195,10 @@ public class GestioneSerieTV implements Notifier {
 			}
 		}
 	}
+	public int GetEpisodiDaScaricare()
+	{
+		return Database.getCount("SELECT COUNT(*) FROM episodi WHERE stato_visualizzazione = 0 AND serie IN (SELECT id_serie FROM preferiti)");
+	}
 	public ArrayList<Entry<SerieTV,ArrayList<Episodio>>> getEpisodiDaScaricare(){
 		ArrayList<SerieTV> serie = getElencoSeriePreferite();
 		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> res = new ArrayList<Entry<SerieTV,ArrayList<Episodio>>>();

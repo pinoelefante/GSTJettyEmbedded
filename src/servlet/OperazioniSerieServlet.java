@@ -96,6 +96,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseEpisodiScaricare(map);
 				break;
 			}
+			case "getNumEpisodiDaScaricare":{
+				int count = manager.GetEpisodiDaScaricare();
+				xml = ResponseSender.createResponseInteger(count);
+				break;
+			}
 			case "getEpisodiDaScaricareBySerie": {
 				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
 				ArrayList<Episodio> episodi = manager.getEpisodiDaScaricareBySerie(idSerie);

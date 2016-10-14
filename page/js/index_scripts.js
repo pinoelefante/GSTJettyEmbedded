@@ -7,7 +7,7 @@ $(document).ready(function() {
 	caricaSerieNuove();
 	caricaElencoSerieCompleto();
 	getEpisodiDaVedere();
-	lookForToDownload();
+	GetCountToDownload();
 	bootbox.setDefaults({
 		locale: "it"
 	});
@@ -239,6 +239,7 @@ function download() {
 			downloadS(idEp);
 		}
 	}); 
+	GetCountToDownload();
 	//showButtonResults();
 }
 function lookForToDownload(){
@@ -254,6 +255,23 @@ function lookForToDownload(){
 				$("#btnShowSelect").removeClass("hidden");
 				$("#btnShowSelect").addClass("visible");
 				$("#btnShowSelect").text(numEpisodi+" nuovi");
+			}
+		}
+	});
+}
+function GetCountToDownload(){
+	$.ajax({
+		type : "POST",
+		url : "./OperazioniSerieServlet",
+		data : "action=getNumEpisodiDaScaricare",
+		dataType : "xml",
+		success : function(msg) {
+			var resp = parseBooleanXML(msg);
+			if(resp){
+				var count=parseInt($(msg).find("Integer").text());
+				$("#btnShowSelect").removeClass("hidden");
+				$("#btnShowSelect").addClass("visible");
+				$("#btnShowSelect").text(count+" nuovi");
 			}
 		}
 	});
@@ -299,6 +317,7 @@ function downloadList(){
 			$(this).remove();
 		}
 	});
+	GetCountToDownload();
 }
 
 function ignora() {
