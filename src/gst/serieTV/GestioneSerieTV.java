@@ -13,11 +13,9 @@ import gst.services.TaskRicercaEpisodi;
 import gst.sottotitoli.GestoreSottotitoli;
 
 import java.io.File;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Timer;
 
 import org.jdom.Document;
@@ -356,21 +354,39 @@ public class GestioneSerieTV implements Notifier {
 		timer.cancel();
 		timer.purge();
 	}
-	public ArrayList<Entry<SerieTV, ArrayList<Episodio>>> getEpisodiDaVedere(){
-		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> results = new ArrayList<>();
-		for(SerieTV st: getElencoSeriePreferite()){
-			String query = "SELECT * FROM episodi WHERE serie="+st.getIDDb()+" AND stato_visualizzazione=1 "+(settings.isRicercaSottotitoli()?("AND sottotitolo=0"):"")+" ORDER BY stagione, episodio ASC";
-			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-			ArrayList<Episodio> eps = new ArrayList<Episodio>();
-			for(int i=0;i<res.size();i++){
-				Episodio ep = ProviderSerieTV.parseEpisodio(res.get(i));
-				eps.add(ep);
+	public Document GetEpisodiDaVedere()
+	{
+		String query = "SELECT st.id AS id_serie, st.nome, ep.id AS id_episodio, ep.stagione, ep.episodio FROM episodi AS ep JOIN serietv AS st WHERE ep.serie IN (SELECT id_serie FROM preferiti ) AND ep.serie=st.id AND stato_visualizzazione=1 AND sottotitolo=0 ORDER BY st.nome, ep.stagione, ep.episodio";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		int idCurrSerie = -1;
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element serieElem = null;
+		for(KVResult<String, Object> row : res)
+		{
+			int idSerie = (int)row.getValueByKey("id_serie");
+			if(idCurrSerie != idSerie)
+			{
+				if(serieElem!=null)
+					root.addContent(serieElem);
+				serieElem = new Element("serie");
+				serieElem.setAttribute("id", idSerie+"");
+				serieElem.setAttribute("nome", row.getValueByKey("nome").toString());
+				idCurrSerie = idSerie;
 			}
-			Entry<SerieTV, ArrayList<Episodio>> entry = new AbstractMap.SimpleEntry<SerieTV, ArrayList<Episodio>>(st, eps);
-			if(eps.size()>0)
-				results.add(entry);
+			Element episodio = new Element("episodio");
+			Element titolo=new Element("titolo");
+			Element id=new Element("id");
+			int epNum = (int)row.getValueByKey("episodio");
+			titolo.addContent(row.getValueByKey("nome").toString()+" "+(int)row.getValueByKey("stagione")+"x"+(epNum<10?"0"+epNum:epNum));
+			id.addContent((int)row.getValueByKey("id_episodio")+"");
+			episodio.addContent(titolo);
+			episodio.addContent(id);
+			serieElem.addContent(episodio);
 		}
-		return results;
+		return new Document(root);
 	}
 	public boolean ignoraEpisodio(int idEp){
 		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
