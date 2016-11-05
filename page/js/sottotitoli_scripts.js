@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	loadSeriePreferite();
-	loadProviders();
 	chosenConfig();
 	loadsubScaricati();
 	loadsubScaricare();
+	loadProviders();
 });
 function chosenConfig(){
 	var config = {

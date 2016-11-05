@@ -5,9 +5,9 @@ $(document).ready(function() {
 	});
 	loadSeriePreferite();
 	caricaSerieNuove();
-	caricaElencoSerieCompleto();
 	getEpisodiDaVedere();
 	GetCountToDownload();
+	caricaElencoSerieCompleto();
 	bootbox.setDefaults({
 		locale: "it"
 	});
