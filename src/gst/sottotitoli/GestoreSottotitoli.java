@@ -29,7 +29,8 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import util.Object4Value;
+import org.jdom.Document;
+import org.jdom.Element;
 
 public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
@@ -323,23 +324,34 @@ public class GestoreSottotitoli implements Notifier{
 		}
 		return subDown;
 	}
-	public Map<SerieTV, ArrayList<Episodio>> sottotitoliDaScaricare() {
-		Map<SerieTV, ArrayList<Episodio>> map = new HashMap<SerieTV, ArrayList<Episodio>>();
-		ArrayList<SerieTV> series = GestioneSerieTV.getInstance().getElencoSeriePreferite();
-		for(int i=0;i<series.size();i++){
-			SerieTV s = series.get(i);
-			String query = "SELECT * FROM "+Database.TABLE_EPISODI+" WHERE sottotitolo=1 AND serie="+s.getIDDb()+" ORDER BY stagione, episodio ASC";
-			ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-			ArrayList<Episodio> eps = new ArrayList<Episodio>();
-			for(int j=0;j<res.size();j++){
-				Episodio e = ProviderSerieTV.parseEpisodio(res.get(j));
-				eps.add(e);
-			}
-			if(eps.size()>0){
-				map.put(s, eps);
-			}
+	public Document GetSottotitoliDaScaricare()
+	{
+		String query = "SELECT st.id AS id_serie, ep.id AS id_episodio, st.nome, ep.stagione, ep.episodio FROM episodi AS ep JOIN serietv AS st WHERE ep.serie=st.id AND sottotitolo=1 AND serie IN (SELECT id_serie FROM preferiti) ORDER BY nome, stagione, episodio ASC";
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		Element subs = new Element("episodi");
+		for(KVResult<String, Object> row : res)
+		{
+			Element episodio = new Element("episodio");
+			Element idEpisodio = new Element("id_episodio");
+			idEpisodio.addContent((int)row.getValueByKey("id_episodio")+"");
+			episodio.addContent(idEpisodio);
+			
+			String nomeSerie = row.getValueByKey("nome").toString();
+			int episodeNum = (int)row.getValueByKey("episodio");
+			int stagioneNum = (int)row.getValueByKey("stagione");
+			String title = String.format("%s - %dx%02d", nomeSerie, stagioneNum, episodeNum);
+			Element titolo = new Element("titolo");
+			titolo.addContent(title);
+			episodio.addContent(titolo);
+			
+			subs.addContent(episodio);
 		}
-		return map;
+		root.addContent(subs);
+		return new Document(root);
 	}
 	public Map<ProviderSottotitoli, ArrayList<SerieSub>> getProviders(){
 		Map<ProviderSottotitoli, ArrayList<SerieSub>> map = new HashMap<ProviderSottotitoli, ArrayList<SerieSub>>();
@@ -351,6 +363,37 @@ public class GestoreSottotitoli implements Notifier{
 			map.put(p, s);
 		}
 		return map;
+	}
+	public Document GetProviders()
+	{
+		String query = "SELECT id,nome,6 AS provider FROM addic7ed UNION SELECT id,nome,1 AS provider FROM itasa UNION SELECT id,nome,3 FROM subspedia ORDER BY provider, nome";
+		ArrayList<KVResult<String,Object>> res = Database.selectQuery(query);
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		int currProvider = -1;
+		Element providerElem = null;
+		for(KVResult<String,Object> row : res)
+		{
+			int provider = (int)row.getValueByKey("provider");
+			if(provider!=currProvider)
+			{
+				providerElem = new Element("provider");
+				providerElem.setAttribute("id_provider", provider+"");
+				root.addContent(providerElem);
+				currProvider = provider;
+			}
+			Element serie = new Element("serie");
+			Element nomeSerie = new Element("nome");
+			nomeSerie.addContent(row.getValueByKey("nome").toString());
+			serie.addContent(nomeSerie);
+			Element idSerie = new Element("id");
+			idSerie.addContent((int)row.getValueByKey("id")+"");
+			serie.addContent(idSerie);
+			providerElem.addContent(serie);
+		}
+		return new Document(root);
 	}
 	public static void rimuoviSub(int id){
 		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+id;
@@ -377,22 +420,46 @@ public class GestoreSottotitoli implements Notifier{
 			Database.updateQuery(query1);
 		}
 	}
-	public ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> getLast50LogSub(){
-		String query = "SELECT * FROM logsub ORDER BY id DESC LIMIT 50";
-		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list = new ArrayList<Object4Value<ProviderSottotitoli,SerieTV,Episodio, String>>();
-		for(int i=res.size()-1;i>=0;i--){
-			KVResult<String,Object> r = res.get(i);
-			int idEpisodio = (int) r.getValueByKey("episodio");
-			int provider = (int) r.getValueByKey("provider");
-			String lingua = (String) r.getValueByKey("lingua");
-			Episodio ep = ProviderSerieTV.getEpisodio(idEpisodio);
-			SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
-			ProviderSottotitoli prov = getProvider(provider);
-			Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> val = new Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>(prov, serie, ep, lingua);
-			list.add(val);
+	public Document GetLastLogSub(int limit){
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		
+		String query = "SELECT st.nome AS nome_serie,ep.id AS id_episodio, ep.stagione,ep.episodio,log.provider, log.lingua FROM logsub AS log JOIN episodi AS ep JOIN serietv AS st WHERE log.episodio = ep.id AND ep.serie=st.id ORDER BY log.id DESC LIMIT "+limit;
+		ArrayList<KVResult<String,Object>>res = Database.selectQuery(query);
+		Element subs = new Element("subs");
+		for(KVResult<String,Object> row : res)
+		{
+			Element sub = new Element("sub");
+			Element nomeSerie = new Element("nomeSerie");
+			nomeSerie.addContent(row.getValueByKey("nome_serie").toString());
+			
+			Element id_episodio = new Element("id_episodio");
+			id_episodio.addContent((int)row.getValueByKey("id_episodio")+"");
+			
+			Element stagione = new Element("stagione");
+			stagione.addContent((int)row.getValueByKey("stagione")+"");
+			
+			Element episodio = new Element("episodio");
+			episodio.addContent((int)row.getValueByKey("episodio")+"");
+			
+			Element provider = new Element("provider");
+			provider.addContent(getProvider((int)row.getValueByKey("provider")).getProviderName());
+			
+			Element lingua = new Element("lingua");
+			lingua.addContent(row.getValueByKey("lingua").toString());
+			
+			sub.addContent(nomeSerie);
+			sub.addContent(id_episodio);
+			sub.addContent(stagione);
+			sub.addContent(episodio);
+			sub.addContent(provider);
+			sub.addContent(lingua);
+			subs.addContent(sub);
 		}
-		return list;
+		root.addContent(subs);
+		return new Document(root);
 	}
 	public void close() {
 		timer.cancel();

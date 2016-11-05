@@ -31,6 +31,7 @@ public class OperazioniInfoServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String action = checkParameter("action", resp, req, false);
 		Document xml = null;
+		long init = System.currentTimeMillis();
 		switch(action){
 			case "associa": {
 				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
@@ -81,6 +82,8 @@ public class OperazioniInfoServlet extends HttpServlet {
 				break;
 			}
 		}
+		long finish = System.currentTimeMillis();
+		System.out.println("Tempo esecuzione "+action+" = "+ (finish-init));
 		ResponseSender.sendResponse(resp, xml);
 	}
 	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{

@@ -1,7 +1,5 @@
 package servlet;
 
-import gst.serieTV.Episodio;
-import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
@@ -16,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
-
-import util.Object4Value;
 
 public class SottotitoliServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
@@ -34,15 +30,16 @@ public class SottotitoliServlet extends HttpServlet{
 			return;
 		}
 		Document xml = null;
+		long init = System.currentTimeMillis();
 		switch(action){
 			case "getProviders": {
 				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = GestoreSottotitoli.getInstance().getProviders();
 				xml = ResponseSender.createProviderSottotitoli(map);
+				//xml = GestoreSottotitoli.getInstance().GetProviders();
 				break;
 			}
 			case "getSottotitoliDaScaricare": {
-				Map<SerieTV, ArrayList<Episodio>> map = GestoreSottotitoli.getInstance().sottotitoliDaScaricare();
-				xml = ResponseSender.createResponseSubDownload(map);
+				xml = GestoreSottotitoli.getInstance().GetSottotitoliDaScaricare();
 				break;
 			}
 			case "scaricaSubByID": {
@@ -75,11 +72,12 @@ public class SottotitoliServlet extends HttpServlet{
 				break;
 			}
 			case "getLogSub": {
-				ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list = GestoreSottotitoli.getInstance().getLast50LogSub();
-				xml = ResponseSender.createResponseLogSub(list);
+				xml = GestoreSottotitoli.getInstance().GetLastLogSub(50);
 				break;
 			}
 		}
+		long finish = System.currentTimeMillis();
+		System.out.println("Tempo esecuzione "+action+" = "+ (finish-init));
 		ResponseSender.sendResponse(resp, xml);
 	}
 	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{

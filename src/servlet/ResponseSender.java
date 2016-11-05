@@ -24,8 +24,6 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import util.Object4Value;
-
 public class ResponseSender {
 	public static void sendResponse(HttpServletResponse response, Document doc){
 		XMLOutputter xml_out = new XMLOutputter();
@@ -237,61 +235,6 @@ public class ResponseSender {
 		
 		return new Document(root);
 	}
-	public static Document createResponseEpisodiVedere(ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map) {
-		Element root = new Element("response");
-		Element ok = new Element("booleanResponse");
-		ok.addContent(true+"");
-		root.addContent(ok);
-		
-		for(Entry<SerieTV, ArrayList<Episodio>> entry : map){
-			SerieTV st = entry.getKey();
-			ArrayList<Episodio> eps = entry.getValue();
-			Element serie = new Element("serie");
-			serie.setAttribute("id", st.getIDDb()+"");
-			serie.setAttribute("nome", st.getNomeSerie());
-			for(int i=0;i<eps.size();i++){
-				Episodio ep = eps.get(i);
-				Element episodio = new Element("episodio");
-				Element titolo=new Element("titolo");
-				Element id=new Element("id");
-				titolo.addContent(st.getNomeSerie()+" "+ep.getStagione()+"x"+(ep.getEpisodio()<10?"0"+ep.getEpisodio():ep.getEpisodio()));
-				id.addContent(""+ep.getId());
-				episodio.addContent(titolo);
-				episodio.addContent(id);
-				serie.addContent(episodio);
-			}
-			root.addContent(serie);
-		}
-		return new Document(root);
-	}
-	public static Document createResponseEpisodiScaricare(ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map) {
-		Element root = new Element("response");
-		Element ok = new Element("booleanResponse");
-		ok.addContent(true+"");
-		root.addContent(ok);
-		
-		for(Entry<SerieTV, ArrayList<Episodio>> entry : map){
-			SerieTV st = entry.getKey();
-			ArrayList<Episodio> eps = entry.getValue();
-			Element serie = new Element("serie");
-			serie.setAttribute("id", st.getIDDb()+"");
-			serie.setAttribute("nome", st.getNomeSerie());
-			serie.setAttribute("noselect", st.isEscludiSelezione()+"");
-			for(int i=0;i<eps.size();i++){
-				Episodio ep = eps.get(i);
-				Element episodio = new Element("episodio");
-				Element titolo=new Element("titolo");
-				Element id=new Element("id");
-				titolo.addContent(st.getNomeSerie()+" "+ep.getStagione()+"x"+(ep.getEpisodio()<10?"0"+ep.getEpisodio():ep.getEpisodio()));
-				id.addContent(""+ep.getId());
-				episodio.addContent(titolo);
-				episodio.addContent(id);
-				serie.addContent(episodio);
-			}
-			root.addContent(serie);
-		}
-		return new Document(root);
-	}
 	public static Document createResponseInfoSerie(SerieTVDBFull serie) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
@@ -404,38 +347,6 @@ public class ResponseSender {
 		
 		return new Document(root);
 	}
-	public static Document createResponseLogSub(ArrayList<Object4Value<ProviderSottotitoli, SerieTV, Episodio, String>> list) {
-		Element root = new Element("response");
-		Element ok = new Element("booleanResponse");
-		ok.addContent(true+"");
-		root.addContent(ok);
-		Element subs = new Element("subs");
-		for(int i=list.size()-1;i>=0;i--){
-			Object4Value<ProviderSottotitoli, SerieTV, Episodio, String> s = list.get(i);
-			Element sub = new Element("sub");
-			Element nomeSerie = new Element("nomeSerie");
-			nomeSerie.addContent(s.getV().getNomeSerie());
-			Element id_episodio = new Element("id_episodio");
-			id_episodio.addContent(s.getT().getId()+"");
-			Element stagione = new Element("stagione");
-			stagione.addContent(s.getT().getStagione()+"");
-			Element episodio = new Element("episodio");
-			episodio.addContent(s.getT().getEpisodio()+"");
-			Element provider = new Element("provider");
-			provider.addContent(s.getK().getProviderName());
-			Element lingua = new Element("lingua");
-			lingua.addContent(s.getZ());
-			sub.addContent(nomeSerie);
-			sub.addContent(id_episodio);
-			sub.addContent(stagione);
-			sub.addContent(episodio);
-			sub.addContent(provider);
-			sub.addContent(lingua);
-			subs.addContent(sub);
-		}
-		root.addContent(subs);
-		return new Document(root);
-	}
 	public static Document createInfoClient(String id, int versione) {
 		Element root = new Element("response");
 		Element ok = new Element("booleanResponse");
@@ -507,25 +418,5 @@ public class ResponseSender {
 		e.addContent(rating);
 		root.addContent(e);
 		return new Document(root);
-	}
-	public static Element elementEpisodio(Episodio e){
-		Element episodio = new Element("episodio");
-		
-		Element id = new Element("id");
-		Element stagione = new Element("stagione");
-		Element ep = new Element("num_episodio");
-		Element idTvDb = new Element("id_tvdb");
-		
-		id.addContent(""+e.getId());
-		stagione.addContent(""+e.getStagione());
-		ep.addContent(""+e.getEpisodio());
-		idTvDb.addContent(e.getIdTvDB()+"");
-		
-		episodio.addContent(id);
-		episodio.addContent(stagione);
-		episodio.addContent(ep);
-		episodio.addContent(idTvDb);
-		
-		return episodio;
 	}
 }

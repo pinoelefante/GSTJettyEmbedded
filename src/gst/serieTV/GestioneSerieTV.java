@@ -216,12 +216,11 @@ public class GestioneSerieTV implements Notifier {
 			int idSerie = (int)row.getValueByKey("id_serie");
 			if(idCurrSerie != idSerie)
 			{
-				if(serieElem!=null)
-					root.addContent(serieElem);
 				serieElem = new Element("serie");
 				serieElem.setAttribute("id", idSerie+"");
 				serieElem.setAttribute("nome", row.getValueByKey("nome").toString());
 				serieElem.setAttribute("noselect", ((int)row.getValueByKey("escludi_selezione")==1?true:false)+"");
+				root.addContent(serieElem);
 				idCurrSerie = idSerie;
 			}
 			Element episodio = new Element("episodio");
@@ -369,11 +368,10 @@ public class GestioneSerieTV implements Notifier {
 			int idSerie = (int)row.getValueByKey("id_serie");
 			if(idCurrSerie != idSerie)
 			{
-				if(serieElem!=null)
-					root.addContent(serieElem);
 				serieElem = new Element("serie");
 				serieElem.setAttribute("id", idSerie+"");
 				serieElem.setAttribute("nome", row.getValueByKey("nome").toString());
+				root.addContent(serieElem);
 				idCurrSerie = idSerie;
 			}
 			Element episodio = new Element("episodio");
