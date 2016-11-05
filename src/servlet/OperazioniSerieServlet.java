@@ -45,6 +45,7 @@ public class OperazioniSerieServlet extends HttpServlet {
 			return;
 		}
 		Document xml = null;
+		long init = System.currentTimeMillis();
 		switch(action){
 			case "add": {
 				int serie = Integer.parseInt(checkParameter("serie", resp, req, false));
@@ -92,12 +93,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				break;
 			}
 			case "getEpisodiDaScaricare":{
-				ArrayList<Entry<SerieTV, ArrayList<Episodio>>> map = manager.getEpisodiDaScaricare();
-				xml = ResponseSender.createResponseEpisodiScaricare(map);
+				xml = manager.GetEpisodiDaScaricare();
 				break;
 			}
 			case "getNumEpisodiDaScaricare":{
-				int count = manager.GetEpisodiDaScaricare();
+				int count = manager.GetNumEpisodiDaScaricare();
 				xml = ResponseSender.createResponseInteger(count);
 				break;
 			}
@@ -221,6 +221,8 @@ public class OperazioniSerieServlet extends HttpServlet {
 			}
 			break;
 		}
+		long finish = System.currentTimeMillis();
+		System.out.println("Tempo esecuzione "+action+" = "+ (finish-init));
 		ResponseSender.sendResponse(resp, xml);
 	}
 	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{

@@ -188,14 +188,6 @@ public abstract class ProviderSerieTV {
 		for(int i=0;i<res1.size();i++){
 			episodi.add(parseEpisodio(res1.get(i)));
 		}
-		for(int i=0;i<episodi.size();i++){
-			Episodio ep = episodi.get(i);
-			String query2 = "SELECT * FROM torrent WHERE episodio="+ep.getId();
-			ArrayList<KVResult<String, Object>> res2=Database.selectQuery(query2);
-			for(int j=0;j<res2.size();j++){
-				ep.aggiungiLink(parseTorrent(res2.get(j)));
-			}
-		}
 		return episodi;
 	}
 	public static ArrayList<Episodio> getEpisodiSerie(int idSerie){

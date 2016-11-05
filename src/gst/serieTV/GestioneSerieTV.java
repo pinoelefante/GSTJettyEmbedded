@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Timer;
 
+import org.jdom.Document;
+import org.jdom.Element;
+
 import util.os.DirectoryManager;
 import util.os.DirectoryNotAvailableException;
 
@@ -195,20 +198,45 @@ public class GestioneSerieTV implements Notifier {
 			}
 		}
 	}
-	public int GetEpisodiDaScaricare()
+	public int GetNumEpisodiDaScaricare()
 	{
 		return Database.getCount("SELECT COUNT(*) FROM episodi WHERE stato_visualizzazione = 0 AND serie IN (SELECT id_serie FROM preferiti)");
 	}
-	public ArrayList<Entry<SerieTV,ArrayList<Episodio>>> getEpisodiDaScaricare(){
-		ArrayList<SerieTV> serie = getElencoSeriePreferite();
-		ArrayList<Entry<SerieTV, ArrayList<Episodio>>> res = new ArrayList<Entry<SerieTV,ArrayList<Episodio>>>();
-		for(SerieTV s : serie){
-			ArrayList<Episodio> episodi = getEpisodiDaScaricareBySerie(s.getIDDb());
-			if(episodi.isEmpty())
-				continue;
-			res.add(new AbstractMap.SimpleEntry<SerieTV,ArrayList<Episodio>>(s, episodi));
+	public Document GetEpisodiDaScaricare()
+	{
+		
+		String query = "SELECT st.id AS id_serie,ep.id AS id_episodio,st.nome, ep.stagione,ep.episodio, st.escludi_seleziona_tutto AS escludi_selezione FROM episodi AS ep JOIN serietv AS st WHERE ep.serie=st.id AND  ep.serie IN (SELECT id_serie FROM preferiti) AND stato_visualizzazione = 0 ORDER BY escludi_selezione, st.nome, ep.stagione,ep.episodio";
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		int idCurrSerie = -1;
+		Element root = new Element("response");
+		Element ok = new Element("booleanResponse");
+		ok.addContent(true+"");
+		root.addContent(ok);
+		Element serieElem = null;
+		for(KVResult<String, Object> row : res)
+		{
+			int idSerie = (int)row.getValueByKey("id_serie");
+			if(idCurrSerie != idSerie)
+			{
+				if(serieElem!=null)
+					root.addContent(serieElem);
+				serieElem = new Element("serie");
+				serieElem.setAttribute("id", idSerie+"");
+				serieElem.setAttribute("nome", row.getValueByKey("nome").toString());
+				serieElem.setAttribute("noselect", ((int)row.getValueByKey("escludi_selezione")==1?true:false)+"");
+				idCurrSerie = idSerie;
+			}
+			Element episodio = new Element("episodio");
+			Element titolo=new Element("titolo");
+			Element id=new Element("id");
+			int epNum = (int)row.getValueByKey("episodio");
+			titolo.addContent(row.getValueByKey("nome").toString()+" "+(int)row.getValueByKey("stagione")+"x"+(epNum<10?"0"+epNum:epNum));
+			id.addContent((int)row.getValueByKey("id_episodio")+"");
+			episodio.addContent(titolo);
+			episodio.addContent(id);
+			serieElem.addContent(episodio);
 		}
-		return res;
+		return new Document(root);
 	}
 	public ArrayList<Episodio> getEpisodiDaScaricareBySerie(int idSerie){
 		ArrayList<Episodio> episodi = ProviderSerieTV.getEpisodiDaScaricare(idSerie);
