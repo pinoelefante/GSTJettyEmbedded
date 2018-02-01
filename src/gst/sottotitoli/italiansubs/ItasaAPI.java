@@ -4,10 +4,12 @@ import gst.naming.CaratteristicheFile;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.SerieSub;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -26,12 +28,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.config.Registry;
@@ -60,13 +66,13 @@ import org.xml.sax.SAXException;
 import util.UserAgent;
 
 public class ItasaAPI {
-	private String			  AUTHCODE	  = "";
-	private String			  APIKEY		= "87c9d52fba19ba856a883b1d3ddb14dd";
+	private String AUTHCODE		 = "";
+	private String APIKEY		 = "87c9d52fba19ba856a883b1d3ddb14dd";
 
-	private String			  API_SHOWLIST  = "https://api.italiansubs.net/api/rest/shows?apikey=" + APIKEY;
-	private String			  API_SUB_GETID = "https://api.italiansubs.net/api/rest/subtitles/search?q=<QUERY>&show_id=<SHOW_ID>&version=<VERSIONE>&apikey=" + APIKEY;
-	private String			  API_LOGIN	 = "https://api.italiansubs.net/api/rest/users/login?username=<USERNAME>&password=<PASSWORD>&apikey=" + APIKEY;
-	private String			  API_DOWNLOAD  = "https://api.italiansubs.net/api/rest/subtitles/download?subtitle_id=<ID_SUB>&authcode=<AUTHCODE>&apikey=" + APIKEY;
+	private String API_SHOWLIST  = "https://api.italiansubs.net/api/rest/shows?apikey=" + APIKEY;
+	private String API_SUB_GETID = "https://api.italiansubs.net/api/rest/subtitles/search?q=<QUERY>&show_id=<SHOW_ID>&version=<VERSIONE>&apikey=" + APIKEY;
+	private String API_LOGIN	 = "https://api.italiansubs.net/api/rest/users/login?username=<USERNAME>&password=<PASSWORD>&apikey=" + APIKEY;
+	private String API_DOWNLOAD  = "https://api.italiansubs.net/api/rest/subtitles/download?subtitle_id=<ID_SUB>&authcode=<AUTHCODE>&apikey=" + APIKEY;
 
 	private CloseableHttpClient httpclient;
 	private BasicCookieStore	cookieStore;
@@ -118,36 +124,59 @@ public class ItasaAPI {
 	}
 
 	private void loginWeb(String username, String password) throws Exception {
-		HttpGet httpget = new HttpGet("http://www.italiansubs.net/index.php");
-		List<NameValuePair> parametri = null;
-		CloseableHttpResponse response1 = httpclient.execute(httpget);
-		try {
-			HttpEntity entity = response1.getEntity();
-			parametri = getParameters(EntityUtils.toString(entity));
-			parametri.add(new BasicNameValuePair("username", username));
-			parametri.add(new BasicNameValuePair("passwd", password));
-			EntityUtils.consume(entity);
-		}
-		finally {
-			response1.close();
-		}
-
-		RequestBuilder rq = RequestBuilder.post();
-		for (int i = 0; parametri != null && i < parametri.size(); i++) {
-			rq.addParameter(parametri.get(i));
-		}
-
-		HttpUriRequest login = rq.setUri("http://www.italiansubs.net/index.php").build();
-		CloseableHttpResponse response2 = httpclient.execute(login);
-		try {
-			HttpEntity entity = response2.getEntity();
-			EntityUtils.consume(entity);
-		}
-		finally {
-			response2.close();
-		}
+        org.jsoup.nodes.Document homepage = Jsoup.parse(new URL("https://www.italiansubs.net/index.php"), 5000);
+        org.jsoup.select.Elements inputs = homepage.select("form#form-login input[type=hidden]");
+        List<NameValuePair> input_fields = new ArrayList<NameValuePair>();
+        for(int i=0;i<inputs.size();i++)
+        {
+            org.jsoup.nodes.Element inp = inputs.get(i);
+            input_fields.add(new BasicNameValuePair(inp.attr("name"), inp.attr("value")));
+        }
+        input_fields.add(new BasicNameValuePair("username", username));
+        input_fields.add(new BasicNameValuePair("passwd", password));
+        
+        HttpPost request = new HttpPost("https://www.italiansubs.net/index.php");
+        request.setHeader(new BasicHeader(HttpHeaders.REFERER, "https://www.italiansubs.net/index.php"));
+        request.setHeader(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded"));
+        
+        UrlEncodedFormEntity entity_request = new UrlEncodedFormEntity(input_fields, Consts.UTF_8);
+        request.setEntity(entity_request);
+        
+        try {
+            CloseableHttpResponse response = httpclient.execute(request);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                String body_content = ReadResponse(entity);
+                EntityUtils.consume(entity);
+                System.out.println(body_content);
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
-
+	private String ReadResponse(HttpEntity entity) {
+        try {
+            InputStream in = entity.getContent();
+            InputStreamReader in_reader = new InputStreamReader(in);
+            BufferedReader reader = new BufferedReader(in_reader);
+            StringBuilder str_builder = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                str_builder.append(line);
+            }
+            reader.close();
+            in_reader.close();
+            in.close();
+            return str_builder.toString();
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 	private boolean tm_instanced = false;
 
 	private HttpsURLConnection getConnection(String url) throws IOException {

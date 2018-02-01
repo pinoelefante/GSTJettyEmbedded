@@ -135,6 +135,7 @@ public class ShowRSS extends ProviderSerieTV {
 
 	@Override
 	public void caricaEpisodiOnline(SerieTV serie) {
+		/*
 		try {
 			int idSerie = serie.getIDDb();
 			SerieTV k_serie = serie.getIDKarmorra()==0 ? serie : ProviderSerieTV.getSerieByID(serie.getIDKarmorra());
@@ -155,7 +156,7 @@ public class ShowRSS extends ProviderSerieTV {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		*/
 	}
 
 	@Override

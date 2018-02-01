@@ -71,6 +71,7 @@ public class Sistema {
 		}
 	}
 	public void aggiornaLauncher(){
+		/*
 		if(Os.isWindows()){
 			String pathLauncher = setts.getCurrentDir()+File.separator+"gstLauncher.exe";
 			String md5 = MD5Hash.hashFile(pathLauncher);
@@ -99,6 +100,7 @@ public class Sistema {
 				}
 			}
 		}
+		*/
 	}
 	private boolean verificaHashLauncher(String md5) {
 		try {
