@@ -184,12 +184,6 @@ public class OperazioniSerieServlet extends HttpServlet {
 				}
 				break;
 			}
-			case "associaAShowRss":{
-				int idSerie = Integer.parseInt(checkParameter("serie", resp, req, false));
-				int idRss = Integer.parseInt(checkParameter("showrssid", resp, req, false));
-				//TODO
-			}
-			break;
 			case "forzaAggiornamentoSerie":
 				//TODO
 				break;
@@ -218,6 +212,11 @@ public class OperazioniSerieServlet extends HttpServlet {
 				xml = ResponseSender.createResponseBoolean(true);
 			}
 			break;
+			case "setDefaultVideoQualityForAll":
+				int quality = Integer.parseInt(checkParameter("quality", resp, req, false));
+				manager.changeDefaultVideoQualityForAll(quality);
+				xml = ResponseSender.createResponseBoolean(true);
+				break;
 		}
 		long finish = System.currentTimeMillis();
 		System.out.println("Tempo esecuzione "+action+" = "+ (finish-init));

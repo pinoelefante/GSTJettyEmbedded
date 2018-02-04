@@ -436,4 +436,11 @@ public class GestioneSerieTV implements Notifier {
 		String query = "UPDATE "+Database.TABLE_EPISODI+" SET id_tvdb="+idTVDB+" WHERE id="+idEpisodio;
 		return Database.updateQuery(query);
 	}
+	public boolean changeDefaultVideoQualityForAll(int pref)
+	{
+		ArrayList<SerieTV> preferite = getElencoSeriePreferite();
+		for(SerieTV serie : preferite)
+			setPreferenzeDownload(serie.getIDDb(), pref);
+		return true;
+	}
 }
