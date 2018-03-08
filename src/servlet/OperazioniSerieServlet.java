@@ -8,10 +8,19 @@ import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
 import gst.serieTV.ShowRSS;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,11 +33,13 @@ import util.os.DirectoryNotAvailableException;
 public class OperazioniSerieServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GestioneSerieTV manager;
+	private Map<String, String> streaming_threads;
 	
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		manager = GestioneSerieTV.getInstance();
+		streaming_threads = new HashMap<String, String>();
 	}
 	
 	@Override
@@ -159,6 +170,89 @@ public class OperazioniSerieServlet extends HttpServlet {
 				}
 				break;
 			}
+			case "stream":
+			{
+				int idEpisodio = Integer.parseInt(checkParameter("episodio", resp, req, false));
+				String filename = manager.getVideoFile(idEpisodio);
+				if(filename == null)
+				{
+					resp.sendError(404);
+					return;
+				}
+				
+				String range = req.getHeader("Range");
+				System.out.println("Range="+(range==null?"null":range));
+				long start = 0;
+				long end = 0;
+				if(range !=null)
+				{
+					String[] ranges = range.replace("bytes=", "").trim().split("-");
+					start = Long.parseLong(ranges[0]);
+					end = Long.parseLong(ranges.length>1 ? ranges[1] : "0");
+					
+					System.out.println(String.format("Range request: %d - %d", start, end));
+				}
+				
+				File file_info = new File(filename);
+				String file_ext = filename.substring(filename.lastIndexOf(".")+1);
+				/*
+				if(start==0 && end==0) // bytes=0-
+				{
+					System.out.println("Begin");
+					resp.setStatus(200);
+					resp.setHeader("Accept-Ranges", "bytes");
+					resp.setHeader("Content-Type", "video/x-matroska");
+					resp.setHeader("Content-Length", file_info.length()+"");
+					//resp.setHeader("Content-Length", 1048576+"");
+					resp.setHeader("Content-Range", String.format("bytes 0-1048575/%d", file_info.length()));
+					byte[] fileContent = ReadFile(filename, 0, 1048576);
+					resp.getOutputStream().write(fileContent);
+					resp.getOutputStream().close();
+				}
+				else if(start > 0)
+				{
+					resp.setStatus(206);
+					resp.setHeader("Accept-Ranges", "bytes");
+					resp.setHeader("Content-Type", "video/x-matroska");
+					resp.setHeader("Content-Length", file_info.length()+"");
+					resp.setHeader("Content-Range", String.format("bytes %d-%d/883912350", start, (start + 1048575)));
+					
+					byte[] fileContent = ReadFile(filename, (int)start, (int)start + 1048575);
+					resp.getOutputStream().write(fileContent);
+				}
+				/*
+				else if(end > start) // es: bytes=12-1024
+				{
+					System.out.println("Range play");
+				}
+				*/
+				
+				//else 
+				{
+					System.out.println("Direct play");
+					resp.setStatus(200);
+					resp.setHeader("Accept-Ranges", "bytes");
+					resp.setHeader("Content-Type", GetMimeType(file_ext));
+					resp.setHeader("Content-Length", file_info.length()+"");
+					//resp.setHeader("Content-Range", "bytes 0-1048575/883912350");
+					
+					byte[] buffer = new byte[1048576];
+					int read = 0;
+					try(FileInputStream reader = new FileInputStream(file_info))
+					{
+						while((read = reader.read(buffer)) > 0)
+						{
+							resp.getOutputStream().write(buffer, 0, read);
+						}
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+				
+				return;
+			}
 			case "remove": {
 				int idSerie=Integer.parseInt(checkParameter("id", resp, req, false));
 				String rimuoviEpisodi = checkParameter("removeEp", resp, req, true);
@@ -231,5 +325,36 @@ public class OperazioniSerieServlet extends HttpServlet {
 		}
 		return req.getParameter(parametro);
 	}
-
+	private byte[] ReadFile(String filename, int start, int end)
+	{
+		File file = new File(filename);
+		byte[] buffer = new byte[end-start];
+		try(FileInputStream reader = new FileInputStream(file))
+		{
+			reader.read(buffer, start, end);
+		}
+		catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return buffer;
+	}
+	private String GetMimeType(String ext)
+	{
+		ext = ext.toLowerCase();
+		switch(ext)
+		{
+			case "mkv":
+				return "video/x-matroska";
+			case "mp4":
+				return "video/mp4";
+		}
+		return "text/html";
+	}
 }

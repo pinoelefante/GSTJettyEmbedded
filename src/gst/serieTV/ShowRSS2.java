@@ -85,8 +85,8 @@ public class ShowRSS2 extends ProviderSerieTV
 		{
 			KVResult<String, Object> resEztv = res.get(0);
 			int ideztv = (int) resEztv.getValueByKey("id");
-			String query_associa = "UPDATE " + Database.TABLE_SERIETV + " SET id_showrss_new=" + s.getIDDb() + " WHERE id=" + ideztv;
-			return Database.updateQuery(query_associa);
+			String query_associa = "UPDATE " + Database.TABLE_SERIETV + " SET id_showrss_new=? WHERE id=?";
+			return Database.updateQuery(query_associa, s.getIDDb(), ideztv);
 		}
 		return false;
 	}

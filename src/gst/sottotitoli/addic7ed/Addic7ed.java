@@ -265,20 +265,20 @@ public class Addic7ed implements ProviderSottotitoli {
 	private boolean salvaInDB(String nome, int id){
 		if(isPresente(id))
 			return false;
-		String query = "INSERT INTO "+Database.TABLE_ADDIC7ED+" (id, nome) VALUES ("+id+",\""+nome+"\")";
-		return Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_ADDIC7ED+" (id, nome) VALUES (?,?)";
+		return Database.updateQuery(query, id, nome);
 	}
 
 	@Override
 	public boolean associa(int idSerie, int idSub) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed="+idSub+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=? WHERE id=?";
+		return Database.updateQuery(query, idSub, idSerie);
 	}
 
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=0 WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=0 WHERE id=?";
+		return Database.updateQuery(query, idSerie);
 	}
 
 	@Override

@@ -127,8 +127,8 @@ public class Subspedia2 implements ProviderSottotitoli {
 	private void addSerie(int id, String nome){
 		if(isPresente(id))
 			return;
-		String query = "INSERT INTO "+Database.TABLE_SUBSPEDIA+" (id,nome) VALUES ("+id+",\""+nome+"\")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_SUBSPEDIA+" (id,nome) VALUES (?,?)";
+		Database.updateQuery(query, id, nome);
 	}
 	private boolean isPresente(int id){
 		String query = "SELECT * FROM "+Database.TABLE_SUBSPEDIA+" WHERE id="+id;
@@ -157,14 +157,14 @@ public class Subspedia2 implements ProviderSottotitoli {
 
 	@Override
 	public boolean associa(int idSerie, int idSub) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSub+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=? WHERE id=?";
+		return Database.updateQuery(query, idSub, idSerie);
 	}
 
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=0 WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=0 WHERE id=?";
+		return Database.updateQuery(query,idSerie);
 	}
 
 	@Override

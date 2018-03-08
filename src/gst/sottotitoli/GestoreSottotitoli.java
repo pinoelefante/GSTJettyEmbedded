@@ -242,8 +242,8 @@ public class GestoreSottotitoli implements Notifier{
 			scaricato = false;
 		
 		if(scaricato){
-			String query="UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+e.getId();
-			Database.updateQuery(query);
+			String query="UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id=?";
+			Database.updateQuery(query, e.getId());
 		}
 		if(scaricato && online){
 			localsubs.scaricaSottotitolo(s, e, lang, uniqueLang); //rename
@@ -251,8 +251,8 @@ public class GestoreSottotitoli implements Notifier{
 		return scaricato;
 	}
 	private void inserisciLog(Episodio e, ProviderSottotitoli p, String lang){
-		String query = "INSERT INTO "+Database.TABLE_LOGSUB+" (episodio, provider, lingua) VALUES ("+e.getId()+","+p.getProviderID()+",\""+lang+"\")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_LOGSUB+" (episodio, provider, lingua) VALUES (?,?,?)";
+		Database.updateQuery(query, e.getId(), p.getProviderID(), lang);
 	}
 	public ArrayList<SerieSub> getElencoSerie(int provider){
 		switch(provider){
@@ -400,28 +400,28 @@ public class GestoreSottotitoli implements Notifier{
 		return new Document(root);
 	}
 	public static void rimuoviSub(int id){
-		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id="+id;
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=0 WHERE id=?";
+		Database.updateQuery(query, id);
 		
-		String query2="DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio="+id;
-		Database.updateQuery(query2);
+		String query2="DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio=?";
+		Database.updateQuery(query2, id);
 	}
 	public static void setSottotitoloDownload(int idEpisodio, boolean stato, String lang){
-		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo="+(stato?1:0)+" WHERE id="+idEpisodio;
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET sottotitolo=? WHERE id=?";
+		Database.updateQuery(query,(stato?1:0), idEpisodio);
 		
 		if(stato == true) {
 			Episodio ep = ProviderSerieTV.getEpisodio(idEpisodio);
 			SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
 			String[] langs = serie.getPreferenzeSottotitoli().getPreferenze();
 			for(int i=0;i<langs.length;i++){
-				String query1 = "INSERT INTO "+Database.TABLE_SUBDOWN + " (episodio, lingua) VALUES ("+idEpisodio+",\""+langs[i]+"\")";
-				Database.updateQuery(query1);
+				String query1 = "INSERT INTO "+Database.TABLE_SUBDOWN + " (episodio, lingua) VALUES (?,?)";
+				Database.updateQuery(query1, idEpisodio, langs[i]);
 			}
 		}
 		else {
-			String query1 = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio="+idEpisodio+" AND lingua=\""+lang+"\"";
-			Database.updateQuery(query1);
+			String query1 = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio=? AND lingua=?";
+			Database.updateQuery(query1, idEpisodio, lang);
 		}
 	}
 	public Document GetLastLogSub(int limit){
@@ -474,7 +474,7 @@ public class GestoreSottotitoli implements Notifier{
 		PreferenzeSottotitoli p = s.getPreferenzeSottotitoli();
 		p.addPreferenza(lang);
 		String langs = p.getPreferenzeU();
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+langs+"\" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=? WHERE id=?";
+		return Database.updateQuery(query, langs, idSerie);
 	}
 }

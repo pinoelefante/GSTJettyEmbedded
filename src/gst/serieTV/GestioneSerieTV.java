@@ -172,8 +172,8 @@ public class GestioneSerieTV implements Notifier {
 	public boolean rimuoviSeriePreferita(int id, boolean removeEpisodi){
 		boolean ok=ProviderSerieTV.removeSerieDaPreferiti(id, removeEpisodi);
 		if(ok){
-			String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie="+id+")";
-			Database.updateQuery(q);
+			String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie=?)";
+			Database.updateQuery(q, id);
 		}
 		return ok;
 	}
@@ -335,7 +335,18 @@ public class GestioneSerieTV implements Notifier {
 			}
 		}
 	}
-	
+	public String getVideoFile(int idEp)
+	{
+		Episodio ep = ProviderSerieTV.getEpisodio(idEp);
+		SerieTV serie = ProviderSerieTV.getSerieByID(ep.getSerie());
+		ArrayList<File> files= DirectoryManager.getInstance().cercaFileVideo(serie, ep);
+		if(files.size()==0)
+		{
+			ProviderSerieTV.changeStatusEpisodio(idEp, Episodio.RIMOSSO);
+			return null;
+		}
+		return files.get(0).getAbsolutePath();
+	}
 	private ArrayList<Notificable> notificable;
 	public void subscribe(Notificable e) {
 		if(e!=null)
@@ -399,13 +410,13 @@ public class GestioneSerieTV implements Notifier {
 		String path2 = settings.getDirectoryDownload2()+serie.getFolderSerie();
 		boolean op = OperazioniFile.DeleteDirectory(new File(path));
 		OperazioniFile.DeleteDirectory(new File(path2));
-		String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+idSerie;
-		Database.updateQuery(resetEp);
+		String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie=?";
+		Database.updateQuery(resetEp,idSerie);
 		return op;
 	}
 	public boolean setSerieNonSelezionabile(int idSerie, boolean s){
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET escludi_seleziona_tutto="+(s?1:0)+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET escludi_seleziona_tutto=? WHERE id=?";
+		return Database.updateQuery(query,(s?1:0),idSerie);
 	}
 	public boolean setLingueSub(int idSerie, String lingue){
 		SerieTV serie=ProviderSerieTV.getSerieByID(idSerie);
@@ -415,26 +426,26 @@ public class GestioneSerieTV implements Notifier {
 		
 		if(rimosse.size()>0){
 			for(int i=0;i<rimosse.size();i++){
-				String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie="+idSerie+" AND list.lingua=\""+rimosse.get(i)+"\")";
-				Database.updateQuery(q);
+				String q = "DELETE FROM "+Database.TABLE_SUBDOWN+" WHERE episodio IN (SELECT list.episodio FROM list_subdown AS list JOIN episodi AS ep ON list.episodio=ep.id AND ep.serie=? AND list.lingua=?)";
+				Database.updateQuery(q, idSerie, rimosse.get(i));
 			}
 		}
 		if(lingueNuove.size()>0){
 			for(int i=0;i<lingueNuove.size();i++){
-				String q = "INSERT INTO list_subdown(episodio, lingua) SELECT id, \""+lingueNuove.get(i)+"\" FROM "+Database.TABLE_EPISODI+" WHERE serie="+idSerie+" AND sottotitolo=1";
-				Database.updateQuery(q);
+				String q = "INSERT INTO list_subdown(episodio, lingua) SELECT id, \""+lingueNuove.get(i)+"\" FROM "+Database.TABLE_EPISODI+" WHERE serie=? AND sottotitolo=1";
+				Database.updateQuery(q, idSerie);
 			}
 		}
- 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+lingue+"\" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+ 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=? WHERE id=?";
+		return Database.updateQuery(query, lingue, idSerie);
 	}
 	public boolean setPreferenzeDownload(int id, int pref_down) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_download="+pref_down+" WHERE id="+id;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_download=? WHERE id=?";
+		return Database.updateQuery(query, pref_down, id);
 	}
 	public boolean associaEpisodioTVDB(int idEpisodio, int idTVDB){
-		String query = "UPDATE "+Database.TABLE_EPISODI+" SET id_tvdb="+idTVDB+" WHERE id="+idEpisodio;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_EPISODI+" SET id_tvdb=? WHERE id=?";
+		return Database.updateQuery(query, idTVDB, idEpisodio);
 	}
 	public boolean changeDefaultVideoQualityForAll(int pref)
 	{

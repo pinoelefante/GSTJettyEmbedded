@@ -435,13 +435,12 @@ public class TheTVDB {
 	}
 	private void salvaAttori(SerieTVDBFull serie){
 		System.out.println("Salvo gli attori nel DB");
-		String queryD = "DELETE FROM "+Database.TABLE_TVDB_ATTORI+" WHERE idSerie="+serie.getId();
-		Database.updateQuery(queryD);
+		String queryD = "DELETE FROM "+Database.TABLE_TVDB_ATTORI+" WHERE idSerie=?";
+		Database.updateQuery(queryD, serie.getId());
 		
 		for(ActorTVDB a:serie.getAttori()){
-			String q = "INSERT INTO "+Database.TABLE_TVDB_ATTORI+" (idSerie,attore,ruolo,image) VALUES ("+
-					serie.getId()+",\""+a.getNome().replace("\"", "'")+"\",\""+a.getRuolo().replace("\"", "'")+"\",\""+a.getUrlImage()+"\")";
-			Database.updateQuery(q);
+			String q = "INSERT INTO "+Database.TABLE_TVDB_ATTORI+" (idSerie,attore,ruolo,image) VALUES (?,?,?,?)";
+			Database.updateQuery(q,serie.getId(),a.getNome(), a.getRuolo(), a.getUrlImage());
 		}
 	}
 	private void loadAttori(SerieTVDBFull serie){
@@ -525,12 +524,8 @@ public class TheTVDB {
 	private void salvaSerie(SerieTVDBFull serie){
 		String query = "INSERT INTO "+Database.TABLE_TVDB_SERIE + 
 				"(id,nomeSerie,rating,generi,network,inizio,giorno_settimana,ora_trasmissione,durata_episodi,stato,descrizione,descrizione_lang,banner,ultimo_aggiornamento)"+
-				" VALUES ("+serie.getId()+",\""+serie.getNomeSerie()+"\","+serie.getRating()+","+
-				"\""+serie.getGeneriString()+"\",\""+serie.getNetwork()+"\",\""+serie.getDataInizioITA()+"\","+
-				"\""+serie.getGiornoSettimana()+"\",\""+serie.getOraTrasmissione()+"\","+serie.getDurataEpisodi()+","+
-				"\""+serie.getStatoSerie()+"\",\""+serie.getDescrizione().replace("\"", "'")+"\",\""+(serie.getLang().isEmpty()?defaultLang:serie.getLang())+"\","+
-				"\""+serie.getUrlBanner()+"\","+(System.currentTimeMillis()/1000)+")";
-		Database.updateQuery(query);
+				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		Database.updateQuery(query, serie.getId(),serie.getNomeSerie(),serie.getRating(),serie.getGeneriString(),serie.getNetwork(),serie.getDataInizioITA(),serie.getGiornoSettimana(),serie.getOraTrasmissione(),serie.getDurataEpisodi(),serie.getStatoSerie(),serie.getDescrizione(),(serie.getLang().isEmpty()?defaultLang:serie.getLang()),serie.getUrlBanner(),(System.currentTimeMillis()/1000));
 	}
 	private SerieTVDBFull caricaSerie(int id, boolean skipImage){
 		String query = "SELECT * FROM "+Database.TABLE_TVDB_SERIE+" WHERE id="+id;
@@ -578,14 +573,11 @@ public class TheTVDB {
 		return serie;
 	}
 	private void aggiornaSerie(SerieTVDBFull serie){
-		String query = "UPDATE "+Database.TABLE_TVDB_SERIE +" SET "+ 
-				"rating="+serie.getRating()+", generi=\""+serie.getGeneriString()+"\", network=\""+serie.getNetwork()+"\","+
-				"inizio=\""+serie.getDataInizio()+"\", giorno_settimana=\""+serie.getGiornoSettimana()+"\","+
-				"ora_trasmissione=\""+serie.getOraTrasmissione()+"\", durata_episodi="+serie.getDurataEpisodi()+","+
-				"stato=\""+serie.getStatoSerie()+"\", descrizione=\""+serie.getDescrizione().replace("\"", "\\\"")+"\", descrizione_lang=\""+serie.getLang()+"\","+
-				"banner=\""+serie.getUrlBanner()+"\", ultimo_aggiornamento="+(System.currentTimeMillis()/1000)+
-				" WHERE id="+serie.getId();
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_TVDB_SERIE +" SET rating=?, generi=?, network=?, inizio=?, giorno_settimana=?,"+
+				"ora_trasmissione=?, durata_episodi=?,stato=?, descrizione=?, descrizione_lang=?,"+
+				"banner=?, ultimo_aggiornamento=? WHERE id=?";
+		Database.updateQuery(query, serie.getRating(), serie.getGeneriString(), serie.getNetwork(), serie.getDataInizio(), serie.getGiornoSettimana(), serie.getOraTrasmissione(), serie.getDurataEpisodi(),
+				serie.getStatoSerie(), serie.getDescrizione(), serie.getLang(), serie.getUrlBanner(), (System.currentTimeMillis()/1000), serie.getId());
 	}
 	public EpisodioTVDB getEpisodio(int idSerie, int st, int ep){
 		EpisodioTVDB eDB = caricaEpisodio(idSerie, st, ep);
@@ -679,12 +671,9 @@ public class TheTVDB {
 		return episodioTVDB;
 	}
 	private void salvaEpisodio(EpisodioTVDB e){
-		String query = "INSERT INTO "+Database.TABLE_TVDB_EPISODI+
-				" (id,idSerie,stagione,episodio,titolo,immagine,descrizione,guestStars,data_air,regista,sceneggiatori,lang,rating,ultimoAggiornamento) "+
-				"VALUES ("+e.getIdEpisodio()+","+e.getIdSerie()+","+e.getStagione()+","+e.getEpisodio()+",\""+e.getTitolo().replace("\"", "'")+"\",\""+e.getImageURL()+"\","+
-				"\""+e.getDescrizione().replace("\"", "'")+"\",\""+e.getGuestStarsS()+"\",\""+e.getDataAir()+"\",\""+e.getRegistaS()+"\",\""+e.getSceneggiatoriS()+"\","+
-				"\""+e.getLang()+"\","+e.getRating()+","+(System.currentTimeMillis()/1000)+")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_TVDB_EPISODI+ " (id,idSerie,stagione,episodio,titolo,immagine,descrizione,guestStars,data_air,regista,sceneggiatori,lang,rating,ultimoAggiornamento) "+
+				"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		Database.updateQuery(query, e.getIdEpisodio(),e.getIdSerie(),e.getStagione(),e.getEpisodio(),e.getTitolo(),e.getImageURL(),e.getDescrizione(),e.getGuestStarsS(),e.getDataAir(),e.getRegistaS(),e.getSceneggiatoriS(),e.getLang(),e.getRating(),(System.currentTimeMillis()/1000));
 	}
 	@SuppressWarnings("unused")
 	private EpisodioTVDB caricaEpisodio(int idEpisodio){
@@ -731,12 +720,8 @@ public class TheTVDB {
 		return e;
 	}
 	private void aggiornaEpisodio(EpisodioTVDB e){
-		String query = "UPDATE "+Database.TABLE_TVDB_EPISODI+" SET titolo=\""+e.getTitolo().replace("\"", "\\\"")+"\", descrizione=\""+e.getDescrizione().replace("\"", "\\\"")+"\","+
-				"immagine=\""+e.getImageURL()+"\",guestStars=\""+e.getGuestStarsS()+"\",data_air=\""+e.getDataAir()+"\","+
-				"regista=\""+e.getRegistaS()+"\",sceneggiatori=\""+e.getSceneggiatoriS()+"\",lang=\""+e.getLang()+"\","+
-				"rating="+e.getRating()+",ultimoAggiornamento="+(System.currentTimeMillis()/1000)+
-				" WHERE id="+e.getIdEpisodio();
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_TVDB_EPISODI+" SET titolo=?, descrizione=?, immagine=?,guestStars=?,data_air=?,regista=?,sceneggiatori=?,lang=?,rating=?,ultimoAggiornamento=? WHERE id=?";
+		Database.updateQuery(query, e.getTitolo(), e.getDescrizione(), e.getImageURL(), e.getGuestStarsS(), e.getDataAir(), e.getRegistaS(), e.getSceneggiatoriS(), e.getLang(), e.getRating(), (System.currentTimeMillis()/1000), e.getIdEpisodio());
 	}
 	private HttpURLConnection getConnection(String url) throws IOException {
 		try {

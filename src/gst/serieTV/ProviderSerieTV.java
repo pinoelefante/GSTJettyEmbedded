@@ -99,24 +99,23 @@ public abstract class ProviderSerieTV {
 			return false;
 		}
 		else {
-			String query = "INSERT INTO "+Database.TABLE_PREFERITI+" (id_serie) VALUES ("+serie.getIDDb()+")";
-			String query2 = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=\""+Settings.getInstance().getLingua()+"\" WHERE id="+serie.getIDDb();
-			boolean pref = Database.updateQuery(query);
-			Database.updateQuery(query2);
+			String query = "INSERT INTO "+Database.TABLE_PREFERITI+" (id_serie) VALUES (?)";
+			String query2 = "UPDATE "+Database.TABLE_SERIETV+" SET preferenze_sottotitoli=? WHERE id=?";
+			boolean pref = Database.updateQuery(query, serie.getIDDb());
+			Database.updateQuery(query2, Settings.getInstance().getLingua(), serie.getIDDb());
 			return pref;
 		}
 	}
 	public static boolean removeSerieDaPreferiti(int serie, boolean resetEpisodi){
-		String update_serie = "UPDATE serietv SET stop_search=0, escludi_seleziona_tutto=0 WHERE id="+serie;
-		Database.updateQuery(update_serie);
+		String update_serie = "UPDATE serietv SET stop_search=0, escludi_seleziona_tutto=0 WHERE id=?";
+		Database.updateQuery(update_serie, serie);
 		if(resetEpisodi){
-			String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie="+serie;
-			Database.updateQuery(resetEp);
+			String resetEp="UPDATE "+Database.TABLE_EPISODI+" SET stato_visualizzazione=0, sottotitolo=0 WHERE serie=?";
+			Database.updateQuery(resetEp, serie);
 		}
 		
-		String query="DELETE FROM "+Database.TABLE_PREFERITI+" WHERE id_serie="+serie;
-		
-		return Database.updateQuery(query);
+		String query="DELETE FROM "+Database.TABLE_PREFERITI+" WHERE id_serie=?";
+		return Database.updateQuery(query,serie);
 	}
 	public boolean aggiungiSerieADatabase(SerieTV s, int provider){
 		if(getSerieByURL(s.getUrl(), provider)!=null)
@@ -136,8 +135,8 @@ public abstract class ProviderSerieTV {
 		return serie;
 	}
 	private void addSerieToDB(SerieTV s){
-		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa, preferenze_download, preferenze_sottotitoli) VALUES (\""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+getProviderID()+","+(s.isConclusa()?1:0)+","+s.getPreferenze().toValue()+",\""+s.getPreferenzeSottotitoli().getPreferenzeU()+"\")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa, preferenze_download, preferenze_sottotitoli) VALUES (?,?,?,?,?,?)";
+		Database.updateQuery(query, s.getNomeSerie(),s.getUrl(),getProviderID(),(s.isConclusa()?1:0),s.getPreferenze().toValue(),s.getPreferenzeSottotitoli().getPreferenzeU());
 	}
 	public boolean isUpgrading(){
 		return update_in_corso;
@@ -165,8 +164,8 @@ public abstract class ProviderSerieTV {
 	public static int aggiungiEpisodioSerie(int idSerie, int stagione, int episodio){
 		int id = isEpisodioPresente(idSerie, stagione, episodio);
 		if(id==0){
-			String query = "INSERT INTO episodi (serie, stagione, episodio) VALUES ("+idSerie+","+stagione+","+episodio+")";
-			Database.updateQuery(query);
+			String query = "INSERT INTO episodi (serie, stagione, episodio) VALUES (?,?,?)";
+			Database.updateQuery(query, idSerie, stagione, episodio);
 			id=isEpisodioPresente(idSerie, stagione, episodio);
 		}
 		return id;
@@ -177,8 +176,8 @@ public abstract class ProviderSerieTV {
 	}
 	public static void aggiungiLink(int id_episodio, int qualita, String url){
 		if(!isLinkPresente(url, id_episodio)){
-			String query = "INSERT INTO torrent (episodio, qualita, url) VALUES ("+id_episodio+","+qualita+",\""+url+"\")";
-			Database.updateQuery(query);
+			String query = "INSERT INTO torrent (episodio, qualita, url) VALUES (?,?,?)";
+			Database.updateQuery(query, id_episodio, qualita, url);
 		}
 	}
 	public static ArrayList<Episodio> getEpisodiDaScaricare(int idSerie){
@@ -249,8 +248,8 @@ public abstract class ProviderSerieTV {
 			if(ep.getStatoVisualizzazione()==nuovoStato)
 				return false;
 			else {
-				String query2 = "UPDATE episodi SET stato_visualizzazione="+nuovoStato+" WHERE id="+idEp;
-				return Database.updateQuery(query2);
+				String query2 = "UPDATE episodi SET stato_visualizzazione=? WHERE id=?";
+				return Database.updateQuery(query2, nuovoStato, idEp);
 			} 
 		}
 	}
@@ -335,8 +334,8 @@ public abstract class ProviderSerieTV {
 		return null;
 	}
 	public static boolean associaSerieTVDB(int idSerie, int idTVDB){
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_tvdb="+idTVDB+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_tvdb=? WHERE id=?";
+		return Database.updateQuery(query, idTVDB, idSerie);
 	}
 	
 	public abstract String getProviderName();

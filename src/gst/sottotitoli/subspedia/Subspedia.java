@@ -211,8 +211,8 @@ public class Subspedia implements ProviderSottotitoli {
 	private void addSerie(String nome, String url){
 		if(isPresente(url))
 			return;
-		String query = "INSERT INTO "+Database.TABLE_SUBSPEDIA+" (nome, url) VALUES (\""+nome+"\",\""+url+"\")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_SUBSPEDIA+" (nome, url) VALUES (?,?)";
+		Database.updateQuery(query, nome, url);
 	}
 	private boolean isPresente(String dir){
 		String query = "SELECT * FROM "+Database.TABLE_SUBSPEDIA+" WHERE url=\""+dir+"\"";
@@ -335,14 +335,14 @@ public class Subspedia implements ProviderSottotitoli {
 		}
 	}
 	public boolean associa(int idSerie, int idSubspedia) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia="+idSubspedia+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=? WHERE id=?";
+		return Database.updateQuery(query, idSubspedia, idSerie);
 	}
 	
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=0 WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subspedia=0 WHERE id=?";
+		return Database.updateQuery(query,idSerie);
 	}
 	
 	private ArrayList<SottotitoloSubspedia> caricaCartella(SerieSubConDirectory serie){

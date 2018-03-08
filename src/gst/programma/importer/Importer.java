@@ -169,8 +169,8 @@ public class Importer implements Notifier{
 		imp.startImport();
 	}
 	private void addSerieToDB(SerieTV s){
-		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (id, nome, url, provider,conclusa) VALUES ("+s.getIDDb()+", \""+s.getNomeSerie()+"\",\""+s.getUrl()+"\","+s.getProviderID()+","+(s.isConclusa()?1:0)+")";
-		Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (id, nome, url, provider,conclusa) VALUES (?,?,?,?,?)";
+		Database.updateQuery(query, s.getIDDb(), s.getNomeSerie(), s.getUrl(), s.getProviderID(), (s.isConclusa()?1:0));
 	}
 	private SerieTVOld parseSerie(KVResult<String, Object> res){	
 		int id_db = (int) res.getValueByKey("id");

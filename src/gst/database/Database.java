@@ -7,6 +7,7 @@ import gst.programma.Settings;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -247,9 +248,9 @@ public class Database {
 	}
 	private static void init(){
 		if(selectQuery("SELECT * FROM provider WHERE id=1").size()==0)
-			updateQuery("INSERT INTO provider (id, nome) VALUES (1,'eztv.it')");
+			updateQuery("INSERT INTO provider (id, nome) VALUES (?,?')", 1, "eztv.it");
 		if(selectQuery("SELECT * FROM provider WHERE id=2").size()==0)
-			updateQuery("INSERT INTO provider (id, nome) VALUES (2,'Karmorra')");
+			updateQuery("INSERT INTO provider (id, nome) VALUES (?,?)", 2, "Karmorra");
 	}
 	private static void checkIntegrita(){}
 	
@@ -401,6 +402,41 @@ public class Database {
 			return result;
 		}
 	}
+	private static void _bindParameter(PreparedStatement statement, int i, Object parameter) throws SQLException
+	{
+		if(parameter instanceof String)
+			statement.setString(i, (String)parameter);
+		else if(parameter instanceof Integer)
+			statement.setInt(i, (int)parameter);
+		else if(parameter instanceof Double || parameter instanceof Float)
+			statement.setDouble(i, (double)parameter);
+		else if(parameter instanceof Long)
+			statement.setLong(i, (long)parameter);
+		else {
+			System.out.println("BindParameter Error: "+parameter.getClass().getTypeName());
+		}
+	}
+	public static boolean updateQuery(String query, Object... parameters)
+	{
+		int ins_ok = 0;
+		try
+		{
+			PreparedStatement stat = con.prepareStatement(query);
+			for(int i = 0; i<parameters.length;i++)
+				_bindParameter(stat, i+1, parameters[i]);
+			ins_ok = stat.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			System.out.println("Error updateQuery - "+e.getMessage());
+			System.out.println(query);
+			e.printStackTrace();
+			ManagerException.registraEccezione(query);
+			ManagerException.registraEccezione(e);
+		}
+		return (ins_ok==0?false:true);
+	}
+	/*
 	public static boolean updateQuery(String query){
 		//System.out.println(query);
 		int ins_ok=0;
@@ -417,6 +453,7 @@ public class Database {
 		}
 		return (ins_ok==0?false:true);
 	}
+	*/
 	public static boolean updateQuery(Connection con,String query){
 		//System.out.println(query);
 		int ins_ok=0;

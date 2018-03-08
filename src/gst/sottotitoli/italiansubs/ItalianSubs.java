@@ -228,8 +228,8 @@ public class ItalianSubs implements ProviderSottotitoli{
 	
 	private boolean insertSerie(SerieSub toInsert){
 		if(!isSeriePresente(toInsert.getIDDB())){
-			String query = "INSERT INTO "+Database.TABLE_ITASA+" (id,nome) VALUES("+toInsert.getIDDB()+",\""+toInsert.getNomeSerie()+"\")";
-			return Database.updateQuery(query);
+			String query = "INSERT INTO "+Database.TABLE_ITASA+" (id,nome) VALUES(?,?)";
+			return Database.updateQuery(query, toInsert.getIDDB(), toInsert.getNomeSerie());
 		}
 		return false;
 	}
@@ -326,8 +326,8 @@ public class ItalianSubs implements ProviderSottotitoli{
 		}
 	}
 	public void associaSerie(SerieTV serie, int idItasa){
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa="+idItasa+" WHERE id="+serie.getIDDb();
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=? WHERE id=?";
+		Database.updateQuery(query,idItasa,serie.getIDDb());
 	}
 
 	@Override
@@ -342,14 +342,14 @@ public class ItalianSubs implements ProviderSottotitoli{
 
 	@Override
 	public boolean associa(int idSerie, int idSub) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa="+idSub+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=? WHERE id=?";
+		return Database.updateQuery(query, idSub, idSerie);
 	}
 
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=0 WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_itasa=0 WHERE id=?";
+		return Database.updateQuery(query, idSerie);
 	}
 
 	@Override

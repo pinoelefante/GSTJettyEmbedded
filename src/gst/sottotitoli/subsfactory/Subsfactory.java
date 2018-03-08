@@ -192,8 +192,8 @@ public class Subsfactory implements ProviderSottotitoli {
 	private boolean addSerie(SerieSubConDirectory s){
 		if(isPresente(s.getDirectory()))
 			return false;
-		String query = "INSERT INTO "+Database.TABLE_SUBSFACTORY+" (nome, directory) VALUES (\""+s.getNomeSerie()+"\",\""+s.getDirectory()+"\")";
-		return Database.updateQuery(query);
+		String query = "INSERT INTO "+Database.TABLE_SUBSFACTORY+" (nome, directory) VALUES (?,?)";
+		return Database.updateQuery(query, s.getNomeSerie(), s.getDirectory());
 	}
 	private String cercaFeed(String id, Torrent t){
 		return cercaFeed(id, t.getStats());
@@ -336,8 +336,8 @@ public class Subsfactory implements ProviderSottotitoli {
 		}
 	}
 	private void associa(SerieTV s, int id){
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory="+id+" WHERE id="+s.getIDDb();
-		Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=? WHERE id=?";
+		Database.updateQuery(query, id, s.getIDDb());
 	}
 	public synchronized void aggiornaElencoSerieOnline() {
 		try {
@@ -380,14 +380,14 @@ public class Subsfactory implements ProviderSottotitoli {
 	}
 	@Override
 	public boolean associa(int idSerie, int idSub) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory="+idSub+" WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=? WHERE id=?";
+		return Database.updateQuery(query, idSub, idSerie);
 	}
 
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=0 WHERE id="+idSerie;
-		return Database.updateQuery(query);
+		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_subsfactory=0 WHERE id=?";
+		return Database.updateQuery(query, idSerie);
 	}
 	@Override
 	public boolean hasLanguage(String lang) {

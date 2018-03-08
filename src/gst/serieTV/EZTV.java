@@ -204,8 +204,8 @@ public class EZTV extends ProviderSerieTV {
 		ArrayList<SerieTV> list = GestioneSerieTV.getInstance().getSerieFromProvider(getProviderID());
 		for(int i=0;i<list.size();i++){
 			if(isTempPlaceholder(list.get(i).getNomeSerie())){
-				String query = "DELETE FROM "+Database.TABLE_SERIETV+" WHERE id="+list.get(i).getIDDb();
-				Database.updateQuery(query);
+				String query = "DELETE FROM "+Database.TABLE_SERIETV+" WHERE id=?";
+				Database.updateQuery(query,list.get(i).getIDDb());
 			}
 		}
 	}
