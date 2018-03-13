@@ -311,7 +311,7 @@ public class Database {
 		ArrayList<String> columns=getTableColumns(table);
 		for(int i=0;i<columns.size();i++){
 			if(columns.get(i).compareTo(field)==0){
-				//ManagerException.registraEccezione(new Exception("Campo '"+field+"' già presente nella tabella '"+table+"'"));
+				//ManagerException.registraEccezione(new Exception("Campo '"+field+"' giï¿½ presente nella tabella '"+table+"'"));
 				return true;
 			}
 		}
@@ -322,7 +322,7 @@ public class Database {
 		ArrayList<String> columns=getTableColumns(con,table);
 		for(int i=0;i<columns.size();i++){
 			if(columns.get(i).compareTo(field)==0){
-				//ManagerException.registraEccezione(new Exception("Campo '"+field+"' già presente nella tabella '"+table+"'"));
+				//ManagerException.registraEccezione(new Exception("Campo '"+field+"' giï¿½ presente nella tabella '"+table+"'"));
 				return true;
 			}
 		}
@@ -333,7 +333,7 @@ public class Database {
 		ArrayList<String> columns=getTableColumns(table);
 		for(int i=0;i<columns.size();i++){
 			if(columns.get(i).compareTo(campo)==0){
-				ManagerException.registraEccezione(new Exception("Campo '"+campo+"' già presente nella tabella '"+table+"'"));
+				ManagerException.registraEccezione(new Exception("Campo '"+campo+"' giï¿½ presente nella tabella '"+table+"'"));
 				return false;
 			}
 		}
@@ -409,7 +409,7 @@ public class Database {
 		else if(parameter instanceof Integer)
 			statement.setInt(i, (int)parameter);
 		else if(parameter instanceof Double || parameter instanceof Float)
-			statement.setDouble(i, (double)parameter);
+			statement.setDouble(i, Double.parseDouble(parameter.toString()));
 		else if(parameter instanceof Long)
 			statement.setLong(i, (long)parameter);
 		else {
