@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import server.ServerStart;
-import util.MD5Hash;
 import util.os.Os;
 
 public class Sistema {
@@ -101,25 +100,6 @@ public class Sistema {
 			}
 		}
 		*/
-	}
-	private boolean verificaHashLauncher(String md5) {
-		try {
-			Download.downloadFromUrl("http://gestioneserietv.altervista.org/verificaHashLauncher.php?hash="+md5+"&id_client="+setts.getClientID(), setts.getUserDir()+"hashLauncher");
-			FileReader f=new FileReader(setts.getUserDir()+"hashLauncher");
-			Scanner file=new Scanner(f);
-			boolean hashOK = true;
-			if(file.hasNextBoolean()){
-				hashOK=file.nextBoolean();
-			}
-			file.close();
-			f.close();
-			OperazioniFile.deleteFile(setts.getUserDir()+"hashLauncher");
-			return hashOK;
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 	public void aggiorna() {
 		try {

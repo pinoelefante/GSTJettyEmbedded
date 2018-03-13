@@ -43,7 +43,6 @@ public class EZTV extends ProviderSerieTV {
 			String url_b = baseUrls.get(i);
 			System.out.println("Verificando: " + url_b);
 			if (Download.isRaggiungibile(url_b)){
-				lastVerificaRaggiungibile = System.currentTimeMillis();
 				return url_b;
 			}
 		}
@@ -241,23 +240,7 @@ public class EZTV extends ProviderSerieTV {
 		baseUrl = getOnlineUrl();
 		System.out.println("Base URL in uso: " + baseUrl);
 	}
-	private long lastVerificaRaggiungibile;
-	private boolean raggiungibile;
-	private boolean isRaggiungibile(){
-		if(System.currentTimeMillis() > lastVerificaRaggiungibile+120000){ //controllo dopo due minuti
-			for(int i=0;i<baseUrls.size();i++){
-				if(Download.isRaggiungibile(baseUrls.get(i))){
-					raggiungibile = true;
-					baseUrl = baseUrls.get(i);
-					break;
-				}
-				else
-					raggiungibile = false;
-			}
-			lastVerificaRaggiungibile = System.currentTimeMillis();
-		}
-		return raggiungibile;
-	}
+	
 	private void proxyShowlist(String url){
 		System.out.println("aggiorno elenco serie - proxy");
 		int nuove = 0;

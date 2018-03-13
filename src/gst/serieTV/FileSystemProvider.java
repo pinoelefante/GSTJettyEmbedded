@@ -1,7 +1,5 @@
 package gst.serieTV;
 
-import gst.programma.Settings;
-
 public class FileSystemProvider extends ProviderSerieTV {
 
 	public FileSystemProvider(int id) {

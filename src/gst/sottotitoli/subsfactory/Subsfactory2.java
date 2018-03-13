@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import org.jsoup.Jsoup;
 
 import util.UserAgent;
-import gst.programma.ManagerException;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
-import gst.sottotitoli.SerieSubConDirectory;
 
 public class Subsfactory2 implements ProviderSottotitoli{
 	private static String URL_ELENCO_SERIE = "http://www.subsfactory.it/archivio/download-category/tutte-le-serie/";

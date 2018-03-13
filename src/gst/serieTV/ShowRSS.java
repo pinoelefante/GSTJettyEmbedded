@@ -2,24 +2,12 @@ package gst.serieTV;
 
 import gst.database.Database;
 import gst.database.tda.KVResult;
-import gst.naming.CaratteristicheFile;
-import gst.programma.Settings;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import util.UserAgent;
-
 public class ShowRSS extends ProviderSerieTV {
-	private Settings settings;
 	public ShowRSS() {
 		super(PROVIDER_SHOWRSS);
-		settings = Settings.getInstance();
 	}
 
 	@Override
@@ -67,21 +55,6 @@ public class ShowRSS extends ProviderSerieTV {
 			e.printStackTrace();
 		}
 		*/
-	}
-	
-	private boolean associaEztv(SerieTV s)
-	{
-		/*
-		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND lower(nome)=\""+s.getNomeSerie().toLowerCase()+"\"";
-		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
-		if(res.size()==1){
-			KVResult<String, Object> resEztv = res.get(0);
-			int ideztv = (int) resEztv.getValueByKey("id");
-			String query_associa = "UPDATE "+Database.TABLE_SERIETV+" SET id_karmorra="+s.getIDDb()+" WHERE id="+ideztv;
-			return Database.updateQuery(query_associa);
-		}
-		*/
-		return false;
 	}
 	public int associaToEztv(SerieTV s){
 		String query = "SELECT * FROM "+Database.TABLE_SERIETV+" WHERE provider="+PROVIDER_EZTV+" AND lower(nome)=\""+s.getNomeSerie().toLowerCase()+"\"";

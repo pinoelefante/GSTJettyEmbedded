@@ -6,7 +6,6 @@ import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.programma.Settings;
 import gst.serieTV.Episodio;
-import gst.serieTV.GestioneSerieTV;
 import gst.serieTV.PreferenzeSottotitoli;
 import gst.serieTV.ProviderSerieTV;
 import gst.serieTV.SerieTV;
@@ -16,9 +15,6 @@ import gst.services.TaskRicercaSottotitoli;
 import gst.sottotitoli.addic7ed.Addic7ed;
 import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
-import gst.sottotitoli.opensubtitles.OpenSubtitles;
-import gst.sottotitoli.podnapisi.Podnapisi;
-import gst.sottotitoli.subspedia.Subspedia;
 import gst.sottotitoli.subspedia.Subspedia2;
 
 import java.util.AbstractMap;

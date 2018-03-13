@@ -10,17 +10,10 @@ import gst.serieTV.ShowRSS;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,13 +26,11 @@ import util.os.DirectoryNotAvailableException;
 public class OperazioniSerieServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GestioneSerieTV manager;
-	private Map<String, String> streaming_threads;
 	
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		manager = GestioneSerieTV.getInstance();
-		streaming_threads = new HashMap<String, String>();
 	}
 	
 	@Override
@@ -324,26 +315,6 @@ public class OperazioniSerieServlet extends HttpServlet {
 				resp.sendError(HttpServletResponse.SC_BAD_REQUEST,parametro+" not sended");
 		}
 		return req.getParameter(parametro);
-	}
-	private byte[] ReadFile(String filename, int start, int end)
-	{
-		File file = new File(filename);
-		byte[] buffer = new byte[end-start];
-		try(FileInputStream reader = new FileInputStream(file))
-		{
-			reader.read(buffer, start, end);
-		}
-		catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		return buffer;
 	}
 	private String GetMimeType(String ext)
 	{

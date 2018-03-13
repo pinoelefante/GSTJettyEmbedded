@@ -3,7 +3,7 @@ package gst.download;
 import gst.serieTV.Torrent;
 
 public class TransmissionBT implements BitTorrentClient {
-	private String address="http://host:9091/transmission/rpc";
+	// private String address = "http://host:9091/transmission/rpc";
 	
 	@Override
 	public boolean haveWebAPI() {

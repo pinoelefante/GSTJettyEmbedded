@@ -38,8 +38,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -56,7 +54,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -258,7 +255,7 @@ public class ItasaAPI {
 		}
 		return null;
 	}
-
+/*
 	private List<NameValuePair> getParameters(String html) {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		org.jsoup.nodes.Document doc = Jsoup.parse(html);
@@ -272,7 +269,7 @@ public class ItasaAPI {
 		}
 		return params;
 	}
-
+*/
 	public String download(int idSub, String folder) throws Exception {
 		if (AUTHCODE.isEmpty())
 			throw new Exception("Not logged in - Check your credentials");
