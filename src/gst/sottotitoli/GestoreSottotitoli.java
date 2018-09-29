@@ -13,7 +13,6 @@ import gst.services.TaskAggiornaElenchi;
 import gst.services.TaskAssociaSerie;
 import gst.services.TaskRicercaSottotitoli;
 import gst.sottotitoli.addic7ed.Addic7ed;
-import gst.sottotitoli.italiansubs.ItalianSubs;
 import gst.sottotitoli.localhost.LocalSubs;
 import gst.sottotitoli.subspedia.Subspedia2;
 
@@ -32,7 +31,7 @@ public class GestoreSottotitoli implements Notifier{
 	private static GestoreSottotitoli instance;
 
 	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3, PODNAPISI=4, OPENSUBTITLES=5, ADDIC7ED=6; 
-	private ProviderSottotitoli itasa;
+	//private ProviderSottotitoli itasa;
 	//private ProviderSottotitoli subsfactory;
 	private ProviderSottotitoli subspedia;
 	private ProviderSottotitoli addic7ed;
@@ -49,7 +48,7 @@ public class GestoreSottotitoli implements Notifier{
 		return instance;
 	}
 	private GestoreSottotitoli(){
-		itasa=ItalianSubs.getInstance();
+		//itasa=ItalianSubs.getInstance();
 		//subsfactory=Subsfactory.getInstance();
 		subspedia=Subspedia2.getInstance();
 		localsubs=LocalSubs.getInstance();
@@ -87,9 +86,9 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	public void aggiornaElenco(int idProvider){
 		switch(idProvider){
-			case ITASA:
-				itasa.aggiornaElencoSerieOnline();
-				break;
+			//case ITASA:
+				//itasa.aggiornaElencoSerieOnline();
+				//break;
 				/*
 			case SUBSFACTORY:
 				subsfactory.aggiornaElencoSerieOnline();
@@ -104,9 +103,11 @@ public class GestoreSottotitoli implements Notifier{
 		}
 	}
 	public void associaSerie(SerieTV s){
+		/*
 		if(s.getIDItasa()<=0){
 			itasa.associaSerie(s);
 		}
+		*/
 		/*	
 		if(s.getIDDBSubsfactory()<=0){
 			subsfactory.associaSerie(s);
@@ -124,8 +125,10 @@ public class GestoreSottotitoli implements Notifier{
 		if(serie==null)
 			return false;
 		switch(idProvider){
+			/*
 			case ITASA:
 				return itasa.associa(idSerie, idSerieSub);
+			*/
 			/*
 			case SUBSFACTORY:
 				return subsfactory.associa(idSerie, idSerieSub);
@@ -143,8 +146,10 @@ public class GestoreSottotitoli implements Notifier{
 		if(serie==null)
 			return false;
 		switch(idProvider){
+			/*
 			case ITASA:
 				return itasa.disassocia(idSerie);
+				*/
 				/*
 			case SUBSFACTORY:
 				return subsfactory.disassocia(idSerie);
@@ -204,10 +209,12 @@ public class GestoreSottotitoli implements Notifier{
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+localsubs.getProviderName());
 			//inserisciLog(e, localsubs, lang);
 		}
+		/*
 		else if(itasa.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+itasa.getProviderName());
 			inserisciLog(e, itasa, lang);
 		}
+		*/
 		/*
 		else if(subsfactory.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subsfactory.getProviderName());
@@ -252,8 +259,10 @@ public class GestoreSottotitoli implements Notifier{
 	}
 	public ArrayList<SerieSub> getElencoSerie(int provider){
 		switch(provider){
+			/*
 			case ITASA:
 				return itasa.getElencoSerie();
+				*/
 				/*
 			case SUBSFACTORY:
 				return subsfactory.getElencoSerie();
@@ -269,8 +278,10 @@ public class GestoreSottotitoli implements Notifier{
 		switch(provider){
 			case LOCALE:
 				return localsubs;
+				/*
 			case ITASA:
 				return itasa;
+				*/
 				/*
 			case SUBSFACTORY:
 				return subsfactory;

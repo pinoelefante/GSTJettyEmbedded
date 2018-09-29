@@ -23,8 +23,8 @@ import gst.sottotitoli.SerieSub;
 
 public class Subspedia2 implements ProviderSottotitoli {
 	private static Subspedia2 instance;
-	private static final String URL_ELENCO_SERIE = "http://www.subspedia.tv/API/getAllSeries.php";
-	private static final String URL_ELENCO_EPISODI_SERIE = "http://subspedia.tv/API/getBySerie.php?serie={ID}";
+	private static final String URL_ELENCO_SERIE = "https://www.subspedia.tv/API/elenco_serie";
+	private static final String URL_ELENCO_EPISODI_SERIE = "https://www.subspedia.tv/API/sottotitoli_serie?serie={ID}";
 	
 	public static Subspedia2 getInstance(){
 		if(instance==null)
@@ -135,6 +135,8 @@ public class Subspedia2 implements ProviderSottotitoli {
 		return Database.selectQuery(query).size()>0;
 	}
 	private String getLinkDownload(int idSerieSub, int stagione, int episodio){
+		if(idSerieSub <= 0)
+			return null;
 		try {
 			String url = URL_ELENCO_EPISODI_SERIE.replace("{ID}", ""+idSerieSub);
 			String json = Jsoup.connect(url).ignoreContentType(true).execute().body();

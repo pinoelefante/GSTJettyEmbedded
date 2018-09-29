@@ -63,15 +63,23 @@ import gst.programma.Settings;
     	}
 		@Override
 		public boolean playVideo(String pathVideo) {
-			String[] cmd = {
-					pathExe,
-					"\"file:///"+pathVideo+"\"",
-					"-f",
-					"--disable-screensaver",
-					"--no-video-title-show",
-					"--one-instance"
-			};
+			
+			
 			try {
+				/*
+				String[] cmd = {
+						pathExe,
+						"\"file:///"+pathVideo+"\"",
+						"-f",
+						"--disable-screensaver",
+						"--no-video-title-show",
+						"--one-instance"
+				};
+				*/
+				String[] cmd = {
+						pathExe,
+						"\""+pathVideo+"\"",
+				};
 				Runtime.getRuntime().exec(cmd);
 				return true;
 			}
