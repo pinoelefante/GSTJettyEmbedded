@@ -283,18 +283,20 @@ public class ResponseSender {
 		root.addContent(generi);
 		Element attori = new Element("attori");
 		ArrayList<ActorTVDB> elenco_attori = serie.getAttori().size()>0?serie.getAttori():serie.getAttoriString();
-		for(ActorTVDB a:elenco_attori){
-			Element attore = new Element("attore");
-			Element nome = new Element("nome_attore");
-			nome.addContent(a.getNome());
-			Element ruolo = new Element("ruolo_attore");
-			ruolo.addContent(a.getRuolo());
-			Element img_attore=new Element("img_attore");
-			img_attore.addContent(a.getUrlImage());
-			attore.addContent(nome);
-			attore.addContent(ruolo);
-			attore.addContent(img_attore);
-			attori.addContent(attore);
+		if(elenco_attori != null){
+    		for(ActorTVDB a:elenco_attori){
+    			Element attore = new Element("attore");
+    			Element nome = new Element("nome_attore");
+    			nome.addContent(a.getNome());
+    			Element ruolo = new Element("ruolo_attore");
+    			ruolo.addContent(a.getRuolo());
+    			Element img_attore=new Element("img_attore");
+    			img_attore.addContent(a.getUrlImage());
+    			attore.addContent(nome);
+    			attore.addContent(ruolo);
+    			attore.addContent(img_attore);
+    			attori.addContent(attore);
+    		}
 		}
 		root.addContent(attori);
 		Element poster_url = new Element("posters");
