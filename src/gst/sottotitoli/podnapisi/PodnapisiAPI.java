@@ -20,8 +20,6 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
-import util.UserAgent;
-
 @SuppressWarnings({"rawtypes","unchecked"})
 public class PodnapisiAPI {
 	private final static Integer RESPONSE_OK = 200/*,
@@ -40,7 +38,7 @@ public class PodnapisiAPI {
 			server = new XmlRpcClient();
 			XmlRpcClientConfigImpl conf = new XmlRpcClientConfigImpl();
 			conf.setServerURL(new URL("http://ssp.podnapisi.net:8000/RPC2/"));
-			conf.setUserAgent(UserAgent.get());
+			conf.setUserAgent("GSTJ");
 			server.setConfig(conf);
 		}
 		catch (MalformedURLException e) {
@@ -57,7 +55,7 @@ public class PodnapisiAPI {
 
 	public boolean initiate() {
 		List<Object> p = new ArrayList<Object>();
-		p.add(UserAgent.get());
+		p.add("GSTJ");
 		try {
 			Map m = execute("initiate", p);
 			//printMap(m);

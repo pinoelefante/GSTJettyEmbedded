@@ -1,67 +1,67 @@
 package gst.serieTV;
 
-import java.util.ArrayList;
+import com.j256.ormlite.field.DatabaseField;
 
-public class Episodio {
-	public final static int SCARICARE=0, SCARICATO=1, VISTO=2, RIMOSSO=3, IGNORATO=4;
-	private int episodio, stagione, id, serie, stato, idTVDB;
-	private boolean sub_down;
-	 
-	private ArrayList<Torrent> links;
+public abstract class Episodio implements Comparable<Episodio>
+{
+	@DatabaseField(columnName="stagione")
+	private int stagione;
+	@DatabaseField(columnName="episodio")
+	private int episodio;
 	
-	public Episodio(int stagione, int episodio){
-		this.stagione=stagione;
-		this.episodio=episodio;
-		links = new ArrayList<Torrent>();
+	public Episodio(int stagione, int episodio)
+	{
+		setStagione(stagione);
+		setEpisodio(episodio);
 	}
-	public int getStagione(){
+
+	public int getStagione()
+	{
 		return stagione;
 	}
-	public int getEpisodio(){
+
+	public void setStagione(int stagione)
+	{
+		this.stagione = stagione;
+	}
+
+	public int getEpisodio()
+	{
 		return episodio;
 	}
-	public ArrayList<Torrent> getLinks(){
-		return links;
+
+	public void setEpisodio(int episodio)
+	{
+		this.episodio = episodio;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public int getSerie() {
-		return serie;
-	}
-	public void setSerie(int serie) {
-		this.serie = serie;
-	}
-	public int getStatoVisualizzazione() {
-		return stato;
-	}
-	public void setStatoVisualizzazione(int stato) {
-		this.stato = stato;
-	}
-	public int getIdTvDB() {
-		return idTVDB;
-	}
-	public void setIdTvDB(int idTVDB) {
-		this.idTVDB = idTVDB;
-	}
-	public boolean isSubDownload() {
-		return sub_down;
-	}
-	public void setSubDownload(boolean sub_down) {
-		this.sub_down = sub_down;
-	}
-	public void aggiungiLink(Torrent t){
-		boolean inserito = false;
-		for(int i=0;i<links.size() && !inserito;i++){
-			if(t.getStats().value()>links.get(i).getStats().value()){
-				links.add(i, t);
-				inserito = true;
-			}
+	@Override
+	public int compareTo(Episodio o)
+	{
+		if(getStagione() == o.getStagione() && getEpisodio() == o.getEpisodio())
+			return 0;
+		if(getStagione() < o.getStagione())
+			return -1;
+		else if(getStagione() > o.getStagione())
+			return 1;
+		else
+		{
+			if(getEpisodio()<o.getEpisodio())
+				return -1;
+			else
+				return 1;
 		}
-		if(!inserito)
-			links.add(t);
+	}
+	@Override
+	public String toString()
+	{
+		return String.format("S%02dE%02d", getStagione(), getEpisodio());
+	}
+	@Override
+	public boolean equals(Object obj)
+	{
+		if(!(obj instanceof Episodio))
+			return false;
+		Episodio ep = (Episodio)obj;
+		return compareTo(ep) == 0;
 	}
 }

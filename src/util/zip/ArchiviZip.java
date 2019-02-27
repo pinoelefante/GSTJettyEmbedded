@@ -1,7 +1,5 @@
 package util.zip;
 
-import gst.programma.ManagerException;
-
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -22,7 +20,7 @@ public class ArchiviZip {
 				init = true;
 			}
 			catch (SevenZipNativeInitializationException e) {
-				ManagerException.registraEccezione(e);
+				e.printStackTrace();
 			}
 		}
 	}

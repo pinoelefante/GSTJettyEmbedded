@@ -48,12 +48,9 @@ public class OperazioniFile {
 		}
 		catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage() + " in the specified directory.");
-			ManagerException.registraEccezione(ex);
 		}
 		catch (IOException e) {
-			System.out.println(e.getMessage());
 			e.printStackTrace();
-			ManagerException.registraEccezione(e);
 		}
 		return false;
 	}
@@ -72,7 +69,7 @@ public class OperazioniFile {
 			d.browse(new URI(url));
 		}
 		catch (IOException | URISyntaxException e) {
-			ManagerException.registraEccezione(e);
+			e.printStackTrace();
 			throw e;
 		}
 	}

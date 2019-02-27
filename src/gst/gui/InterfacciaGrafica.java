@@ -1,20 +1,13 @@
 package gst.gui;
 
-import gst.interfacce.Notificable;
-import gst.programma.Settings;
-
 import java.awt.AWTException;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.Toolkit;
 import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,30 +17,17 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
-import server.ServerStart;
-
-public class InterfacciaGrafica implements Notificable {
-	private static InterfacciaGrafica sing;
-	private FrameOpzioni frameOpzioni;
-	
-	public static InterfacciaGrafica getInstance(){
-		if(sing==null)
-			sing=new InterfacciaGrafica();
-		return sing;
-	}
+public class InterfacciaGrafica {
+	private static InterfacciaGrafica singleton = new InterfacciaGrafica();
 	
 	private InterfacciaGrafica(){
-		/*
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		}
-		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-		*/
 		setTray();
+	}
+	
+	public static InterfacciaGrafica getInstance()
+	{
+		return singleton;
 	}
 	
 	private SystemTray tray;
@@ -64,7 +44,7 @@ public class InterfacciaGrafica implements Notificable {
 			return;
 		}
 		PopupMenu popup = new PopupMenu();
-		final TrayIcon trayIcon = new TrayIcon(createImage("icon.png", "Gestione Serie TV rel." + Settings.getInstance().getVersioneSoftware() + " by pinoelefante"), "Gestione Serie TV rel." + Settings.getInstance().getVersioneSoftware() + " by pinoelefante");
+		final TrayIcon trayIcon = new TrayIcon(createImage("icon.png", "Gestione Serie TV"), "Gestione Serie TV");
 
 		tray = SystemTray.getSystemTray();
 		final MenuItem restoreWin = new MenuItem("Apri");
@@ -98,18 +78,7 @@ public class InterfacciaGrafica implements Notificable {
 		});
 		opzioni.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mostraFinestraOpzioni();
-			}
-		});
-		exitItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(Settings.getInstance().isAskOnClose()){
-					chiudiFinestraOpzioni();
-					if(showConfirmDialog("Conferma chiusura", "Vuoi veramente chiudere Gestione Serie TV?"))
-						ServerStart.close();
-				}
-				else
-					ServerStart.close();
+				apriOpzioni();
 			}
 		});
 	}
@@ -123,27 +92,6 @@ public class InterfacciaGrafica implements Notificable {
 		return new ImageIcon(imageURL, description).getImage();
 	}
 
-	@Override
-	public void sendNotify(String text) {
-		if(tray != null && Settings.getInstance().isSendNotify())
-			tray.getTrayIcons()[0].displayMessage("Gestione Serie TV", text, MessageType.INFO);
-	}
-	public void mostraFinestraOpzioni(){
-		if(frameOpzioni==null)
-			frameOpzioni=new FrameOpzioni();
-		centraFinestra(Toolkit.getDefaultToolkit().getScreenSize(), frameOpzioni);
-		frameOpzioni.init();
-		frameOpzioni.setVisible(true);
-	}
-	public void chiudiFinestraOpzioni(){
-		if(frameOpzioni!=null)
-			frameOpzioni.setVisible(false);
-	}
-	public boolean showConfirmDialog(String titolo, String text){
-		if(JOptionPane.showConfirmDialog(null, text, titolo, JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION)
-			return true;
-		return false;
-	}
 	public void apriInterfaccia(){
 		if(Desktop.isDesktopSupported()){
 			Desktop d = Desktop.getDesktop();
@@ -154,17 +102,18 @@ public class InterfacciaGrafica implements Notificable {
 				e.printStackTrace();
 			}
 		}
-		else {
-			sendNotify("Per aprire l'interfaccia di Gestione Serie TV, visita l'indirizzo 'http://localhost:8585' nel tuo browser web");
+	}
+	public void apriOpzioni()
+	{
+		if(Desktop.isDesktopSupported()){
+			Desktop d = Desktop.getDesktop();
+			try {
+				d.browse(new URI("http://localhost:8585/settings"));
+			}
+			catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
+			}
 		}
-	}
-	public void showMessageDialog(String text){
-		JOptionPane.showMessageDialog(null, text);
-	}
-	private void centraFinestra(Dimension risoluzione, Frame finestra){
-		int x=risoluzione.width/2-finestra.getSize().width/2;
-		int y=risoluzione.height/2-finestra.getSize().width/2;
-		finestra.setLocation(x, y);
 	}
 
 	public boolean openFolder(String string) {

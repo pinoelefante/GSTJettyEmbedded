@@ -99,8 +99,6 @@ function loadProviders(){
 					case "6":
 						select=$("#selectAddic7ed");
 						break;
-					default:
-						alert("DEFAULT CASE!!!!");
 				}
 				$(this).find("serie").each(function(){
 					var nomeSerie = $(this).find("nome").text();

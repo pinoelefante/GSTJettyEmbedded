@@ -9,9 +9,6 @@ public class TaskAggiornaElenchi extends TimerTask {
 	@Override
 	public void run() {
 		System.out.println("Aggiornamento elenchi");
-		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.ITASA);
-		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.SUBSFACTORY);
-		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.SUBSPEDIA);
 		GestoreSottotitoli.getInstance().aggiornaElenco(GestoreSottotitoli.ADDIC7ED);
 	}
 

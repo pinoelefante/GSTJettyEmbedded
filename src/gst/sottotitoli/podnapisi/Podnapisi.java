@@ -1,9 +1,5 @@
 package gst.sottotitoli.podnapisi;
 
-import gst.download.Download;
-import gst.naming.CaratteristicheFile;
-import gst.naming.Naming;
-import gst.programma.Settings;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
@@ -18,14 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import util.os.DirectoryManager;
 import util.zip.ArchiviZip;
 
 public class Podnapisi implements ProviderSottotitoli {
 	private static Podnapisi instance;
 	private Map<String, Integer> langs;
 	private PodnapisiAPI api;
-	private Settings settings;
 	private boolean init;
 	
 	public static Podnapisi getInstance(){
@@ -34,7 +28,6 @@ public class Podnapisi implements ProviderSottotitoli {
 		return instance;
 	}
 	private Podnapisi() {
-		settings = Settings.getInstance();
 		api = new PodnapisiAPI();
 		
 	}
@@ -45,32 +38,32 @@ public class Podnapisi implements ProviderSottotitoli {
 		if(!hasLanguage(lang))
 			return false;
 		
-		ArrayList<File> files = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
-		if(files.size()<=0)
-			return false;
-		
-		boolean down = false;
-		for(int i = 0;i < files.size();i++){
-			if(api.setFilters(langs.get(lang))){
-				CaratteristicheFile stat = Naming.parse(files.get(i).getName(), null);
-				ArrayList<String> subs = api.search(files.get(i), stat.is720p());
-				if(subs.size()>0){
-					String url = api.download(subs.get(0));
-					if(!url.isEmpty()){
-						String zip=files.get(i).getParent()+File.separator+serie.getFolderSerie()+"_"+stat.getStagione()+"_"+stat.getEpisodio()+"_"+i+".zip";
-						try {
-							Download.downloadFromUrl(url, zip);
-							ArchiviZip.estrai_tutto(zip, files.get(i).getParent());
-							down = true;
-						}
-						catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		}
-		return down;
+//		ArrayList<File> files = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
+//		if(files.size()<=0)
+//			return false;
+//		
+//		boolean down = false;
+//		for(int i = 0;i < files.size();i++){
+//			if(api.setFilters(langs.get(lang))){
+//				CaratteristicheFile stat = Naming.parse(files.get(i).getName(), null);
+//				ArrayList<String> subs = api.search(files.get(i), stat.is720p());
+//				if(subs.size()>0){
+//					String url = api.download(subs.get(0));
+//					if(!url.isEmpty()){
+//						String zip=files.get(i).getParent()+File.separator+serie.getFolderSerie()+"_"+stat.getStagione()+"_"+stat.getEpisodio()+"_"+i+".zip";
+//						try {
+//							Download.downloadFromUrl(url, zip);
+//							ArchiviZip.estrai_tutto(zip, files.get(i).getParent());
+//							down = true;
+//						}
+//						catch (IOException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//		}
+		return false;
 	}
 
 	@Override
@@ -119,7 +112,7 @@ public class Podnapisi implements ProviderSottotitoli {
 	private void init(){
 		if(!init){
     		api.initiate();
-    		api.authenticate(settings.getPodnapisiUsername(), settings.getPodnapisiPassword());
+    		// api.authenticate(settings.getPodnapisiUsername(), settings.getPodnapisiPassword());
     		init = true;
 		}
 	}

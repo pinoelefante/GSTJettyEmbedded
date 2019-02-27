@@ -1,77 +1,104 @@
 package gst.serieTV;
 
-import gst.naming.CaratteristicheFile;
-import gst.naming.Naming;
+import com.j256.ormlite.field.DatabaseField;
 
-public class Torrent {
-	 
-	private String	url;
-	private CaratteristicheFile prop_torrent;
-	private int id, idEpisodio;
+public abstract class Torrent implements Comparable<Torrent>
+{
+	@DatabaseField(columnName="episodeId")
+	private int episodeId;
+	@DatabaseField(columnName="url", id=true)
+	private String url;
+	@DatabaseField(columnName="resolution")
+	private int resolution;
+	@DatabaseField(columnName="proper")
+	private boolean proper;
+	@DatabaseField(columnName="repack")
+	private boolean repack;
+	@DatabaseField(columnName="preair")
+	private boolean preair;
+	@DatabaseField(columnName="videoSource")
+	private String source;
 	
-	public Torrent(String link, int idDB, int idEpisodio) {
-		setUrl(link);
-		setId(idDB);
-		setIdEpisodio(idEpisodio);
-		prop_torrent=Torrent.parse(getUrl());
+	public Torrent() { }
+	public Torrent(String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
+	{
+		this(0, url, resolution, proper, repack, preair, source);
+	}
+	public Torrent(int episodeId, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
+	{
+		setEpisodeId(episodeId);
+		setUrl(url);
+		setResolution(resolution);
+		setProper(proper);
+		setRepack(repack);
+		setPreair(preair);
+		setSource(source);
 	}
 	
-	public String getUrl() {
+	public String getUrl()
+	{
 		return url;
 	}
-	public void setUrl(String url) {
+	public void setUrl(String url)
+	{
 		this.url = url;
 	}
-	public CaratteristicheFile getCaratteristiche() {
-		return prop_torrent;
+	public int getResolution()
+	{
+		return resolution;
 	}
-	public void setCaratteristiche(CaratteristicheFile prop_torrent) {
-		this.prop_torrent = prop_torrent;
+	public void setResolution(int resolution)
+	{
+		this.resolution = resolution;
 	}
-	public int getId() {
-		return id;
+	public boolean isRepack()
+	{
+		return repack;
 	}
-	public void setId(int id) {
-		this.id = id;
+	public void setRepack(boolean repack)
+	{
+		this.repack = repack;
 	}
-	public int getIdEpisodio() {
-		return idEpisodio;
+	public boolean isPreair()
+	{
+		return preair;
 	}
-	public void setIdEpisodio(int idEpisodio) {
-		this.idEpisodio = idEpisodio;
+	public void setPreair(boolean preair)
+	{
+		this.preair = preair;
 	}
-	public static CaratteristicheFile parse(String url) {
-		String[] patt=new String[]{
-				Naming.PATTERN_SnEn,
-				Naming.PATTERN_SxE,
-				Naming.PATTERN_Part_dotnofn,
-				Naming.PATTERN_nofn,
-				Naming.PATTERN_DATA,
-				Naming.PATTERN_EP_ALL_NUM
-		};
-		CaratteristicheFile stat = null;
-		if(isMagnet(url))
-			stat=Naming.parse(getNameFromMagnet(url), patt);
-		else
-			stat=Naming.parse(url, patt);
-		return stat;
+	public int getEpisodeId()
+	{
+		return episodeId;
 	}
-	private static String getNameFromMagnet(String url) {
-		String[] pts = url.split("&");
-		for(int i=0;i<pts.length;i++){
-			String[] kv = pts[i].split("=");
-			if(kv[0].compareToIgnoreCase("dn")==0)
-				return kv[1];
-		}
-		return url;
+	public void setEpisodeId(int episodeId)
+	{
+		this.episodeId = episodeId;
 	}
-	private static boolean isMagnet(String link){
-		return link.toLowerCase().startsWith("magnet");
+	public boolean isProper()
+	{
+		return proper;
 	}
-	public CaratteristicheFile getStats(){
-		return prop_torrent;
+	public void setProper(boolean proper)
+	{
+		this.proper = proper;
 	}
-	public void setStats(int val){
-		prop_torrent.setStatsFromValue(val);
+	public String getSource()
+	{
+		return source;
+	}
+	public void setSource(String ripSource)
+	{
+		this.source = ripSource;
+	}
+	@Override
+	public String toString()
+	{
+		return String.format("%dp Source: %s Preair: %b Proper: %b Repack: %b", getResolution(), getSource(), isPreair(), isProper(), isRepack());
+	}
+	@Override
+	public int compareTo(Torrent o)
+	{
+		return this.getUrl().compareTo(o.getUrl());
 	}
 }

@@ -1,15 +1,12 @@
 package gst.sottotitoli.addic7ed;
 
 import gst.database.Database;
-import gst.database.tda.KVResult;
-import gst.download.Download;
-import gst.naming.CaratteristicheFile;
-import gst.naming.Naming;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;
+import util.httpOperations.HttpOperations;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +22,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import util.UserAgent;
-import util.os.DirectoryManager;
 
 public class Addic7ed implements ProviderSottotitoli {
 	private static Addic7ed instance;
@@ -82,46 +76,47 @@ public class Addic7ed implements ProviderSottotitoli {
 	
 	@Override
 	public boolean scaricaSottotitolo(SerieTV serie, Episodio ep, String lang) {
-		if(!hasLanguage(lang))
-			return false;
-		if(downloads>=15)
-			return false;
-		if(serie.getIDAddic7ed()<=0)
-			return false;
-		String langS = getLangString(lang);
-		if(langS==null)
-			return false;
-		ArrayList<File> videos = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
-		boolean downloadOK = false;
-		for(int i=0;i<videos.size();i++){
-			File f = videos.get(i);
-			CaratteristicheFile stat = Naming.parse(f.getName(), null);
-			ArrayList<String> urls = cercaSottotitoli(serie.getIDAddic7ed(), stat.getStagione(), stat.getEpisodio(), langS, stat.is720p(), getAddictedLanguages(lang));
-			if(urls==null)
-				continue;
-			else {
-				for(int j=0;j<urls.size();j++){
-					String path = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator)+1)+serie.getNomeSerie()+"_"+ep.getStagione()+"x"+ep.getEpisodio()+".srt";
-					try {
-						ArrayList<Entry<String, String>> headers = new ArrayList<Map.Entry<String,String>>();
-						headers.add(new AbstractMap.SimpleEntry<String, String>("Host","www.addic7ed.com"));
-						headers.add(new AbstractMap.SimpleEntry<String, String>("Referer",getAPIUrl(serie.getIDAddic7ed(), ep.getStagione(), langS, stat.is720p())));
-						Download.downloadCustomHeaders(urls.get(j), path, headers);
-						downloadOK = true;
-						downloads++;
-						GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
-						if(downloads >=LIMITE_DOWNLOAD){
-							timer.schedule(task_reset_addic7ed_downloads, 86400000, 86400000);
-							break;
-						}
-					}
-					catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		return downloadOK;
+//		if(!hasLanguage(lang))
+//			return false;
+//		if(downloads>=15)
+//			return false;
+//		if(serie.getIDAddic7ed()<=0)
+//			return false;
+//		String langS = getLangString(lang);
+//		if(langS==null)
+//			return false;
+//		ArrayList<File> videos = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
+//		boolean downloadOK = false;
+//		for(int i=0;i<videos.size();i++){
+//			File f = videos.get(i);
+//			CaratteristicheFile stat = Naming.parse(f.getName(), null);
+//			ArrayList<String> urls = cercaSottotitoli(serie.getIDAddic7ed(), stat.getStagione(), stat.getEpisodio(), langS, stat.is720p(), getAddictedLanguages(lang));
+//			if(urls==null)
+//				continue;
+//			else {
+//				for(int j=0;j<urls.size();j++){
+//					String path = f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf(File.separator)+1)+serie.getNomeSerie()+"_"+ep.getStagione()+"x"+ep.getEpisodio()+".srt";
+//					try {
+//						ArrayList<Entry<String, String>> headers = new ArrayList<Map.Entry<String,String>>();
+//						headers.add(new AbstractMap.SimpleEntry<String, String>("Host","www.addic7ed.com"));
+//						headers.add(new AbstractMap.SimpleEntry<String, String>("Referer",getAPIUrl(serie.getIDAddic7ed(), ep.getStagione(), langS, stat.is720p())));
+//						Download.downloadCustomHeaders(urls.get(j), path, headers);
+//						downloadOK = true;
+//						downloads++;
+//						GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
+//						if(downloads >=LIMITE_DOWNLOAD){
+//							timer.schedule(task_reset_addic7ed_downloads, 86400000, 86400000);
+//							break;
+//						}
+//					}
+//					catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//		return downloadOK;
+		return false;
 	}
 	private String getAPIUrl(int idShow, int stagione,String lang, boolean hd){
 		return URL_GET_EPISODES.replace("<IDSHOW>", idShow+"").replace("<SEASON>", stagione+"").replace("<LANG>", lang).replace("<HD>", hd?"1":"0");
@@ -130,10 +125,7 @@ public class Addic7ed implements ProviderSottotitoli {
 		String apiCall = getAPIUrl(idShow, stagione, lang, hd);
 		//System.out.println(apiCall);
 		try {
-			Document doc = Jsoup.connect(apiCall)
-					.header("User-Agent", UserAgent.get())
-					.timeout(10000)
-					.get();
+			Document doc = HttpOperations.getJSoupDocument(apiCall);
 			Elements righe = doc.select("tr.epeven");
 			ArrayList<String> urls = new ArrayList<String>();
 			for(int i=0;i<righe.size();i++){
@@ -196,20 +188,15 @@ public class Addic7ed implements ProviderSottotitoli {
 
 	@Override
 	public ArrayList<SerieSub> getElencoSerie() {
-		String query = "SELECT * FROM "+Database.TABLE_ADDIC7ED+" ORDER BY nome ASC";
-		ArrayList<KVResult<String, Object>>	res = Database.selectQuery(query);
-		ArrayList<SerieSub> el = new ArrayList<SerieSub>();
-		for(KVResult<String, Object> r: res){
-			el.add(parse(r));
-		}
-		return el;
+//		String query = "SELECT * FROM "+Database.TABLE_ADDIC7ED+" ORDER BY nome ASC";
+//		ArrayList<KVResult<String, Object>>	res = Database.selectQuery(query);
+//		ArrayList<SerieSub> el = new ArrayList<SerieSub>();
+//		for(KVResult<String, Object> r: res){
+//			el.add(parse(r));
+//		}
+//		return el;
+		return null;
 	}
-	private SerieSub parse(KVResult<String, Object> r){
-		int id = (int) r.getValueByKey("id");
-		String nome = (String) r.getValueByKey("nome");
-		return new SerieSub(nome, id);
-	}
-
 	@Override
 	public String getProviderName() {
 		return "Addic7ed";
@@ -222,23 +209,19 @@ public class Addic7ed implements ProviderSottotitoli {
 
 	@Override
 	public void associaSerie(SerieTV s) {
-		ArrayList<SerieSub> serieDB = getElencoSerie();
-		for(int i=0;i<serieDB.size();i++){
-			if(s.getNomeSerie().compareToIgnoreCase(serieDB.get(i).getNomeSerie())==0){
-				s.setIDSubsfactory(serieDB.get(i).getIDDB());
-				associa(s.getIDDb(),serieDB.get(i).getIDDB());
-				return;
-			}
-		}
+//		ArrayList<SerieSub> serieDB = getElencoSerie();
+//		for(int i=0;i<serieDB.size();i++){
+//			if(s.getNomeSerie().compareToIgnoreCase(serieDB.get(i).getNomeSerie())==0){
+//				associa(s.getIDDb(),serieDB.get(i).getIDDB());
+//				return;
+//			}
+//		}
 	}
 
 	@Override
 	public void aggiornaElencoSerieOnline() {
 		try {
-			Document doc = Jsoup.connect(URL_SHOWLIST)
-					.header("User-Agent", UserAgent.get())
-					.timeout(10000)
-					.get();
+			Document doc = HttpOperations.getJSoupDocument(URL_SHOWLIST);
 			Elements opts = doc.select("#qsShow option");
 			for(int i=0;i<opts.size();i++){
 				Element opt = opts.get(i);
@@ -259,26 +242,30 @@ public class Addic7ed implements ProviderSottotitoli {
 		}
 	}
 	private boolean isPresente(int id){
-		String query = "SELECT * FROM "+Database.TABLE_ADDIC7ED+" WHERE id="+id;
-		return Database.selectQuery(query).size()==1;
+//		String query = "SELECT * FROM "+Database.TABLE_ADDIC7ED+" WHERE id="+id;
+//		return Database.selectQuery(query).size()==1;
+		return false;
 	}
 	private boolean salvaInDB(String nome, int id){
-		if(isPresente(id))
-			return false;
-		String query = "INSERT INTO "+Database.TABLE_ADDIC7ED+" (id, nome) VALUES (?,?)";
-		return Database.updateQuery(query, id, nome);
+//		if(isPresente(id))
+//			return false;
+//		String query = "INSERT INTO "+Database.TABLE_ADDIC7ED+" (id, nome) VALUES (?,?)";
+//		return Database.updateQuery(query, id, nome);
+		return false;
 	}
 
 	@Override
 	public boolean associa(int idSerie, int idSub) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=? WHERE id=?";
-		return Database.updateQuery(query, idSub, idSerie);
+//		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=? WHERE id=?";
+//		return Database.updateQuery(query, idSub, idSerie);
+		return false;
 	}
 
 	@Override
 	public boolean disassocia(int idSerie) {
-		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=0 WHERE id=?";
-		return Database.updateQuery(query, idSerie);
+//		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_addic7ed=0 WHERE id=?";
+//		return Database.updateQuery(query, idSerie);
+		return false;
 	}
 
 	@Override

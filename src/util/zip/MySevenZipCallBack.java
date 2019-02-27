@@ -1,7 +1,5 @@
 package util.zip;
 
-import gst.programma.ManagerException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,7 +71,6 @@ public class MySevenZipCallBack implements IArchiveExtractCallback {
 								f.createNewFile();
 							} 
                 			catch (IOException e) {
-                				ManagerException.registraEccezione(e);
 								e.printStackTrace();
 							}
                 		}
@@ -82,7 +79,6 @@ public class MySevenZipCallBack implements IArchiveExtractCallback {
 								f.createNewFile();
 							}
 							catch (IOException e) {
-								ManagerException.registraEccezione(e);
 								e.printStackTrace();
 							}
                 	}
@@ -92,7 +88,6 @@ public class MySevenZipCallBack implements IArchiveExtractCallback {
 					} 
                 	catch (IOException e) {
 						e.printStackTrace();
-						ManagerException.registraEccezione(e);
 					}
                 	finally {
                 		if(fw!=null){

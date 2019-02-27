@@ -33,9 +33,9 @@ public class SottotitoliServlet extends HttpServlet{
 		long init = System.currentTimeMillis();
 		switch(action){
 			case "getProviders": {
-				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = GestoreSottotitoli.getInstance().getProviders();
-				xml = ResponseSender.createProviderSottotitoli(map);
-				//xml = GestoreSottotitoli.getInstance().GetProviders();
+//				Map<ProviderSottotitoli, ArrayList<SerieSub>> map = GestoreSottotitoli.getInstance().getProviders();
+//				xml = ResponseSender.createProviderSottotitoli(map);
+//				//xml = GestoreSottotitoli.getInstance().GetProviders();
 				break;
 			}
 			case "getSottotitoliDaScaricare": {
@@ -43,32 +43,32 @@ public class SottotitoliServlet extends HttpServlet{
 				break;
 			}
 			case "scaricaSubByID": {
-				Integer idEPisodio = Integer.parseInt(checkParameter("id", resp, req, false));
-				boolean r = GestoreSottotitoli.getInstance().scaricaSottotitolo(idEPisodio);
-				xml = ResponseSender.createResponseBoolean(r);
+//				Integer idEPisodio = Integer.parseInt(checkParameter("id", resp, req, false));
+//				boolean r = GestoreSottotitoli.getInstance().scaricaSottotitolo(idEPisodio);
+//				xml = ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "removeSubByID": {
-				int idEpisodio = Integer.parseInt(checkParameter("id", resp, req, false));
-				GestoreSottotitoli.rimuoviSub(idEpisodio);
-				xml = ResponseSender.createResponseBoolean(true);
+//				int idEpisodio = Integer.parseInt(checkParameter("id", resp, req, false));
+//				GestoreSottotitoli.rimuoviSub(idEpisodio);
+//				xml = ResponseSender.createResponseBoolean(true);
 				break;
 			}
 			case "associa": {
-				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
-				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
-				int idSerieSub = Integer.parseInt(checkParameter("idSerieSub", resp, req, false));
-				System.out.println("idSerie="+idSerie+" idSerieSub="+idSerieSub+" idProvider="+idProvider);
-				boolean r=GestoreSottotitoli.getInstance().associaSerie(idSerie, idProvider, idSerieSub);
-				xml=ResponseSender.createResponseBoolean(r);
+//				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
+//				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
+//				int idSerieSub = Integer.parseInt(checkParameter("idSerieSub", resp, req, false));
+//				System.out.println("idSerie="+idSerie+" idSerieSub="+idSerieSub+" idProvider="+idProvider);
+//				boolean r=GestoreSottotitoli.getInstance().associaSerie(idSerie, idProvider, idSerieSub);
+//				xml=ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "disassocia": {
-				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
-				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
-				boolean r=GestoreSottotitoli.getInstance().disassociaSerie(idSerie, idProvider);
-				System.out.println("idSerie="+idSerie+" idProvider="+idProvider);
-				xml=ResponseSender.createResponseBoolean(r);
+//				int idSerie = Integer.parseInt(checkParameter("idSerie", resp, req, false));
+//				int idProvider = Integer.parseInt(checkParameter("idProvider", resp, req, false));
+//				boolean r=GestoreSottotitoli.getInstance().disassociaSerie(idSerie, idProvider);
+//				System.out.println("idSerie="+idSerie+" idProvider="+idProvider);
+//				xml=ResponseSender.createResponseBoolean(r);
 				break;
 			}
 			case "getLogSub": {
@@ -78,7 +78,7 @@ public class SottotitoliServlet extends HttpServlet{
 		}
 		long finish = System.currentTimeMillis();
 		System.out.println("Tempo esecuzione "+action+" = "+ (finish-init));
-		ResponseSender.sendResponse(resp, xml);
+//		ResponseSender.sendResponse(resp, xml);
 	}
 	private String checkParameter(String parametro, HttpServletResponse resp, HttpServletRequest req, boolean paramOpzionale) throws IOException{
 		if(req.getParameter(parametro)==null){

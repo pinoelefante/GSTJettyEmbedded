@@ -9,7 +9,6 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 
 import gst.programma.OperazioniFile;
-import gst.programma.Settings;
 
     public class VLC implements VideoPlayer {
     	private String pathExe;
@@ -44,29 +43,17 @@ import gst.programma.Settings;
     				if(OperazioniFile.fileExists(path))
     					return path;
     			}
-				path = Settings.getInstance().getCurrentDir() + File.separator + "vlc"+File.separator+"vlc.exe";
+				//path = Settings.getInstance().getCurrentDir() + File.separator + "vlc"+File.separator+"vlc.exe";
 				if(OperazioniFile.fileExists(path))
 					return path;
     		}
-    		else if(Os.isLinux()){
-    			if(OperazioniFile.fileExists("/usr/bin/vlc"))
-    				return "/usr/bin/vlc";
-    		}
-    		else if(Os.isMacOS()){
-    			
-    		}
     		return null;
-    	}
-    	public static void main(String[] args){
-    		Settings.getInstance();
-    		System.out.println(rilevaVLC());
     	}
 		@Override
 		public boolean playVideo(String pathVideo) {
 			
 			
 			try {
-				/*
 				String[] cmd = {
 						pathExe,
 						"\"file:///"+pathVideo+"\"",
@@ -75,11 +62,12 @@ import gst.programma.Settings;
 						"--no-video-title-show",
 						"--one-instance"
 				};
-				*/
+				/*
 				String[] cmd = {
 						pathExe,
 						"\""+pathVideo+"\"",
 				};
+				*/
 				Runtime.getRuntime().exec(cmd);
 				return true;
 			}

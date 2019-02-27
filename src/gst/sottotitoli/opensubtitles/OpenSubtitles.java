@@ -1,6 +1,5 @@
 package gst.sottotitoli.opensubtitles;
 
-import gst.download.Download;
 import gst.serieTV.Episodio;
 import gst.serieTV.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
@@ -15,7 +14,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import util.os.DirectoryManager;
 import util.zip.ArchiviZip;
 
 public class OpenSubtitles implements ProviderSottotitoli {
@@ -57,44 +55,45 @@ public class OpenSubtitles implements ProviderSottotitoli {
 		if(!hasLanguage(lang))
 			return false;
 		
-		ArrayList<File> files = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
-		if(files.size()<=0)
-			return false;
-		
-		boolean down = false;
-		for(int i=0;i<files.size();i++){
-			if(!api.canDownload())
-				return down;
-			try {
-				String filehash = OpenSubtitlesHasher.computeHash(files.get(i));
-				int filesize = (int) files.get(i).length();
-				String filename = files.get(i).getName();
-				filename = filename.substring(0, filename.lastIndexOf("."));
-				Map<String, String> results = api.searchSubtitles(filehash, filesize, lingue_disponibili.get(lang));
-				if(results.isEmpty())
-					return false;
-				else {
-					String url_download = null;
-					url_download = results.get(filename)!=null?results.get(filename):results.values().iterator().next();
-					String filezip = files.get(i).getParent()+File.separator+serie.getFolderSerie()+"_"+ep.getStagione()+"_"+ep.getEpisodio()+"_"+i+".zip";
-					try {
-						Download.downloadFromUrl(url_download, filezip);
-						api.increaseDownloadCount();
-						ArchiviZip.estrai_tutto(filezip, files.get(i).getParent());
-						down = true;
-					}
-					catch(IOException e){}
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if(down){
-			ep.setSubDownload(!down);
-			GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
-		}
-		return down;
+//		ArrayList<File> files = DirectoryManager.getInstance().cercaFileVideo(serie, ep);
+//		if(files.size()<=0)
+//			return false;
+//		
+//		boolean down = false;
+//		for(int i=0;i<files.size();i++){
+//			if(!api.canDownload())
+//				return down;
+//			try {
+//				String filehash = OpenSubtitlesHasher.computeHash(files.get(i));
+//				int filesize = (int) files.get(i).length();
+//				String filename = files.get(i).getName();
+//				filename = filename.substring(0, filename.lastIndexOf("."));
+//				Map<String, String> results = api.searchSubtitles(filehash, filesize, lingue_disponibili.get(lang));
+//				if(results.isEmpty())
+//					return false;
+//				else {
+//					String url_download = null;
+//					url_download = results.get(filename)!=null?results.get(filename):results.values().iterator().next();
+//					String filezip = files.get(i).getParent()+File.separator+serie.getFolderSerie()+"_"+ep.getStagione()+"_"+ep.getEpisodio()+"_"+i+".zip";
+//					try {
+//						Download.downloadFromUrl(url_download, filezip);
+//						api.increaseDownloadCount();
+//						ArchiviZip.estrai_tutto(filezip, files.get(i).getParent());
+//						down = true;
+//					}
+//					catch(IOException e){}
+//				}
+//			}
+//			catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		if(down){
+//			ep.setSubDownload(!down);
+//			GestoreSottotitoli.setSottotitoloDownload(ep.getId(), false, lang);
+//		}
+//		return down;
+		return false;
 	}
 	
 	private final static ArrayList<SerieSub> elenco_serie = new ArrayList<SerieSub>(1); 

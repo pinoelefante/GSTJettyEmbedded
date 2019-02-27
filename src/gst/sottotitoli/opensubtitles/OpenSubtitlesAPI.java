@@ -1,7 +1,5 @@
 package gst.sottotitoli.opensubtitles;
 
-import gst.programma.Settings;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,21 +15,17 @@ import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
-import util.UserAgent;
-
 @SuppressWarnings({"rawtypes","unchecked"})
 public class OpenSubtitlesAPI {
+	private final static String userAgent = "Gestione Serie TV (Jetty)";
+	
 	private XmlRpcClient server;
-	//private final static String TestUserAgent = "OSTestUserAgent";
-	private String userAgent, token;
-	private Settings setts;
+	private String token;
 	private int download_count, download_limit;
 	private Timer timer;
 	
 	public OpenSubtitlesAPI(){
-		setts = Settings.getInstance();
 		timer = new Timer();
-		userAgent = UserAgent.getOpenSubtitles();
 		server = new XmlRpcClient();
 		XmlRpcClientConfigImpl conf = new XmlRpcClientConfigImpl();
 		try {
@@ -55,7 +49,7 @@ public class OpenSubtitlesAPI {
 		List<Object> params = new ArrayList<Object>();
 		params.add(user);
 		params.add(pass);
-		params.add(setts.getLingua());
+		// params.add(setts.getLingua());
 		params.add(userAgent);
 		try {
 			Map login = execute("LogIn", params);
@@ -77,7 +71,8 @@ public class OpenSubtitlesAPI {
 		return login("","");
 	}
 	public boolean logga(){
-		return login(setts.getOpenSubtitlesUsername(),setts.getOpenSubtitlesPassword());
+		// return login(setts.getOpenSubtitlesUsername(),setts.getOpenSubtitlesPassword());
+		return false;
 	}
 	public boolean logout(){
 		List<Object> p = new ArrayList<>();

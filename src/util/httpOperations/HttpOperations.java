@@ -1,5 +1,6 @@
 package util.httpOperations;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -14,6 +15,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class HttpOperations {
 	public static String GET_withResponse(String url) throws Exception{
@@ -87,5 +90,9 @@ public class HttpOperations {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	public static Document getJSoupDocument(String url) throws IOException
+	{
+		return Jsoup.connect(url).header("User-Agent", "GSTJ").timeout(10000).get();
 	}
 }

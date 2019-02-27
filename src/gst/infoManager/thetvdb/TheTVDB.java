@@ -1,10 +1,6 @@
 package gst.infoManager.thetvdb;
 
 import gst.database.Database;
-import gst.database.tda.KVResult;
-import gst.naming.Naming;
-import gst.programma.ManagerException;
-import gst.programma.Settings;
 import gst.serieTV.SerieTV;
 
 import java.io.IOException;
@@ -24,8 +20,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import util.UserAgent;
 
 public class TheTVDB {
 	private static TheTVDB				   instance;
@@ -53,7 +47,7 @@ public class TheTVDB {
 	}
 
 	private TheTVDB() {
-		defaultLang = Settings.getInstance().getTVDBPreferredLang();
+		// defaultLang = Settings.getInstance().getTVDBPreferredLang();
 		initLanguage();
 		caricaMirrors();
 	}
@@ -109,17 +103,8 @@ public class TheTVDB {
 				list_mirrors.add(newMirror);
 			}
 		}
-		catch (IOException e) {
+		catch (IOException | ParserConfigurationException | SAXException  e) {
 			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		catch (SAXException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
 		}
 	}
 
@@ -170,7 +155,7 @@ public class TheTVDB {
 			if (mirror == null)
 				return null;
 
-			String API_PATH = API_CERCA_SERIE_LINGUA.replace("<seriesname>", serietv.getNomeSerie()).replace("<mirrorpath>", mirror.getUrl()).replace("<language>", defaultLang);
+			String API_PATH = API_CERCA_SERIE_LINGUA.replace("<seriesname>", serietv.getTitolo()).replace("<mirrorpath>", mirror.getUrl()).replace("<language>", defaultLang);
 			conn = getConnection(API_PATH);
 			DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder domparser = dbfactory.newDocumentBuilder();
@@ -178,7 +163,7 @@ public class TheTVDB {
 
 			NodeList elementi = doc.getElementsByTagName("Series");
 			if (elementi.getLength() == 0) {
-				API_PATH = API_CERCA_SERIE_LINGUA.replace("<seriesname>", SerieTV.removeNationality(serietv.getNomeSerie())).replace("<mirrorpath>", mirror.getUrl()).replace("<language>", defaultLang);
+				API_PATH = API_CERCA_SERIE_LINGUA.replace("<seriesname>", SerieTV.removeNationality(serietv.getTitolo())).replace("<mirrorpath>", mirror.getUrl()).replace("<language>", defaultLang);
 				doc = domparser.parse(API_PATH);
 				elementi = doc.getElementsByTagName("Series");
 				if (elementi.getLength() == 0)
@@ -220,19 +205,10 @@ public class TheTVDB {
 				addSerieToList(serie_trovate, newSerie);
 			}
 		}
-		catch (IOException e) {
+		catch (IOException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
-			ManagerException.registraEccezione(e);
 		}
-		catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		catch (SAXException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		filtraRisultati(serie_trovate, serietv.getNomeSerie());
+		filtraRisultati(serie_trovate, serietv.getTitolo());
 		return serie_trovate;
 	}
 	private void filtraRisultati(ArrayList<SerieTVDB> list, String nomeSerie ){
