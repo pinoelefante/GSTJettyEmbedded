@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
-import gst.gui.InterfacciaGrafica;
-import gst.serieTV.SerieTV;
-
 public class OperazioniSerieServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	//private GestioneSerieTV manager;

@@ -1,4 +1,4 @@
-package gst.serieTV;
+package gst.serietv;
 
 import com.j256.ormlite.field.DatabaseField;
 

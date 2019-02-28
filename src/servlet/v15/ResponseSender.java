@@ -11,7 +11,7 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import gst.serieTV.XMLSerializable;
+import gst.serietv.XMLSerializable;
 
 public class ResponseSender
 {

@@ -1,4 +1,4 @@
-package gst.programma;
+package util;
 
 import java.awt.Desktop;
 import java.io.File;

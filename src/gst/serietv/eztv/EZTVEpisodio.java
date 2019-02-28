@@ -1,9 +1,9 @@
-package gst.serieTV.eztv;
+package gst.serietv.eztv;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import gst.serieTV.EpisodioTorrent;
+import gst.serietv.EpisodioTorrent;
 
 @DatabaseTable(tableName="eztv_episodio")
 public class EZTVEpisodio extends EpisodioTorrent<EZTVTorrent>

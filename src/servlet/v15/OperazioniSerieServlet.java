@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.Document;
 
-import gst.serieTV.SerieTV;
-import gst.serieTV.SerieTVController;
+import gst.serietv.SerieTV;
+import gst.serietv.SerieTVController;
 
 public class OperazioniSerieServlet extends HttpServlet
 {

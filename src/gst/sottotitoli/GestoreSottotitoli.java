@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import gst.serieTV.Episodio;
-import gst.serieTV.SerieTV;
+import gst.serietv.Episodio;
+import gst.serietv.SerieTV;
 import gst.services.TaskAggiornaElenchi;
 import gst.services.TaskRicercaSottotitoli;
 import gst.sottotitoli.addic7ed.Addic7ed;

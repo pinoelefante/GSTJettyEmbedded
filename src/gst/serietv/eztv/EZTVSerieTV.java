@@ -1,12 +1,12 @@
-package gst.serieTV.eztv;
+package gst.serietv.eztv;
 
 import org.jdom.Element;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import gst.serieTV.Identifier;
-import gst.serieTV.SerieTV;
+import gst.serietv.Identifier;
+import gst.serietv.SerieTV;
 
 @DatabaseTable(tableName="eztv_serie")
 public class EZTVSerieTV extends SerieTV implements Identifier<Integer>

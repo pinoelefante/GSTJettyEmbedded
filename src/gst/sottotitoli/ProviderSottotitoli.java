@@ -1,9 +1,9 @@
 package gst.sottotitoli;
 
-import gst.serieTV.Episodio;
-import gst.serieTV.SerieTV;
-
 import java.util.ArrayList;
+
+import gst.serietv.Episodio;
+import gst.serietv.SerieTV;
 
 public abstract interface ProviderSottotitoli {
 	public final static String ITALIANO="it", 

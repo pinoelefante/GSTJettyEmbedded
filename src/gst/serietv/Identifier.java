@@ -1,4 +1,4 @@
-package gst.serieTV;
+package gst.serietv;
 
 public interface Identifier<T>
 {

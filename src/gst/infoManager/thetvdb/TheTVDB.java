@@ -1,7 +1,7 @@
 package gst.infoManager.thetvdb;
 
 import gst.database.Database;
-import gst.serieTV.SerieTV;
+import gst.serietv.SerieTV;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

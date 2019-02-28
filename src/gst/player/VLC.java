@@ -3,12 +3,11 @@ package gst.player;
 import java.io.File;
 import java.io.IOException;
 
+import util.OperazioniFile;
 import util.os.Os;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
-
-import gst.programma.OperazioniFile;
 
     public class VLC implements VideoPlayer {
     	private String pathExe;

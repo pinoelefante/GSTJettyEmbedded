@@ -1,9 +1,9 @@
-package gst.serieTV.showrss;
+package gst.serietv.showrss;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import gst.serieTV.EpisodioTorrent;
+import gst.serietv.EpisodioTorrent;
 
 @DatabaseTable(tableName="showrss_episodio")
 public class ShowRSSEpisodio extends EpisodioTorrent<ShowRSSTorrent>

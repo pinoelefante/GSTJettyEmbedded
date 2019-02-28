@@ -1,4 +1,4 @@
-package gst.serieTV;
+package gst.serietv;
 
 import java.util.List;
 import java.util.SortedSet;

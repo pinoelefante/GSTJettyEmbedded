@@ -1,8 +1,8 @@
-package gst.serieTV.eztv;
+package gst.serietv.eztv;
 
 import com.j256.ormlite.table.DatabaseTable;
 
-import gst.serieTV.Torrent;
+import gst.serietv.Torrent;
 
 @DatabaseTable(tableName="eztv_torrent")
 public class EZTVTorrent extends Torrent

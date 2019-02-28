@@ -1,4 +1,4 @@
-package gst.serieTV.eztv;
+package gst.serietv.eztv;
 
 import util.httpOperations.HttpOperations;
 

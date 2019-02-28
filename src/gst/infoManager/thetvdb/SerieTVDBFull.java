@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.jdom.Element;
 
-import gst.serieTV.XMLSerializable;
+import gst.serietv.XMLSerializable;
 
 public class SerieTVDBFull extends SerieTVDB implements XMLSerializable {
 	private String giorno_settimana;

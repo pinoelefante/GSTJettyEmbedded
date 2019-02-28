@@ -1,8 +1,8 @@
-package gst.serieTV.showrss;
+package gst.serietv.showrss;
 
 import com.j256.ormlite.table.DatabaseTable;
 
-import gst.serieTV.Torrent;
+import gst.serietv.Torrent;
 
 @DatabaseTable(tableName="showrss_torrent")
 public class ShowRSSTorrent extends Torrent

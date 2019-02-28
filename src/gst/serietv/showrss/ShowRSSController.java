@@ -1,10 +1,10 @@
-package gst.serieTV.showrss;
+package gst.serietv.showrss;
 
 import java.util.List;
 import java.util.SortedSet;
 
 import gst.database.Database;
-import gst.serieTV.AbstractTorrentProviderController;
+import gst.serietv.AbstractTorrentProviderController;
 import javafx.util.Pair;
 import util.MyCollections;
 import util.Tuple;

@@ -3,9 +3,9 @@ package gst.download;
 import java.io.File;
 import java.io.IOException;
 
+import gst.serietv.Torrent;
+import util.OperazioniFile;
 import util.os.Os;
-import gst.programma.OperazioniFile;
-import gst.serieTV.Torrent;
 
 public class UTorrent {
 	private static UTorrent instance;

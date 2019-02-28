@@ -1,7 +1,7 @@
 package gst.sottotitoli.localhost;
 
-import gst.serieTV.Episodio;
-import gst.serieTV.SerieTV;
+import gst.serietv.Episodio;
+import gst.serietv.SerieTV;
 import gst.sottotitoli.GestoreSottotitoli;
 import gst.sottotitoli.ProviderSottotitoli;
 import gst.sottotitoli.SerieSub;

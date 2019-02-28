@@ -1,11 +1,11 @@
-package gst.serieTV.eztv;
+package gst.serietv.eztv;
 
 import java.util.List;
 import java.util.SortedSet;
 
 import gst.database.Database;
-import gst.serieTV.AbstractTorrentProviderController;
-import gst.serieTV.NameUtils;
+import gst.serietv.AbstractTorrentProviderController;
+import gst.serietv.NameUtils;
 import javafx.util.Pair;
 import util.MyCollections;
 import util.Tuple;

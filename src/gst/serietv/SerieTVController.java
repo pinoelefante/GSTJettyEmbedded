@@ -1,4 +1,4 @@
-package gst.serieTV;
+package gst.serietv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import gst.database.Database;
-import gst.serieTV.eztv.EZTVController;
-import gst.serieTV.eztv.EZTVSerieTV;
-import gst.serieTV.showrss.ShowRSSController;
-import gst.serieTV.showrss.ShowRSSSerieTV;
+import gst.serietv.eztv.EZTVController;
+import gst.serietv.eztv.EZTVSerieTV;
+import gst.serietv.showrss.ShowRSSController;
+import gst.serietv.showrss.ShowRSSSerieTV;
 import javafx.util.Pair;
 import util.MyCollections;
 

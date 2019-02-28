@@ -1,4 +1,4 @@
-package gst.serieTV.showrss;
+package gst.serietv.showrss;
 
 import java.io.IOException;
 import java.util.ArrayList;

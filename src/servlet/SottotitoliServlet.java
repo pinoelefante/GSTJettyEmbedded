@@ -39,7 +39,7 @@ public class SottotitoliServlet extends HttpServlet{
 				break;
 			}
 			case "getSottotitoliDaScaricare": {
-				xml = GestoreSottotitoli.getInstance().GetSottotitoliDaScaricare();
+				//xml = GestoreSottotitoli.getInstance().GetSottotitoliDaScaricare();
 				break;
 			}
 			case "scaricaSubByID": {
@@ -72,7 +72,7 @@ public class SottotitoliServlet extends HttpServlet{
 				break;
 			}
 			case "getLogSub": {
-				xml = GestoreSottotitoli.getInstance().GetLastLogSub(50);
+				//xml = GestoreSottotitoli.getInstance().GetLastLogSub(50);
 				break;
 			}
 		}
