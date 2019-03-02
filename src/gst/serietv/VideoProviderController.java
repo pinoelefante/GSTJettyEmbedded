@@ -15,13 +15,13 @@ import gst.serietv.showrss.ShowRSSSerieTV;
 import javafx.util.Pair;
 import util.MyCollections;
 
-public class SerieTVController
+public class VideoProviderController
 {
-	private static SerieTVController instance = new SerieTVController();
+	private static VideoProviderController instance = new VideoProviderController();
 	private List<AbstractController<?,?,?>> controllers;
 	private Database db;
 
-	private SerieTVController()
+	private VideoProviderController()
 	{
 		db = Database.GetInstance();
 		db.CreateDB(SerieTVComposer.class);
@@ -29,17 +29,19 @@ public class SerieTVController
 		controllers.add(EZTVController.getInstance());
 		controllers.add(ShowRSSController.getInstance());
 	}
-	public static SerieTVController getInstance() {
+	public static VideoProviderController getInstance() {
 		return instance;
 	}
 	@SuppressWarnings("unchecked")
 	public List<SerieTV> getElencoSerieTV()
 	{
-		return MyCollections.CastTo(db.SelectWhereOrder(SerieTVComposer.class, null, new Pair[]{new Pair<String,String>("titolo", "ASC")}));
+		return MyCollections.CastTo(db.SelectWhereOrder(SerieTVComposer.class,
+				null,
+				new Pair[]{new Pair<String,String>("titolo", "ASC")}));
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<SerieTVComposer> aggiornaSerie()
+	public List<SerieTV> aggiornaSerie()
 	{
 		long startUpdate = System.currentTimeMillis();
 		List<SerieTV> newShows = new ArrayList<>();
@@ -49,7 +51,7 @@ public class SerieTVController
 			newShows.addAll(serie);
 		}
 		System.out.println("Tempo aggiornamento serie: "+ (System.currentTimeMillis() - startUpdate));
-		return merge(newShows);
+		return MyCollections.CastTo(merge(newShows));
 	}
 
 	private List<SerieTVComposer> merge(List<SerieTV> list)
@@ -114,12 +116,14 @@ public class SerieTVController
 		list.forEach((SerieTVComposer s) -> map.put(s.getTitolo().toLowerCase(), s));
 		return map;
 	}
+	
 	public void rename(int composerId, String newTitle)
 	{
 		SerieTVComposer composer = getComposer(composerId);
 		composer.setTitolo(newTitle);
 		db.SaveItem(composer);
 	}
+	
 	public void associateComposers(int composerFirst, int composerSecond)
 	{
 		SerieTVComposer composer1 = getComposer(composerFirst);
@@ -133,10 +137,12 @@ public class SerieTVController
 		db.DeleteItem(composer2);
 		db.SaveItem(composer1);
 	}
+	
 	private SerieTVComposer getComposer(int id)
 	{
 		return db.SelectById(SerieTVComposer.class, id);
 	}
+	
 	public void aggiornaEpisodi(int composerId)
 	{
 		SerieTVComposer composer = getComposer(composerId);
@@ -147,6 +153,13 @@ public class SerieTVController
 			else if(controller instanceof ShowRSSController)
 				((ShowRSSController)controller).aggiornaEpisodi(composer.getShowrss());
 		}
+	}
+	public void aggiornaEpisodi()
+	{
+		List<SerieTV> listaSerie = getFavouriteList();
+		
+		for(SerieTV serie : listaSerie)
+			aggiornaEpisodi(((SerieTVComposer)serie).getId());
 	}
 	@SuppressWarnings("rawtypes")
 	public SortedSet<Episodio> getElencoEpisodi(int composerId)
@@ -162,12 +175,23 @@ public class SerieTVController
 		}
 		return episodi;
 	}
-	public static void main(String[] args)
+	public void setFavourite(int showId, boolean status)
 	{
-		SerieTVController c = new SerieTVController();
-		List<SerieTV> serie = c.getElencoSerieTV();
-		for(SerieTV s : serie)
-			System.out.println(s.getTitolo());
+		SerieTVComposer composer = getComposer(showId);
+		composer.setFavourite(status);
+		db.SaveItem(composer);
+	}
+	@SuppressWarnings("unchecked")
+	public List<SerieTV> getFavouriteList()
+	{
+		return MyCollections.CastTo(db.SelectWhereOrder(SerieTVComposer.class,
+				new Pair[] { new Pair<String, Boolean>("favourite", true)},
+				new Pair[] { new Pair<String, String>("titolo", "ASC")}));
+	}
+	
+	public List<Torrent> getTorrentsForEpisode(int showId, int season, int episode)
+	{
+		return null;
 	}
 	
 	// get links for episode

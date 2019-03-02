@@ -1,8 +1,11 @@
 package gst.serietv;
 
+import org.jdom.Element;
+import org.json.simple.JSONObject;
+
 import com.j256.ormlite.field.DatabaseField;
 
-public abstract class Episodio implements Comparable<Episodio>
+public abstract class Episodio implements Comparable<Episodio>, XMLSerializable, JSONSerializable
 {
 	@DatabaseField(columnName="stagione")
 	private int stagione;
@@ -63,5 +66,26 @@ public abstract class Episodio implements Comparable<Episodio>
 			return false;
 		Episodio ep = (Episodio)obj;
 		return compareTo(ep) == 0;
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("season", getStagione());
+		obj.put("episode", getEpisodio());
+		return obj;
+	}
+	@Override
+	public Element getXml()
+	{
+		Element doc = new Element("episode");
+		Element season = new Element("season");
+		season.addContent(getStagione()+"");
+		doc.addContent(season);
+		Element epNum = new Element("epNum");
+		epNum.addContent(getEpisodio()+"");
+		doc.addContent(epNum);
+		return doc;
 	}
 }

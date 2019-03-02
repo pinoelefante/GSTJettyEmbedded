@@ -1,10 +1,11 @@
 package gst.serietv;
 
 import org.jdom.Element;
+import org.json.simple.JSONObject;
 
 import com.j256.ormlite.field.DatabaseField;
 
-public abstract class SerieTV implements XMLSerializable
+public abstract class SerieTV implements XMLSerializable, JSONSerializable
 {
 	@DatabaseField(columnName="titolo")
 	private String titolo;
@@ -34,5 +35,14 @@ public abstract class SerieTV implements XMLSerializable
 		nome.addContent(getTitolo());
 		serie_tag.addContent(nome);
 		return serie_tag;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("name", getTitolo());
+		return obj;
 	}
 }

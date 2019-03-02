@@ -1,8 +1,11 @@
 package gst.serietv;
 
+import org.jdom.Element;
+import org.json.simple.JSONObject;
+
 import com.j256.ormlite.field.DatabaseField;
 
-public abstract class Torrent implements Comparable<Torrent>
+public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, JSONSerializable
 {
 	@DatabaseField(columnName="episodeId")
 	private int episodeId;
@@ -100,5 +103,46 @@ public abstract class Torrent implements Comparable<Torrent>
 	public int compareTo(Torrent o)
 	{
 		return this.getUrl().compareTo(o.getUrl());
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("epId", getEpisodeId());
+		obj.put("url", getUrl());
+		obj.put("resolution", getResolution());
+		obj.put("proper", isProper());
+		obj.put("repack", isRepack());
+		obj.put("preair", isPreair());
+		obj.put("source", getSource());
+		return obj;
+	}
+	@Override
+	public Element getXml()
+	{
+		Element torrent = new Element("torrent");
+		Element epId = new Element("epId");
+		epId.addContent(getEpisodeId()+"");
+		Element url = new Element("url");
+		url.addContent(getUrl());
+		Element resolution = new Element("resolution");
+		resolution.addContent(getResolution()+"");
+		Element proper = new Element("proper");
+		proper.addContent(isProper()+"");
+		Element repack = new Element("repack");
+		repack.addContent(isRepack()+"");
+		Element preair = new Element("preair");
+		preair.addContent(isPreair()+"");
+		Element source = new Element("source");
+		source.addContent(getSource());
+		torrent.addContent(epId);
+		torrent.addContent(url);
+		torrent.addContent(resolution);
+		torrent.addContent(proper);
+		torrent.addContent(repack);
+		torrent.addContent(preair);
+		torrent.addContent(source);
+		return torrent;
 	}
 }

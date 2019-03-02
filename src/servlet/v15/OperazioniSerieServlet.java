@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jdom.Document;
+import org.json.simple.JSONObject;
 
 import gst.serietv.SerieTV;
-import gst.serietv.SerieTVController;
+import gst.serietv.VideoProviderController;
 
 public class OperazioniSerieServlet extends HttpServlet
 {
@@ -24,18 +24,76 @@ public class OperazioniSerieServlet extends HttpServlet
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "action not sended");
 			return;
 		}
-		Document xml = null;
+		JSONObject jsonContent = null;
 		switch(action)
 		{
+			case "aggiungiFavorita":
+			{
+				int id = Integer.parseInt(req.getParameter("id"));
+				VideoProviderController.getInstance().setFavourite(id, true);
+				break;
+			}
+			case "rimuoviFavorita":
+			{
+				int id = Integer.parseInt(req.getParameter("id"));
+				VideoProviderController.getInstance().setFavourite(id, false);
+				break;
+			}
+			case "aggiornaElencoSerie":
+			{
+				List<SerieTV> list = VideoProviderController.getInstance().aggiornaSerie();
+				jsonContent = ResponseSender.createCollectionJson(list);
+				break;
+			}
 			case "elencoSerie":
 			{
-				List<SerieTV> listSerie = SerieTVController.getInstance().getElencoSerieTV();
-				System.out.println("Serie Trovate: "+listSerie.size());
-				xml = ResponseSender.createCollectionXml(listSerie);
+				List<SerieTV> listSerie = VideoProviderController.getInstance().getElencoSerieTV();
+				jsonContent = ResponseSender.createCollectionJson(listSerie);
+				break;
+			}
+			case "elencoSerieFavorite":
+			{
+				List<SerieTV> listSerie = VideoProviderController.getInstance().getFavouriteList();
+				jsonContent = ResponseSender.createCollectionJson(listSerie);
+				break;
+			}
+			case "rinominaSerie":
+			{
+				int id = Integer.parseInt(req.getParameter("id"));
+				String newName = req.getParameter("name");
+				VideoProviderController.getInstance().rename(id, newName);
+				break;
+			}
+			case "unisciSerie":
+			{
+				int id1 = Integer.parseInt(req.getParameter("id1"));
+				int id2 = Integer.parseInt(req.getParameter("id2"));
+				VideoProviderController.getInstance().associateComposers(id1, id2);
+				break;
+			}
+			case "aggiornaElencoEpisodi":
+			{
+				VideoProviderController.getInstance().aggiornaEpisodi();
+				break;
+			}
+			case "aggiornaElencoEpisodiSerie":
+			{
+				int serie = Integer.parseInt(req.getParameter("id"));
+				VideoProviderController.getInstance().aggiornaEpisodi(serie);
+				break;
+			}
+			case "elencoEpisodi":
+			{
+				
+				break;
+			}
+			case "elencoEpisodiSerie":
+			{
+				int serie = Integer.parseInt(req.getParameter("id"));
 				break;
 			}
 		}
-		ResponseSender.sendResponse(resp, xml);
+		ResponseSender.sendJSONResponse(resp, jsonContent);
 	}
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException

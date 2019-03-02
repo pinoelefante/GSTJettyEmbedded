@@ -25,7 +25,7 @@ public class ShowRSSSerieTV extends SerieTV implements Identifier<Integer>
 	public Element getXml()
 	{
 		Element doc = super.getXml();
-		Element onlineId = new Element("showrss_id");
+		Element onlineId = new Element("id");
 		onlineId.addContent(getId()+"");
 		doc.addContent(onlineId);
 		return doc;

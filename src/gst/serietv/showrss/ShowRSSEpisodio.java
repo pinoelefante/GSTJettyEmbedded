@@ -1,5 +1,8 @@
 package gst.serietv.showrss;
 
+import org.jdom.Element;
+import org.json.simple.JSONObject;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -38,5 +41,25 @@ public class ShowRSSEpisodio extends EpisodioTorrent<ShowRSSTorrent>
 	{
 		this.episodioId = episodioId;
 	}
-
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = super.getJson();
+		obj.put("epId", getEpisodioId());
+		obj.put("showId", getSerieId());
+		return obj;
+	}
+	@Override
+	public Element getXml()
+	{
+		Element doc = super.getXml();
+		Element epId = new Element("epId");
+		epId.addContent(getEpisodioId()+"");
+		Element showId = new Element("showId");
+		showId.addContent(getSerieId()+"");
+		doc.addContent(epId);
+		doc.addContent(showId);
+		return doc;
+	}
 }

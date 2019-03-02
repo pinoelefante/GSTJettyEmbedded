@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class TheTVDB {
+/*
 	private static TheTVDB				   instance;
 
 	private static String				   APIKEY				 = "294AFD865CEB421D";
@@ -712,4 +713,5 @@ public class TheTVDB {
 			throw e;
 		}
 	}
+	*/
 }

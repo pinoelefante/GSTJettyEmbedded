@@ -1,5 +1,8 @@
 package gst.serietv.eztv;
 
+import org.jdom.Element;
+import org.json.simple.JSONObject;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -40,5 +43,25 @@ public class EZTVEpisodio extends EpisodioTorrent<EZTVTorrent>
 	{
 		this.serieId = serieId;
 	}
-	
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = super.getJson();
+		obj.put("epId", getEpisodeId());
+		obj.put("showId", getSerieId());
+		return obj;
+	}
+	@Override
+	public Element getXml()
+	{
+		Element doc = super.getXml();
+		Element epId = new Element("epId");
+		epId.addContent(getEpisodeId()+"");
+		Element showId = new Element("showId");
+		showId.addContent(getSerieId()+"");
+		doc.addContent(epId);
+		doc.addContent(showId);
+		return doc;
+	}
 }

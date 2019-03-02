@@ -1,6 +1,7 @@
 package gst.serietv.eztv;
 
 import org.jdom.Element;
+import org.json.simple.JSONObject;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -27,7 +28,7 @@ public class EZTVSerieTV extends SerieTV implements Identifier<Integer>
 	public Element getXml()
 	{
 		Element tag = super.getXml();
-		Element eztv_id = new Element("eztv_id");
+		Element eztv_id = new Element("id");
 		eztv_id.addContent(getId()+"");
 		tag.addContent(eztv_id);
 		return tag;
@@ -41,5 +42,13 @@ public class EZTVSerieTV extends SerieTV implements Identifier<Integer>
 	public void setId(Integer id)
 	{
 		this.id = id;
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject obj = super.getJson();
+		obj.put("id", getId());
+		return obj;
 	}
 }

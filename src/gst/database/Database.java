@@ -1,12 +1,9 @@
 package gst.database;
 
 import java.sql.SQLException;
-import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import javafx.util.Pair;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +15,8 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
+
+import javafx.util.Pair;
 
 /* Using http://ormlite.com/ */
 public class Database
