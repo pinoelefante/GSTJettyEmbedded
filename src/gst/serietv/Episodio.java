@@ -40,19 +40,10 @@ public abstract class Episodio implements Comparable<Episodio>, XMLSerializable,
 	@Override
 	public int compareTo(Episodio o)
 	{
-		if(getStagione() == o.getStagione() && getEpisodio() == o.getEpisodio())
-			return 0;
-		if(getStagione() < o.getStagione())
-			return -1;
-		else if(getStagione() > o.getStagione())
-			return 1;
-		else
-		{
-			if(getEpisodio()<o.getEpisodio())
-				return -1;
-			else
-				return 1;
-		}
+		int seasonCompare = Integer.compare(getStagione(), o.getStagione());
+		if(seasonCompare == 0)
+			return getEpisodio()-o.getEpisodio();
+		return seasonCompare;
 	}
 	@Override
 	public String toString()

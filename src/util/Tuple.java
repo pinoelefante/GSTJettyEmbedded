@@ -50,12 +50,9 @@ public class Tuple<K extends Comparable<K>,V extends Comparable<V>> implements C
 	@Override
 	public int compareTo(Tuple<K, V> arg0)
 	{
-		if(this.getElement1().compareTo(arg0.getElement1()) == 0 && this.getElement2().compareTo(arg0.getElement2()) == 0)
-			return 0;
-		int hash1 = this.getElement1().hashCode() + this.getElement2().hashCode();
-		int hash2 = arg0.getElement1().hashCode() + arg0.getElement2().hashCode();
-		return hash1-hash2; 
+		int kCompare = getElement1().compareTo(arg0.getElement1()); 
+		if(kCompare == 0)
+			return getElement2().compareTo(arg0.getElement2());
+		return kCompare;
 	}
-	
-	
 }

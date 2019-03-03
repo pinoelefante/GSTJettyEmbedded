@@ -2,6 +2,7 @@ package servlet.v15;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 
+import gst.serietv.Episodio;
 import gst.serietv.SerieTV;
 import gst.serietv.VideoProviderController;
 
@@ -90,6 +92,8 @@ public class OperazioniSerieServlet extends HttpServlet
 			case "elencoEpisodiSerie":
 			{
 				int serie = Integer.parseInt(req.getParameter("id"));
+				Set<Episodio> episodi = VideoProviderController.getInstance().getElencoEpisodi(serie);
+				jsonContent = ResponseSender.createCollectionJson(episodi);
 				break;
 			}
 		}

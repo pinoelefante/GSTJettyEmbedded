@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import gst.database.Database;
+import gst.database.DatabaseSave;
 import gst.serietv.AbstractTorrentProviderController;
 import gst.serietv.NameUtils;
 import javafx.util.Pair;
@@ -41,13 +42,12 @@ public class EZTVController extends AbstractTorrentProviderController<Integer, E
 	@Override
 	protected void saveNewEpisode(EZTVEpisodio onlineEpisodio)
 	{
-		db.SaveItem(onlineEpisodio, new Runnable() {
-			public void run()
-			{
-				onlineEpisodio.getLinksList().forEach((EZTVTorrent t) -> t.setEpisodeId(onlineEpisodio.getEpisodeId()));
-				db.SaveList(EZTVTorrent.class, onlineEpisodio.getLinksList());
-			}
-		});
+		DatabaseSave save = db.SaveItem(onlineEpisodio);
+		if(save.isComplete())
+		{
+			onlineEpisodio.getLinksList().forEach((EZTVTorrent t) -> t.setEpisodeId(onlineEpisodio.getEpisodeId()));
+			db.SaveList(EZTVTorrent.class, onlineEpisodio.getLinksList());
+		}
 	}
 
 	@Override

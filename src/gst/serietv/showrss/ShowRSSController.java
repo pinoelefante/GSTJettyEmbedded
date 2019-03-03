@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import gst.database.Database;
+import gst.database.DatabaseSave;
 import gst.serietv.AbstractTorrentProviderController;
 import javafx.util.Pair;
 import util.MyCollections;
@@ -51,14 +52,12 @@ public class ShowRSSController extends AbstractTorrentProviderController<Integer
 	@Override
 	protected void saveNewEpisode(ShowRSSEpisodio onlineEpisodio)
 	{
-		db.SaveItem(onlineEpisodio, new Runnable() {
-			public void run()
-			{
-				onlineEpisodio.getLinksList().forEach((ShowRSSTorrent t) -> t.setEpisodeId(onlineEpisodio.getEpisodioId()));
-				db.SaveList(ShowRSSTorrent.class, onlineEpisodio.getLinksList());
-			}
-		});
-		
+		DatabaseSave save = db.SaveItem(onlineEpisodio);
+		if(save.isComplete())
+		{
+			onlineEpisodio.getLinksList().forEach((ShowRSSTorrent t) -> t.setEpisodeId(onlineEpisodio.getEpisodioId()));
+			db.SaveList(ShowRSSTorrent.class, onlineEpisodio.getLinksList());
+		}
 	}
 
 	@Override
