@@ -1,4 +1,4 @@
-package gst.infoManager.thetvdb;
+package gst.info.thetvdb;
 
 import gst.database.Database;
 import gst.serietv.SerieTV;

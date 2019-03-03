@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import util.Tuple;
-
 public class NameUtils
 {
 	private static List<Map.Entry<Integer, Pattern>> patterns	  = new ArrayList<>();
@@ -105,14 +103,14 @@ public class NameUtils
 			return "WEB";
 		return "HDTV";
 	}
-	public static Tuple<Integer, Integer> getSeasonEpisode(String name)
+	public static EpisodeWrapper getSeasonEpisode(String name)
 	{
 		return parseEpisodeName(name, 0);
 	}
 	
-	private static Tuple<Integer, Integer> parseEpisodeName(String toParse, int startFrom)
+	private static EpisodeWrapper parseEpisodeName(String toParse, int startFrom)
 	{
-		Tuple<Integer, Integer> myTuple = new Tuple<>(0, 0);
+		EpisodeWrapper myTuple = new EpisodeWrapper(0, 0);
 		if(startFrom >= patterns.size())
 			return myTuple;
 		int currentPattern;
@@ -186,8 +184,8 @@ public class NameUtils
 
 		try
 		{
-			myTuple.setElement1(Integer.parseInt(dati[0]));
-			myTuple.setElement2(Integer.parseInt(dati[1]));
+			myTuple.setSeason(Integer.parseInt(dati[0]));
+			myTuple.setEpisode(Integer.parseInt(dati[1]));
 		}
 		catch (Exception e)
 		{

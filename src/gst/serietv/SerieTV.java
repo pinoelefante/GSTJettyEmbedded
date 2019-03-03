@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 
 import com.j256.ormlite.field.DatabaseField;
 
-public abstract class SerieTV implements XMLSerializable, JSONSerializable
+public abstract class SerieTV implements XMLSerializable, JSONSerializable, Comparable<SerieTV>
 {
 	@DatabaseField(columnName="titolo")
 	private String titolo;
@@ -44,5 +44,11 @@ public abstract class SerieTV implements XMLSerializable, JSONSerializable
 		JSONObject obj = new JSONObject();
 		obj.put("name", getTitolo());
 		return obj;
+	}
+	
+	@Override
+	public int compareTo(SerieTV o)
+	{
+		return getTitolo().compareToIgnoreCase(o.getTitolo());
 	}
 }

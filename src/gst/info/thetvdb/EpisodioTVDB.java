@@ -1,4 +1,4 @@
-package gst.infoManager.thetvdb;
+package gst.info.thetvdb;
 
 public class EpisodioTVDB {
 	private int idSerie, stagione, episodio, idEpisodio;

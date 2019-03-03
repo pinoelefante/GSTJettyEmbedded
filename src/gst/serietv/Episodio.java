@@ -5,15 +5,18 @@ import org.json.simple.JSONObject;
 
 import com.j256.ormlite.field.DatabaseField;
 
-public abstract class Episodio implements Comparable<Episodio>, XMLSerializable, JSONSerializable
+public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, JSONSerializable
 {
-	@DatabaseField(columnName="stagione")
+	@DatabaseField(columnName="showId", id=true)
+	private ID showId;
+	@DatabaseField(columnName="stagione", id=true)
 	private int stagione;
-	@DatabaseField(columnName="episodio")
+	@DatabaseField(columnName="episodio", id=true)
 	private int episodio;
 	
-	public Episodio(int stagione, int episodio)
+	public Episodio(ID showId, int stagione, int episodio)
 	{
+		setShowId(showId);
 		setStagione(stagione);
 		setEpisodio(episodio);
 	}
@@ -37,8 +40,18 @@ public abstract class Episodio implements Comparable<Episodio>, XMLSerializable,
 	{
 		this.episodio = episodio;
 	}
+	public ID getShowId()
+	{
+		return showId;
+	}
+
+	public void setShowId(ID showId)
+	{
+		this.showId = showId;
+	}
+
 	@Override
-	public int compareTo(Episodio o)
+	public int compareTo(Episodio<ID> o)
 	{
 		int seasonCompare = Integer.compare(getStagione(), o.getStagione());
 		if(seasonCompare == 0)
@@ -50,12 +63,13 @@ public abstract class Episodio implements Comparable<Episodio>, XMLSerializable,
 	{
 		return String.format("S%02dE%02d", getStagione(), getEpisodio());
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj)
 	{
 		if(!(obj instanceof Episodio))
 			return false;
-		Episodio ep = (Episodio)obj;
+		Episodio<ID> ep = (Episodio<ID>)obj;
 		return compareTo(ep) == 0;
 	}
 	@SuppressWarnings("unchecked")
@@ -63,6 +77,7 @@ public abstract class Episodio implements Comparable<Episodio>, XMLSerializable,
 	public JSONObject getJson()
 	{
 		JSONObject obj = new JSONObject();
+		obj.put("show", getShowId());
 		obj.put("season", getStagione());
 		obj.put("episode", getEpisodio());
 		return obj;
@@ -71,6 +86,9 @@ public abstract class Episodio implements Comparable<Episodio>, XMLSerializable,
 	public Element getXml()
 	{
 		Element doc = new Element("episode");
+		Element show = new Element("show");
+		show.addContent(getShowId()+"");
+		doc.addContent(show);
 		Element season = new Element("season");
 		season.addContent(getStagione()+"");
 		doc.addContent(season);

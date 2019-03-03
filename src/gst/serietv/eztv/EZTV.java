@@ -85,11 +85,14 @@ public class EZTV
 
 	public List<String> caricaLinkTorrents(EZTVSerieTV serie)
 	{
+		return caricaLinkTorrents(serie.getId());
+	}
+	public List<String> caricaLinkTorrents(int serieId)
+	{
 		List<String> links = new ArrayList<>();
-		// System.out.println("Aggiornando i link di: " + serie.getTitolo());
 		try
 		{
-			String pageHtml = HttpOperations.GET_withResponse(BASE_URL+"/shows/"+serie.getId()+"/");
+			String pageHtml = HttpOperations.GET_withResponse(BASE_URL+"/shows/"+serieId+"/");
 			StringReader sr = new StringReader(pageHtml);
 			Scanner file = new Scanner(sr);
 			while (file.hasNextLine())

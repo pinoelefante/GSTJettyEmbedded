@@ -17,10 +17,12 @@ public class SerieTVComposer extends SerieTV implements XMLSerializable
 	private int	showrss;
 	@DatabaseField(columnName = "favourite")
 	private boolean favourite;
+	@DatabaseField(columnName = "lastUpdate", defaultValue="0")
+	private long lastUpdate;
+	@DatabaseField(columnName = "resolution", defaultValue="720")
+	private int favouriteResolution;
 
-	public SerieTVComposer()
-	{
-	}
+	public SerieTVComposer() { }
 
 	public SerieTVComposer(int eztv, int showrss, String titolo)
 	{
@@ -67,6 +69,26 @@ public class SerieTVComposer extends SerieTV implements XMLSerializable
 	public void setFavourite(boolean favourite)
 	{
 		this.favourite = favourite;
+	}
+
+	public long getLastUpdate()
+	{
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(long lastUpdate)
+	{
+		this.lastUpdate = lastUpdate;
+	}
+
+	public int getFavouriteResolution()
+	{
+		return favouriteResolution;
+	}
+
+	public void setFavouriteResolution(int favouriteResolution)
+	{
+		this.favouriteResolution = favouriteResolution;
 	}
 
 	@Override

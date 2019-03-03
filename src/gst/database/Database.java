@@ -1,6 +1,7 @@
 package gst.database;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
@@ -47,7 +48,8 @@ public class Database
 	private Database() throws SQLException
 	{
 		String databaseUrl = "jdbc:sqlite:gstnew.sqlite";
-		connectionSource = new JdbcPooledConnectionSource(databaseUrl);
+		connectionSource = new JdbcConnectionSource(databaseUrl);
+		// connectionSource = new JdbcPooledConnectionSource(databaseUrl);
 	}
 
 	public HashMap<Class<?>, Dao> daos = new HashMap<>();
@@ -74,7 +76,7 @@ public class Database
 		return daos.get(c);
 	}
 
-	public QueryBuilder GetQueryBuilder(Class c)
+	public QueryBuilder GetQueryBuilder(Class<?> c)
 	{
 		return GetDao(c).queryBuilder();
 	}
@@ -205,29 +207,38 @@ public class Database
 		}
 		return null;
 	}
-
-	public <T> DatabaseSave SaveList(Class<?> c, List<T> item, Runnable runnable)
-	{
-		if (item != null && item.size() > 0)
-		{
-			DatabaseSave db = new DatabaseSave(c, item, true, runnable);
-			save(db);
-			return db;
-		}
-		return null;
-	}
-
+	
 	public <T> DatabaseSave Union(Class<?> c, List<T> items)
 	{
 
 		return null;
 	}
-
-	public <T> DatabaseSave SaveList(Class<?> c, List<T> item)
+	
+	private <T> DatabaseSave SaveCollection(Class<?> c, Collection<T> collection, Runnable runnable)
 	{
-		return SaveList(c, item, null);
+		DatabaseSave db = new DatabaseSave(c, collection, true, runnable);
+		save(db);
+		return db;
 	}
-
+	public <T> DatabaseSave SaveCollection(Collection<T> collection, Runnable run)
+	{
+		if(collection == null || collection.isEmpty())
+		{
+			DatabaseSave save = new DatabaseSave(null, null, true, null);
+			save.setComplete(true);
+			return save;
+		}
+		else
+		{
+			Class<?> itemClass = collection.iterator().next().getClass();
+			return SaveCollection(itemClass, collection, run);
+		}
+	}
+	public <T> DatabaseSave SaveCollection(Collection<T> collection)
+	{
+		return SaveCollection(collection, null);
+	}
+	
 	private void save(DatabaseSave db_save)
 	{
 		try
@@ -236,41 +247,23 @@ public class Database
 			DatabaseConnection db_conn = dao.startThreadConnection();
 			dao.startThreadConnection().setAutoCommit(false);
 			dao.setAutoCommit(db_conn, false);
-			boolean delete = db_save.isDelete();
-			if (db_save.isCollection())
-			{
-				List<?> items = (List<?>) db_save.getContent();
-				if (delete)
+			int result = 0;
+			if(db_save.isDelete())
+				result = db_save.isCollection() ? dao.delete((Collection<?>)db_save.getContent()) : dao.deleteById(db_save.getContent());
+			else{
+				if(db_save.isCollection())
 				{
-					dao.delete(items);
+					for(Object x : (Collection<?>)db_save.getContent())
+						result = result + dao.createOrUpdate(x).getNumLinesChanged();
 				}
 				else
-				{
-
-					for (int i = 0; i < items.size(); i++)
-					{
-						dao.createOrUpdate(items.get(i));
-					}
-				}
-			}
-			else
-			{
-				if (delete)
-				{
-					dao.delete(db_save.getContent());
-				}
-				else
-				{
-					// System.out.println("Saving:
-					// "+db_save.getContent().getClass().getName());
-					dao.createOrUpdate(db_save.getContent());
-				}
+					result = dao.createOrUpdate(db_save.getContent()).getNumLinesChanged();
 			}
 			dao.commit(db_conn);
 			dao.endThreadConnection(db_conn);
 			db_save.setComplete(true);
 			if(db_save.getRunnable() != null)
-				db_save.getRunnable().run();
+				new Thread(db_save.getRunnable()).start();
 		}
 		catch (SQLException e)
 		{

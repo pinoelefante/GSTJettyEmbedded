@@ -3,6 +3,8 @@ package servlet.v15;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,23 +35,6 @@ public class ResponseSender
 			e.printStackTrace();
 		}
 	}
-	public static void sendJSONResponse(HttpServletResponse response, JSONObject obj)
-	{
-		if(obj == null)
-			obj = new JSONObject();
-		response.setContentType("application/json");
-		response.setHeader("Cache-Control",	"no-store, no-cache, must-revalidate");
-		PrintWriter out;
-		try {
-			out = response.getWriter();
-			obj.writeJSONString(out);
-			out.close();
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
 	public static <E extends XMLSerializable> Document createItemXml(E item)
 	{
 		Document doc = new Document(item.getXml());
@@ -67,6 +52,23 @@ public class ResponseSender
 		Document doc = new Document(col);
 		return doc;
 	}
+	public static void sendJSONResponse(HttpServletResponse response, JSONObject obj)
+	{
+		if(obj == null)
+			obj = new JSONObject();
+		response.setContentType("application/json");
+		response.setHeader("Cache-Control",	"no-store, no-cache, must-revalidate");
+		PrintWriter out;
+		try {
+			out = response.getWriter();
+			obj.writeJSONString(out);
+			out.close();
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	public static <E extends JSONSerializable> JSONObject createItemJson(E item)
 	{
 		return item.getJson();
@@ -78,6 +80,29 @@ public class ResponseSender
 		JSONArray array = new JSONArray();
 		collection.forEach((E item) -> array.add(item.getJson()));
 		obj.put("collection", array);
+		return obj;
+	}
+	@SuppressWarnings("unchecked")
+	public static<K extends JSONSerializable, V extends Collection<? extends JSONSerializable>> JSONObject createMapJson(Map<K,V> map)
+	{
+		JSONObject obj = new JSONObject();
+		JSONArray array = new JSONArray();
+		for(Entry<K,V> entry : map.entrySet())
+		{
+			JSONObject item = createItemJson(entry.getKey());
+			JSONObject col = createCollectionJson(entry.getValue());
+			item.put("items", col);
+			
+			array.add(item);
+		}
+		obj.put("collection", array);
+		return obj;
+	}
+	@SuppressWarnings("unchecked")
+	public static JSONObject createBooleanJson(boolean b)
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("response", b);
 		return obj;
 	}
 }

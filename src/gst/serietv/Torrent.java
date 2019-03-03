@@ -7,8 +7,6 @@ import com.j256.ormlite.field.DatabaseField;
 
 public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, JSONSerializable
 {
-	@DatabaseField(columnName="episodeId")
-	private int episodeId;
 	@DatabaseField(columnName="url", id=true)
 	private String url;
 	@DatabaseField(columnName="resolution")
@@ -21,15 +19,21 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	private boolean preair;
 	@DatabaseField(columnName="videoSource")
 	private String source;
+	@DatabaseField(columnName="season")
+	private int season;
+	@DatabaseField(columnName="episode")
+	private int episode;
+	@DatabaseField(columnName="showId")
+	private int showId;
+	
+	private final static int PROPER = 4, REPACK = 2, PREAIR = 1;
 	
 	public Torrent() { }
-	public Torrent(String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
+	public Torrent(int showId, int season, int episode, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
 	{
-		this(0, url, resolution, proper, repack, preair, source);
-	}
-	public Torrent(int episodeId, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
-	{
-		setEpisodeId(episodeId);
+		setShowId(showId);
+		setSeason(season);
+		setEpisode(episode);
 		setUrl(url);
 		setResolution(resolution);
 		setProper(proper);
@@ -70,14 +74,6 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	{
 		this.preair = preair;
 	}
-	public int getEpisodeId()
-	{
-		return episodeId;
-	}
-	public void setEpisodeId(int episodeId)
-	{
-		this.episodeId = episodeId;
-	}
 	public boolean isProper()
 	{
 		return proper;
@@ -94,6 +90,31 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	{
 		this.source = ripSource;
 	}
+	
+	public int getSeason()
+	{
+		return season;
+	}
+	public void setSeason(int season)
+	{
+		this.season = season;
+	}
+	public int getEpisode()
+	{
+		return episode;
+	}
+	public void setEpisode(int episode)
+	{
+		this.episode = episode;
+	}
+	public int getShowId()
+	{
+		return showId;
+	}
+	public void setShowId(int showId)
+	{
+		this.showId = showId;
+	}
 	@Override
 	public String toString()
 	{
@@ -102,15 +123,29 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	@Override
 	public int compareTo(Torrent o)
 	{
-		return this.getUrl().compareTo(o.getUrl());
+		if(getResolution() == o.getResolution())
+		{
+			int maskDiff = o.getMask()-getMask(); 
+			if(maskDiff == 0)
+				return getUrl().compareTo(o.getUrl());
+			return maskDiff;
+		}
+		return o.getResolution()-getResolution();
+	}
+	@Override
+	public boolean equals(Object obj)
+	{
+		return getUrl().compareTo(((Torrent)obj).getUrl()) == 0;
 	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject getJson()
 	{
 		JSONObject obj = new JSONObject();
-		obj.put("epId", getEpisodeId());
 		obj.put("url", getUrl());
+		obj.put("showId", getShowId());
+		obj.put("season", getSeason());
+		obj.put("episode", getEpisode());
 		obj.put("resolution", getResolution());
 		obj.put("proper", isProper());
 		obj.put("repack", isRepack());
@@ -122,8 +157,6 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	public Element getXml()
 	{
 		Element torrent = new Element("torrent");
-		Element epId = new Element("epId");
-		epId.addContent(getEpisodeId()+"");
 		Element url = new Element("url");
 		url.addContent(getUrl());
 		Element resolution = new Element("resolution");
@@ -136,13 +169,26 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 		preair.addContent(isPreair()+"");
 		Element source = new Element("source");
 		source.addContent(getSource());
-		torrent.addContent(epId);
+		Element showId = new Element("showId");
+		source.addContent(getShowId()+"");
+		Element season = new Element("season");
+		source.addContent(getSeason()+"");
+		Element episode = new Element("episode");
+		source.addContent(getEpisode()+"");
 		torrent.addContent(url);
+		torrent.addContent(showId);
+		torrent.addContent(season);
+		torrent.addContent(episode);
 		torrent.addContent(resolution);
 		torrent.addContent(proper);
 		torrent.addContent(repack);
 		torrent.addContent(preair);
 		torrent.addContent(source);
 		return torrent;
+	}
+	private int getMask()
+	{
+		int mask = (isProper() ? PROPER : 0) + (isRepack() ? REPACK : 0) + (isPreair() ? PREAIR : 0);
+		return mask;
 	}
 }

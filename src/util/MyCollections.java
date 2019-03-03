@@ -37,6 +37,7 @@ public class MyCollections
 		set.forEach((V v) -> list.add(v));
 		return list;
 	}
+	@SuppressWarnings("unchecked")
 	public static <Key,Value> Map<Key,Value> createMapFromListUsingMethod(List<Value> list, String methodName)
 	{
 		Map<Key,Value> map = new TreeMap<>();
@@ -58,6 +59,7 @@ public class MyCollections
 		}
 		return map;
 	}
+	@SuppressWarnings("unchecked")
 	public static <V> Set<V> mergeSets(Set<V>...sets)
 	{
 		Set<V> all = new TreeSet<V>();

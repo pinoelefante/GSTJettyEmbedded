@@ -8,18 +8,11 @@ import gst.serietv.Torrent;
 public class ShowRSSTorrent extends Torrent
 {
 
-	public ShowRSSTorrent()
-	{
-	}
+	public ShowRSSTorrent() {}
 
-	public ShowRSSTorrent(String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
+	public ShowRSSTorrent(int showid, int season, int episode, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
 	{
-		super(url, resolution, proper, repack, preair, source);
-	}
-
-	public ShowRSSTorrent(int episodeId, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)
-	{
-		super(episodeId, url, resolution, proper, repack, preair, source);
+		super(showid, season, episode, url, resolution, proper, repack, preair, source);
 	}
 
 }

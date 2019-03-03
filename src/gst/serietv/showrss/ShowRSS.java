@@ -45,10 +45,14 @@ public class ShowRSS
 	
 	public List<String> caricaEpisodiOnline(ShowRSSSerieTV serie)
 	{
+		return caricaEpisodiOnline(serie.getId());
+	}
+	public List<String> caricaEpisodiOnline(int idSerie)
+	{
 		List<String> lista = new ArrayList<String>();
 		try
 		{
-			String pageURL = BASE_URL + "/browse/" + serie.getId();
+			String pageURL = BASE_URL + "/browse/" + idSerie;
 			Document doc = HttpOperations.getJSoupDocument(pageURL);
 			Elements magnets = doc.select("a");
 			for (int i = 0; i < magnets.size(); i++)

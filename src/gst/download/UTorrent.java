@@ -31,7 +31,8 @@ public class UTorrent {
 		pathEseguibile=p;
 	}
 	public String getPathInstallazione(){
-		return pathEseguibile;
+		//return pathEseguibile;
+		return "C:\\Users\\pinoe\\AppData\\Roaming\\uTorrent\\uTorrent.exe";
 	}
 	private static long nextTorrentCLI = 0L;
 	public synchronized boolean downloadCLI(Torrent t, String path){

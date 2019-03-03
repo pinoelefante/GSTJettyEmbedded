@@ -1,4 +1,4 @@
-package gst.infoManager.thetvdb;
+package gst.info.thetvdb;
 
 public class ActorTVDB {
 	private String nome, url_file, ruolo;
