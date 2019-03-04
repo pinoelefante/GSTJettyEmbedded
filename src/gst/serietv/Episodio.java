@@ -5,18 +5,16 @@ import org.json.simple.JSONObject;
 
 import com.j256.ormlite.field.DatabaseField;
 
-public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, JSONSerializable
+public class Episodio implements Comparable<Episodio>, XMLSerializable, JSONSerializable
 {
-	@DatabaseField(columnName="showId", id=true)
-	private ID showId;
-	@DatabaseField(columnName="stagione", id=true)
+	@DatabaseField(columnName="stagione", uniqueCombo=true)
 	private int stagione;
-	@DatabaseField(columnName="episodio", id=true)
+	@DatabaseField(columnName="episodio", uniqueCombo=true)
 	private int episodio;
 	
-	public Episodio(ID showId, int stagione, int episodio)
+	public Episodio() { }
+	public Episodio(int stagione, int episodio)
 	{
-		setShowId(showId);
 		setStagione(stagione);
 		setEpisodio(episodio);
 	}
@@ -40,18 +38,9 @@ public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, 
 	{
 		this.episodio = episodio;
 	}
-	public ID getShowId()
-	{
-		return showId;
-	}
-
-	public void setShowId(ID showId)
-	{
-		this.showId = showId;
-	}
 
 	@Override
-	public int compareTo(Episodio<ID> o)
+	public int compareTo(Episodio o)
 	{
 		int seasonCompare = Integer.compare(getStagione(), o.getStagione());
 		if(seasonCompare == 0)
@@ -63,13 +52,12 @@ public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, 
 	{
 		return String.format("S%02dE%02d", getStagione(), getEpisodio());
 	}
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object obj)
 	{
 		if(!(obj instanceof Episodio))
 			return false;
-		Episodio<ID> ep = (Episodio<ID>)obj;
+		Episodio ep = (Episodio)obj;
 		return compareTo(ep) == 0;
 	}
 	@SuppressWarnings("unchecked")
@@ -77,7 +65,6 @@ public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, 
 	public JSONObject getJson()
 	{
 		JSONObject obj = new JSONObject();
-		obj.put("show", getShowId());
 		obj.put("season", getStagione());
 		obj.put("episode", getEpisodio());
 		return obj;
@@ -85,14 +72,13 @@ public class Episodio<ID> implements Comparable<Episodio<ID>>, XMLSerializable, 
 	@Override
 	public Element getXml()
 	{
-		Element doc = new Element("episode");
+		Element doc = new Element("ep");
 		Element show = new Element("show");
-		show.addContent(getShowId()+"");
 		doc.addContent(show);
 		Element season = new Element("season");
 		season.addContent(getStagione()+"");
 		doc.addContent(season);
-		Element epNum = new Element("epNum");
+		Element epNum = new Element("episode");
 		epNum.addContent(getEpisodio()+"");
 		doc.addContent(epNum);
 		return doc;

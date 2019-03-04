@@ -103,12 +103,12 @@ public class NameUtils
 			return "WEB";
 		return "HDTV";
 	}
-	public static EpisodeWrapper getSeasonEpisode(String name)
+	public static<T> EpisodeWrapper getSeasonEpisode(String name)
 	{
 		return parseEpisodeName(name, 0);
 	}
 	
-	private static EpisodeWrapper parseEpisodeName(String toParse, int startFrom)
+	private static<T> EpisodeWrapper parseEpisodeName(String toParse, int startFrom)
 	{
 		EpisodeWrapper myTuple = new EpisodeWrapper(0, 0);
 		if(startFrom >= patterns.size())
@@ -184,8 +184,8 @@ public class NameUtils
 
 		try
 		{
-			myTuple.setSeason(Integer.parseInt(dati[0]));
-			myTuple.setEpisode(Integer.parseInt(dati[1]));
+			myTuple.setStagione(Integer.parseInt(dati[0]));
+			myTuple.setEpisodio(Integer.parseInt(dati[1]));
 		}
 		catch (Exception e)
 		{

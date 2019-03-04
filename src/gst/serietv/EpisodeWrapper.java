@@ -1,27 +1,70 @@
 package gst.serietv;
 
-import util.Tuple;
+import org.json.simple.JSONObject;
 
-public class EpisodeWrapper extends Tuple<Integer,Integer>
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName="episode")
+public class EpisodeWrapper extends Episodio
 {
-	public EpisodeWrapper(Integer k, Integer v)
+	@DatabaseField(columnName="id", generatedId=true)
+	private int id;
+	@DatabaseField(columnName="showId", uniqueCombo=true)
+	private int showId;
+	@DatabaseField(columnName="status")
+	private EpisodeStatusEnum status = EpisodeStatusEnum.DA_SCARICARE;
+	@DatabaseField(columnName="viewPercent")
+	private int viewPercent = 0;
+	
+	public EpisodeWrapper() { }
+	
+	public EpisodeWrapper(int stagione, int episodio)
 	{
-		super(k, v, "season", "episode");
+		super(stagione, episodio);
 	}
-	public Integer getSeason()
+	public EpisodeWrapper(int showId, int stagione, int episodio)
 	{
-		return getElement1();
+		super(stagione, episodio);
+		setShowId(showId);
 	}
-	public Integer getEpisode()
+
+	public int getShowId()
 	{
-		return getElement2();
+		return showId;
 	}
-	public void setSeason(Integer v)
+
+	public void setShowId(int showId)
 	{
-		setElement1(v);
+		this.showId = showId;
 	}
-	public void setEpisode(Integer v)
+
+	public EpisodeStatusEnum getStatus()
 	{
-		setElement2(v);
+		return status;
+	}
+
+	public void setStatus(EpisodeStatusEnum status)
+	{
+		this.status = status;
+	}
+
+	public int getPercent()
+	{
+		return viewPercent;
+	}
+
+	public void setPercent(int percent)
+	{
+		this.viewPercent = percent;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject getJson()
+	{
+		JSONObject o = super.getJson();
+		o.put("status", getStatus().ordinal());
+		return o;
 	}
 }

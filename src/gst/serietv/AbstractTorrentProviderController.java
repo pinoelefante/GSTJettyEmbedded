@@ -58,7 +58,7 @@ public abstract class AbstractTorrentProviderController<ID, S extends SerieTV & 
 			boolean repack = NameUtils.isRepack(link);
 			String source =  NameUtils.getVideoSource(link);
 			
-			T torrent = creaTorrent(serie.getId(), key.getSeason(), key.getEpisode(), link, resolution, proper, repack, preair, source);
+			T torrent = creaTorrent(serie.getId(), key.getStagione(), key.getEpisodio(), link, resolution, proper, repack, preair, source);
 			torrents.add(torrent);
 		}
 		return torrents;

@@ -27,7 +27,7 @@ public class VideoProviderController
 	private VideoProviderController()
 	{
 		db = Database.GetInstance();
-		db.CreateDB(SerieTVComposer.class);
+		db.CreateDB(SerieTVComposer.class, EpisodeWrapper.class);
 		controllers = new ArrayList<>(2);
 		controllers.add(EZTVController.getInstance());
 		controllers.add(ShowRSSController.getInstance());
@@ -159,6 +159,9 @@ public class VideoProviderController
 			else if(controller instanceof ShowRSSController)
 				episodi.addAll(((ShowRSSController)controller).aggiornaEpisodi(composer.getShowrss()));
 		}
+		Set<EpisodeWrapper> offline = getEpisodeWrappers(composerId);
+		episodi.removeAll(offline);
+		episodi.addAll(offline);
 		map.put(composer, episodi);
 		aggiornaTempoAggiornamento(composer);
 		return map;
@@ -196,6 +199,9 @@ public class VideoProviderController
 			else if(controller instanceof ShowRSSController)
 				episodi.addAll(((ShowRSSController)controller).elencoEpisodi(composer.getShowrss()));
 		}
+		Set<EpisodeWrapper> offline = getEpisodeWrappers(composerId);
+		episodi.removeAll(offline);
+		episodi.addAll(offline);
 		return episodi;
 	}
 	public boolean setFavourite(int showId, boolean status)
@@ -245,8 +251,43 @@ public class VideoProviderController
 		List<Torrent> t = torrents.stream().filter((Torrent x) -> x.getResolution() == composer.getFavouriteResolution()).collect(Collectors.toList());
 		Torrent download = !t.isEmpty() ? t.get(0) : torrents.iterator().next();
 		String path = "D:\\Torrent\\SerieTV";
-		UTorrent.getInstance().downloadCLI(download, path);
-		System.out.println(download);
+		if(UTorrent.getInstance().downloadCLI(download, path))
+			changeEpisodeWrapperStatus(showId, season, episode, EpisodeStatusEnum.SCARICATO);
+		// System.out.println(download);
 		return download;
+	}
+	@SuppressWarnings("unchecked")
+	private Set<EpisodeWrapper> getEpisodeWrappers(int showid)
+	{
+		return db.SelectWhere(EpisodeWrapper.class, new Pair<>("showId",showid)).stream().collect(Collectors.toSet());
+	}
+	@SuppressWarnings("unchecked")
+	private EpisodeWrapper getEpisodeWrapper(int showId, int season, int episode)
+	{
+		return db.SelectFirstWhere(EpisodeWrapper.class, new Pair<>("showId",showId), new Pair<>("stagione",season), new Pair<>("episodio", episode));	
+	}
+	private boolean changeEpisodeWrapperStatus(int showId, int season, int episode, EpisodeStatusEnum status)
+	{
+		EpisodeWrapper wrapper = getEpisodeWrapper(showId, season, episode);
+		if(wrapper == null)
+			wrapper = new EpisodeWrapper(showId, season, episode);
+		wrapper.setStatus(status);
+		return db.SaveItem(wrapper).isComplete();
+	}
+	public boolean changeEpisodeWrapperViewPercentage(int showId, int season, int episode, int perc)
+	{
+		EpisodeWrapper wrapper = getEpisodeWrapper(showId, season, episode);
+		if(wrapper == null)
+		{
+			wrapper = new EpisodeWrapper(showId, season, episode);
+			wrapper.setStatus(EpisodeStatusEnum.VEDENDO);
+		}
+		wrapper.setPercent(perc);
+		return db.SaveItem(wrapper).isComplete();
+	}
+	public boolean playVideo(int showId, int season, int episode)
+	{
+		
+		return false;
 	}
 }

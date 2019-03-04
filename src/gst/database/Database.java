@@ -66,6 +66,7 @@ public class Database
 		}
 		catch (SQLException e)
 		{
+			e.printStackTrace();
 			System.out.println("Can't create database: " + e.getSQLState());
 			System.exit(-1);
 		}

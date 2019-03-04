@@ -19,8 +19,8 @@ public class SerieTVComposer extends SerieTV implements XMLSerializable
 	private boolean favourite;
 	@DatabaseField(columnName = "lastUpdate", defaultValue="0")
 	private long lastUpdate;
-	@DatabaseField(columnName = "resolution", defaultValue="720")
-	private int favouriteResolution;
+	@DatabaseField(columnName = "resolution")
+	private int favouriteResolution = 720;
 
 	public SerieTVComposer() { }
 

@@ -129,6 +129,23 @@ public class OperazioniSerieServlet extends HttpServlet
 				jsonContent = ResponseSender.createItemJson(t);
 				break;
 			}
+			case "changeViewPercentage":
+			{
+				int showId = Integer.parseInt(req.getParameter("id"));
+				int season = Integer.parseInt(req.getParameter("stagione"));
+				int episode = Integer.parseInt(req.getParameter("episodio"));
+				int percentage = Integer.parseInt(req.getParameter("percentage"));
+				boolean r = VideoProviderController.getInstance().changeEpisodeWrapperViewPercentage(showId, season, episode, percentage);
+				jsonContent = ResponseSender.createBooleanJson(r);
+			}
+			case "playEpisode":
+			{
+				int showId = Integer.parseInt(req.getParameter("id"));
+				int season = Integer.parseInt(req.getParameter("stagione"));
+				int episode = Integer.parseInt(req.getParameter("episodio"));
+				boolean r = VideoProviderController.getInstance().playVideo(showId, season, episode);
+				jsonContent = ResponseSender.createBooleanJson(r);
+			}
 		}
 		ResponseSender.sendJSONResponse(resp, jsonContent);
 	}
