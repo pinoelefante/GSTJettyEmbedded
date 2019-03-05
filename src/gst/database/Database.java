@@ -22,34 +22,28 @@ import javafx.util.Pair;
 /* Using http://ormlite.com/ */
 public class Database
 {
-
-	public final static Object INSERT_OK = new Object();
-	private static Database	   instance;
-
-	public static Database GetInstance()
+	private static class SingletonHelper{
+        private static final Database INSTANCE = new Database();
+    }
+	public static Database getInstance()
 	{
-		if (instance == null)
-		{
-			try
-			{
-				instance = new Database();
-			}
-			catch (SQLException ex)
-			{
-				Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-				System.exit(-1);
-			}
-		}
-		return instance;
+		return SingletonHelper.INSTANCE;
 	}
 
 	private ConnectionSource connectionSource;
 
-	private Database() throws SQLException
+	private Database()
 	{
 		String databaseUrl = "jdbc:sqlite:gstnew.sqlite";
-		connectionSource = new JdbcConnectionSource(databaseUrl);
-		// connectionSource = new JdbcPooledConnectionSource(databaseUrl);
+		try
+		{
+			connectionSource = new JdbcConnectionSource(databaseUrl);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	public HashMap<Class<?>, Dao> daos = new HashMap<>();

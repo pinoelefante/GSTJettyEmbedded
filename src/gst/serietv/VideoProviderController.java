@@ -20,20 +20,23 @@ import util.MyCollections;
 
 public class VideoProviderController
 {
-	private static VideoProviderController instance = new VideoProviderController();
 	private List<AbstractController<?,?>> controllers;
 	private Database db;
-
+	
+	private static class SingletonHelper{
+        private static final VideoProviderController INSTANCE = new VideoProviderController();
+    }
 	private VideoProviderController()
 	{
-		db = Database.GetInstance();
+		db = Database.getInstance();
 		db.CreateDB(SerieTVComposer.class, EpisodeWrapper.class);
 		controllers = new ArrayList<>(2);
 		controllers.add(EZTVController.getInstance());
 		controllers.add(ShowRSSController.getInstance());
 	}
+	
 	public static VideoProviderController getInstance() {
-		return instance;
+		return SingletonHelper.INSTANCE;
 	}
 	@SuppressWarnings("unchecked")
 	public List<SerieTV> getElencoSerieTV()

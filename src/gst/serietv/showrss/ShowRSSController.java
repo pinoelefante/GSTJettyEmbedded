@@ -9,15 +9,17 @@ import util.MyCollections;
 
 public class ShowRSSController extends AbstractTorrentProviderController<Integer, ShowRSSSerieTV, ShowRSSTorrent>
 {
-	private final static ShowRSSController instance = new ShowRSSController();
 	private ShowRSS showRss;
+	private static class SingletonHelper{
+        private static final ShowRSSController INSTANCE = new ShowRSSController();
+    }
 	private ShowRSSController()
 	{
 		showRss = new ShowRSS();
 		db.CreateDB(ShowRSSSerieTV.class, ShowRSSTorrent.class);
 	}
 	public static ShowRSSController getInstance() {
-		return instance;
+		return SingletonHelper.INSTANCE;
 	}
 
 	@Override

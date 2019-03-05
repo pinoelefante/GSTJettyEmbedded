@@ -26,7 +26,7 @@ public abstract class Torrent implements Comparable<Torrent>, XMLSerializable, J
 	@DatabaseField(columnName="showId")
 	private int showId;
 	
-	private final static int PROPER = 4, REPACK = 2, PREAIR = 1;
+	private final static int PROPER = 4, REPACK = 2, PREAIR = -1;
 	
 	public Torrent() { }
 	public Torrent(int showId, int season, int episode, String url, int resolution, boolean proper, boolean repack, boolean preair, String source)

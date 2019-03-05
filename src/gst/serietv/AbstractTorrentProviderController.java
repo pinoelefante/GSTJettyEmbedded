@@ -20,7 +20,7 @@ public abstract class AbstractTorrentProviderController<ID, S extends SerieTV & 
 	
 	public AbstractTorrentProviderController()
 	{
-		db = Database.GetInstance();
+		db = Database.getInstance();
 	}
 	
 	@Override

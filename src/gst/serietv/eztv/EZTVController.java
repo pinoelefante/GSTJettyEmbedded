@@ -10,11 +10,13 @@ import util.MyCollections;
 
 public class EZTVController extends AbstractTorrentProviderController<Integer, EZTVSerieTV, EZTVTorrent>
 {
-	private final static EZTVController instance = new EZTVController();
 	private EZTV eztv;
+	private static class SingletonHelper{
+        private static final EZTVController INSTANCE = new EZTVController();
+    }
 	
 	public static EZTVController getInstance() {
-		return instance;
+		return SingletonHelper.INSTANCE;
 	}
 	
 	private EZTVController() {
