@@ -1,5 +1,6 @@
 package gst.serietv;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,18 +17,21 @@ import gst.serietv.eztv.EZTVSerieTV;
 import gst.serietv.showrss.ShowRSSController;
 import gst.serietv.showrss.ShowRSSSerieTV;
 import javafx.util.Pair;
+import server.settings.SettingsController;
 import util.MyCollections;
 
 public class VideoProviderController
 {
 	private List<AbstractController<?,?>> controllers;
 	private Database db;
+	private SettingsController settings;
 	
 	private static class SingletonHelper{
         private static final VideoProviderController INSTANCE = new VideoProviderController();
     }
 	private VideoProviderController()
 	{
+		settings = SettingsController.getInstance();
 		db = Database.getInstance();
 		db.CreateDB(SerieTVComposer.class, EpisodeWrapper.class);
 		controllers = new ArrayList<>(2);
@@ -253,10 +257,10 @@ public class VideoProviderController
 			return null;
 		List<Torrent> t = torrents.stream().filter((Torrent x) -> x.getResolution() == composer.getFavouriteResolution()).collect(Collectors.toList());
 		Torrent download = !t.isEmpty() ? t.get(0) : torrents.iterator().next();
-		String path = "D:\\Torrent\\SerieTV";
-		if(UTorrent.getInstance().downloadCLI(download, path))
+		String downloadFolder = settings.getDownloadDir();
+		String showDownloadFolder = Paths.get(downloadFolder, NameUtils.getFolderName(composer.getTitolo())).toAbsolutePath().toString();
+		if(UTorrent.getInstance().downloadTorrent(download, showDownloadFolder))
 			changeEpisodeWrapperStatus(showId, season, episode, EpisodeStatusEnum.SCARICATO);
-		// System.out.println(download);
 		return download;
 	}
 	@SuppressWarnings("unchecked")

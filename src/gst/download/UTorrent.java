@@ -1,97 +1,68 @@
 package gst.download;
 
-import java.io.File;
 import java.io.IOException;
 
 import gst.serietv.Torrent;
+import server.settings.SettingsController;
 import util.OperazioniFile;
-import util.os.Os;
 
 public class UTorrent {
-	private static UTorrent instance;
-	
+	private SettingsController settings;
+	private static class SingletonHelper{
+		private final static UTorrent INSTANCE = new UTorrent();
+	}
+	private UTorrent() {
+		settings = SettingsController.getInstance();
+	}
 	public synchronized static UTorrent getInstance()
 	{
-		if(instance == null)
-			instance = new UTorrent();
-		return instance;
+		return SingletonHelper.INSTANCE;
 	}
 	
-	private String pathEseguibile;
-	
-	private UTorrent() {}
-	
-	public synchronized boolean downloadTorrent(Torrent t, String path) {
-		System.out.println("download torrent "+t.getUrl());
-		
+	public synchronized boolean downloadTorrent(Torrent t, String path) {	
 		return downloadCLI(t, path);
 	}
-	
-	public void setPathInstallazione(String p){
-		pathEseguibile=p;
-	}
-	public String getPathInstallazione(){
-		//return pathEseguibile;
-		return "C:\\Users\\pinoe\\AppData\\Roaming\\uTorrent\\uTorrent.exe";
-	}
 	private static long nextTorrentCLI = 0L;
-	public synchronized boolean downloadCLI(Torrent t, String path){
-		while(System.currentTimeMillis()<=nextTorrentCLI){
-			try {
-				Thread.sleep(100L);
+	private boolean downloadCLI(Torrent t, String path){
+		if(!isUtorrentPathValid())
+			return false;
+		long diff = nextTorrentCLI - System.currentTimeMillis();
+		if(diff > 0)
+		{
+			try
+			{
+				Thread.sleep(diff);
 			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
+			catch (InterruptedException e1)
+			{
+				e1.printStackTrace();
 			}
 		}
-		if(Os.isWindows()){
-			String[] cmd={
-					getPathInstallazione(),
-					"/NOINSTALL",
-					"/DIRECTORY",
-					("\"" + path + "\""),
-					t.getUrl()
-			};
-			
-			try {
-				Process p = Runtime.getRuntime().exec(cmd);
-				nextTorrentCLI = System.currentTimeMillis()+250;
-				if(p==null){
-					return false;
-				}
-				return true;
-			}
-			catch (IOException e) {
-				e.printStackTrace();
+		String[] cmd={
+				getPathInstallazione(),
+				"/NOINSTALL",
+				"/DIRECTORY",
+				("\"" + path + "\""),
+				t.getUrl()
+		};
+		
+		try {
+			Process p = Runtime.getRuntime().exec(cmd);
+			nextTorrentCLI = System.currentTimeMillis()+250;
+			if(p==null){
 				return false;
 			}
+			return true;
 		}
-		return false;
+		catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-	
-	public static String rilevaInstallazione(){
-		String path = null;
-		if(Os.isWindows()){
-			path = System.getenv("APPDATA")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
-			if(OperazioniFile.fileExists(path))
-				return path;
-			if(Os.is32bit()){
-				path = System.getenv("PROGRAMFILES")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
-				if(OperazioniFile.fileExists(path))
-					return path;
-			}
-			else {
-				path = System.getenv("PROGRAMFILES")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
-				if(OperazioniFile.fileExists(path))
-					return path;
-				path = System.getenv("PROGRAMFILES(x86)")+File.separator+"uTorrent"+File.separator+"uTorrent.exe";
-				if(OperazioniFile.fileExists(path))
-					return path;
-			}
-//			path = Settings.getInstance().getCurrentDir() + File.separator + "uTorrent.exe";
-//			if(OperazioniFile.fileExists(path))
-//				return path;
-		}
-		return null;
+	private boolean isUtorrentPathValid() {
+		return OperazioniFile.fileExists(settings.getUTorrentPath());
+	}
+	private String getPathInstallazione() {
+		return settings.getUTorrentPath();
 	}
 }

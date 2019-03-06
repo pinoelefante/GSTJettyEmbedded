@@ -110,9 +110,9 @@ public class NameUtils
 	
 	private static<T> EpisodeWrapper parseEpisodeName(String toParse, int startFrom)
 	{
-		EpisodeWrapper myTuple = new EpisodeWrapper(0, 0);
+		EpisodeWrapper epWrapper = new EpisodeWrapper(0, 0);
 		if(startFrom >= patterns.size())
-			return myTuple;
+			return epWrapper;
 		int currentPattern;
 		Matcher matcher = null;
 		for (currentPattern = startFrom; currentPattern < patterns.size(); currentPattern++)
@@ -184,13 +184,17 @@ public class NameUtils
 
 		try
 		{
-			myTuple.setStagione(Integer.parseInt(dati[0]));
-			myTuple.setEpisodio(Integer.parseInt(dati[1]));
+			epWrapper.setStagione(Integer.parseInt(dati[0]));
+			epWrapper.setEpisodio(Integer.parseInt(dati[1]));
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return myTuple;
+		return epWrapper;
+	}
+	public static String getFolderName(String showName)
+	{
+		return showName.replaceAll("[\\\\/:*?\"<>|]", " ").trim().replace("  ", " ");
 	}
 }

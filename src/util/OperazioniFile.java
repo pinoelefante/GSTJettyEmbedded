@@ -75,24 +75,10 @@ public class OperazioniFile {
 	}
 	public static boolean fileExists(String path){
 		File f=new File(path);
-		if(f.exists()){
-			if(f.isFile())
-				return true;
-			else
-				return false;
-		}
-		else
-			return false;
+		return (f.exists() && f.isFile());
 	}
 	public static boolean dirExists(String path){
 		File f=new File(path);
-		if(f.exists()){
-			if(f.isDirectory())
-				return true;
-			else
-				return false;
-		}
-		else
-			return false;
+		return (f.exists() && f.isDirectory());
 	}
 }
