@@ -31,7 +31,7 @@ public class TheTVDB {
 	private static TheTVDB				   instance;
 
 	private static String				   APIKEY				 = "294AFD865CEB421D";
-	private static String				   API_MIRROR_PATH		= "http://thetvdb.com/api/" + APIKEY + "/mirrors.xml";
+	private static String				   API_MIRROR_PATH		= "https://thetvdb.com/api/" + APIKEY + "/mirrors.xml";
 
 	private static ArrayList<Mirror>	   list_mirrors;
 
@@ -97,7 +97,7 @@ public class TheTVDB {
 								id = Integer.parseInt(attr.getTextContent());
 								break;
 							case "mirrorpath":
-								mirror_path = attr.getTextContent();
+								mirror_path = attr.getTextContent().replace("http:", "https:");
 								break;
 							case "typemask":
 								mask = Integer.parseInt(attr.getTextContent());
@@ -729,6 +729,7 @@ public class TheTVDB {
 			HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
 			connection.setRequestProperty("User-Agent", UserAgent.get());
 			connection.setReadTimeout(10000);
+			connection.setInstanceFollowRedirects(true);
 			return connection;
 		}
 		catch (IOException e) {
