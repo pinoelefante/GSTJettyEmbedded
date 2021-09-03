@@ -33,8 +33,8 @@ public class GestoreSottotitoli implements Notifier{
 	public final static int LOCALE=0, ITASA=1, SUBSFACTORY=2, SUBSPEDIA=3, PODNAPISI=4, OPENSUBTITLES=5, ADDIC7ED=6; 
 	//private ProviderSottotitoli itasa;
 	//private ProviderSottotitoli subsfactory;
-	private ProviderSottotitoli subspedia;
-	private ProviderSottotitoli addic7ed;
+	//private ProviderSottotitoli subspedia;
+	//private ProviderSottotitoli addic7ed;
 	//private ProviderSottotitoli podnapisi;
 	//private ProviderSottotitoli opensubtitles;
 	private LocalSubs localsubs;
@@ -50,18 +50,21 @@ public class GestoreSottotitoli implements Notifier{
 	private GestoreSottotitoli(){
 		//itasa=ItalianSubs.getInstance();
 		//subsfactory=Subsfactory.getInstance();
-		subspedia=Subspedia2.getInstance();
+		//subspedia=Subspedia2.getInstance();
 		localsubs=LocalSubs.getInstance();
-		addic7ed = Addic7ed.getInstance();
+		//addic7ed = Addic7ed.getInstance();
 		//podnapisi = Podnapisi.getInstance();
 		//opensubtitles = OpenSubtitles.getInstance();
 		notificable=new ArrayList<Notificable>(2);
 		settings=Settings.getInstance();
+		/*
 		timer = new Timer();
 		timer.scheduleAtFixedRate(aggiornaElenchi=new TaskAggiornaElenchi(), 1000, 43200000); //12 ore
 		timer.scheduleAtFixedRate(associaSerie=new TaskAssociaSerie(), 10000, 3600000); //1 ora
 		if(settings.isRicercaSottotitoli())
 			avviaRicercaAutomatica();
+
+		 */
 		
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 			public void run(){
@@ -94,12 +97,15 @@ public class GestoreSottotitoli implements Notifier{
 				subsfactory.aggiornaElencoSerieOnline();
 				break;
 				*/
-			case SUBSPEDIA:
-				subspedia.aggiornaElencoSerieOnline();
-				break;
+			//case SUBSPEDIA:
+				//subspedia.aggiornaElencoSerieOnline();
+			//	break;
+			/*
 			case ADDIC7ED:
 				addic7ed.aggiornaElencoSerieOnline();
 				break;
+
+			 */
 		}
 	}
 	public void associaSerie(SerieTV s){
@@ -113,12 +119,17 @@ public class GestoreSottotitoli implements Notifier{
 			subsfactory.associaSerie(s);
 		}
 		*/
+		/*
 		if(s.getIDSubspedia()<=0){
 			subspedia.associaSerie(s);
 		}
+		 */
+		/*
 		if(s.getIDAddic7ed()<=0){
 			addic7ed.associaSerie(s);
 		}
+
+		 */
 	}
 	public boolean associaSerie(int idSerie, int idProvider, int idSerieSub){
 		SerieTV serie = ProviderSerieTV.getSerieByID(idSerie);
@@ -134,10 +145,13 @@ public class GestoreSottotitoli implements Notifier{
 				return subsfactory.associa(idSerie, idSerieSub);
 				break;
 			*/
+			/*
 			case SUBSPEDIA:
 				return subspedia.associa(idSerie, idSerieSub);
+			 */
+			/*
 			case ADDIC7ED:
-				return addic7ed.associa(idSerie, idSerieSub);
+				return addic7ed.associa(idSerie, idSerieSub);*/
 		}
 		return false;
 	}
@@ -155,10 +169,13 @@ public class GestoreSottotitoli implements Notifier{
 				return subsfactory.disassocia(idSerie);
 				break;
 				*/
+			/*
 			case SUBSPEDIA:
 				return subspedia.disassocia(idSerie);
+				*/
+			/*
 			case ADDIC7ED:
-				return addic7ed.disassocia(idSerie);
+				return addic7ed.disassocia(idSerie);*/
 		}
 		return false;
 	}
@@ -221,14 +238,17 @@ public class GestoreSottotitoli implements Notifier{
 			inserisciLog(e, subsfactory, lang);
 		}
 		*/
+		/*
 		else if(subspedia.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+subspedia.getProviderName());
 			inserisciLog(e, subspedia, lang);
 		}
+		*/
+		/*
 		else if(addic7ed.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " "  + episodio + " - Sottotitolo scaricato - "+addic7ed.getProviderName());
 			inserisciLog(e, addic7ed, lang);
-		}
+		}*/
 		/*
 		else if(podnapisi.scaricaSottotitolo(s, e, lang)){
 			inviaNotifica(s.getNomeSerie() + " " + episodio + " - Sottotitolo scaricato - "+podnapisi.getProviderName());
@@ -267,10 +287,15 @@ public class GestoreSottotitoli implements Notifier{
 			case SUBSFACTORY:
 				return subsfactory.getElencoSerie();
 				*/
+			/*
 			case SUBSPEDIA:
 				return subspedia.getElencoSerie();
+			 */
+			/*
 			case ADDIC7ED:
 				return addic7ed.getElencoSerie();
+
+			 */
 		}
 		return null;
 	}
@@ -286,10 +311,13 @@ public class GestoreSottotitoli implements Notifier{
 			case SUBSFACTORY:
 				return subsfactory;
 				*/
+			/*
 			case SUBSPEDIA:
 				return subspedia;
+			 */
+			/*
 			case ADDIC7ED:
-				return addic7ed;
+				return addic7ed;*/
 				/*
 			case PODNAPISI:
 				return podnapisi;
