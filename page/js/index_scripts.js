@@ -438,7 +438,9 @@ function loadSeriePreferite() {
 				var provider = $(this).find("provider").text();
 				var provider_name = $(this).find("provider_name").text();
 				var noselect = $(this).find("no_select").text();
-				var elem = creaSerieElementoPagina("<b>"+nome+"</b> - "+provider_name, id, provider, noselect);
+				var rating = $(this).find("voto").text();
+				var ratingS = rating ? "(" + rating + ")" : "";
+				var elem = creaSerieElementoPagina("<b>"+nome+"</b> " + ratingS + " - "+provider_name, id, provider, noselect);
 				$("#accordion").append(elem);
 				//getEpisodi(id, noselect);
 			});

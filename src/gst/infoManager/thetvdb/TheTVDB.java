@@ -527,7 +527,17 @@ public class TheTVDB {
 				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		Database.updateQuery(query, serie.getId(),serie.getNomeSerie(),serie.getRating(),serie.getGeneriString(),serie.getNetwork(),serie.getDataInizioITA(),serie.getGiornoSettimana(),serie.getOraTrasmissione(),serie.getDurataEpisodi(),serie.getStatoSerie(),serie.getDescrizione(),(serie.getLang().isEmpty()?defaultLang:serie.getLang()),serie.getUrlBanner(),(System.currentTimeMillis()/1000));
 	}
-	private SerieTVDBFull caricaSerie(int id, boolean skipImage){
+	public SerieTVDB caricaSerieMain(int id) {
+		String query = "SELECT * FROM "+Database.TABLE_TVDB_SERIE+" WHERE id="+id;
+		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
+		if(res==null || res.size()==0 || res.size()>1)
+			return null;
+		else {
+			return parseSerie(res.get(0));
+		}
+	}
+
+	public SerieTVDBFull caricaSerie(int id, boolean skipImage){
 		String query = "SELECT * FROM "+Database.TABLE_TVDB_SERIE+" WHERE id="+id;
 		ArrayList<KVResult<String, Object>> res = Database.selectQuery(query);
 		if(res==null || res.size()==0 || res.size()>1)

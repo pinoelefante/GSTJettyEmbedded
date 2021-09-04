@@ -97,6 +97,7 @@ public class ResponseSender {
 			Element pref_subs = new Element("pref_subs");
 			Element no_select=new Element("no_select");
 			Element pref_down = new Element("pref_down");
+			Element voto = new Element("voto");
 			nome.addContent(serie.get(i).getNomeSerie());
 			Element id = new Element("id");
 			id.addContent(serie.get(i).getIDDb()+"");
@@ -111,6 +112,7 @@ public class ResponseSender {
 			pref_subs.addContent(serie.get(i).getPreferenzeSottotitoli().getPreferenzeU());
 			no_select.addContent(serie.get(i).isEscludiSelezione()+"");
 			pref_down.addContent(serie.get(i).getPreferenze().toValue()+"");
+			voto.addContent(serie.get(i).getVoto());
 			serie_tag.addContent(nome);
 			serie_tag.addContent(id);
 			serie_tag.addContent(provider);
@@ -123,6 +125,7 @@ public class ResponseSender {
 			serie_tag.addContent(pref_subs);
 			serie_tag.addContent(no_select);
 			serie_tag.addContent(pref_down);
+			serie_tag.addContent(voto);
 			elenco.addContent(serie_tag);
 		}
 		Document doc=new Document(root);

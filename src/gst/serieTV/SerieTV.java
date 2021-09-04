@@ -11,6 +11,7 @@ public class SerieTV {
 	private boolean conclusa, stop_search, no_select;
 	private Preferenze preferenze_download;
 	private PreferenzeSottotitoli pref_subs;
+	private String voto;
 	
 	public SerieTV(int provider, String nomeserie, String url) {
 		this.provider=provider;
@@ -179,5 +180,14 @@ public class SerieTV {
 	}
 	public void SetIdShowRss(int id){
 		id_showrss_new = id;
+	}
+	public String getVoto() {
+		return voto;
+	}
+	public void setVoto(float rating) {
+		this.voto = rating + "";
+	}
+	public void setVoto(String s) {
+		this.voto = s;
 	}
 }

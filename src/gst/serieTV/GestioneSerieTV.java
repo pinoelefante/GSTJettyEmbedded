@@ -3,6 +3,8 @@ package gst.serieTV;
 import gst.database.Database;
 import gst.database.tda.KVResult;
 import gst.gui.InterfacciaGrafica;
+import gst.infoManager.thetvdb.SerieTVDB;
+import gst.infoManager.thetvdb.TheTVDB;
 import gst.interfacce.Notificable;
 import gst.interfacce.Notifier;
 import gst.player.VideoPlayer;
@@ -165,6 +167,12 @@ public class GestioneSerieTV implements Notifier {
 		ArrayList<SerieTV> preferiti = new ArrayList<>();
 		for(int i=0;i<res.size();i++){
 			SerieTV s = ProviderSerieTV.parseSerie(res.get(i));
+			if (s.getIDTvdb() > 0) {
+				SerieTVDB serieTVDB = TheTVDB.getInstance().caricaSerieMain(s.getIDTvdb());
+				if (serieTVDB != null) {
+					s.setVoto(serieTVDB.getRating());
+				}
+			}
 			preferiti.add(s);
 		}
 		return preferiti;
