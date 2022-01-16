@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -53,79 +54,41 @@ public class EZTV extends ProviderSerieTV {
 	}
 
 	public String getBaseURL() {
-		return "https://eztv.yt/";
+		return "https://eztv.re/";
 	}
 
 	@Override
 	public void aggiornaElencoSerie() {
 		update_in_corso=true;
-		System.out.println("EZTV.it - Aggiornando elenco serie tv");
-
-		String response = "";
-		try {
-			Response resp = api.getShowlist().execute();
-			if (!resp.isSuccessful()) {
-				throw new RuntimeException(resp.message());
-			}
-			response = resp.body().toString();
-		}
-		catch (Exception e1) {
-			e1.printStackTrace();
-			update_in_corso=false;
-			return;
-		}
-
-		Scanner file = null;
-		ByteArrayInputStream memStream = null;
-		int caricate = 0;
-		try {
-			memStream = new ByteArrayInputStream(response.getBytes(Charset.defaultCharset()));
-			file = new Scanner(memStream);
-
-			while (file.hasNextLine()) {
-				String linea = file.nextLine().trim();
-				if (linea.contains("\"thread_link\"")) {
-					String nomeserie = linea.substring(linea.indexOf("class=\"thread_link\">") + "class=\"thread_link\">".length(), linea.indexOf("</a>")).trim();
-					String url = linea.substring(linea.indexOf("<a href=\"") + "<a href=\"".length(), linea.indexOf("\" class=\"thread_link\">")).trim();
-					url = url.replace(getBaseURL(), "");
-					url = url.replace("/shows/", "");
-					url = url.substring(0, url.indexOf("/"));
-					String nextline = file.nextLine().trim();
-					boolean conclusa = false;
-					if (nextline.contains("ended"))
-						conclusa = true;
-					
-					if(isTempPlaceholder(nomeserie))
-						continue;
-					
-					SerieTV toInsert = new SerieTV(getProviderID(), nomeserie, url);
-					toInsert.setConclusa(conclusa);
-					toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
-					toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
-					if(aggiungiSerieADatabase(toInsert, PROVIDER_EZTV)){
-						caricate++;
-					}
+		System.out.println("EZTV.re - Aggiornando elenco serie tv");
+		AtomicInteger caricate = new AtomicInteger(0);
+		try
+		{
+			var document = Jsoup.parse(new URL(getBaseURL() + "showlist/"), 30000);
+			var links = document.tagName("a").getElementsByAttributeValue("class", "thread_link");
+			links.forEach(l -> {
+				var url = l.attr("href").replace(getBaseURL(), "").replace("/shows/", "");
+				url = url.substring(0,  url.indexOf("/"));
+				var nomeserie = l.text().trim();
+				if (isTempPlaceholder(nomeserie))
+					return;
+				SerieTV toInsert = new SerieTV(getProviderID(), nomeserie, url);
+				toInsert.setPreferenze(new Preferenze(settings.getRegolaDownloadDefault()));
+				toInsert.setPreferenzeSottotitoli(new PreferenzeSottotitoli(settings.getLingua()));
+				if(aggiungiSerieADatabase(toInsert, PROVIDER_EZTV)){
+					caricate.addAndGet(1);
 				}
-			}
-			System.out.println("EZTV - aggiornamento elenco serie tv completo\nCaricate " + caricate + " nuove serie");
+			});
 		}
-		catch (Exception e) {
-			ManagerException.registraEccezione(e);
+		catch (IOException e2)
+		{
+			ManagerException.registraEccezione(e2);
+			e2.printStackTrace();
 		}
 		finally {
-			update_in_corso=false;
-			if(file!=null)
-				file.close();
-			try {
-				if(memStream!=null)
-					memStream.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				ManagerException.registraEccezione(e);
-			}
+			update_in_corso = false;
+			System.out.println("EZTV - aggiornamento elenco serie tv completo\nCaricate " + caricate.get() + " nuove serie");
 		}
-		OperazioniFile.deleteFile(settings.getUserDir() + "file.html");
 	}
 	private String[] temp_patterns = {"^temp[_]{0,1}[\\d]*$", "^t[\\d]*$", "/^temporary_placeholder_[0-9]$/", "test", "z_blank"};
 	public boolean isTempPlaceholder(String nome){
@@ -151,39 +114,23 @@ public class EZTV extends ProviderSerieTV {
 			String base_url = getBaseURL();
 			base_url += "/shows/" + serie.getUrl() + "/";
 			
-			Download download = new Download(base_url, settings.getUserDir() + serie.getNomeSerie());
-			download.avviaDownload();
-			download.getDownloadThread().join();
-
-			FileReader fr = new FileReader(settings.getUserDir() + serie.getNomeSerie());
-			Scanner file = new Scanner(fr);
-			while (file.hasNextLine()) {
-				String linea = file.nextLine();
-				if (linea.contains("magnet:?xt=urn:btih:")) {
-					int inizio = linea.indexOf("magnet:?xt=urn:btih:");
-					int fine = linea.indexOf("\" class=\"magnet\"");
-					String url_magnet = linea.substring(inizio, fine);
-					if (url_magnet.length() > 0) {
-						CaratteristicheFile stat = Torrent.parse(url_magnet);
-						int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(serie.getIDDb(), stat.getStagione(), stat.getEpisodio());
-						ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), url_magnet);
-					}
+			var htmlDocument = Jsoup.parse(new URL(base_url), 30000);
+			var magnets = htmlDocument.getElementsByAttributeValueStarting("href", "magnet:?xt=urn:btih:");
+			magnets.forEach(m -> {
+				var link = m.attr("href");
+				if (link != null && link.length() > 0) {
+					CaratteristicheFile stat = Torrent.parse(link);
+					int episodio_id = ProviderSerieTV.aggiungiEpisodioSerie(serie.getIDDb(), stat.getStagione(), stat.getEpisodio());
+					ProviderSerieTV.aggiungiLink(episodio_id, stat.value(), link);
 				}
-			}
-			file.close();
-			fr.close();
-			OperazioniFile.deleteFile(settings.getUserDir() + serie.getNomeSerie());
-
+			});
+			serie.setConclusa(isEnded(serie));
 			if (serie.isConclusa()) {
 				serie.setStopSearch(true);
+				setConclusa(serie);
 			}
 		}
-
-		catch (InterruptedException e) {
-			e.printStackTrace();
-			ManagerException.registraEccezione(e);
-		}
-		catch (IOException e) {
+		catch(IOException e) {
 			e.printStackTrace();
 			ManagerException.registraEccezione(e);
 		}
@@ -207,8 +154,8 @@ public class EZTV extends ProviderSerieTV {
 
 	interface EZTVApi {
 		@GET("showlist/")
-		Call<ResponseBody> getShowlist();
+		Call<String> getShowlist();
 		@GET("shows/{id}/")
-		Call<ResponseBody> getEpisodes(@Path("id") String id);
+		Call<String> getEpisodes(@Path("id") String id);
 	}
 }

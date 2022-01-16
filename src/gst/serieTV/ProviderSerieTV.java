@@ -134,9 +134,22 @@ public abstract class ProviderSerieTV {
 		serie.addAll(nuove_serie);
 		return serie;
 	}
+	public void setConclusa(SerieTV s) {
+		String query = "UPDATE " + Database.TABLE_SERIETV + " set conclusa = 1, stop_search = 1 where id = " + s.getIDDb();
+		Database.updateQuery(query);
+	}
 	private void addSerieToDB(SerieTV s){
 		String query = "INSERT INTO "+Database.TABLE_SERIETV+" (nome, url, provider,conclusa, preferenze_download, preferenze_sottotitoli) VALUES (?,?,?,?,?,?)";
 		Database.updateQuery(query, s.getNomeSerie(),s.getUrl(),getProviderID(),(s.isConclusa()?1:0),s.getPreferenze().toValue(),s.getPreferenzeSottotitoli().getPreferenzeU());
+	}
+	public boolean isEnded(SerieTV s) {
+		if (s.getIDTvdb() == 0)
+			return s.isConclusa();
+		String query = "SELECT * from " + Database.TABLE_TVDB_SERIE + " where id = " + s.getIDTvdb();
+		ArrayList<KVResult<String,Object>> result = Database.selectQuery(query);
+		if (result.isEmpty()) 
+			return false;
+		return result.get(0).getValueByKey("stato").toString().equals("Ended");
 	}
 	public boolean isUpgrading(){
 		return update_in_corso;
