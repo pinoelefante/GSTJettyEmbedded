@@ -6,6 +6,10 @@ import gst.download.Download;
 import gst.programma.Settings;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 import util.os.DirectoryNotAvailableException;
 
@@ -285,7 +289,7 @@ public abstract class ProviderSerieTV {
 		Episodio ep = getEpisodio(idEp);
 		if(ep!=null){
 			SerieTV serie = getSerieByID(ep.getSerie());
-			ArrayList<Torrent> torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
+			List<Torrent> torrent = searchTorrent(serie.getPreferenze(), ep.getLinks());
 			if(torrent == null || torrent.size()==0){
 				return false;
 			}
@@ -307,44 +311,54 @@ public abstract class ProviderSerieTV {
 		}
 		return false;
 	}
-	public static ArrayList<Torrent> searchTorrent(Preferenze p, ArrayList<Torrent> list){
-		ArrayList<Torrent> download = new ArrayList<Torrent>(2);
-		if(p.isScaricaTutto()){
-			Torrent hd = null, sd = null;
-			for(int i=0;i<list.size() && hd==null && sd==null;i++){
-				if(list.get(i).getStats().is720p() && hd==null){
-					hd = list.get(i);
-					download.add(hd);
-				}
-				else if(sd==null){
-					sd = list.get(i);
-					download.add(sd);
-				}
-			}
-		}
-		else if(p.isPreferisciHD()){
-			for(int i=0;i<list.size();i++){
-				Torrent t = list.get(i);
-				if(t.getStats().is720p() && t.getStats().isPreair()==p.isDownloadPreair()){
-					download.add(list.get(i));
-					return download;
-				}
-			}
-		}
-		else {
-			for(int i=0;i<list.size();i++){
-				Torrent t = list.get(i); 
-				if(!t.getStats().is720p() && t.getStats().isPreair()==p.isDownloadPreair()){
-					download.add(list.get(i));
-					return download;
-				}
-			}
-		}
-		if(list.size()>0){
-			download.add(list.get(0));
+	public static List<Torrent> searchTorrent(Preferenze p, ArrayList<Torrent> list){
+		if (Objects.isNull(list))
+			return null;
+		List<Torrent> ultraHd = new ArrayList<Torrent>();
+		List<Torrent> fullHd = new ArrayList<Torrent>();
+		List<Torrent> hd = new ArrayList<Torrent>();
+		List<Torrent> sd = new ArrayList<Torrent>();
+		
+		list.forEach(torrent -> {
+			if (torrent.getStats().isPreair() && !p.isDownloadPreair())
+				return;
+			if (torrent.getStats().is2160p())
+				ultraHd.add(torrent);
+			else if (torrent.getStats().is1080p())
+				fullHd.add(torrent);
+			else if (torrent.getStats().is720p())
+				hd.add(torrent);
+			else
+				sd.add(torrent);
+		});
+		ultraHd.stream().sorted((x, y) -> x.compareTo(y));
+		fullHd.stream().sorted((x, y) -> x.compareTo(y));
+		hd.stream().sorted((x, y) -> x.compareTo(y));
+		sd.stream().sorted((x, y) -> x.compareTo(y));
+		
+		if (p.isScaricaTutto()) {
+			List<Torrent> download = new ArrayList<Torrent>(4);
+			if (!ultraHd.isEmpty())
+				download.add(ultraHd.get(0));
+			if (!fullHd.isEmpty())
+				download.add(fullHd.get(0));
+			if (!hd.isEmpty())
+				download.add(hd.get(0));
+			if (!sd.isEmpty())
+				download.add(sd.get(0));
 			return download;
+			
+		} else {
+			if (p.isPreferisciUltraHD() && !ultraHd.isEmpty())
+				return Collections.singletonList(ultraHd.get(0));
+			if (p.isPreferisciFullHD() && !fullHd.isEmpty())
+				return Collections.singletonList(fullHd.get(0));
+			if (p.isPreferisciHD() && !hd.isEmpty())
+				return Collections.singletonList(hd.get(0));
+			if (!sd.isEmpty())
+				return Collections.singletonList(sd.get(0));
+			return Collections.singletonList(list.get(0));
 		}
-		return null;
 	}
 	public static boolean associaSerieTVDB(int idSerie, int idTVDB){
 		String query = "UPDATE "+Database.TABLE_SERIETV+" SET id_tvdb=? WHERE id=?";

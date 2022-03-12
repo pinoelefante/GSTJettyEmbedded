@@ -57,6 +57,10 @@ public class Naming {
 		if(patterns==null)
 			init();
 		CaratteristicheFile stat=new CaratteristicheFile();
+		if(toParse.toLowerCase().contains("2160p") || toParse.toLowerCase().contains("4K"))
+			stat.set2160p(true);
+		if(toParse.toLowerCase().contains("1080p"))
+			stat.set1080p(true);
 		if(toParse.toLowerCase().contains("720p"))
 			stat.set720p(true);
 		if(toParse.toUpperCase().contains("PROPER"))

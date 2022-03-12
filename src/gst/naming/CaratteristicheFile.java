@@ -1,8 +1,8 @@
 package gst.naming;
 
-public class CaratteristicheFile {
+public class CaratteristicheFile implements Comparable{
 	private int stagione, episodio;
-	private boolean hd720, repack, proper, dvdrip, preair;
+	private boolean hd2160, hd1080, hd720, repack, proper, dvdrip, preair;
 	
 	public CaratteristicheFile() {}
 	
@@ -24,6 +24,18 @@ public class CaratteristicheFile {
 	public void set720p(boolean hd720) {
 		this.hd720 = hd720;
 	}
+	public void set1080p(boolean b) {
+		this.hd1080 = b;
+	}
+	public boolean is1080p() {
+		return hd1080;
+	}
+	public void set2160p(boolean b) {
+		this.hd2160 = b;
+	}
+	public boolean is2160p() {
+		return hd2160;
+	}
 	public boolean isRepack() {
 		return repack;
 	}
@@ -37,9 +49,9 @@ public class CaratteristicheFile {
 		this.proper = proper;
 	}
 	public String toString(){
-		return "Season: "+stagione+" Episode: "+episodio+"\n720p: "+hd720+"\nrepack: "+repack+"\nproper: "+proper;
+		return "Season: "+stagione+" Episode: "+episodio+"\n720p: "+hd720+"\n1080p: " + hd1080 + "\n2160p: " + hd2160 +"\nrepack: "+repack+"\nproper: "+proper;
 	}
-	private final static int HD=4, REPACK=2, PROPER=1;
+	private final static int ULTRA_HD = 16, FULL_HD = 8, HD=4, REPACK=2, PROPER=1;
 	public int compareStats(CaratteristicheFile s){
 		int val_this=value(this);
 		int val_comp=value(s);
@@ -52,6 +64,10 @@ public class CaratteristicheFile {
 	}
 	public int value(CaratteristicheFile s){
 		int val=0;
+		if (s.is2160p())
+			val+= ULTRA_HD;
+		if (s.is1080p())
+			val+=FULL_HD;
 		if(s.is720p())
 			val+=HD;
 		if(s.isRepack())
@@ -60,8 +76,12 @@ public class CaratteristicheFile {
 			val+=PROPER;
 		return val;
 	}
-	public static int valueFromStat(boolean hd, boolean repack, boolean proper){
+	public static int valueFromStat(boolean uhd, boolean fhd, boolean hd, boolean repack, boolean proper){
 		int val=0;
+		if (uhd)
+			val+=ULTRA_HD;
+		if (fhd)
+			val+=FULL_HD;
 		if(hd)
 			val+=HD;
 		if(repack)
@@ -91,11 +111,17 @@ public class CaratteristicheFile {
 		val=v&1;
 		//System.out.println("Value: "+v+" AND: "+val);
 		set720p(val==1?true:false);
+		v=v>>1;
+		val=v&1;
+		set1080p(val == 1);
+		v=v>>1;
+		val=v&1;
+		set2160p(val == 1);
 	}
 	public static void main(String[] args){
 		CaratteristicheFile f=new CaratteristicheFile();
-		f.setStatsFromValue(7);
-		System.out.println("\n\n"+f);
+		f.setStatsFromValue(19);
+		System.out.println(f);
 	}
 
 	public boolean isPreair() {
@@ -104,5 +130,12 @@ public class CaratteristicheFile {
 
 	public void setPreair(boolean preair) {
 		this.preair = preair;
+	}
+
+	@Override
+	public int compareTo(Object o)
+	{
+		CaratteristicheFile other = (CaratteristicheFile) o;
+		return this.value() - other.value();
 	}
 }

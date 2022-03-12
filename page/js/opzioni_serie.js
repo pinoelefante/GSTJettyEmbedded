@@ -70,7 +70,9 @@ function creaSerieElementoPagina(nome, id, provider, noselect, langs, preferenze
                     			"</select>"+
 								"</div>" +
 								"<p><br>"+
-								"<input type='checkbox' value='4' onclick='abilitaPreferenze("+id+")' id='selAll_"+id+"' "+(isScaricaTutto(preferenzeDown)?"checked":"")+" /> Scarica tutto " +
+								"<input type='checkbox' value='256' onclick='abilitaPreferenze("+id+")' id='selAll_"+id+"' "+(isScaricaTutto(preferenzeDown)?"checked":"")+" /> Scarica tutto " +
+								"<input type='checkbox' value='8' id='selUHD_"+id+"' "+(isUltraHD(preferenzeDown)?"checked":"")+" /> Preferisci Ultra HD " +
+								"<input type='checkbox' value='4' id='selFHD_"+id+"' "+(isFullHD(preferenzeDown)?"checked":"")+" /> Preferisci Full HD " +
 								"<input type='checkbox' value='2' id='selHD_"+id+"' "+(isHD(preferenzeDown)?"checked":"")+" /> Preferisci HD " +
 								"<input type='checkbox' value='1' id='selPre_"+id+"' "+(isPreair(preferenzeDown)?"checked":"")+" /> Scarica Pre-Air " +
 								"</p>"+
@@ -125,7 +127,30 @@ function isHD(val){
 		return true;
 	return false;
 }
+function isFullHD(val){
+	val = val >> 1;
+	val = val >> 1;
+	var value = val&1;
+	if(value==1)
+		return true;
+	return false;
+}
+function isUltraHD(val){
+	val = val >> 1;
+	val = val >> 1;
+	val = val >> 1;
+	var value = val&1;
+	if(value==1)
+		return true;
+	return false;
+}
 function isScaricaTutto(val){
+	val = val >> 1;
+	val = val >> 1;
+	val = val >> 1;
+	val = val >> 1;
+	val = val >> 1;
+	val = val >> 1;
 	val = val >> 1;
 	val = val >> 1;
 	var value = val&1;
@@ -146,6 +171,12 @@ function calcolaPreferenze(id){
 	}
 	if($("#selHD_"+id).is(":checked")){
 		preferenze+=parseInt($("#selHD_"+id).val());
+	}
+	if($("#selFHD_"+id).is(":checked")){
+		preferenze+=parseInt($("#selFHD_"+id).val());
+	}
+	if($("#selUHD_"+id).is(":checked")){
+		preferenze+=parseInt($("#selUHD_"+id).val());
 	}
 	if($("#selPre_"+id).is(":checked")){
 		preferenze+=parseInt($("#selPre_"+id).val());

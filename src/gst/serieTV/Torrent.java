@@ -3,7 +3,7 @@ package gst.serieTV;
 import gst.naming.CaratteristicheFile;
 import gst.naming.Naming;
 
-public class Torrent {
+public class Torrent implements Comparable {
 	 
 	private String	url;
 	private CaratteristicheFile prop_torrent;
@@ -73,5 +73,14 @@ public class Torrent {
 	}
 	public void setStats(int val){
 		prop_torrent.setStatsFromValue(val);
+	}
+
+	@Override
+	public int compareTo(Object o)
+	{
+		Torrent other = (Torrent) o;
+		if (this.url.equals(other.getUrl()))
+			return 0;
+		return -this.getStats().compareTo(other.getStats());
 	}
 }
