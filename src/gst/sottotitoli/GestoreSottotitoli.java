@@ -505,8 +505,10 @@ public class GestoreSottotitoli implements Notifier{
 		return new Document(root);
 	}
 	public void close() {
+		/*
 		timer.cancel();
 		timer.purge();
+		*/
 	}
 	public boolean aggiungiLinguaASerie(int idSerie, String lang){
 		SerieTV s = ProviderSerieTV.getSerieByID(idSerie);
